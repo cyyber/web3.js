@@ -16,7 +16,6 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 import { bytesToHex, hexToBytes, uint8ArrayEquals, uint8ArrayConcat } from '@theqrl/web3-utils';
 import {
-	AccessListEIP2930Transaction,
 	AccessListUint8ArrayItem,
 	FeeMarketEIP1559Transaction,
 } from '../../../src';
@@ -39,11 +38,6 @@ const common = new Common({
 
 const txTypes = [
 	{
-		class: AccessListEIP2930Transaction,
-		name: 'AccessListEIP2930Transaction',
-		type: 1,
-	},
-	{
 		class: FeeMarketEIP1559Transaction,
 		name: 'FeeMarketEIP1559Transaction',
 		type: 2,
@@ -54,7 +48,7 @@ const validAddress = hexToBytes('01'.repeat(20));
 const validSlot = hexToBytes('01'.repeat(32));
 const chainId = BigInt(1);
 
-describe('[AccessListEIP2930Transaction / FeeMarketEIP1559Transaction] -> EIP-2930 Compatibility', () => {
+describe('[FeeMarketEIP1559Transaction] -> EIP-2930 Compatibility', () => {
 	it('Initialization / Getter -> fromTxData()', () => {
 		for (const txType of txTypes) {
 			let tx = txType.class.fromTxData({}, { common });
@@ -565,7 +559,9 @@ describe('[AccessListEIP2930Transaction] -> Class Specific Tests', () => {
 		expect(Object.isFrozen(signedTxn)).toBe(false);
 	});
 
+	// TODO(rgeraldes24)
 	// NOTE(rgeraldes24): test not valid atm: no eips available
+	/*
 	it.skip('common propagates from the common of tx, not the common in TxOptions', () => {
 		const txn = AccessListEIP2930Transaction.fromTxData({}, { common, freeze: false });
 		const newCommon = new Common({
@@ -582,4 +578,5 @@ describe('[AccessListEIP2930Transaction] -> Class Specific Tests', () => {
 		const signedTxn = txn.sign(seed);
 		expect(signedTxn.common.eips().includes(2537)).toBeTruthy();
 	});
+	*/
 });

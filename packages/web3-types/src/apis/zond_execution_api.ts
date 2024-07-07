@@ -74,36 +74,13 @@ export interface Transaction1559SignedAPI extends Transaction1559UnsignedAPI {
 	readonly signature: HexStringBytes;
 }
 
-export interface Transaction2930UnsignedAPI extends BaseTransactionAPI {
-	readonly gasPrice: Uint;
-	readonly accessList: AccessList;
-}
-
-export interface Transaction2930SignedAPI extends Transaction2930UnsignedAPI {
-	readonly publicKey: HexStringBytes;
-	readonly signature: HexStringBytes;
-}
-
-export interface TransactionLegacyUnsignedAPI extends BaseTransactionAPI {
-	readonly gasPrice: Uint;
-}
-
-export interface TransactionLegacySignedAPI extends TransactionLegacyUnsignedAPI {
-	readonly publicKey: HexStringBytes;
-	readonly signature: HexStringBytes;
-}
-
 // https://github.com/ethereum/execution-apis/blob/main/src/schemas/transaction.yaml#L144
 export type TransactionUnsignedAPI =
-	| Transaction1559UnsignedAPI
-	| Transaction2930UnsignedAPI
-	| TransactionLegacyUnsignedAPI;
+	| Transaction1559UnsignedAPI;
 
 // https://github.com/ethereum/execution-apis/blob/main/src/schemas/transaction.yaml#L211
 export type TransactionSignedAPI =
-	| Transaction1559SignedAPI
-	| Transaction2930SignedAPI
-	| TransactionLegacySignedAPI;
+	| Transaction1559SignedAPI;
 
 // https://github.com/ethereum/execution-apis/blob/main/src/schemas/transaction.yaml#L216
 export type TransactionInfoAPI = TransactionSignedAPI & {

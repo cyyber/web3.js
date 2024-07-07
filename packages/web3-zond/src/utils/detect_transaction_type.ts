@@ -61,7 +61,7 @@ const transactionType0x2Schema = {
 const validateTxTypeAndHandleErrors = (
 	txSchema: object,
 	tx: Transaction,
-	txType: '0x0' | '0x1' | '0x2',
+	txType: '0x2',
 ) => {
 	try {
 		validator.validateJSONSchema(txSchema, tx);

@@ -576,7 +576,7 @@ export class InvalidPropertiesForTransactionTypeError extends BaseWeb3Error {
 
 	public constructor(
 		validationError: Web3ValidationErrorObject[],
-		txType: '0x0' | '0x1' | '0x2',
+		txType: '0x2',
 	) {
 		const invalidPropertyNames: string[] = [];
 		validationError.forEach(error => invalidPropertyNames.push(error.keyword));

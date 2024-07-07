@@ -20,8 +20,6 @@ import {
 	AccessListEntry,
 	BaseTransactionAPI,
 	Transaction1559UnsignedAPI,
-	Transaction2930UnsignedAPI,
-	TransactionLegacyUnsignedAPI,
 	TransactionCall,
 	TransactionWithSenderAPI,
 } from '@theqrl/web3-types';
@@ -98,33 +96,12 @@ export const isTransaction1559UnsignedValidData = (): [Transaction1559UnsignedAP
 		];
 	});
 
-export const isTransactionLegacyUnsignedValidData = (): [TransactionLegacyUnsignedAPI, true][] =>
-	isBaseTransactionValidData.map(transaction => {
-		return [
-			{
-				...transaction[0],
-				gasPrice: '0x1',
-			},
-			true,
-		];
-	});
 
-export const isTransaction2930UnsignedValidData = (): [Transaction2930UnsignedAPI, true][] =>
-	isTransactionLegacyUnsignedValidData().map(transaction => {
-		return [
-			{
-				...transaction[0],
-				accessList: [],
-			},
-			true,
-		];
-	});
+
 
 export const isTransactionWithSenderValidData = (): [TransactionWithSenderAPI, true][] => {
 	const transactions = [
 		...isTransaction1559UnsignedValidData(),
-		...isTransactionLegacyUnsignedValidData(),
-		...isTransaction2930UnsignedValidData(),
 	];
 	return transactions.map(transaction => {
 		return [
@@ -143,8 +120,6 @@ export const validateTransactionWithSenderInvalidData = (): [
 ][] => {
 	const transactions = [
 		...isTransaction1559UnsignedValidData(),
-		...isTransactionLegacyUnsignedValidData(),
-		...isTransaction2930UnsignedValidData(),
 	];
 	return transactions.map(transaction => {
 		return [transaction[0], new InvalidTransactionWithSender(transaction[0])];

@@ -19,7 +19,6 @@ import {
 	ZondExecutionAPI,
 	HexString,
 	PopulatedUnsignedEip1559Transaction,
-	PopulatedUnsignedEip2930Transaction,
 	PopulatedUnsignedTransaction,
 	Transaction,
 	ValidChains,

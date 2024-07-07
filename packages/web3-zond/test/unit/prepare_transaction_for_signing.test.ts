@@ -20,7 +20,6 @@ import { Web3Context } from '@theqrl/web3-core';
 import HttpProvider from '@theqrl/web3-providers-http';
 import { isNullish } from '@theqrl/web3-validator';
 import {
-	AccessListEIP2930Transaction,
 	FeeMarketEIP1559Transaction,
 	Transaction,
 } from '@theqrl/web3-zond-accounts';
@@ -69,7 +68,6 @@ describe.skip('prepareTransactionForSigning', () => {
 				// should produce an web3-utils/tx instance
 				expect(
 					ethereumjsTx instanceof Transaction ||
-						ethereumjsTx instanceof AccessListEIP2930Transaction ||
 						ethereumjsTx instanceof FeeMarketEIP1559Transaction,
 				).toBeTruthy();
 				expect(ethereumjsTx.sign).toBeDefined();

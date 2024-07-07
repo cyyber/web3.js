@@ -17,7 +17,6 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 import {
 	ZondExecutionAPI,
 	PopulatedUnsignedEip1559Transaction,
-	PopulatedUnsignedEip2930Transaction,
 	Transaction,
 	ValidChains,
 	Hardfork,
@@ -535,21 +534,6 @@ describe('defaultTransactionBuilder', () => {
 	});
 
 	describe('should populate accessList', () => {
-		it('should populate with [] (tx.type 0x1)', async () => {
-			const input = { ...transaction };
-			delete input.accessList;
-			delete input.maxFeePerGas;
-			delete input.maxPriorityFeePerGas;
-			input.type = '0x1';
-
-			const result = await defaultTransactionBuilder<PopulatedUnsignedEip2930Transaction>({
-				transaction: input,
-				web3Context,
-				fillGasPrice: true,
-			});
-			expect(result.accessList).toStrictEqual([]);
-		});
-
 		it('should populate with [] (tx.type 0x2)', async () => {
 			const input = { ...transaction };
 			delete input.accessList;

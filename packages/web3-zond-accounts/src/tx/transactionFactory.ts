@@ -16,12 +16,9 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 import { toUint8Array, uint8ArrayToBigInt } from '../common/utils.js';
 import { FeeMarketEIP1559Transaction } from './eip1559Transaction.js';
-import { AccessListEIP2930Transaction } from './eip2930Transaction.js';
-import { Transaction } from './legacyTransaction.js';
 import type { TypedTransaction } from '../types.js';
 
 import type {
-	AccessListEIP2930TxData,
 	FeeMarketEIP1559TxData,
 	TxData,
 	TxOptions,
@@ -45,20 +42,10 @@ export class TransactionFactory {
 	): TypedTransaction {
 		if (!('type' in txData) || txData.type === undefined) {
 			// Assume legacy transaction
+			// TODO(rgeraldes24)
 			return Transaction.fromTxData(txData as TxData, txOptions);
 		}
 		const txType = Number(uint8ArrayToBigInt(toUint8Array(txData.type)));
-		if (txType === 0) {
-			return Transaction.fromTxData(txData as TxData, txOptions);
-		}
-		if (txType === 1) {
-			// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-			return AccessListEIP2930Transaction.fromTxData(
-				// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-				<AccessListEIP2930TxData>txData,
-				txOptions,
-			);
-		}
 		if (txType === 2) {
 			return FeeMarketEIP1559Transaction.fromTxData(
 				// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
@@ -82,8 +69,6 @@ export class TransactionFactory {
 		if (data[0] <= 0x7f) {
 			// Determine the type.
 			switch (data[0]) {
-				case 1:
-					return AccessListEIP2930Transaction.fromSerializedTx(data, txOptions);
 				case 2:
 					return FeeMarketEIP1559Transaction.fromSerializedTx(data, txOptions);
 				default:

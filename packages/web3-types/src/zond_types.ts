@@ -65,7 +65,6 @@ export interface TransactionInput {
 	readonly input?: string;
 	readonly gas: HexString;
 	readonly gasLimit?: string;
-	readonly gasPrice?: string;
 	readonly maxPriorityFeePerGas?: string;
 	readonly maxFeePerGas?: string;
 	readonly nonce: string;
@@ -87,10 +86,9 @@ export type TransactionOutput = {
 	readonly value: Numbers;
 	readonly blockNumber?: Numbers;
 	readonly transactionIndex?: Numbers;
-} & (
-	| { maxPriorityFeePerGas: Numbers; maxFeePerGas: Numbers; gasPrice?: never }
-	| { maxPriorityFeePerGas?: never; maxFeePerGas?: never; gasPrice: Numbers }
-);
+	maxPriorityFeePerGas: Numbers;
+	maxFeePerGas: Numbers;
+}
 
 export interface LogsInput {
 	readonly blockHash?: HexString;
@@ -292,7 +290,6 @@ interface TransactionBase {
 	accessList?: AccessList;
 	common?: Common;
 	gas?: Numbers;
-	gasPrice?: Numbers;
 	type?: Numbers;
 	maxFeePerGas?: Numbers;
 	maxPriorityFeePerGas?: Numbers;
@@ -343,12 +340,11 @@ export interface TransactionInfo extends Transaction {
 	readonly transactionIndex?: Numbers;
 }
 
-export interface PopulatedUnsignedBaseTransaction {
+export interface PopulatedUnsignedEip1559Transaction {
 	from: Address;
 	to?: Address;
 	value: Numbers;
 	gas?: Numbers;
-	gasPrice: Numbers;
 	type: Numbers;
 	input?: Bytes;
 	data?: Bytes;
@@ -359,20 +355,12 @@ export interface PopulatedUnsignedBaseTransaction {
 	chainId: Numbers;
 	common: Common;
 	gasLimit: Numbers;
-}
-
-export interface PopulatedUnsignedEip2930Transaction extends PopulatedUnsignedBaseTransaction {
 	accessList: AccessList;
-}
-
-export interface PopulatedUnsignedEip1559Transaction extends PopulatedUnsignedEip2930Transaction {
-	gasPrice: never;
 	maxFeePerGas: Numbers;
 	maxPriorityFeePerGas: Numbers;
 }
+
 export type PopulatedUnsignedTransaction =
-	| PopulatedUnsignedBaseTransaction
-	| PopulatedUnsignedEip2930Transaction
 	| PopulatedUnsignedEip1559Transaction;
 
 export interface BlockBase<

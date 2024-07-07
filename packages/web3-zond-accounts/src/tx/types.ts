@@ -176,9 +176,9 @@ export type TxData = {
 };
 
 /**
- * {@link AccessListEIP2930Transaction} data.
+ * {@link FeeMarketEIP1559Transaction} data.
  */
-export interface AccessListEIP2930TxData extends TxData {
+export interface FeeMarketEIP1559TxData extends TxData {
 	/**
 	 * The transaction's chain ID
 	 */
@@ -189,48 +189,17 @@ export interface AccessListEIP2930TxData extends TxData {
 	 */
 	// eslint-disable-next-line @typescript-eslint/ban-types
 	accessList?: AccessListUint8Array | AccessList | null;
-}
 
-/**
- * {@link FeeMarketEIP1559Transaction} data.
- */
-export interface FeeMarketEIP1559TxData extends AccessListEIP2930TxData {
-	/**
-	 * The transaction's gas price, inherited from {@link Transaction}.  This property is not used for EIP1559
-	 * transactions and should always be undefined for this specific transaction type.
-	 */
-	// eslint-disable-next-line @typescript-eslint/ban-types
-	gasPrice?: never | null;
 	/**
 	 * The maximum inclusion fee per gas (this fee is given to the miner)
 	 */
 	maxPriorityFeePerGas?: Numbers | Uint8Array;
+
 	/**
 	 * The maximum total fee
 	 */
 	maxFeePerGas?: Numbers | Uint8Array;
 }
-
-/**
- * Uint8Array values array for a legacy {@link Transaction}
- */
-export type TxValuesArray = Uint8Array[];
-
-/**
- * Uint8Array values array for an {@link AccessListEIP2930Transaction}
- */
-export type AccessListEIP2930ValuesArray = [
-	Uint8Array,
-	Uint8Array,
-	Uint8Array,
-	Uint8Array,
-	Uint8Array,
-	Uint8Array,
-	Uint8Array,
-	AccessListUint8Array,
-	Uint8Array?,
-	Uint8Array?,
-];
 
 /**
  * Uint8Array values array for a {@link FeeMarketEIP1559Transaction}

@@ -20,9 +20,7 @@ import {
 	AccessListEntry,
 	BaseTransactionAPI,
 	Transaction1559UnsignedAPI,
-	Transaction2930UnsignedAPI,
 	TransactionCall,
-	TransactionLegacyUnsignedAPI,
 	Transaction,
 	TransactionWithSenderAPI,
 	ZOND_DATA_FORMAT,
@@ -92,28 +90,11 @@ export function isTransaction1559Unsigned(value: Transaction1559UnsignedAPI): bo
 	return true;
 }
 
-export function isTransaction2930Unsigned(value: Transaction2930UnsignedAPI): boolean {
-	if (!isBaseTransaction(value)) return false;
-	if (!isHexStrict(value.gasPrice)) return false;
-	if (!isAccessList(value.accessList)) return false;
-
-	return true;
-}
-
-export function isTransactionLegacyUnsigned(value: TransactionLegacyUnsignedAPI): boolean {
-	if (!isBaseTransaction(value)) return false;
-	if (!isHexStrict(value.gasPrice)) return false;
-
-	return true;
-}
-
 export function isTransactionWithSender(value: TransactionWithSenderAPI): boolean {
 	if (!isAddress(value.from)) return false;
 	if (!isBaseTransaction(value)) return false;
 	if (
-		!isTransaction1559Unsigned(value as Transaction1559UnsignedAPI) &&
-		!isTransaction2930Unsigned(value as Transaction2930UnsignedAPI) &&
-		!isTransactionLegacyUnsigned(value as TransactionLegacyUnsignedAPI)
+		!isTransaction1559Unsigned(value as Transaction1559UnsignedAPI)
 	)
 		return false;
 
@@ -134,7 +115,6 @@ export function isTransactionCall(value: TransactionCall): boolean {
 	if (!isNullish(value.input) && !isHexStrict(value.input)) return false;
 	if (!isNullish(value.type)) return false;
 	if (isTransaction1559Unsigned(value as Transaction1559UnsignedAPI)) return false;
-	if (isTransaction2930Unsigned(value as Transaction2930UnsignedAPI)) return false;
 
 	return true;
 }

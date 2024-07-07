@@ -20,16 +20,12 @@ import { Chain, Common, Hardfork, toUint8Array } from '../../../src/common';
 import { Address } from '../../../src/tx/address';
 
 import {
-	AccessListEIP2930Transaction,
 	FeeMarketEIP1559Transaction,
-	Transaction,
 	TransactionFactory,
 } from '../../../src';
 
 import type {
-	AccessListEIP2930ValuesArray,
 	FeeMarketEIP1559ValuesArray,
-	TxValuesArray,
 } from '../../../src';
 import type { BigIntLike, PrefixedHexString } from '../../../src/common/types';
 
@@ -121,10 +117,6 @@ const baseTxValues = {
 	value: generateBigIntLikeValues(10),
 };
 
-const legacyTxValues = {
-	gasPrice: generateBigIntLikeValues(100),
-};
-
 const accessListEip2930TxValues = {
 	chainId: generateBigIntLikeValues(4),
 };
@@ -135,19 +127,6 @@ const eip1559TxValues = {
 };
 
 describe('[Transaction Input Values]', () => {
-	it('Legacy Transaction Values', () => {
-		const common = new Common({ chain: Chain.Mainnet, hardfork: Hardfork.Shanghai });
-		const options = { ...baseTxValues, ...legacyTxValues, type: '0' };
-		const legacyTxData = generateCombinations({
-			options,
-		});
-		const randomSample = getRandomSubarray(legacyTxData, 100);
-		for (const txData of randomSample) {
-			const tx = Transaction.fromTxData(txData, { common });
-			expect(() => tx.hash()).toThrow();
-		}
-	});
-
 	it('EIP-1559 Transaction Values', () => {
 		const common = new Common({ chain: Chain.Mainnet, hardfork: Hardfork.Shanghai });
 		const options = {
@@ -169,7 +148,7 @@ describe('[Transaction Input Values]', () => {
 });
 
 test('[Invalid Array Input values]', () => {
-	const txTypes = [/*0x0, 0x1,*/ 0x2];
+	const txTypes = [0x2];
 	for (const signed of [false, true]) {
 		for (const txType of txTypes) {
 			let tx = TransactionFactory.fromTxData({ type: txType });
@@ -182,20 +161,6 @@ test('[Invalid Array Input values]', () => {
 				rawValues[x] = <any>[1, 2, 3];
 				// eslint-disable-next-line default-case
 				switch (txType) {
-					case 0:
-						// eslint-disable-next-line jest/no-conditional-expect
-						expect(() =>
-							Transaction.fromValuesArray(rawValues as TxValuesArray),
-						).toThrow();
-						break;
-					case 1:
-						// eslint-disable-next-line jest/no-conditional-expect
-						expect(() =>
-							AccessListEIP2930Transaction.fromValuesArray(
-								rawValues as AccessListEIP2930ValuesArray,
-							),
-						).toThrow();
-						break;
 					case 2:
 						// eslint-disable-next-line jest/no-conditional-expect
 						expect(() =>
@@ -211,7 +176,7 @@ test('[Invalid Array Input values]', () => {
 });
 
 test('[Invalid Access Lists]', () => {
-	const txTypes = [/*0x1,*/ 0x2];
+	const txTypes = [0x2];
 	const invalidAccessLists = [
 		[[]], // does not have an address and does not have slots
 		[[[], []]], // the address is an array
@@ -258,22 +223,12 @@ test('[Invalid Access Lists]', () => {
 				// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 				const rawValues = tx!.raw();
 
-				if (txType === 1 && rawValues[7].length === 0) {
-					rawValues[7] = invalidAccessListItem;
-				} else if (txType === 2 && rawValues[8].length === 0) {
+				if (txType === 2 && rawValues[8].length === 0) {
 					rawValues[8] = invalidAccessListItem;
 				}
 
 				// eslint-disable-next-line default-case
 				switch (txType) {
-					case 1:
-						// eslint-disable-next-line jest/no-conditional-expect
-						expect(() =>
-							AccessListEIP2930Transaction.fromValuesArray(
-								rawValues as AccessListEIP2930ValuesArray,
-							),
-						).toThrow();
-						break;
 					case 2:
 						// eslint-disable-next-line jest/no-conditional-expect
 						expect(() =>
