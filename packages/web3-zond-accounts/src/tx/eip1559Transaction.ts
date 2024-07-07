@@ -176,8 +176,6 @@ export class FeeMarketEIP1559Transaction extends BaseTransaction<FeeMarketEIP155
 		this.common = this._getCommon(opts.common, chainId);
 		this.chainId = this.common.chainId();
 
-		this.activeCapabilities = this.activeCapabilities.concat([1559, 2718, 2930]);
-
 		// Populate the access list fields
 		const accessListData = getAccessListData(accessList ?? []);
 		this.accessList = accessListData.accessList;

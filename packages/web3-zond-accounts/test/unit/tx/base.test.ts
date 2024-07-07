@@ -17,19 +17,14 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 import { bytesToUint8Array, hexToBytes, uint8ArrayEquals } from '@theqrl/web3-utils'
 import { Dilithium } from '@theqrl/wallet.js';
 import {
-	//AccessListEIP2930Transaction,
-	Capability,
 	FeeMarketEIP1559Transaction,
-	Transaction,
 } from '../../../src';
 import { Chain, Common, Hardfork, toUint8Array, uint8ArrayToBigInt } from '../../../src/common';
 import { MAX_INTEGER, MAX_UINT64 } from '../../../src/tx/constants';
 
 import type { BaseTransaction } from '../../../src/tx/baseTransaction';
 import eip1559Fixtures from '../../fixtures/json/eip1559txs.json';
-//import eip2930Fixtures from '../../fixtures/json/eip2930txs.json';
 
-//import legacyFixtures from '../../fixtures/json/txs.json';
 import { HexString } from '@theqrl/web3-types';
 
 
@@ -67,31 +62,6 @@ describe('[BaseTransaction]', () => {
 
 	const zero = new Uint8Array(0);
 	const txTypes = [
-		// {
-		// 	class: Transaction,
-		// 	name: 'Transaction',
-		// 	type: 0,
-		// 	values: Array(6).fill(zero),
-		// 	txs: legacyTxs,
-		// 	fixtures: legacyFixtures,
-		// 	activeCapabilities: [],
-		// 	notActiveCapabilities: [
-		// 		Capability.EIP1559FeeMarket,
-		// 		Capability.EIP2718TypedTransaction,
-		// 		Capability.EIP2930AccessLists,
-		// 		9999,
-		// 	],
-		// },
-		// {
-		// 	class: AccessListEIP2930Transaction,
-		// 	name: 'AccessListEIP2930Transaction',
-		// 	type: 1,
-		// 	values: [new Uint8Array([1])].concat(Array(7).fill(zero)),
-		// 	txs: eip2930Txs,
-		// 	fixtures: eip2930Fixtures,
-		// 	activeCapabilities: [Capability.EIP2718TypedTransaction, Capability.EIP2930AccessLists],
-		// 	notActiveCapabilities: [Capability.EIP1559FeeMarket, 9999],
-		// },
 		{
 			class: FeeMarketEIP1559Transaction,
 			name: 'FeeMarketEIP1559Transaction',
@@ -99,12 +69,6 @@ describe('[BaseTransaction]', () => {
 			values: [new Uint8Array([1])].concat(Array(8).fill(zero)),
 			txs: eip1559Txs,
 			fixtures: eip1559Fixtures,
-			activeCapabilities: [
-				Capability.EIP1559FeeMarket,
-				Capability.EIP2718TypedTransaction,
-				Capability.EIP2930AccessLists,
-			],
-			notActiveCapabilities: [9999],
 		},
 	];
 
@@ -177,19 +141,6 @@ describe('[BaseTransaction]', () => {
 			for (const tx of txType.txs) {
 				expect(txType.class.fromSerializedTx(tx.serialize(), { common })).toBeTruthy();
 				expect(txType.class.fromSerializedTx(tx.serialize(), { common })).toBeTruthy();
-			}
-		}
-	});
-
-	it('supports()', () => {
-		for (const txType of txTypes) {
-			for (const tx of txType.txs) {
-				for (const activeCapability of txType.activeCapabilities) {
-					expect(tx.supports(activeCapability)).toBe(true);
-				}
-				for (const notActiveCapability of txType.notActiveCapabilities) {
-					expect(tx.supports(notActiveCapability)).toBe(false);
-				}
 			}
 		}
 	});

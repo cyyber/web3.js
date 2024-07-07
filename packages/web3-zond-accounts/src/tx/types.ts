@@ -22,36 +22,6 @@ import type { Uint8ArrayLike, PrefixedHexString } from '../common/types';
 import { Address } from './address.js';
 
 /**
- * Can be used in conjunction with {@link Transaction.supports}
- * to query on tx capabilities
- */
-export enum Capability {
-	/**
-	 * Tx supports EIP-155 replay protection
-	 * See: [155](https://eips.ethereum.org/EIPS/eip-155) Replay Attack Protection EIP
-	 */
-	EIP155ReplayProtection = 155,
-
-	/**
-	 * Tx supports EIP-1559 gas fee market mechanism
-	 * See: [1559](https://eips.ethereum.org/EIPS/eip-1559) Fee Market EIP
-	 */
-	EIP1559FeeMarket = 1559,
-
-	/**
-	 * Tx is a typed transaction as defined in EIP-2718
-	 * See: [2718](https://eips.ethereum.org/EIPS/eip-2718) Transaction Type EIP
-	 */
-	EIP2718TypedTransaction = 2718,
-
-	/**
-	 * Tx supports access list generation as defined in EIP-2930
-	 * See: [2930](https://eips.ethereum.org/EIPS/eip-2930) Access Lists EIP
-	 */
-	EIP2930AccessLists = 2930,
-}
-
-/**
  * The options for initializing a {@link Transaction}.
  */
 export interface TxOptions {
@@ -201,6 +171,7 @@ export interface FeeMarketEIP1559TxData extends TxData {
 	maxFeePerGas?: Numbers | Uint8Array;
 }
 
+// TODO(rgeraldes24): review for sig and public key
 /**
  * Uint8Array values array for a {@link FeeMarketEIP1559Transaction}
  */

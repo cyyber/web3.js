@@ -31,7 +31,6 @@ export type SignTransactionResult = SignatureObject & {
 
 export type SignTransactionFunction = (
 	transaction:
-		| TxData
 		| FeeMarketEIP1559TxData
 		| Record<string, unknown>,
 ) => SignTransactionResult;

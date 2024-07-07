@@ -45,7 +45,7 @@ const getEthereumjsTxDataFromTransaction = (
 	type: transaction.type,
 	chainId: transaction.chainId,
 	accessList: (
-		transaction as FormatType<PopulatedUnsignedEip2930Transaction, typeof ZOND_DATA_FORMAT>
+		transaction as FormatType<PopulatedUnsignedEip1559Transaction, typeof ZOND_DATA_FORMAT>
 	).accessList,
 	maxPriorityFeePerGas: (
 		transaction as FormatType<PopulatedUnsignedEip1559Transaction, typeof ZOND_DATA_FORMAT>

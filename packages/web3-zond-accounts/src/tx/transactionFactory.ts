@@ -66,16 +66,12 @@ export class TransactionFactory {
 		data: Uint8Array,
 		txOptions: TxOptions = {},
 	): TypedTransaction {
-		if (data[0] <= 0x7f) {
-			// Determine the type.
-			switch (data[0]) {
-				case 2:
-					return FeeMarketEIP1559Transaction.fromSerializedTx(data, txOptions);
-				default:
-					throw new Error(`TypedTransaction with ID ${data[0]} unknown`);
-			}
-		} else {
-			return Transaction.fromSerializedTx(data, txOptions);
+		// Determine the type.
+		switch (data[0]) {
+			case 2:
+				return FeeMarketEIP1559Transaction.fromSerializedTx(data, txOptions);
+			default:
+				throw new Error(`TypedTransaction with ID ${data[0]} unknown`);
 		}
 	}
 
