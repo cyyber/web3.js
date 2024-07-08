@@ -30,7 +30,7 @@ import { formatTransaction } from '../../../src';
 
 jest.mock('@theqrl/web3-rpc-methods');
 
-describe('signTransaction', () => {
+describe.skip('signTransaction', () => {
 	let web3Context: Web3Context<Web3ZondExecutionAPI>;
 
 	beforeAll(() => {

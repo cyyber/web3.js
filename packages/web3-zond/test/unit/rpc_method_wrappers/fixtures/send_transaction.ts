@@ -75,11 +75,12 @@ export const testData: [string, Transaction, SendTransactionOptions | undefined]
 		},
 		{ ignoreGasPricing: true },
 	],
+	// TODO(rgeraldes24): review + desc
 	[
 		'Transaction with all hex string values, inputTransaction.gasPrice === undefined; inputTransaction.maxPriorityFeePerGas !== undefined; inputTransaction.maxFeePerGas !== undefined',
 		{
 			...inputTransaction,
-			gasPrice: undefined,
+			// gasPrice: undefined,
 		},
 		{ ignoreGasPricing: true },
 	],
@@ -99,11 +100,12 @@ export const testData: [string, Transaction, SendTransactionOptions | undefined]
 		},
 		{ ignoreGasPricing: true },
 	],
+	// TODO(rgeraldes24): review + desc
 	[
 		'Transaction with all hex string values, inputTransaction.gasPrice === undefined; inputTransaction.maxPriorityFeePerGas === undefined; inputTransaction.maxFeePerGas === undefined',
 		{
 			...inputTransaction,
-			gasPrice: undefined,
+			// gasPrice: undefined,
 			maxPriorityFeePerGas: undefined,
 			maxFeePerGas: undefined,
 		},

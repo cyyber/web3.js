@@ -58,8 +58,7 @@ describe('defaultTransactionBuilder', () => {
 		value: '0x174876e800',
 		gas: expectedGas,
 		gasLimit: expectedGasLimit,
-		gasPrice: expectedGasPrice,
-		type: '0x0',
+		type: '0x2',
 		maxFeePerGas: expectedMaxFeePerGas,
 		maxPriorityFeePerGas: expectedMaxPriorityFeePerGas,
 		data: '0x',
@@ -483,7 +482,6 @@ describe('defaultTransactionBuilder', () => {
 			const input = { ...transaction };
 			delete input.gas;
 			delete input.gasLimit;
-			delete input.gasPrice;
 			delete input.maxFeePerGas;
 			delete input.maxPriorityFeePerGas;
 			delete input.accessList;
@@ -501,43 +499,10 @@ describe('defaultTransactionBuilder', () => {
 		});
 	});
 
-	describe('should populate gasPrice', () => {
-		it('should populate with web3Zond.getGasPrice (tx.type 0x0)', async () => {
-			const input = { ...transaction };
-			delete input.gasPrice;
-			delete input.maxFeePerGas;
-			delete input.maxPriorityFeePerGas;
-			input.type = '0x0';
-
-			const result = await defaultTransactionBuilder({
-				transaction: input,
-				web3Context,
-				fillGasPrice: true,
-			});
-			expect(result.gasPrice).toBe(expectedGasPrice);
-		});
-
-		it('should populate with web3Zond.getGasPrice (tx.type 0x1)', async () => {
-			const input = { ...transaction };
-			delete input.gasPrice;
-			delete input.maxFeePerGas;
-			delete input.maxPriorityFeePerGas;
-			input.type = '0x1';
-
-			const result = await defaultTransactionBuilder({
-				transaction: input,
-				web3Context,
-				fillGasPrice: true,
-			});
-			expect(result.gasPrice).toBe(expectedGasPrice);
-		});
-	});
-
 	describe('should populate accessList', () => {
 		it('should populate with [] (tx.type 0x2)', async () => {
 			const input = { ...transaction };
 			delete input.accessList;
-			delete input.gasPrice;
 			input.type = '0x2';
 
 			const result = await defaultTransactionBuilder<PopulatedUnsignedEip1559Transaction>({
@@ -559,7 +524,6 @@ describe('defaultTransactionBuilder', () => {
 			);
 
 			const input = { ...transaction };
-			delete input.gasPrice;
 			input.type = '0x2';
 
 			await expect(
@@ -571,7 +535,6 @@ describe('defaultTransactionBuilder', () => {
 			const input = { ...transaction };
 			delete input.maxPriorityFeePerGas;
 			delete input.maxFeePerGas;
-			delete input.gasPrice;
 			input.type = '0x2';
 
 			const result = await defaultTransactionBuilder<PopulatedUnsignedEip1559Transaction>({
@@ -581,14 +544,12 @@ describe('defaultTransactionBuilder', () => {
 			});
 
 			expect(result.maxPriorityFeePerGas).toBeDefined();
-			expect(result.gasPrice).toBeUndefined();
 		});
 
 		it('should populate with default maxPriorityFeePerGas and calculated maxFeePerGas (no maxPriorityFeePerGas and maxFeePerGas)', async () => {
 			const input = { ...transaction };
 			delete input.maxPriorityFeePerGas;
 			delete input.maxFeePerGas;
-			delete input.gasPrice;
 			input.type = '0x2';
 
 			const result = await defaultTransactionBuilder<PopulatedUnsignedEip1559Transaction>({
@@ -603,7 +564,6 @@ describe('defaultTransactionBuilder', () => {
 		it('should populate with default maxPriorityFeePerGas and calculated maxFeePerGas (no maxFeePerGas)', async () => {
 			const input = { ...transaction };
 			delete input.maxFeePerGas;
-			delete input.gasPrice;
 			input.type = '0x2';
 
 			const result = await defaultTransactionBuilder<PopulatedUnsignedEip1559Transaction>({
@@ -618,7 +578,6 @@ describe('defaultTransactionBuilder', () => {
 		it('should populate with default maxPriorityFeePerGas and calculated maxFeePerGas (no maxPriorityFeePerGas)', async () => {
 			const input = { ...transaction };
 			delete input.maxPriorityFeePerGas;
-			delete input.gasPrice;
 			input.type = '0x2';
 
 			const result = await defaultTransactionBuilder<PopulatedUnsignedEip1559Transaction>({
@@ -634,7 +593,6 @@ describe('defaultTransactionBuilder', () => {
 			const input = { ...transaction };
 			delete input.maxPriorityFeePerGas;
 			delete input.maxFeePerGas;
-			delete input.gasPrice;
 			input.type = '0x2';
 
 			web3Context = new Web3Context<ZondExecutionAPI>({
@@ -656,7 +614,6 @@ describe('defaultTransactionBuilder', () => {
 		it('should populate with web3Context.defaultMaxPriorityFeePerGas and calculated maxFeePerGas (no maxFeePerGas)', async () => {
 			const input = { ...transaction };
 			delete input.maxFeePerGas;
-			delete input.gasPrice;
 			input.type = '0x2';
 
 			web3Context = new Web3Context<ZondExecutionAPI>({
@@ -678,7 +635,6 @@ describe('defaultTransactionBuilder', () => {
 		it('should populate with web3Context.defaultMaxPriorityFeePerGas and calculated maxFeePerGas (no maxPriorityFeePerGas)', async () => {
 			const input = { ...transaction };
 			delete input.maxPriorityFeePerGas;
-			delete input.gasPrice;
 			input.type = '0x2';
 
 			web3Context = new Web3Context<ZondExecutionAPI>({

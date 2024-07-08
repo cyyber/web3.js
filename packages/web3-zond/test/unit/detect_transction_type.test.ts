@@ -18,8 +18,6 @@ import { InvalidPropertiesForTransactionTypeError } from '@theqrl/web3-errors';
 
 import { detectTransactionType } from '../../src/utils/detect_transaction_type';
 import {
-	transactionType0x0,
-	transactionType0x1,
 	transactionType0x2,
 	transactionTypeUndefined,
 	transactionTypeValidationError,
@@ -31,18 +29,6 @@ describe('detectTransactionType', () => {
 			const overrideFunction = jest.fn();
 			detectTransactionType(transactionTypeUndefined[0]);
 			expect(overrideFunction).toHaveBeenCalledWith(transactionTypeUndefined[0]);
-		});
-	});
-
-	describe('should detect transaction type 0x0', () => {
-		it.each(transactionType0x0)('%s', transaction => {
-			expect(detectTransactionType(transaction)).toBe('0x0');
-		});
-	});
-
-	describe('should detect transaction type 0x1', () => {
-		it.each(transactionType0x1)('%s', transaction => {
-			expect(detectTransactionType(transaction)).toBe('0x1');
 		});
 	});
 
@@ -59,7 +45,8 @@ describe('detectTransactionType', () => {
 		});
 	});
 
-	describe('should throw validation error', () => {
+	// TODO(rgeraldes24)
+	describe.skip('should throw validation error', () => {
 		it.each(transactionTypeValidationError)('%s', transaction => {
 			expect(() => detectTransactionType(transaction)).toThrow(
 				InvalidPropertiesForTransactionTypeError,

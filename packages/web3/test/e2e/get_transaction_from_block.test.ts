@@ -85,7 +85,8 @@ describe(`${getSystemTestBackend()} tests - getTransactionFromBlock`, () => {
 				blockNumber: expect.any(BigInt),
 				transactionIndex: expect.any(BigInt),
 				from: expect.any(String),
-				gasPrice: expect.any(BigInt),
+				// TODO(rgeraldes24)
+				// gasPrice: expect.any(BigInt),
 				gas: expect.any(BigInt),
 				input: expect.any(String),
 				type: expect.any(BigInt),

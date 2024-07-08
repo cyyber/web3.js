@@ -2043,7 +2043,8 @@ export const tx = {
 	blockNumber: '123',
 	from: '0x01ada9d3470eb9eb3875d9e7948c674804ca43ae',
 	gas: '21000',
-	gasPrice: '10000',
+	// TODO(rgeraldes24)
+	// gasPrice: '10000',
 	hash: '0x84f44dffc3cd90a1b66ad0219a97680308e5e7a77299fbf1e2ebb572cf02cc2d',
 	input: '0x',
 	nonce: '61',

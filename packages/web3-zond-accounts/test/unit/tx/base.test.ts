@@ -41,19 +41,8 @@ const common = new Common({
 // @ts-expect-error set private property
 common._chainParams.chainId = 1;
 describe('[BaseTransaction]', () => {
-	// EIP-2930 is not enabled in Common by default (2021-03-06)
 	// eslint-disable-next-line @typescript-eslint/no-shadow
 	const common = new Common({ chain: Chain.Mainnet, hardfork: Hardfork.Shanghai });
-
-	// const legacyTxs: BaseTransaction<Transaction>[] = [];
-	// for (const tx of legacyFixtures.slice(0, 4)) {
-	// 	legacyTxs.push(Transaction.fromTxData(tx.data, { common }));
-	// }
-
-	// const eip2930Txs: BaseTransaction<AccessListEIP2930Transaction>[] = [];
-	// for (const tx of eip2930Fixtures) {
-	// 	eip2930Txs.push(AccessListEIP2930Transaction.fromTxData(tx.data, { common }));
-	// }
 
 	const eip1559Txs: BaseTransaction<FeeMarketEIP1559Transaction>[] = [];
 	for (const tx of eip1559Fixtures) {
@@ -253,10 +242,10 @@ describe('[BaseTransaction]', () => {
 
 	it('initialization with defaults', () => {
 		const uInt8ArrayZero = toUint8Array('0x');
-		const tx = Transaction.fromTxData({
+		const tx = FeeMarketEIP1559Transaction.fromTxData({
+		// const tx = Transaction.fromTxData({
 			nonce: '',
 			gasLimit: '',
-			gasPrice: '',
 			to: '',
 			value: '',
 			data: '',
@@ -268,7 +257,6 @@ describe('[BaseTransaction]', () => {
 		expect(tx.to).toBeUndefined();
 		expect(tx.value).toBe(uint8ArrayToBigInt(uInt8ArrayZero));
 		expect(tx.data).toEqual(uInt8ArrayZero);
-		expect(tx.gasPrice).toBe(uint8ArrayToBigInt(uInt8ArrayZero));
 		expect(tx.gasLimit).toBe(uint8ArrayToBigInt(uInt8ArrayZero));
 		expect(tx.nonce).toBe(uint8ArrayToBigInt(uInt8ArrayZero));
 	});

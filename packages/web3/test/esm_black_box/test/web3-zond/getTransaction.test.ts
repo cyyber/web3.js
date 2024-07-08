@@ -50,12 +50,11 @@ describe('ESM - Black Box Unit Tests - web3.zond.getTransaction', () => {
 	// 			maxFeePerGas: BigInt(32251128981),
 	// 			maxPriorityFeePerGas: BigInt(1000000000),
 	// 			nonce: BigInt(83553),
-	// 			r: '0x1240db6f5b2245729b8593ff43230795e3c4c1005776dd6841de68da926096e9',
-	// 			s: '0x48678639e5b752a69dcc62b4ef9417b3f65e4d4c75ec99df8457b02b339799de',
+	// 			publicKey: '0x1240db6f5b2245729b8593ff43230795e3c4c1005776dd6841de68da926096e9',
+	// 			signature: '0x48678639e5b752a69dcc62b4ef9417b3f65e4d4c75ec99df8457b02b339799de',
 	// 			to: '0xdac17f958d2ee523a2206206994597c13d831ec7',
 	// 			transactionIndex: BigInt(190),
 	// 			type: BigInt(2),
-	// 			v: BigInt(1),
 	// 			value: BigInt(0),
 	// 		};
 

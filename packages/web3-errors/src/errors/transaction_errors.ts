@@ -378,22 +378,6 @@ export class InvalidMaxPriorityFeePerGasOrMaxFeePerGas extends InvalidValueError
 	}
 }
 
-export class UnsupportedFeeMarketError extends InvalidValueError {
-	public code = ERR_TX_INVALID_LEGACY_FEE_MARKET;
-
-	public constructor(value: {
-		maxPriorityFeePerGas: Numbers | undefined;
-		maxFeePerGas: Numbers | undefined;
-	}) {
-		super(
-			`maxPriorityFeePerGas: ${value.maxPriorityFeePerGas ?? 'undefined'}, maxFeePerGas: ${
-				value.maxFeePerGas ?? 'undefined'
-			}`,
-			"pre-eip-1559 transaction don't support maxFeePerGas/maxPriorityFeePerGas",
-		);
-	}
-}
-
 export class InvalidTransactionObjectError extends InvalidValueError {
 	public code = ERR_TX_INVALID_OBJECT;
 

@@ -142,7 +142,8 @@ export const isTransactionCallValidData: [TransactionCall, true][] = [
 			from: '0x6E599DA0bfF7A6598AC1224E4985430Bf16458a4',
 			to: '0x6E599DA0bfF7A6598AC1224E4985430Bf16458a4',
 			gas: '0x5208',
-			gasPrice: '0x5208',
+			// TODO(rgeraldes24)
+			// gasPrice: '0x5208',
 			value: '0x1',
 			data: '0x0',
 		},

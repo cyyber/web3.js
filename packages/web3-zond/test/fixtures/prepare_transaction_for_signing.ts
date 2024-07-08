@@ -17,6 +17,7 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 
 import { /*AccessList,*/ Block, HexString, Common, Transaction } from '@theqrl/web3-types';
 
+/*
 export const preEip1559Block: Block = {
 	parentHash: '0xe99e022112df268087ea7eafaf4790497fd21dbeeb6bd7a1721df161a6657a54',
 	miner: '0xbb7b8287f3f0a933474a79eae42cbca977791171',
@@ -35,6 +36,8 @@ export const preEip1559Block: Block = {
 	transactions: [],
 	hash: '0xdc0818cf78f21a8e70579cb46a43643f78291264dda342ae31049421c82d21ae',
 };
+*/
+
 export const postEip1559Block: Block = {
 	parentHash: '0x28f49150e1fe6f245655925b290f59e707d1e5c646dadaa22937169433b30294',
 	miner: '0x86864f1edf10eaf105b1bdc6e9aa8232b4c6aa00',
@@ -75,6 +78,8 @@ const common: Common = {
 // 	},
 // ];
 
+// TODO(rgeraldes24): review
+
 /**
  * Array consists of:
  * - pre/post EIP1559 block
@@ -100,6 +105,7 @@ export const validTransactions: [
 	HexString,
 	HexString,
 ][] = [
+	/*
 	[
 		preEip1559Block,
 		{
@@ -636,6 +642,8 @@ export const validTransactions: [
 		'0x7a49fff8f639e42af36704b16e30fd95823d9ab7e71bf7c231e397dec2c5427c',
 		'0x773bfdc5e911eedc0470325727426cff3c65329be4701005cd4ea620aacfa335',
 	],
+	*/
+	/*
 	[
 		postEip1559Block,
 		{

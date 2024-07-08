@@ -399,9 +399,8 @@ export class Web3Zond extends Web3Context<Web3ZondExecutionAPI, RegisteredSubscr
 	 *    gas: 90000n,
 	 *    gasPrice: 2000000000n,
 	 *    input: '0x',
-	 *    v: 2709n,
-	 *    r: '0x8b336c290f6d7b2af3ccb2c02203a8356cc7d5b150ab19cce549d55636a3a78c',
-	 *    s: '0x5a83c6f816befc5cd4b0c997a347224a8aa002e5799c4b082a3ec726d0e9531d'
+	 *    publicKey: '0x8b336c290f6d7b2af3ccb2c02203a8356cc7d5b150ab19cce549d55636a3a78c',
+	 *    signature: '0x5a83c6f816befc5cd4b0c997a347224a8aa002e5799c4b082a3ec726d0e9531d'
 	 *  }
 	 *
 	 * web3.zond.getTransaction(
@@ -421,9 +420,8 @@ export class Web3Zond extends Web3Context<Web3ZondExecutionAPI, RegisteredSubscr
 	 *    gas: 90000,
 	 *    gasPrice: 2000000000,
 	 *    input: '0x',
-	 *    v: 2709,
-	 *    r: '0x8b336c290f6d7b2af3ccb2c02203a8356cc7d5b150ab19cce549d55636a3a78c',
-	 *    s: '0x5a83c6f816befc5cd4b0c997a347224a8aa002e5799c4b082a3ec726d0e9531d'
+	 *    publicKey: '0x8b336c290f6d7b2af3ccb2c02203a8356cc7d5b150ab19cce549d55636a3a78c',
+	 *    signature: '0x5a83c6f816befc5cd4b0c997a347224a8aa002e5799c4b082a3ec726d0e9531d'
 	 *  }
 	 * ```
 	 */
@@ -462,9 +460,8 @@ export class Web3Zond extends Web3Context<Web3ZondExecutionAPI, RegisteredSubscr
 	 *          gas: 90000n,
 	 *          gasPrice: 2000000000n,
 	 *          input: '0x',
-	 *          v: 2709n,
-	 *          r: '0x8b336c290f6d7b2af3ccb2c02203a8356cc7d5b150ab19cce549d55636a3a78c',
-	 *          s: '0x5a83c6f816befc5cd4b0c997a347224a8aa002e5799c4b082a3ec726d0e9531d'
+	 *          publicKey: '0x8b336c290f6d7b2af3ccb2c02203a8356cc7d5b150ab19cce549d55636a3a78c',
+	 *          signature: '0x5a83c6f816befc5cd4b0c997a347224a8aa002e5799c4b082a3ec726d0e9531d'
 	 *      },
 	 *      {
 	 *          hash: '0xdf7756865c2056ce34c4eabe4eff42ad251a9f920a1c620c00b4ea0988731d3f',
@@ -479,9 +476,8 @@ export class Web3Zond extends Web3Context<Web3ZondExecutionAPI, RegisteredSubscr
 	 *          gas: 90000n,
 	 *          gasPrice: 2000000000n,
 	 *          input: '0x',
-	 *          v: 2710n,
-	 *          r: '0x55ac19fade21db035a1b7ea0a8d49e265e05dbb926e75f273f836ad67ce5c96a',
-	 *          s: '0x6550036a7c3fd426d5c3d35d96a7075cd673957620b7889846a980d2d017ec08'
+	 *          publicKey: '0x55ac19fade21db035a1b7ea0a8d49e265e05dbb926e75f273f836ad67ce5c96a',
+	 *          signature: '0x6550036a7c3fd426d5c3d35d96a7075cd673957620b7889846a980d2d017ec08'
 	 *      }
 	 *   ]
 	 *
@@ -500,9 +496,8 @@ export class Web3Zond extends Web3Context<Web3ZondExecutionAPI, RegisteredSubscr
 	 *          gas: 90000,
 	 *          gasPrice: 2000000000,
 	 *          input: '0x',
-	 *          v: 2709,
-	 *          r: '0x8b336c290f6d7b2af3ccb2c02203a8356cc7d5b150ab19cce549d55636a3a78c',
-	 *          s: '0x5a83c6f816befc5cd4b0c997a347224a8aa002e5799c4b082a3ec726d0e9531d'
+	 *          publicKey: '0x8b336c290f6d7b2af3ccb2c02203a8356cc7d5b150ab19cce549d55636a3a78c',
+	 *          signature: '0x5a83c6f816befc5cd4b0c997a347224a8aa002e5799c4b082a3ec726d0e9531d'
 	 *      },
 	 *      {
 	 *          hash: '0xdf7756865c2056ce34c4eabe4eff42ad251a9f920a1c620c00b4ea0988731d3f',
@@ -517,9 +512,8 @@ export class Web3Zond extends Web3Context<Web3ZondExecutionAPI, RegisteredSubscr
 	 *          gas: 90000,
 	 *          gasPrice: 2000000000,
 	 *          input: '0x',
-	 *          v: 2710,
-	 *          r: '0x55ac19fade21db035a1b7ea0a8d49e265e05dbb926e75f273f836ad67ce5c96a',
-	 *          s: '0x6550036a7c3fd426d5c3d35d96a7075cd673957620b7889846a980d2d017ec08'
+	 *          publicKey: '0x55ac19fade21db035a1b7ea0a8d49e265e05dbb926e75f273f836ad67ce5c96a',
+	 *          signature: '0x6550036a7c3fd426d5c3d35d96a7075cd673957620b7889846a980d2d017ec08'
 	 *      }
 	 *   ]
 	 * ```
@@ -551,9 +545,8 @@ export class Web3Zond extends Web3Context<Web3ZondExecutionAPI, RegisteredSubscr
 	 *    gas: 90000n,
 	 *    gasPrice: 2000000000n,
 	 *    input: '0x',
-	 *    v: 2709n,
-	 *    r: '0x8b336c290f6d7b2af3ccb2c02203a8356cc7d5b150ab19cce549d55636a3a78c',
-	 *    s: '0x5a83c6f816befc5cd4b0c997a347224a8aa002e5799c4b082a3ec726d0e9531d'
+	 *    publicKey: '0x8b336c290f6d7b2af3ccb2c02203a8356cc7d5b150ab19cce549d55636a3a78c',
+	 *    signature: '0x5a83c6f816befc5cd4b0c997a347224a8aa002e5799c4b082a3ec726d0e9531d'
 	 *  }
 	 *
 	 * web3.zond.getTransactionFromBlock(
@@ -574,9 +567,8 @@ export class Web3Zond extends Web3Context<Web3ZondExecutionAPI, RegisteredSubscr
 	 *    gas: 90000,
 	 *    gasPrice: 2000000000,
 	 *    input: '0x',
-	 *    v: 2709,
-	 *    r: '0x8b336c290f6d7b2af3ccb2c02203a8356cc7d5b150ab19cce549d55636a3a78c',
-	 *    s: '0x5a83c6f816befc5cd4b0c997a347224a8aa002e5799c4b082a3ec726d0e9531d'
+	 *    publicKey: '0x8b336c290f6d7b2af3ccb2c02203a8356cc7d5b150ab19cce549d55636a3a78c',
+	 *    signature: '0x5a83c6f816befc5cd4b0c997a347224a8aa002e5799c4b082a3ec726d0e9531d'
 	 *  }
 	 * ```
 	 */
@@ -950,9 +942,8 @@ export class Web3Zond extends Web3Context<Web3ZondExecutionAPI, RegisteredSubscr
 	 *      gasPrice: 1000000001n,
 	 *      gas: 21000n,
 	 *      value: 1n,
-	 *      v: 2710n,
-	 *      r: '0xadb3468dbb4dce89fe1785ea9182e85fb56b399b378f82b93af7a8a12a4f9679',
-	 *      s: '0x27d37d736e9bcf00121f78b2d10e4404fa5c45856d62b746574345f5cd278097',
+	 *      publicKey: '0xadb3468dbb4dce89fe1785ea9182e85fb56b399b378f82b93af7a8a12a4f9679',
+	 *      signature: '0x27d37d736e9bcf00121f78b2d10e4404fa5c45856d62b746574345f5cd278097',
 	 *      to: '0xe899f0130fd099c0b896b2ce4e5e15a25b23139a',
 	 *      data: '0x'
 	 *   }
@@ -967,9 +958,8 @@ export class Web3Zond extends Web3Context<Web3ZondExecutionAPI, RegisteredSubscr
 	 *      gasPrice: 1000000001,
 	 *      gas: 21000,
 	 *      value: 1,
-	 *      v: 2710,
-	 *      r: '0xadb3468dbb4dce89fe1785ea9182e85fb56b399b378f82b93af7a8a12a4f9679',
-	 *      s: '0x27d37d736e9bcf00121f78b2d10e4404fa5c45856d62b746574345f5cd278097',
+	 *      publicKey: '0xadb3468dbb4dce89fe1785ea9182e85fb56b399b378f82b93af7a8a12a4f9679',
+	 *      signature: '0x27d37d736e9bcf00121f78b2d10e4404fa5c45856d62b746574345f5cd278097',
 	 *      to: '0xe899f0130fd099c0b896b2ce4e5e15a25b23139a',
 	 *      data: '0x'
 	 *   }

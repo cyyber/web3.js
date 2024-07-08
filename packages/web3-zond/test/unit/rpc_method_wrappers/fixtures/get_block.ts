@@ -45,7 +45,8 @@ const hydratedTransaction: TransactionInfo = {
 	blockNumber: '0x5daf3b',
 	from: '0xa7d9ddbe1f17865597fbd27ec712455208b6b76d',
 	gas: '0xc350',
-	gasPrice: '0x4a817c800',
+	// TODO(rgeraldes24)
+	// gasPrice: '0x4a817c800',
 	hash: '0x88df016429689c079f3b2f6ad39fa052532c56795b733da78a91ebe6a713944b',
 	input: '0x68656c6c6f21',
 	nonce: '0x15',
