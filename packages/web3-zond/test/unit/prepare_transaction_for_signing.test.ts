@@ -21,7 +21,6 @@ import HttpProvider from '@theqrl/web3-providers-http';
 import { isNullish } from '@theqrl/web3-validator';
 import {
 	FeeMarketEIP1559Transaction,
-	Transaction,
 } from '@theqrl/web3-zond-accounts';
 import { zondRpcMethods } from '@theqrl/web3-rpc-methods';
 
@@ -67,8 +66,7 @@ describe.skip('prepareTransactionForSigning', () => {
 
 				// should produce an web3-utils/tx instance
 				expect(
-					ethereumjsTx instanceof Transaction ||
-						ethereumjsTx instanceof FeeMarketEIP1559Transaction,
+					ethereumjsTx instanceof FeeMarketEIP1559Transaction,
 				).toBeTruthy();
 				expect(ethereumjsTx.sign).toBeDefined();
 

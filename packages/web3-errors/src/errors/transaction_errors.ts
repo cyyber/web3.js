@@ -31,13 +31,11 @@ import {
 	ERR_TX_CONTRACT_NOT_STORED,
 	ERR_TX_CHAIN_ID_MISMATCH,
 	ERR_TX_DATA_AND_INPUT,
-	ERR_TX_GAS_MISMATCH,
 	ERR_TX_CHAIN_MISMATCH,
 	ERR_TX_HARDFORK_MISMATCH,
 	ERR_TX_INVALID_CALL,
 	ERR_TX_INVALID_CHAIN_INFO,
 	ERR_TX_INVALID_FEE_MARKET_GAS,
-	ERR_TX_INVALID_FEE_MARKET_GAS_PRICE,
 	ERR_TX_INVALID_LEGACY_FEE_MARKET,
 	ERR_TX_INVALID_LEGACY_GAS,
 	ERR_TX_INVALID_NONCE_OR_CHAIN_ID,
@@ -329,14 +327,12 @@ export class MissingGasError extends InvalidValueError {
 
 	public constructor(value: {
 		gas: Numbers | undefined;
-		gasPrice: Numbers | undefined;
 		maxPriorityFeePerGas: Numbers | undefined;
 		maxFeePerGas: Numbers | undefined;
 	}) {
 		super(
-			`gas: ${value.gas ?? 'undefined'}, gasPrice: ${
-				value.gasPrice ?? 'undefined'
-			}, maxPriorityFeePerGas: ${value.maxPriorityFeePerGas ?? 'undefined'}, maxFeePerGas: ${
+			`gas: ${value.gas ?? 'undefined'}, maxPriorityFeePerGas: ${
+				value.maxPriorityFeePerGas ?? 'undefined'}, maxFeePerGas: ${
 				value.maxFeePerGas ?? 'undefined'
 			}`,
 			'"gas" is missing',
@@ -352,27 +348,6 @@ export class TransactionGasMismatchInnerError extends BaseWeb3Error {
 		super(
 			'Missing properties in transaction, either define "gas" and "gasPrice" for type 0 transactions or "gas", "maxPriorityFeePerGas" and "maxFeePerGas" for type 2 transactions, not both',
 		);
-	}
-}
-
-export class TransactionGasMismatchError extends InvalidValueError {
-	public code = ERR_TX_GAS_MISMATCH;
-
-	public constructor(value: {
-		gas: Numbers | undefined;
-		gasPrice: Numbers | undefined;
-		maxPriorityFeePerGas: Numbers | undefined;
-		maxFeePerGas: Numbers | undefined;
-	}) {
-		super(
-			`gas: ${value.gas ?? 'undefined'}, gasPrice: ${
-				value.gasPrice ?? 'undefined'
-			}, maxPriorityFeePerGas: ${value.maxPriorityFeePerGas ?? 'undefined'}, maxFeePerGas: ${
-				value.maxFeePerGas ?? 'undefined'
-			}`,
-			'transaction must specify legacy or fee market gas properties, not both',
-		);
-		this.innerError = new TransactionGasMismatchInnerError();
 	}
 }
 
@@ -400,14 +375,6 @@ export class InvalidMaxPriorityFeePerGasOrMaxFeePerGas extends InvalidValueError
 			}`,
 			'maxPriorityFeePerGas or maxFeePerGas is lower than 0',
 		);
-	}
-}
-
-export class Eip1559GasPriceError extends InvalidValueError {
-	public code = ERR_TX_INVALID_FEE_MARKET_GAS_PRICE;
-
-	public constructor(value: unknown) {
-		super(value, "eip-1559 transactions don't support gasPrice");
 	}
 }
 

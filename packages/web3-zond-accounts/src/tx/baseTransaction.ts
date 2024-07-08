@@ -31,7 +31,6 @@ import type {
 	FeeMarketEIP1559TxData,
 	FeeMarketEIP1559ValuesArray,
 	JsonTx,
-	TxData,
 	TxOptions,
 } from './types.js';
 import { Address } from './address.js';

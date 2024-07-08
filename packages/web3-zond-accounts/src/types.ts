@@ -16,7 +16,7 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { Web3BaseWalletAccount, HexString } from '@theqrl/web3-types';
-import { FeeMarketEIP1559TxData, TxData } from './tx/types.js';
+import { FeeMarketEIP1559TxData } from './tx/types.js';
 import { FeeMarketEIP1559Transaction } from './tx';
 
 export type SignatureObject = {
@@ -84,4 +84,4 @@ export interface WebStorage {
 }
 
 export type TypedTransaction =
-	| FeeMarketEIP1559Transaction;
+	FeeMarketEIP1559Transaction;

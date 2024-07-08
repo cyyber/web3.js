@@ -37,7 +37,6 @@ const getEthereumjsTxDataFromTransaction = (
 	transaction: FormatType<PopulatedUnsignedTransaction, typeof ZOND_DATA_FORMAT>,
 ) => ({
 	nonce: transaction.nonce,
-	gasPrice: transaction.gasPrice,
 	gasLimit: transaction.gasLimit ?? transaction.gas,
 	to: transaction.to,
 	value: transaction.value,

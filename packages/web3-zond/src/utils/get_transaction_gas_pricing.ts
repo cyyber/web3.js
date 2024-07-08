@@ -28,7 +28,7 @@ import { isNullish } from '@theqrl/web3-validator';
 import { Eip1559NotSupportedError, UnsupportedTransactionTypeError } from '@theqrl/web3-errors';
 import { format } from '@theqrl/web3-utils';
 // eslint-disable-next-line import/no-cycle
-import { getBlock, getGasPrice } from '../rpc_method_wrappers.js';
+import { getBlock } from '../rpc_method_wrappers.js';
 import { InternalTransaction } from '../types.js';
 // eslint-disable-next-line import/no-cycle
 import { getTransactionType } from './transaction_builder.js';
@@ -42,6 +42,8 @@ async function getEip1559GasPricing<ReturnFormat extends DataFormat>(
 
 	if (isNullish(block.baseFeePerGas)) throw new Eip1559NotSupportedError();
 
+	// TODO(rgeraldes24): remove?
+	/*
 	if (!isNullish(transaction.gasPrice)) {
 		const convertedTransactionGasPrice = format(
 			{ format: 'uint' },
@@ -54,6 +56,7 @@ async function getEip1559GasPricing<ReturnFormat extends DataFormat>(
 			maxFeePerGas: convertedTransactionGasPrice,
 		};
 	}
+	*/
 	return {
 		maxPriorityFeePerGas: format(
 			{ format: 'uint' },
@@ -78,7 +81,7 @@ export async function getTransactionGasPricing<ReturnFormat extends DataFormat>(
 	returnFormat: ReturnFormat,
 ): Promise<
 	| FormatType<
-			{ gasPrice?: Numbers; maxPriorityFeePerGas?: Numbers; maxFeePerGas?: Numbers },
+			{ maxPriorityFeePerGas?: Numbers; maxFeePerGas?: Numbers },
 			ReturnFormat
 	  >
 	| undefined
@@ -92,19 +95,8 @@ export async function getTransactionGasPricing<ReturnFormat extends DataFormat>(
 		if (transactionType < '0x0' || transactionType > '0x7f')
 			throw new UnsupportedTransactionTypeError(transactionType);
 
-		if (
-			isNullish(transaction.gasPrice) &&
-			(transactionType === '0x0' || transactionType === '0x1')
-		)
-			return {
-				gasPrice: await getGasPrice(web3Context, returnFormat),
-				maxPriorityFeePerGas: undefined,
-				maxFeePerGas: undefined,
-			};
-
 		if (transactionType === '0x2') {
 			return {
-				gasPrice: undefined,
 				...(await getEip1559GasPricing(transaction, web3Context, returnFormat)),
 			};
 		}

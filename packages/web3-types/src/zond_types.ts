@@ -361,7 +361,7 @@ export interface PopulatedUnsignedEip1559Transaction {
 }
 
 export type PopulatedUnsignedTransaction =
-	| PopulatedUnsignedEip1559Transaction;
+	PopulatedUnsignedEip1559Transaction;
 
 export interface BlockBase<
 	ByteType,

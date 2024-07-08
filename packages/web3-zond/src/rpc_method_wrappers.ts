@@ -429,7 +429,8 @@ export function sendTransaction<
 
 					if (
 						!options?.ignoreGasPricing &&
-						isNullish(transactionFormatted.gasPrice) &&
+						// TODO(rgeraldes24)
+						// isNullish(transactionFormatted.gasPrice) &&
 						(isNullish(transaction.maxPriorityFeePerGas) ||
 							isNullish(transaction.maxFeePerGas))
 					) {

@@ -40,11 +40,6 @@ export class TransactionFactory {
 		txData: TxData | TypedTransaction,
 		txOptions: TxOptions = {},
 	): TypedTransaction {
-		if (!('type' in txData) || txData.type === undefined) {
-			// Assume legacy transaction
-			// TODO(rgeraldes24)
-			return Transaction.fromTxData(txData as TxData, txOptions);
-		}
 		const txType = Number(uint8ArrayToBigInt(toUint8Array(txData.type)));
 		if (txType === 2) {
 			return FeeMarketEIP1559Transaction.fromTxData(
@@ -87,10 +82,6 @@ export class TransactionFactory {
 	public static fromBlockBodyData(data: Uint8Array | Uint8Array[], txOptions: TxOptions = {}) {
 		if (data instanceof Uint8Array) {
 			return this.fromSerializedData(data, txOptions);
-		}
-		if (Array.isArray(data)) {
-			// It is a legacy transaction
-			return Transaction.fromValuesArray(data, txOptions);
 		}
 		throw new Error('Cannot decode transaction: unknown type input');
 	}

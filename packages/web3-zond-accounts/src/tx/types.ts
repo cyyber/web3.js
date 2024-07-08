@@ -103,12 +103,6 @@ export type TxData = {
 	nonce?: Numbers | Uint8Array;
 
 	/**
-	 * The transaction's gas price.
-	 */
-	// eslint-disable-next-line @typescript-eslint/ban-types
-	gasPrice?: Numbers | Uint8Array | null;
-
-	/**
 	 * The transaction's gas limit.
 	 */
 	gasLimit?: Numbers | Uint8Array;
