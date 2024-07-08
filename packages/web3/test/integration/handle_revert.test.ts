@@ -102,7 +102,7 @@ describe.skip('zond', () => {
 				web3.zond.sendTransaction({
 					from: accounts[0],
 					gas: '0x3d0900',
-					gasPrice: '0x3B9ACBF4',
+					// gasPrice: '0x3B9ACBF4',
 					input: '0x608060405234801561001057600080fdklkl',
 					nonce: '0x10',
 					to: undefined,
@@ -125,7 +125,7 @@ describe.skip('zond', () => {
 					from: accounts[0],
 					to: accounts[1],
 					gas: '0x76c0',
-					gasPrice: '0x9184e72a000',
+					// gasPrice: '0x9184e72a000',
 					value: '0x9184e72a',
 					data: '0xd46e8dd67c5d32be8d46e8dd67c5d32be8058bb8eb970870f072445675058bb8eb970870f072445675',
 				}),
