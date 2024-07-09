@@ -66,7 +66,6 @@ export const ERR_TX_INVALID_FEE_MARKET_GAS = 417;
 export const ERR_TX_INVALID_OBJECT = 420;
 export const ERR_TX_INVALID_NONCE_OR_CHAIN_ID = 421;
 export const ERR_TX_UNABLE_TO_POPULATE_NONCE = 422;
-export const ERR_TX_UNSUPPORTED_EIP_1559 = 423;
 export const ERR_TX_UNSUPPORTED_TYPE = 424;
 export const ERR_TX_DATA_AND_INPUT = 425;
 export const ERR_TX_POLLING_TIMEOUT = 426;
@@ -80,7 +79,6 @@ export const ERR_TX_SEND_TIMEOUT = 431;
 export const ERR_TX_BLOCK_TIMEOUT = 432;
 
 export const ERR_TX_SIGNING = 433;
-export const ERR_TX_GAS_MISMATCH = 434;
 
 export const ERR_TX_CHAIN_MISMATCH = 435;
 export const ERR_TX_HARDFORK_MISMATCH = 436;

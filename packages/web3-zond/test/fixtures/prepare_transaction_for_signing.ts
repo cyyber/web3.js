@@ -57,11 +57,9 @@ const accessList: AccessList = [
 	},
 ];
 
-// TODO(rgeraldes24): review
-
 /**
  * Array consists of:
- * - pre/post EIP1559 block
+ * - post EIP1559 block
  * - transaction data
  * - seed
  * - address
@@ -84,7 +82,6 @@ export const validTransactions: [
 	HexString,
 	HexString,
 ][] = [
-	
 	[
 		postEip1559Block,
 		{

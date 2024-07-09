@@ -23,15 +23,8 @@ import { InvalidPropertiesForTransactionTypeError } from '@theqrl/web3-errors';
 
 import { InternalTransaction } from '../types.js';
 
-// TODO(rgeraldes24): remove?
-// undefined is treated as null for JSON schema validator
 const transactionType0x2Schema = {
 	type: 'object',
-	// properties: {
-	// 	gasPrice: {
-	// 		type: 'null',
-	// 	},
-	// },
 };
 
 const validateTxTypeAndHandleErrors = (

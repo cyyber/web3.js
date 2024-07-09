@@ -58,17 +58,6 @@ describe('[FeeMarketEIP1559Transaction] -> EIP-2930 Compatibility', () => {
 			});
 			expect(tx.common.chainId() === BigInt(99999)).toBeTruthy();
 
-			// NOTE(rgeraldes24): not valid: eip 2930 is available from the start
-			/*
-			const nonEIP2930Common = new Common({
-				chain: Chain.Mainnet,
-				hardfork: Hardfork.Shanghai,
-			});
-			expect(() => {
-				txType.class.fromTxData({}, { common: nonEIP2930Common });
-			}).toThrow();
-			*/
-
 			expect(() => {
 				txType.class.fromTxData(
 					{
@@ -89,8 +78,7 @@ describe('[FeeMarketEIP1559Transaction] -> EIP-2930 Compatibility', () => {
 		}
 	});
 
-	/*
-	TODO(rgeraldes24)
+	
 	it('cannot input decimal values', () => {
 		const values = ['chainId', 'nonce', 'maxFeePerGas', 'maxPriorityFeePerGas', 'gasLimit', 'value', 'publicKey', 'signature'];
 		const cases = [
@@ -124,12 +112,11 @@ describe('[FeeMarketEIP1559Transaction] -> EIP-2930 Compatibility', () => {
 				}
 				txData[value] = testCase;
 				expect(() => {
-					AccessListEIP2930Transaction.fromTxData(txData);
+					FeeMarketEIP1559Transaction.fromTxData(txData);
 				}).toThrow();
 			}
 		}
 	});
-	*/
 
 	it('Initialization / Getter -> fromSerializedTx()', () => {
 		for (const txType of txTypes) {

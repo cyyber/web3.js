@@ -70,7 +70,7 @@ describe('[Common]: Hardfork logic', () => {
 		// expect(c.setHardforkByBlockNumber(1735371)).toBe('mergeForkIdTransition');
 	});
 
-	// TODO(rgeraldes24)
+	// TODO(rgeraldes24): review
 	/*
 	it('should throw if no hardfork qualifies', () => {
 		const hardforks = [

@@ -44,7 +44,7 @@ const inputTransaction = {
 	nonce: '0x15',
 	to: '0xf02c1c8e6114b1dbe8937a39260b5b0a374432bb',
 	value: '0xf3dbb76162000',
-	type: '0x0',
+	type: '0x2',
 	maxFeePerGas: '0x1475505aab',
 	maxPriorityFeePerGas: '0x7f324180',
 	chainId: '0x1',
@@ -65,18 +65,6 @@ export const testData: [string, Transaction, SendTransactionOptions | undefined]
 		inputTransaction,
 		{ ignoreGasPricing: true },
 	],
-	// TODO(rgeraldes): same test as below: check the old test
-	/*
-	[
-		'Transaction with all hex string values, inputTransaction.gasPrice !== undefined; inputTransaction.maxPriorityFeePerGas === undefined; inputTransaction.maxFeePerGas === undefined',
-		{
-			...inputTransaction,
-			maxPriorityFeePerGas: undefined,
-			maxFeePerGas: undefined,
-		},
-		{ ignoreGasPricing: true },
-	],
-	*/
 	[
 		'Transaction with all hex string values, inputTransaction.maxPriorityFeePerGas === undefined; inputTransaction.maxFeePerGas !== undefined',
 		{

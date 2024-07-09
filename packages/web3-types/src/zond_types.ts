@@ -383,7 +383,7 @@ export interface BlockBase<
 	readonly timestamp: NumberType;
 	readonly extraData: extraDataType;
 	readonly prevRandao: ByteType;
-	readonly baseFeePerGas?: NumberType;
+	readonly baseFeePerGas: NumberType;
 	readonly size: NumberType;
 	readonly transactions: TransactionTypes;
 	readonly hash?: ByteType;

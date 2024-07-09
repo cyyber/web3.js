@@ -58,7 +58,6 @@ import {
 	ERR_TX_SEND_TIMEOUT,
 	ERR_TX_SIGNING,
 	ERR_TX_UNABLE_TO_POPULATE_NONCE,
-	ERR_TX_UNSUPPORTED_EIP_1559,
 	ERR_TX_UNSUPPORTED_TYPE,
 	ERR_TX_REVERT_TRANSACTION_CUSTOM_ERROR,
 	ERR_TX_INVALID_PROPERTIES_FOR_TYPE,
@@ -340,7 +339,6 @@ export class MissingGasError extends InvalidValueError {
 }
 
 export class InvalidGas extends InvalidValueError {
-	// TODO(rgeraldes24): name?
 	public code = ERR_TX_INVALID_LEGACY_GAS;
 
 	public constructor(value: { gas: Numbers | undefined }) {
@@ -391,14 +389,6 @@ export class UnableToPopulateNonceError extends InvalidValueError {
 
 	public constructor() {
 		super('UnableToPopulateNonceError', 'unable to populate nonce, no from address available');
-	}
-}
-
-export class Eip1559NotSupportedError extends InvalidValueError {
-	public code = ERR_TX_UNSUPPORTED_EIP_1559;
-
-	public constructor() {
-		super('Eip1559NotSupportedError', "Network doesn't support eip-1559");
 	}
 }
 

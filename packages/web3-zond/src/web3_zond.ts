@@ -361,7 +361,6 @@ export class Web3Zond extends Web3Context<Web3ZondExecutionAPI, RegisteredSubscr
 		return rpcMethodsWrappers.getBlockTransactionCount(this, block, returnFormat);
 	}
 
-	// TODO(rgeraldes24): gasPrice
 	/**
 	 * @param transactionHash The hash of the desired transaction.
 	 * @param returnFormat ({@link DataFormat} defaults to {@link DEFAULT_RETURN_FORMAT}) Specifies how the return data should be formatted.
@@ -906,7 +905,6 @@ export class Web3Zond extends Web3Context<Web3ZondExecutionAPI, RegisteredSubscr
 		return rpcMethodsWrappers.sign(this, message, address, returnFormat);
 	}
 
-	// TODO(rgeraldes24): modify desc(gas price)
 	/**
 	 * @param transaction The transaction object to sign.
 	 * @param returnFormat ({@link DataFormat} defaults to {@link DEFAULT_RETURN_FORMAT}) Specifies how the return data should be formatted.
@@ -1001,7 +999,7 @@ export class Web3Zond extends Web3Context<Web3ZondExecutionAPI, RegisteredSubscr
 	 *       to: '0xe899f0130FD099c0b896B2cE4E5E15A25b23139a',
 	 *       value: '0x1',
 	 *       nonce: '0x1',
-	 *       type: '0x0'
+	 *       type: '0x2'
 	 * }
 	 *
 	 * web3.zond.estimateGas(transaction).then(console.log);

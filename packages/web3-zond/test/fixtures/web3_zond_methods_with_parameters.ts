@@ -2071,6 +2071,6 @@ export const txReceipt: TransactionReceipt = {
 	to: '0x0000000000000000000000000000000000000000',
 	transactionHash: '0x84f44dffc3cd90a1b66ad0219a97680308e5e7a77299fbf1e2ebb572cf02cc2d',
 	transactionIndex: BigInt(0),
-	type: BigInt(0),
+	type: BigInt(2),
 	root: '',
 };

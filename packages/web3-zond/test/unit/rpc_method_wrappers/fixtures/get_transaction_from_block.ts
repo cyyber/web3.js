@@ -22,7 +22,7 @@ export const mockRpcResponse: Transaction = {
 	to: '0x3535353535353535353535353535353535353535',
 	value: '0x174876e800',
 	gas: '0x5208',
-	type: '0x0',
+	type: '0x2',
 	maxFeePerGas: '0x1229298c00',
 	maxPriorityFeePerGas: '0x49504f80',
 	data: '0x',

@@ -207,7 +207,6 @@ export abstract class BaseTransaction<TransactionObject> {
 		return this.to === undefined || this.to.buf.length === 0;
 	}
 
-	// TODO(rgeraldes24): desc
 	/**
 	 * Returns a Uint8Array Array of the raw Uint8Arrays of this transaction, in order.
 	 *
@@ -215,7 +214,7 @@ export abstract class BaseTransaction<TransactionObject> {
 	 * with {@link Block.fromValuesArray}.
 	 *
 	 * For an unsigned tx this method uses the empty Uint8Array values for the
-	 * signature parameters `v`, `r` and `s` for encoding. For an EIP-155 compliant
+	 * signature parameters `publicKey` and `signature` for encoding. For an EIP-155 compliant
 	 * representation for external signing use {@link BaseTransaction.getMessageToSign}.
 	 */
 	public abstract raw():
@@ -408,7 +407,6 @@ export abstract class BaseTransaction<TransactionObject> {
 		}
 	}
 
-	// TODO(rgeraldes24): check for public key/sig 
 	protected static _validateNotArray(values: { [key: string]: any }) {
 		const txDataKeys = [
 			'nonce',

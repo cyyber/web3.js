@@ -27,7 +27,6 @@ import { isNullish } from '@theqrl/web3-validator';
 import { zondRpcMethods } from '@theqrl/web3-rpc-methods';
 
 import {
-	Eip1559NotSupportedError,
 	TransactionDataAndInputError,
 	UnableToPopulateNonceError,
 	UnsupportedTransactionTypeError,
@@ -513,22 +512,6 @@ describe('defaultTransactionBuilder', () => {
 	});
 
 	describe('should populate maxPriorityFeePerGas and maxFeePerGas', () => {
-		it('should throw Eip1559NotSupportedError', async () => {
-			const mockBlockDataNoBaseFeePerGas = { ...mockBlockData, baseFeePerGas: undefined };
-			jest.spyOn(zondRpcMethods, 'getBlockByNumber').mockImplementation(
-				// @ts-expect-error - Mocked implementation doesn't have correct method signature
-				// (i.e. requestManager, blockNumber, hydrated params), but that doesn't matter for the test
-				() => mockBlockDataNoBaseFeePerGas,
-			);
-
-			const input = { ...transaction };
-			input.type = '0x2';
-
-			await expect(
-				defaultTransactionBuilder({ transaction: input, web3Context, fillGasPrice: true }),
-			).rejects.toThrow(new Eip1559NotSupportedError());
-		});
-
 		it('should populate with maxPriorityFeePerGas and maxFeePerGas', async () => {
 			const input = { ...transaction };
 			delete input.maxPriorityFeePerGas;

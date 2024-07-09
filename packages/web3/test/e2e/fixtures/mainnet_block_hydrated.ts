@@ -14,7 +14,7 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
-// TODO(rgeraldes24)
+// TODO(theQRL/web3.js/issues/19)
 export const mainnetBlockHydrated = {
 	baseFeePerGas: '0x474472184',
 	extraData: '0xd883010b05846765746888676f312e32302e32856c696e7578',
@@ -99,7 +99,7 @@ export const mainnetBlockHydrated = {
 			signature: '0x51551c439baf3cab9a8b93cd1502e3a40a9b4cdef927fbd274d40d0dfcdc9329',
 			to: '0x7a408b5230d123574eb8c057904e4f364b980770',
 			transactionIndex: '0x3',
-			type: '0x0',
+			type: '0x2',
 			value: '0x5a119fe21ed87',
 		},
 		{
@@ -115,7 +115,7 @@ export const mainnetBlockHydrated = {
 			signature: '0x3ce0ec0d5a776d84f835a6eed0f2cdf59356ffe6d014af9b283ac84e2c5ad362',
 			to: '0x40fc4596608b20c97244922060dcfd2de7fdf9ea',
 			transactionIndex: '0x4',
-			type: '0x0',
+			type: '0x2',
 			value: '0x8f90791f1038e',
 		},
 		{
@@ -147,7 +147,7 @@ export const mainnetBlockHydrated = {
 			signature: '0x2b4b4f8ad723577860d89b6311573260e450a74461b1324b727097cb1ea3f0f6',
 			to: '0x15d4c048f83bd7e37d49ea4c83a07267ec4203da',
 			transactionIndex: '0x6',
-			type: '0x0',
+			type: '0x2',
 			value: '0x0',
 		},
 		{
@@ -217,7 +217,7 @@ export const mainnetBlockHydrated = {
 			signature: '0x3026bc52e581f4ba9233eaca623d7ab55463466fa5cfcab568e6e86b153c0b72',
 			to: '0xa28c1a1330d7634c9bc5a04cb2a3b64cb866f19e',
 			transactionIndex: '0xa',
-			type: '0x0',
+			type: '0x2',
 			value: '0xfd9728a9242400',
 		},
 		{
@@ -233,7 +233,7 @@ export const mainnetBlockHydrated = {
 			signature: '0x263967109771cb590a72b9383d8822183b452114e8fee7800184857b15b979b0',
 			to: '0x6dfc34609a05bc22319fa4cce1d1e2929548c0d7',
 			transactionIndex: '0xb',
-			type: '0x0',
+			type: '0x2',
 			value: '0x5d2c45892ec400',
 		},
 		{
@@ -303,7 +303,7 @@ export const mainnetBlockHydrated = {
 			signature: '0x250c820942d9a1138a731a5de121921ca1d2a328e64bd35c42531b02f2836790',
 			to: '0x52a494dbf47107cc0c624ee10703abecaf586776',
 			transactionIndex: '0xf',
-			type: '0x0',
+			type: '0x2',
 			value: '0x58d15e176280000',
 		},
 		{
@@ -1231,7 +1231,7 @@ export const mainnetBlockHydrated = {
 			signature: '0x063b2d0f20585b959447460b5daa22c5bd0696c074ded4d31d4078b0dcae653a',
 			to: '0x6d1ea4bd89865bbd8c675261585ae566dcda9d53',
 			transactionIndex: '0x40',
-			type: '0x0',
+			type: '0x2',
 			value: '0x2386f26fc10000',
 		},
 		{
@@ -1266,7 +1266,7 @@ export const mainnetBlockHydrated = {
 			signature: '0x377afabdffa95ce2f6b7738a9663500e128046be8f7ff08cf53e1a7fa54f9f13',
 			to: '0xc36442b4a4522e871399cd717abdd847ab11fe88',
 			transactionIndex: '0x42',
-			type: '0x0',
+			type: '0x2',
 			value: '0x0',
 		},
 		{
@@ -1700,7 +1700,7 @@ export const mainnetBlockHydrated = {
 			signature: '0x0dee73e0614bdfdb0e5d2e6b30d4d2f53a96be5f1421bb9d903e814989790ed6',
 			to: '0x2c3113d1a6433d6c88ae92888346cf7f23fcb171',
 			transactionIndex: '0x59',
-			type: '0x0',
+			type: '0x2',
 			value: '0x9ff516e65e000',
 		},
 		{
@@ -1716,7 +1716,7 @@ export const mainnetBlockHydrated = {
 			signature: '0x2263c2789374197fde54cd758502ca6b2b58de839d0be37a3ef2537b415329d2',
 			to: '0xdac17f958d2ee523a2206206994597c13d831ec7',
 			transactionIndex: '0x5a',
-			type: '0x0',
+			type: '0x2',
 			value: '0x0',
 		},
 		{
@@ -1751,7 +1751,7 @@ export const mainnetBlockHydrated = {
 			signature: '0x2378e8c4aa7059f894ff3dc7ac65108d6649c75d347ac99de96997486a931bcd',
 			to: '0xee8253a7c009fad5fe047af648d29586c24d56d3',
 			transactionIndex: '0x5c',
-			type: '0x0',
+			type: '0x2',
 			value: '0x0',
 		},
 		{
@@ -1767,7 +1767,7 @@ export const mainnetBlockHydrated = {
 			signature: '0x2b411dd4544bd94c7dce7f65c4dc0eef761568f12cb56a9da80a847545d6ac55',
 			to: '0xdac17f958d2ee523a2206206994597c13d831ec7',
 			transactionIndex: '0x5d',
-			type: '0x0',
+			type: '0x2',
 			value: '0x0',
 		},
 		{
@@ -1783,7 +1783,7 @@ export const mainnetBlockHydrated = {
 			signature: '0x3fdaee939cae609f0d789d54d5bf5ab5edbfbf927a83bd4e5f5376b9898cb594',
 			to: '0xdac17f958d2ee523a2206206994597c13d831ec7',
 			transactionIndex: '0x5e',
-			type: '0x0',
+			type: '0x2',
 			value: '0x0',
 		},
 		{
@@ -1799,7 +1799,7 @@ export const mainnetBlockHydrated = {
 			signature: '0x5e8e22aea92826c27fc90b46d5f104b95ec52613d3352efa56af8023eed21cd0',
 			to: '0xdac17f958d2ee523a2206206994597c13d831ec7',
 			transactionIndex: '0x5f',
-			type: '0x0',
+			type: '0x2',
 			value: '0x0',
 		},
 		{

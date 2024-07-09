@@ -25,7 +25,7 @@ import {
 	ZOND_DATA_FORMAT,
 } from '@theqrl/web3-types';
 import { isNullish } from '@theqrl/web3-validator';
-import { Eip1559NotSupportedError, UnsupportedTransactionTypeError } from '@theqrl/web3-errors';
+import { UnsupportedTransactionTypeError } from '@theqrl/web3-errors';
 import { format } from '@theqrl/web3-utils';
 // eslint-disable-next-line import/no-cycle
 import { getBlock } from '../rpc_method_wrappers.js';
@@ -39,8 +39,6 @@ async function getEip1559GasPricing<ReturnFormat extends DataFormat>(
 	returnFormat: ReturnFormat,
 ): Promise<FormatType<{ maxPriorityFeePerGas?: Numbers; maxFeePerGas?: Numbers }, ReturnFormat>> {
 	const block = await getBlock(web3Context, web3Context.defaultBlock, false, returnFormat);
-
-	if (isNullish(block.baseFeePerGas)) throw new Eip1559NotSupportedError();
 
 	return {
 		maxPriorityFeePerGas: format(

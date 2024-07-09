@@ -89,10 +89,6 @@ export function isAccessList(input: AccessListUint8Array | AccessList): input is
 	return !isAccessListUint8Array(input); // This is exactly the same method, except the output is negated.
 }
 
-// export interface Dilithium5Signature {
-// 	signature: Uint8Array;
-// }
-
 /**
  * Legacy {@link Transaction} Data
  */
@@ -165,7 +161,6 @@ export interface FeeMarketEIP1559TxData extends TxData {
 	maxFeePerGas?: Numbers | Uint8Array;
 }
 
-// TODO(rgeraldes24): review for sig and public key
 /**
  * Uint8Array values array for a {@link FeeMarketEIP1559Transaction}
  */
@@ -179,7 +174,6 @@ export type FeeMarketEIP1559ValuesArray = [
 	Uint8Array,
 	Uint8Array,
 	AccessListUint8Array,
-	Uint8Array?,
 	Uint8Array?,
 	Uint8Array?,
 ];
@@ -206,6 +200,4 @@ export interface JsonTx {
 	type?: string;
 	maxPriorityFeePerGas?: string;
 	maxFeePerGas?: string;
-	maxFeePerDataGas?: string;
-	versionedHashes?: string[];
 }

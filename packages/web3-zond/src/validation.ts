@@ -178,16 +178,6 @@ export const validateHardfork = (transaction: InternalTransaction) => {
 };
 
 export const validateFeeMarketGas = (transaction: InternalTransaction) => {
-	// These errors come from 1.x, so they must be checked before
-	// InvalidMaxPriorityFeePerGasOrMaxFeePerGas to throw the same error
-	// for the same code executing in 1.x
-	// TODO(rgeraldes24): remove?
-	// if (transaction.type === '0x0' || transaction.type === '0x1')
-	// 	throw new UnsupportedFeeMarketError({
-	// 		maxFeePerGas: transaction.maxFeePerGas,
-	// 		maxPriorityFeePerGas: transaction.maxPriorityFeePerGas,
-	// 	});
-
 	if (
 		isNullish(transaction.maxFeePerGas) ||
 		!isUInt(transaction.maxFeePerGas) ||

@@ -114,8 +114,7 @@ describe('watchTransactionForConfirmations', () => {
 
 		afterEach(() => jest.resetAllMocks());
 
-		// TODO(rgeraldes24): fix input data
-		it.skip.each(testData)(
+		it.each(testData)(
 			`watchTransactionForConfirmations logic\n ${testMessage}`,
 			async (_, inputTransaction) => {
 				const formattedTransactionReceipt = format(
@@ -180,8 +179,7 @@ describe('watchTransactionForConfirmations', () => {
 
 		afterEach(() => jest.resetAllMocks());
 
-		// TODO(rgeraldes24): fix input data
-		it.skip.each(testData)(
+		it.each(testData)(
 			`watchTransactionForConfirmations logic\n ${testMessage}`,
 			async (_, inputTransaction) => {
 				const formattedTransactionReceipt = format(

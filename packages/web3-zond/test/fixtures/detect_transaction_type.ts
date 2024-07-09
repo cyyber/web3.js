@@ -139,7 +139,6 @@ export const transactionTypeUndefined: FormatType<Transaction, typeof ZOND_DATA_
 ];
 
 export const transactionTypeValidationError: FormatType<Transaction, typeof ZOND_DATA_FORMAT>[] = [
-	// TODO(rgeraldes24): review: removed gas price
 	// Invalid type 0x2 txs
 	{
 		from: '0xEB014f8c8B418Db6b45774c326A0E64C78914dC0',
