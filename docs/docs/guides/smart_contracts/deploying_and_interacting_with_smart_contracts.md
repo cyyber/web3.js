@@ -251,7 +251,8 @@ async function deploy() {
 		const tx = await myContract.send({
 			from: defaultAccount,
 			gas,
-			gasPrice: 10000000000,
+			maxFeePerGas: 10000000000,
+			maxPriorityFeePerGas: 0,
 		});
 		console.log('Contract deployed at address: ' + tx.options.address);
 
@@ -322,7 +323,8 @@ async function interact() {
 		const receipt = await MyContract.methods.setMyNumber(myNumber + 1n).send({
 			from: defaultAccount,
 			gas: 1000000,
-			gasPrice: 10000000000,
+			maxFeePerGas: 10000000000,
+			maxPriorityFeePerGas: 0,
 		});
 		console.log('Transaction Hash: ' + receipt.transactionHash);
 
@@ -357,7 +359,7 @@ my number updated value: 2
 
 If you are running into errors when executing contract methods such as `myContract.methods.call` or `myContract.deploy.estimateGas()` you might be seeing a contract execution revert error such as: `value transfer did not complete from a contract execution reverted`
 
-or response error: ResponseError: Returned error: unknown field `input`, expected one of `from`, `to`, `gasPrice`, `maxFeePerGas`, `maxPriorityFeePerGas`, `gas`, `value`, `data`, `nonce`, `chainId`, `accessList`, `type`.
+or response error: ResponseError: Returned error: unknown field `input`, expected one of `from`, `to`, `maxFeePerGas`, `maxPriorityFeePerGas`, `gas`, `value`, `data`, `nonce`, `chainId`, `accessList`, `type`.
 
 This could be due to the node you are connected to and is expecting the `data` property to be populated in your contract instead of `input`, for example this issue will happen with an Anvil node from Foundry. Web3 version >4.0.3 will always populate `input` when sending transactions.
 To fix this, configure the `contractDataInputFill` in `Web3Config` or when initializing your contract to specify `data` in `dataInputFill` to be filled.

@@ -130,8 +130,6 @@ export abstract class BaseTransaction<TransactionObject> {
 
 	/**
 	 * Returns the transaction type.
-	 *
-	 * Note: legacy txs will return tx type `0`.
 	 */
 	public get type() {
 		return this._type;

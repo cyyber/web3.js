@@ -135,10 +135,6 @@ async function interact() {
 
 	// see the updated balances
 	console.log(balance1, balance2);
-
-	// irrelevant with the actual transaction, just to know the gasPrice
-	const gasPrice = await web3.zond.getGasPrice();
-	console.log(gasPrice);
 }
 
 (async () => {

@@ -73,7 +73,6 @@ export class TransactionFactory {
 	/**
 	 * When decoding a BlockBody, in the transactions field, a field is either:
 	 * A Uint8Array (a TypedTransaction - encoded as TransactionType || rlp(TransactionPayload))
-	 * A Uint8Array[] (Legacy Transaction)
 	 * This method returns the right transaction.
 	 *
 	 * @param data - A Uint8Array or Uint8Array[]

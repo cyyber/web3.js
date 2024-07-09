@@ -203,8 +203,8 @@ const dummyTransaction: Transaction = {
 	to: '0x3535353535353535353535353535353535353535',
 	value: '0x174876e800',
 	gas: '0x5208',
-	// TODO(rgeraldes24): fix
-	// gasPrice: '0x4a817c800',
+	maxFeePerGas: '0x4a817c800',
+	maxPriorityFeePerGas: '0x0',
 	type: '0x0',
 	data: '0x0',
 	nonce: '0x4',

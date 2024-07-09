@@ -40,14 +40,6 @@ describe.skip('signTransaction', () => {
 				from: account.address,
 			};
 
-			// either make it legacy or type 0x2 tx, instead of keeping both gasPrice and (maxPriorityFeePerGas maxFeePerGas)
-			// if (txObj.transaction?.maxPriorityFeePerGas) {
-			// 	delete normalTx['gasPrice'];
-			// } else {
-			// 	delete normalTx['maxPriorityFeePerGas'];
-			// 	delete normalTx['maxFeePerGas'];
-			// }
-
 			jest.spyOn(httpProvider.HttpProvider.prototype, 'request').mockImplementation(
 				async (payload: any) => {
 					const response = {

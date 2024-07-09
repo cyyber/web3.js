@@ -42,21 +42,6 @@ async function getEip1559GasPricing<ReturnFormat extends DataFormat>(
 
 	if (isNullish(block.baseFeePerGas)) throw new Eip1559NotSupportedError();
 
-	// TODO(rgeraldes24): remove?
-	/*
-	if (!isNullish(transaction.gasPrice)) {
-		const convertedTransactionGasPrice = format(
-			{ format: 'uint' },
-			transaction.gasPrice as Numbers,
-			returnFormat,
-		);
-
-		return {
-			maxPriorityFeePerGas: convertedTransactionGasPrice,
-			maxFeePerGas: convertedTransactionGasPrice,
-		};
-	}
-	*/
 	return {
 		maxPriorityFeePerGas: format(
 			{ format: 'uint' },
@@ -91,15 +76,12 @@ export async function getTransactionGasPricing<ReturnFormat extends DataFormat>(
 		if (transactionType.startsWith('-'))
 			throw new UnsupportedTransactionTypeError(transactionType);
 
-		// https://github.com/ethereum/EIPs/blob/master/EIPS/eip-2718.md#transactions
-		if (transactionType < '0x0' || transactionType > '0x7f')
+		if (transactionType !== '0x2')
 			throw new UnsupportedTransactionTypeError(transactionType);
 
-		if (transactionType === '0x2') {
-			return {
-				...(await getEip1559GasPricing(transaction, web3Context, returnFormat)),
-			};
-		}
+		return {
+			...(await getEip1559GasPricing(transaction, web3Context, returnFormat)),
+		};
 	}
 
 	return undefined;

@@ -40,7 +40,6 @@ export interface TransactionCallAPI {
 	readonly from?: Address;
 	readonly to: Address;
 	readonly gas?: Uint;
-	readonly gasPrice?: Uint;
 	readonly value?: Uint;
 	readonly data?: HexStringBytes;
 	readonly type?: HexStringSingleByte;

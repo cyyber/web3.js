@@ -144,24 +144,6 @@ export class Web3Zond extends Web3Context<Web3ZondExecutionAPI, RegisteredSubscr
 	}
 
 	/**
-	 * @param returnFormat ({@link DataFormat} defaults to {@link DEFAULT_RETURN_FORMAT}) Specifies how the return data should be formatted.
-	 * @returns The gas price determined by the last few blocks median gas price.
-	 *
-	 * ```ts
-	 * web3.zond.getGasPrice().then(console.log);
-	 * > 20000000000n
-	 *
-	 * web3.zond.getGasPrice({ number: FMT_NUMBER.HEX , bytes: FMT_BYTES.HEX }).then(console.log);
-	 * > "0x4a817c800"
-	 * ```
-	 */
-	public async getGasPrice<ReturnFormat extends DataFormat = typeof DEFAULT_RETURN_FORMAT>(
-		returnFormat: ReturnFormat = DEFAULT_RETURN_FORMAT as ReturnFormat,
-	) {
-		return rpcMethodsWrappers.getGasPrice(this, returnFormat);
-	}
-
-	/**
 	 * @returns A list of accounts the node controls (addresses are checksummed).
 	 *
 	 * ```ts
@@ -379,6 +361,7 @@ export class Web3Zond extends Web3Context<Web3ZondExecutionAPI, RegisteredSubscr
 		return rpcMethodsWrappers.getBlockTransactionCount(this, block, returnFormat);
 	}
 
+	// TODO(rgeraldes24): gasPrice
 	/**
 	 * @param transactionHash The hash of the desired transaction.
 	 * @param returnFormat ({@link DataFormat} defaults to {@link DEFAULT_RETURN_FORMAT}) Specifies how the return data should be formatted.
@@ -917,6 +900,7 @@ export class Web3Zond extends Web3Context<Web3ZondExecutionAPI, RegisteredSubscr
 		return rpcMethodsWrappers.sign(this, message, address, returnFormat);
 	}
 
+	// TODO(rgeraldes24): modify desc(gas price)
 	/**
 	 * @param transaction The transaction object to sign.
 	 * @param returnFormat ({@link DataFormat} defaults to {@link DEFAULT_RETURN_FORMAT}) Specifies how the return data should be formatted.

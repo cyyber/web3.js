@@ -46,7 +46,6 @@ describe('defaultTransactionBuilder', () => {
 	const expectedNonce = '0x42';
 	const expectedGas = BigInt(21000);
 	const expectedGasLimit = expectedGas;
-	const expectedGasPrice = '0x4a817c800';
 	const expectedBaseFeePerGas = '0x13afe8b904';
 	const expectedMaxPriorityFeePerGas = '0x9502f900';
 	const expectedMaxFeePerGas = '0x27f4d46b08';
@@ -108,7 +107,6 @@ describe('defaultTransactionBuilder', () => {
 		getTransactionCountSpy = jest
 			.spyOn(zondRpcMethods, 'getTransactionCount')
 			.mockResolvedValue(expectedNonce);
-		jest.spyOn(zondRpcMethods, 'getGasPrice').mockResolvedValue(expectedGasPrice);
 		jest.spyOn(zondRpcMethods, 'getChainId').mockResolvedValue(expectedChainId);
 
 		web3Context = new Web3Context<ZondExecutionAPI>(new HttpProvider('http://127.0.0.1'));

@@ -20,7 +20,6 @@ import * as rpcMethodWrappers from '../../src/rpc_method_wrappers';
 import {
 	getBlockNumberValidData,
 	getChainIdValidData,
-	getGasPriceValidData,
 } from '../fixtures/rpc_methods_wrappers';
 import {
 	estimateGasValidData,
@@ -59,16 +58,6 @@ describe('web3_eth_methods_with_parameters', () => {
 
 	describe('should call RPC method with expected parameters', () => {
 		describe('only has returnFormat parameter', () => {
-			describe('getGasPrice', () => {
-				it.each(getGasPriceValidData)('returnFormat: %s', async returnFormat => {
-					await web3Zond.getGasPrice(returnFormat);
-					expect(rpcMethodWrappers.getGasPrice).toHaveBeenCalledWith(
-						web3Zond,
-						returnFormat,
-					);
-				});
-			});
-
 			describe('getBlockNumber', () => {
 				it.each(getBlockNumberValidData)('returnFormat: %s', async returnFormat => {
 					await web3Zond.getBlockNumber(returnFormat);

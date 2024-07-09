@@ -81,7 +81,6 @@ export const getSendTxParams = ({
 		{
 			to: contractOptions.address,
 			gas: contractOptions.gas,
-			gasPrice: contractOptions.gasPrice,
 			from: contractOptions.from,
 			input: contractOptions.input,
 			maxPriorityFeePerGas: contractOptions.maxPriorityFeePerGas,
@@ -117,7 +116,6 @@ export const getZondTxCallParams = ({
 		{
 			to: contractOptions.address,
 			gas: contractOptions.gas,
-			gasPrice: contractOptions.gasPrice,
 			from: contractOptions.from,
 			input: contractOptions.input,
 			maxPriorityFeePerGas: contractOptions.maxPriorityFeePerGas,
@@ -150,7 +148,8 @@ export const getEstimateGasParams = ({
 		{
 			to: contractOptions.address,
 			gas: contractOptions.gas,
-			gasPrice: contractOptions.gasPrice,
+			// TODO(rgeraldes24)
+			// gasPrice: contractOptions.gasPrice,
 			from: contractOptions.from,
 			input: contractOptions.input,
 			data: contractOptions.data,
@@ -209,7 +208,6 @@ export const getCreateAccessListParams = ({
 		{
 			to: contractOptions.address,
 			gas: contractOptions.gas,
-			gasPrice: contractOptions.gasPrice,
 			from: contractOptions.from,
 			input: contractOptions.input,
 			maxPriorityFeePerGas: contractOptions.maxPriorityFeePerGas,

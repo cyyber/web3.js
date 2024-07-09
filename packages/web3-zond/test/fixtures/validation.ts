@@ -28,7 +28,7 @@ import { InvalidTransactionCall, InvalidTransactionWithSender } from '@theqrl/we
 export const isBaseTransactionValidData: [BaseTransactionAPI, true][] = [
 	[
 		{
-			type: '0x0',
+			type: '0x2',
 			nonce: '0x0',
 			gas: '0x5208',
 			value: '0x1',
@@ -40,7 +40,7 @@ export const isBaseTransactionValidData: [BaseTransactionAPI, true][] = [
 	[
 		{
 			to: '0x6E599DA0bfF7A6598AC1224E4985430Bf16458a4',
-			type: '0x1',
+			type: '0x2',
 			nonce: '0x1',
 			gas: '0x5208',
 			value: '0x1',

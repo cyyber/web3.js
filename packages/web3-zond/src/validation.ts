@@ -79,7 +79,6 @@ export function isAccessList(value: AccessList): boolean {
 
 export function isTransaction1559Unsigned(value: Transaction1559UnsignedAPI): boolean {
 	if (!isBaseTransaction(value)) return false;
-	// TODO(rgeraldes24): !isNullish(value.gasPrice)
 	if (!isHexStrict(value.maxFeePerGas)) return false;
 	if (!isHexStrict(value.maxPriorityFeePerGas)) return false;
 	if (!isAccessList(value.accessList)) return false;
