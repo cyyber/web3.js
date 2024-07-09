@@ -14,26 +14,17 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
-// TODO(rgeraldes24)
+
 export type ForkName =
-	| 'London+3860'
-	| 'London'
-	| 'Berlin'
-	| 'Istanbul'
-	| 'Byzantium'
-	| 'ConstantinopleFix'
-	| 'Constantinople'
-	| 'EIP150'
-	| 'EIP158'
-	| 'Frontier'
-	| 'Homestead';
+	| 'Shanghai';
 
 export type ForkNamesMap = { [forkName in ForkName]: string };
 
 export interface TxData {
 	data: string;
 	gasLimit: string;
-	gasPrice: string;
+	maxFeePerGas: string;
+	maxPriorityFeePerGas: string;
 	nonce: string;
 	to: string;
 	value: string;

@@ -184,7 +184,6 @@ export type ZondExecutionAPI = {
 	) => Uint;
 
 	// https://github.com/ethereum/execution-apis/blob/main/src/eth/fee_market.yaml
-	zond_gasPrice: () => Uint;
 	zond_feeHistory: (
 		blockCount: Uint,
 		newestBlock: BlockNumberOrTag,

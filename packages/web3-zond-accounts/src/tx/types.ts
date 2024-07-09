@@ -192,11 +192,9 @@ type JsonAccessListItem = { address: string; storageKeys: string[] };
  *
  * Note that all values are marked as optional
  * and not all the values are present on all tx types
- * (an EIP1559 tx e.g. lacks a `gasPrice`).
  */
 export interface JsonTx {
 	nonce?: string;
-	gasPrice?: string;
 	gasLimit?: string;
 	to?: string;
 	data?: string;

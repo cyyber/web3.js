@@ -265,8 +265,8 @@ describe('Web3Zond.sendSignedTransaction', () => {
 				to: '0x0000000000000000000000000000000000000000',
 				value: BigInt(1),
 				gas: 1,
-				gasPrice: 1,
-				//type: BigInt(2),
+				maxFeePerGas: 1,
+				type: BigInt(2),
 				nonce: await web3Zond.getTransactionCount(tempAcc.address),
 			};
 			const signedTransaction = await web3Zond.signTransaction(transaction, {

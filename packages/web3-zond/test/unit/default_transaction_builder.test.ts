@@ -529,7 +529,7 @@ describe('defaultTransactionBuilder', () => {
 			).rejects.toThrow(new Eip1559NotSupportedError());
 		});
 
-		it('should populate with gasPrice', async () => {
+		it('should populate with maxPriorityFeePerGas and maxFeePerGas', async () => {
 			const input = { ...transaction };
 			delete input.maxPriorityFeePerGas;
 			delete input.maxFeePerGas;
@@ -541,6 +541,7 @@ describe('defaultTransactionBuilder', () => {
 				fillGasPrice: true,
 			});
 
+			expect(result.maxFeePerGas).toBeDefined();
 			expect(result.maxPriorityFeePerGas).toBeDefined();
 		});
 

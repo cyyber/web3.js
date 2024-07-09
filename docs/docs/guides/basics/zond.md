@@ -297,7 +297,8 @@ async function sendSigned() {
 		to: toAddress,
 		value: value,
 		gas: 21000,
-		gasPrice: web3.utils.toWei('10', 'gwei'),
+		maxFeePerGas: web3.utils.toWei('10', 'gwei'),
+		maxPriorityFeePerGas: 0,
 		nonce: await web3.zond.getTransactionCount(fromAddress),
 	};
 

@@ -27,11 +27,11 @@ import { InternalTransaction } from '../types.js';
 // undefined is treated as null for JSON schema validator
 const transactionType0x2Schema = {
 	type: 'object',
-	properties: {
-		gasPrice: {
-			type: 'null',
-		},
-	},
+	// properties: {
+	// 	gasPrice: {
+	// 		type: 'null',
+	// 	},
+	// },
 };
 
 const validateTxTypeAndHandleErrors = (

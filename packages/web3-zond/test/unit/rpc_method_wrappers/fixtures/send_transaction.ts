@@ -40,7 +40,6 @@ export const expectedTransactionReceipt: TransactionReceipt = {
 const inputTransaction = {
 	from: '0xa7d9ddbe1f17865597fbd27ec712455208b6b76d',
 	gas: '0xc350',
-	gasPrice: '0x4a817c800',
 	input: '0x68656c6c6f21',
 	nonce: '0x15',
 	to: '0xf02c1c8e6114b1dbe8937a39260b5b0a374432bb',
@@ -66,6 +65,8 @@ export const testData: [string, Transaction, SendTransactionOptions | undefined]
 		inputTransaction,
 		{ ignoreGasPricing: true },
 	],
+	// TODO(rgeraldes): same test as below: check the old test
+	/*
 	[
 		'Transaction with all hex string values, inputTransaction.gasPrice !== undefined; inputTransaction.maxPriorityFeePerGas === undefined; inputTransaction.maxFeePerGas === undefined',
 		{
@@ -75,17 +76,9 @@ export const testData: [string, Transaction, SendTransactionOptions | undefined]
 		},
 		{ ignoreGasPricing: true },
 	],
-	// TODO(rgeraldes24): review + desc
+	*/
 	[
-		'Transaction with all hex string values, inputTransaction.gasPrice === undefined; inputTransaction.maxPriorityFeePerGas !== undefined; inputTransaction.maxFeePerGas !== undefined',
-		{
-			...inputTransaction,
-			// gasPrice: undefined,
-		},
-		{ ignoreGasPricing: true },
-	],
-	[
-		'Transaction with all hex string values, inputTransaction.gasPrice === undefined; inputTransaction.maxPriorityFeePerGas === undefined; inputTransaction.maxFeePerGas !== undefined',
+		'Transaction with all hex string values, inputTransaction.maxPriorityFeePerGas === undefined; inputTransaction.maxFeePerGas !== undefined',
 		{
 			...inputTransaction,
 			maxPriorityFeePerGas: undefined,
@@ -93,19 +86,17 @@ export const testData: [string, Transaction, SendTransactionOptions | undefined]
 		{ ignoreGasPricing: true },
 	],
 	[
-		'Transaction with all hex string values, inputTransaction.gasPrice === undefined; inputTransaction.maxPriorityFeePerGas !== undefined; inputTransaction.maxFeePerGas === undefined',
+		'Transaction with all hex string values, inputTransaction.maxPriorityFeePerGas !== undefined; inputTransaction.maxFeePerGas === undefined',
 		{
 			...inputTransaction,
 			maxFeePerGas: undefined,
 		},
 		{ ignoreGasPricing: true },
 	],
-	// TODO(rgeraldes24): review + desc
 	[
-		'Transaction with all hex string values, inputTransaction.gasPrice === undefined; inputTransaction.maxPriorityFeePerGas === undefined; inputTransaction.maxFeePerGas === undefined',
+		'Transaction with all hex string values, inputTransaction.maxPriorityFeePerGas === undefined; inputTransaction.maxFeePerGas === undefined',
 		{
 			...inputTransaction,
-			// gasPrice: undefined,
 			maxPriorityFeePerGas: undefined,
 			maxFeePerGas: undefined,
 		},

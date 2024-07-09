@@ -339,13 +339,14 @@ export class MissingGasError extends InvalidValueError {
 	}
 }
 
-export class InvalidGasOrGasPrice extends InvalidValueError {
+export class InvalidGas extends InvalidValueError {
+	// TODO(rgeraldes24): name?
 	public code = ERR_TX_INVALID_LEGACY_GAS;
 
-	public constructor(value: { gas: Numbers | undefined; gasPrice: Numbers | undefined }) {
+	public constructor(value: { gas: Numbers | undefined }) {
 		super(
-			`gas: ${value.gas ?? 'undefined'}, gasPrice: ${value.gasPrice ?? 'undefined'}`,
-			'Gas or gasPrice is lower than 0',
+			`gas: ${value.gas ?? 'undefined'}`,
+			'Gas is lower than 0',
 		);
 	}
 }

@@ -227,8 +227,8 @@ describe('Contract', () => {
 				.mockImplementation((_objInstance, tx) => {
 					expect(tx.to).toBeUndefined();
 					expect(tx.gas).toStrictEqual(sendOptions.gas);
-					// TODO(rgeraldes24): review
-					// expect(tx.gasPrice).toBeUndefined();
+					expect(tx.maxFeePerGas).toBeUndefined();
+					expect(tx.maxPriorityFeePerGas).toBeUndefined();
 					expect(tx.from).toStrictEqual(sendOptions.from);
 					expect(tx.input).toStrictEqual(input); // padded data
 
@@ -261,8 +261,8 @@ describe('Contract', () => {
 				.mockImplementation((_objInstance, tx) => {
 					expect(tx.to).toBeUndefined();
 					expect(tx.gas).toStrictEqual(sendOptions.gas);
-					// TODO(rgeraldes24): review
-					// expect(tx.gasPrice).toBeUndefined();
+					expect(tx.maxFeePerGas).toBeUndefined();
+					expect(tx.maxPriorityFeePerGas).toBeUndefined();
 					expect(tx.from).toStrictEqual(sendOptions.from);
 					expect(tx.data).toStrictEqual(data); // padded data
 

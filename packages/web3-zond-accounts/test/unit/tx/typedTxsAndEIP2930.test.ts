@@ -92,7 +92,7 @@ describe('[FeeMarketEIP1559Transaction] -> EIP-2930 Compatibility', () => {
 	/*
 	TODO(rgeraldes24)
 	it('cannot input decimal values', () => {
-		const values = ['chainId', 'nonce', 'gasPrice', 'gasLimit', 'value', 'publicKey', 'signature'];
+		const values = ['chainId', 'nonce', 'maxFeePerGas', 'maxPriorityFeePerGas', 'gasLimit', 'value', 'publicKey', 'signature'];
 		const cases = [
 			10.1,
 			'10.1',
