@@ -254,6 +254,26 @@ describe('Web3Zond.sendTransaction', () => {
 			expect(minedTransactionData).toMatchObject(transaction);
 		});
 
+		it('should send a successful type 0x2 transaction (fee per gas from: calculateFeeData)', async () => {
+			const transaction: Transaction = {
+				from: tempAcc.address,
+				to: '0x0000000000000000000000000000000000000000',
+				value: BigInt(1),
+				type: BigInt(2),
+			};
+
+			const feeData = await web3Zond.calculateFeeData();
+			transaction.maxPriorityFeePerGas = feeData.maxPriorityFeePerGas;
+			transaction.maxFeePerGas = feeData.maxFeePerGas;
+
+			const response = await web3Zond.sendTransaction(transaction);
+			expect(response.type).toBe(BigInt(2));
+			expect(response.status).toBe(BigInt(1));
+
+			const minedTransactionData = await web3Zond.getTransaction(response.transactionHash);
+			expect(minedTransactionData).toMatchObject(transaction);
+		});
+
 		it('should send a successful type 0x2 transaction with data', async () => {
 			const transaction: Transaction = {
 				from: tempAcc.address,
@@ -296,6 +316,28 @@ describe('Web3Zond.sendTransaction', () => {
 		const minedTransactionData = await web3Zond.getTransaction(response.transactionHash);
 		expect(minedTransactionData).toMatchObject(transaction);
 	});
+
+	it('should send type 0x2 transaction with maxPriorityFeePerGas got from await web3Zond.getMaxPriorityFeePerGas()', async () => {
+			const transaction: Transaction = {
+				from: tempAcc.address,
+				to: '0x0000000000000000000000000000000000000000',
+				value: BigInt(1),
+				maxPriorityFeePerGas: await web3Zond.getMaxPriorityFeePerGas(),
+			};
+			const response = await web3Zond.sendTransaction(transaction);
+
+			// TOOD(rgeraldes24)
+			// eslint-disable-next-line jest/no-standalone-expect
+			// expect(response.events).toBeUndefined();
+			// eslint-disable-next-line jest/no-standalone-expect
+			expect(response.type).toBe(BigInt(2));
+			// eslint-disable-next-line jest/no-standalone-expect
+			expect(response.status).toBe(BigInt(1));
+			const minedTransactionData = await web3Zond.getTransaction(response.transactionHash);
+			// eslint-disable-next-line jest/no-standalone-expect
+			expect(minedTransactionData).toMatchObject(transaction);
+		},
+	);
 
 	describe('Transaction PromiEvents', () => {
 		let transaction: Transaction;

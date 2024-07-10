@@ -198,7 +198,7 @@ transactionHash {
 In the next example, we are going to use `estimateGas` function to see the expected gas for contract deployment. (For more on contracts, please see the corresponding tutotial). Create a file named `estimate.ts` and fill it with the following code:
 
 ```typescript
-import Web3, { ETH_DATA_FORMAT, DEFAULT_RETURN_FORMAT } from 'web3';
+import Web3, { ZOND_DATA_FORMAT, DEFAULT_RETURN_FORMAT } from 'web3';
 
 async function estimate() {
 	// abi of our contract
@@ -250,7 +250,7 @@ async function estimate() {
 		{
 			from: acc,
 		},
-		ETH_DATA_FORMAT, // the returned data will be formatted as a hexstring
+		ZOND_DATA_FORMAT, // the returned data will be formatted as a hexstring
 	);
 
 	console.log(estimatedGas);
@@ -274,7 +274,7 @@ If everything is working correctly, you should see something like the following:
 ```
 
 :::note
-📝 Note that numbers returned from web3.js are returned by default in the `BigInt` format. In this example we used `ETH_DATA_FORMAT` parameter, which, can be passed in most methods in web3.js in order to format the result in `hex`.
+📝 Note that numbers returned from web3.js are returned by default in the `BigInt` format. In this example we used `ZOND_DATA_FORMAT` parameter, which, can be passed in most methods in web3.js in order to format the result in `hex`.
 :::
 
 In the next example we are going to sign a transaction and use `sendSignedTransaction` to send the signed transaction. Create a file named `sendSigned.ts` and fill it with the following code:

@@ -20,7 +20,7 @@ import Web3Zond from '../../src/index';
 
 jest.mock('@theqrl/web3-rpc-methods');
 
-describe('web3_eth_methods_no_parameters', () => {
+describe('web3_zond_methods_no_parameters', () => {
 	let web3Zond: Web3Zond;
 
 	beforeAll(() => {
@@ -65,6 +65,11 @@ describe('web3_eth_methods_no_parameters', () => {
 		it('getNodeInfo', async () => {
 			await web3Zond.getNodeInfo();
 			expect(zondRpcMethods.getNodeInfo).toHaveBeenCalledWith(web3Zond.requestManager);
+		});
+
+		it('getMaxPriorityFeePerGas', async () => {
+			await web3Zond.getMaxPriorityFeePerGas();
+			expect(zondRpcMethods.getMaxPriorityFeePerGas).toHaveBeenCalledWith(web3Zond.requestManager);
 		});
 	});
 });

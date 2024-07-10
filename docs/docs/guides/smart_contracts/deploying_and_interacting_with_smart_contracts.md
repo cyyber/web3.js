@@ -311,7 +311,7 @@ const abi = require('./MyContractAbi.json');
 const MyContract = new web3.zond.Contract(abi, deployedAddress);
 
 async function interact() {
-	const providersAccounts = await web3.eth.getAccounts();
+	const providersAccounts = await web3.zond.getAccounts();
 	const defaultAccount = providersAccounts[0];
 
 	try {

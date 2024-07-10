@@ -435,3 +435,37 @@ export interface Eip712TypedData {
 	readonly domain: Record<string, string | number>;
 	readonly message: Record<string, unknown>;
 }
+
+/**
+ * To contain the gas Fee Data to be used with EIP-1559 transactions.
+ * EIP-1559 was applied to Ethereum after London hardfork.
+ *  
+ * Typically you will only need `maxFeePerGas` and `maxPriorityFeePerGas` for a transaction following EIP-1559.
+ * However, if you want to get informed about the fees of last block, you can use `baseFeePerGas` too.
+ * 
+ * 
+ * 	@see https://eips.ethereum.org/EIPS/eip-1559
+ * 
+ */
+export interface FeeData {
+	/**
+	 * The baseFeePerGas returned from the last available block.
+	 * 
+	 * However, the user will only pay (the future baseFeePerGas + the maxPriorityFeePerGas). 
+	 * And this value is just for getting informed about the fees of last block.
+	 */
+	readonly baseFeePerGas?: Numbers;
+
+	/**
+	 * The maximum fee that the user would be willing to pay per-gas.
+	 * 
+	 * However, the user will only pay (the future baseFeePerGas + the maxPriorityFeePerGas).
+	 * And the `maxFeePerGas` could be used to prevent paying more than it, if `baseFeePerGas` went too high.
+	 */
+	readonly maxFeePerGas?: Numbers;
+
+	/**
+	 * The validator's tip for including a transaction in a block.
+	 */
+	readonly maxPriorityFeePerGas?: Numbers;
+}

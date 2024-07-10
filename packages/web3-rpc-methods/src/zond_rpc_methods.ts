@@ -51,6 +51,13 @@ export async function getCoinbase(requestManager: Web3RequestManager) {
 	});
 }
 
+export async function getMaxPriorityFeePerGas(requestManager: Web3RequestManager) {
+	return requestManager.send({
+		method: 'zond_maxPriorityFeePerGas',
+		params: [],
+	});
+}
+
 export async function getAccounts(requestManager: Web3RequestManager) {
 	return requestManager.send({
 		method: 'zond_accounts',

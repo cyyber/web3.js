@@ -37,10 +37,13 @@ import {
 	DataFormat,
 	DEFAULT_RETURN_FORMAT,
 	Eip712TypedData,
+	FeeData,
+	FMT_BYTES,
+	FMT_NUMBER,
 } from '@theqrl/web3-types';
 import { isSupportedProvider, Web3Context, Web3ContextInitOptions } from '@theqrl/web3-core';
 import { TransactionNotFound } from '@theqrl/web3-errors';
-import { toChecksumAddress, isNullish } from '@theqrl/web3-utils';
+import { toChecksumAddress, isNullish, zondUnitMap } from '@theqrl/web3-utils';
 import { zondRpcMethods } from '@theqrl/web3-rpc-methods';
 
 import * as rpcMethodsWrappers from './rpc_method_wrappers.js';
@@ -141,6 +144,85 @@ export class Web3Zond extends Web3Context<Web3ZondExecutionAPI, RegisteredSubscr
 	 */
 	public async getCoinbase() {
 		return zondRpcMethods.getCoinbase(this.requestManager);
+	}
+
+	/**
+	 * @param returnFormat ({@link DataFormat} defaults to {@link DEFAULT_RETURN_FORMAT}) Specifies how the return data should be formatted.
+	 * @returns the current maxPriorityFeePerGas per gas in wei.
+	 *
+	 * ```ts
+	 * web3.zond.getMaxPriorityFeePerGas().then(console.log);
+	 * > 20000000000n
+	 *
+	 * web3.zond.getMaxPriorityFeePerGas({ number: FMT_NUMBER.HEX , bytes: FMT_BYTES.HEX }).then(console.log);
+	 * > "0x4a817c800"
+	 * ```
+	 */
+	public async getMaxPriorityFeePerGas<ReturnFormat extends DataFormat = typeof DEFAULT_RETURN_FORMAT>(
+		returnFormat: ReturnFormat = DEFAULT_RETURN_FORMAT as ReturnFormat,
+	) {
+		return rpcMethodsWrappers.getMaxPriorityFeePerGas(this, returnFormat);
+	}
+
+		/**
+	 * Calculates the current Fee Data.
+	 * `maxFeePerGas` and `maxPriorityFeePerGas` will be calculated.
+	 *
+	 * @param baseFeePerGasFactor The factor to multiply the baseFeePerGas with, if the node supports EIP-1559.
+	 * @param alternativeMaxPriorityFeePerGas The alternative maxPriorityFeePerGas to use, if the node supports EIP-1559, but does not support the method `eth_maxPriorityFeePerGas`.
+	 * @returns The current fee data.
+	 *
+	 * ```ts
+	 * web3.zond.calculateFeeData().then(console.log);
+	 * > {
+	 *     maxFeePerGas: 20000000000n,
+	 *     maxPriorityFeePerGas: 20000000000n,
+	 * 	   baseFeePerGas: 20000000000n
+	 * }
+	 *
+	 * web3.zond.calculateFeeData(zondUnitMap.Gwei, 2n).then(console.log);
+	 * > {
+	 *     maxFeePerGas: 40000000000n,
+	 *     maxPriorityFeePerGas: 20000000000n,
+	 * 	   baseFeePerGas: 20000000000n
+	 * }
+	 * ```
+	 */
+	public async calculateFeeData(
+		baseFeePerGasFactor = BigInt(2),
+		alternativeMaxPriorityFeePerGas = zondUnitMap.Gwei,
+	): Promise<FeeData> {
+		const block = await this.getBlock<{ number: FMT_NUMBER.BIGINT; bytes: FMT_BYTES.HEX }>(
+			undefined,
+			false,
+		);
+
+		const baseFeePerGas: bigint | undefined = block?.baseFeePerGas ?? undefined; // use undefined if it was null
+
+		let maxPriorityFeePerGas: bigint | undefined;
+		try {
+			maxPriorityFeePerGas = await this.getMaxPriorityFeePerGas<{
+				number: FMT_NUMBER.BIGINT;
+				bytes: FMT_BYTES.HEX;
+			}>();
+		} catch (error) {
+			// do nothing
+		}
+
+		let maxFeePerGas: bigint | undefined;
+		// if the `block.baseFeePerGas` is available, then EIP-1559 is supported
+		// and we can calculate the `maxFeePerGas` from the `block.baseFeePerGas`
+		if (baseFeePerGas) {
+			// tip the miner with alternativeMaxPriorityFeePerGas, if no value available from getMaxPriorityFeePerGas
+			maxPriorityFeePerGas = maxPriorityFeePerGas ?? alternativeMaxPriorityFeePerGas;
+			// basically maxFeePerGas = (baseFeePerGas +- 12.5%) + maxPriorityFeePerGas
+			// and we multiply the `baseFeePerGas` by `baseFeePerGasFactor`, to allow
+			// trying to include the transaction in the next few blocks even if the
+			// baseFeePerGas is increasing fast
+			maxFeePerGas = baseFeePerGas * baseFeePerGasFactor + maxPriorityFeePerGas;
+		}
+
+		return { maxFeePerGas, maxPriorityFeePerGas, baseFeePerGas };
 	}
 
 	/**
@@ -1312,12 +1394,13 @@ export class Web3Zond extends Web3Context<Web3ZondExecutionAPI, RegisteredSubscr
 		return rpcMethodsWrappers.createAccessList(this, transaction, blockNumber, returnFormat);
 	}
 
+	// TODO(rgeraldes24): legacy
 	/**
 	 * This method sends EIP-712 typed data to the RPC provider to be signed.
 	 *
 	 * @param address The address that corresponds with the private key used to sign the typed data.
 	 * @param typedData The EIP-712 typed data object.
-	 * @param useLegacy A boolean flag determining whether the RPC call uses the legacy method `eth_signTypedData` or the newer method `eth_signTypedData_v4`
+	 * @param useLegacy A boolean flag determining whether the RPC call uses the legacy method `zond_signTypedData` or the newer method `zond_signTypedData_v4`
 	 * @param returnFormat ({@link DataFormat} defaults to {@link DEFAULT_RETURN_FORMAT}) - Specifies how the signed typed data should be formatted.
 	 * @returns The signed typed data.
 	 */
