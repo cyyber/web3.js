@@ -324,7 +324,7 @@ async function interact() {
 			from: defaultAccount,
 			gas: 1000000,
 			maxFeePerGas: 10000000000,
-			maxPriorityFeePerGas: 0,
+			maxPriorityFeePerGas: 30000000,
 		});
 		console.log('Transaction Hash: ' + receipt.transactionHash);
 
