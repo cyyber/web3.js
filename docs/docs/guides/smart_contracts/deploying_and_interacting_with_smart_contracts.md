@@ -252,7 +252,7 @@ async function deploy() {
 			from: defaultAccount,
 			gas,
 			maxFeePerGas: 10000000000,
-			maxPriorityFeePerGas: 0,
+			maxPriorityFeePerGas: 30000000,
 		});
 		console.log('Contract deployed at address: ' + tx.options.address);
 
@@ -428,7 +428,7 @@ With this knowledge, you can start experimenting with writing smart contract in 
 -   Always test your smart contracts on a local network like Ganache before deploying them to the mainnet.
 -   Use the latest version of web3.js and Solidity to take advantage of the latest features and security patches.
 -   Keep your private keys secure and never share them with anyone.
--   Use the gas fee parameters carefully to avoid spending too much on transaction fees.
+-   Use the gas limit and gas fee parameters carefully to avoid spending too much on transaction fees.
 -   Use the `estimateGas` function in web3.js to estimate the gas required for a transaction before sending it to the network.
 -   Use events to notify the client application about state changes in the smart contract.
 -   Use a linter like Solhint to check for common Solidity coding errors.

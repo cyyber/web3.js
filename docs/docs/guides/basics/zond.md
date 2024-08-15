@@ -135,6 +135,10 @@ async function interact() {
 
 	// see the updated balances
 	console.log(balance1, balance2);
+
+	// irrelevant with the actual transaction, just to know the gasPrice
+	const gasPrice = await web3.zond.getGasPrice();
+	console.log(gasPrice);
 }
 
 (async () => {
@@ -298,7 +302,7 @@ async function sendSigned() {
 		value: value,
 		gas: 21000,
 		maxFeePerGas: web3.utils.toWei('10', 'gwei'),
-		maxPriorityFeePerGas: 0,
+		maxPriorityFeePerGas: 30000000,
 		nonce: await web3.zond.getTransactionCount(fromAddress),
 	};
 
@@ -360,7 +364,7 @@ With this knowledge, you can start experimenting with the Zond blockchain. Keep 
 -   Always test your smart contracts on a local network like Ganache before deploying them to the mainnet.
 -   Use the latest version of web3.js and Solidity to take advantage of the latest features and security patches.
 -   Keep your private keys secure and never share them with anyone.
--   Use the gas fee parameters carefully to avoid spending too much on transaction fees.
+-   Use the gas limit and gas fee parameters carefully to avoid spending too much on transaction fees.
 -   Use the `estimateGas` function in web3.js to estimate the gas required for a transaction before sending it to the network.
 -   Use events to notify the client application about state changes in the smart contract.
 -   Use a linter like Solhint to check for common Solidity coding errors.
