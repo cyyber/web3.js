@@ -148,6 +148,24 @@ export class Web3Zond extends Web3Context<Web3ZondExecutionAPI, RegisteredSubscr
 
 	/**
 	 * @param returnFormat ({@link DataFormat} defaults to {@link DEFAULT_RETURN_FORMAT}) Specifies how the return data should be formatted.
+	 * @returns The gas price determined by the last few blocks median gas price.
+	 *
+	 * ```ts
+	 * web3.zond.getGasPrice().then(console.log);
+	 * > 20000000000n
+	 *
+	 * web3.zond.getGasPrice({ number: FMT_NUMBER.HEX , bytes: FMT_BYTES.HEX }).then(console.log);
+	 * > "0x4a817c800"
+	 * ```
+	 */
+	public async getGasPrice<ReturnFormat extends DataFormat = typeof DEFAULT_RETURN_FORMAT>(
+		returnFormat: ReturnFormat = DEFAULT_RETURN_FORMAT as ReturnFormat,
+	) {
+		return rpcMethodsWrappers.getGasPrice(this, returnFormat);
+	}
+
+	/**
+	 * @param returnFormat ({@link DataFormat} defaults to {@link DEFAULT_RETURN_FORMAT}) Specifies how the return data should be formatted.
 	 * @returns the current maxPriorityFeePerGas per gas in wei.
 	 *
 	 * ```ts

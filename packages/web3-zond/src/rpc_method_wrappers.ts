@@ -118,6 +118,19 @@ export const isSyncing = async (web3Context: Web3Context<ZondExecutionAPI>) =>
 export const getCoinbase = async (web3Context: Web3Context<ZondExecutionAPI>) =>
 	zondRpcMethods.getCoinbase(web3Context.requestManager);
 
+/**
+ * View additional documentations here: {@link Web3Zond.getGasPrice}
+ * @param web3Context ({@link Web3Context}) Web3 configuration object that contains things such as the provider, request manager, wallet, etc.
+ */
+export async function getGasPrice<ReturnFormat extends DataFormat>(
+	web3Context: Web3Context<ZondExecutionAPI>,
+	returnFormat: ReturnFormat,
+) {
+	const response = await zondRpcMethods.getGasPrice(web3Context.requestManager);
+
+	return format({ format: 'uint' }, response as Numbers, returnFormat);
+}
+
 export async function getMaxPriorityFeePerGas<ReturnFormat extends DataFormat>(
 	web3Context: Web3Context<ZondExecutionAPI>,
 	returnFormat: ReturnFormat,

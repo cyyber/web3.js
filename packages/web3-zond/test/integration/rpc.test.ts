@@ -118,6 +118,15 @@ describe('rpc', () => {
 			expect(typeof res).toBe(mapFormatToType[format as string]);
 			expect(parseInt(String(res), 16)).toBeGreaterThan(0);
 		});
+
+		it.each(Object.values(FMT_NUMBER))('getGasPrice', async format => {
+			const res = await web3Zond.getGasPrice({
+				number: format as FMT_NUMBER,
+				bytes: FMT_BYTES.HEX,
+			});
+			expect(typeof res).toBe(mapFormatToType[format as string]);
+			expect(parseInt(String(res), 16)).toBeGreaterThan(0);
+		});
 		
 		it.each(Object.values(FMT_NUMBER))('getBalance', async format => {
 			const value = '0xa';
