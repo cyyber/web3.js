@@ -26,8 +26,8 @@ export interface ContractInitOptions {
 	 */
 	readonly gas?: Uint;
 	readonly gasLimit?: Uint;
-	maxPriorityFeePerGas?: string;
-	maxFeePerGas?: string;
+	readonly maxPriorityFeePerGas?: string;
+	readonly maxFeePerGas?: string;
 	/**
 	 * The address transactions should be made from
 	 */
