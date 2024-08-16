@@ -51,6 +51,8 @@ import {
 import Web3 from '@theqrl/web3';
 
 // eslint-disable-next-line import/no-extraneous-dependencies
+import { NonPayableMethodObject } from '@theqrl/web3-zond-contract';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import HttpProvider from '@theqrl/web3-providers-http';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { IpcProvider } from '@theqrl/web3-providers-ipc';
@@ -323,6 +325,21 @@ export const signTxAndSendEIP1559 = async (
 
 	return web3.zond.sendTransaction(txObj, undefined, { checkRevertBeforeSending: false });
 };
+
+export const signAndSendContractMethodEIP1559 = async (
+	provider: unknown,
+	address: string,
+	method: NonPayableMethodObject,
+	privateKey: string,
+) =>
+	signTxAndSendEIP1559(
+		provider,
+		{
+			to: address,
+			data: method.encodeABI(),
+		},
+		privateKey,
+	);
 
 export const createLocalAccount = async (web3: Web3) => {
 	const account = web3.zond.accounts.create();

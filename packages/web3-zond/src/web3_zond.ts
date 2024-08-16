@@ -133,19 +133,6 @@ export class Web3Zond extends Web3Context<Web3ZondExecutionAPI, RegisteredSubscr
 		return zondRpcMethods.getSyncing(this.requestManager);
 	}
 
-	// TODO consider adding returnFormat parameter (to format address as bytes)
-	/**
-	 * @returns Returns the coinbase address to which mining rewards will go.
-	 *
-	 * ```ts
-	 * web3.zond.getCoinbase().then(console.log);
-	 * > "0x11f4d0A3c12e86B4b5F39B213F7E19D048276DAe"
-	 * ```
-	 */
-	public async getCoinbase() {
-		return zondRpcMethods.getCoinbase(this.requestManager);
-	}
-
 	/**
 	 * @param returnFormat ({@link DataFormat} defaults to {@link DEFAULT_RETURN_FORMAT}) Specifies how the return data should be formatted.
 	 * @returns The gas price determined by the last few blocks median gas price.

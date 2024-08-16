@@ -140,8 +140,6 @@ export class FeeMarketEIP1559Transaction extends BaseTransaction<FeeMarketEIP155
 			maxFeePerGas,
 			gasLimit,
 			value,
-			publicKey,
-			signature,
 		});
 
 		return new FeeMarketEIP1559Transaction(

@@ -38,11 +38,6 @@ describe('web3_zond_methods_no_parameters', () => {
 			expect(zondRpcMethods.getSyncing).toHaveBeenCalledWith(web3Zond.requestManager);
 		});
 
-		it('getCoinbase', async () => {
-			await web3Zond.getCoinbase();
-			expect(zondRpcMethods.getCoinbase).toHaveBeenCalledWith(web3Zond.requestManager);
-		});
-
 		it('getAccounts', async () => {
 			await web3Zond.getAccounts();
 			expect(zondRpcMethods.getAccounts).toHaveBeenCalledWith(web3Zond.requestManager);

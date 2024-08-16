@@ -729,6 +729,7 @@ describe('defaults', () => {
 					value: '0x174876e800',
 					gas: '0x5208',
 					maxFeePerGas: '0x4a817c800',
+					maxPriorityFeePerGas: '0x1c9c380',
 					data: '0x0',
 					nonce: '0x4',
 					chainId: '0x1',
@@ -880,6 +881,8 @@ describe('defaults', () => {
 					nonce: '0x4',
 					chainId: '0x1',
 					gasLimit: '0x5208',
+					maxPriorityFeePerGas: '',
+					maxFeePerGas: '0x4a817c800',
 					accessList: [
 						{
 							address: '0xEB014f8c8B418Db6b45774c326A0E64C78914dC0',
@@ -889,7 +892,7 @@ describe('defaults', () => {
 				},
 				zond2,
 			);
-			expect(accessListOverride).toBe('0x1');
+			expect(accessListOverride).toBe('0x2');
 
 			const hardforkBerlinOverride = getTransactionType(
 				{

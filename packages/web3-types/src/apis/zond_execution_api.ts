@@ -172,7 +172,6 @@ export type ZondExecutionAPI = {
 	// https://github.com/ethereum/execution-apis/blob/main/src/eth/client.yaml
 	zond_protocolVersion: () => string;
 	zond_syncing: () => SyncingStatusAPI;
-	zond_coinbase: () => Address;
 	zond_accounts: () => Address[];
 	zond_blockNumber: () => Uint;
 

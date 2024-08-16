@@ -110,14 +110,6 @@ export const getProtocolVersion = async (web3Context: Web3Context<ZondExecutionA
 export const isSyncing = async (web3Context: Web3Context<ZondExecutionAPI>) =>
 	zondRpcMethods.getSyncing(web3Context.requestManager);
 
-// TODO consider adding returnFormat parameter (to format address as bytes)
-/**
- * View additional documentations here: {@link Web3Zond.getCoinbase}
- * @param web3Context ({@link Web3Context}) Web3 configuration object that contains things such as the provider, request manager, wallet, etc.
- */
-export const getCoinbase = async (web3Context: Web3Context<ZondExecutionAPI>) =>
-	zondRpcMethods.getCoinbase(web3Context.requestManager);
-
 /**
  * View additional documentations here: {@link Web3Zond.getGasPrice}
  * @param web3Context ({@link Web3Context}) Web3 configuration object that contains things such as the provider, request manager, wallet, etc.
