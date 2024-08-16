@@ -330,7 +330,7 @@ export const signAndSendContractMethodEIP1559 = async (
 	provider: unknown,
 	address: string,
 	method: NonPayableMethodObject,
-	privateKey: string,
+	seed: string,
 ) =>
 	signTxAndSendEIP1559(
 		provider,
@@ -338,7 +338,7 @@ export const signAndSendContractMethodEIP1559 = async (
 			to: address,
 			data: method.encodeABI(),
 		},
-		privateKey,
+		seed,
 	);
 
 export const createLocalAccount = async (web3: Web3) => {
