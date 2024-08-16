@@ -27,8 +27,7 @@ import {
 	validateGasData,
 } from '../fixtures/validate_transaction_for_signing';
 
-// TODO(rgeraldes24): fix tests
-describe.skip('validateTransactionForSigning', () => {
+describe('validateTransactionForSigning', () => {
 	describe('should override validateTransactionForSigning method', () => {
 		it('should call override method', () => {
 			const overrideFunction = jest.fn();

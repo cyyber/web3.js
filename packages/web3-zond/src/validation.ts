@@ -31,6 +31,7 @@ import {
 	HardforkMismatchError,
 	ChainIdMismatchError,
 	CommonOrChainAndHardforkError,
+	InvalidGas,
 	InvalidMaxPriorityFeePerGasOrMaxFeePerGas,
 	InvalidNonceOrChainIdError,
 	InvalidTransactionCall,
@@ -178,6 +179,15 @@ export const validateHardfork = (transaction: InternalTransaction) => {
 };
 
 export const validateFeeMarketGas = (transaction: InternalTransaction) => {
+	// This check is verifying gas isn't less than 0.
+	if (
+	isNullish(transaction.gas) ||
+		!isUInt(transaction.gas) 
+	)
+		throw new InvalidGas({
+			gas: transaction.gas,
+		});
+	
 	if (
 		isNullish(transaction.maxFeePerGas) ||
 		!isUInt(transaction.maxFeePerGas) ||
