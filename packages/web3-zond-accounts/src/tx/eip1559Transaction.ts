@@ -281,7 +281,7 @@ export class FeeMarketEIP1559Transaction extends BaseTransaction<FeeMarketEIP155
 	 * Returns the serialized encoding of the EIP-1559 transaction.
 	 *
 	 * Format: `0x02 || rlp([chainId, nonce, maxPriorityFeePerGas, maxFeePerGas, gasLimit, to, value, data,
-	 * accessList, signatureYParity, signatureR, signatureS])`
+	 * accessList, signature, publickey])`
 	 *
 	 * Note that in contrast to the legacy tx serialization format this is not
 	 * valid RLP any more due to the raw tx type preceding and concatenated to

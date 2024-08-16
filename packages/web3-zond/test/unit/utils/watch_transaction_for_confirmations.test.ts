@@ -41,10 +41,9 @@ jest.mock('../../../src/utils/wait_for_transaction_receipt');
 jest.mock('../../../src/utils/watch_transaction_by_pooling');
 jest.mock('../../../src/utils/watch_transaction_by_subscription');
 
-// TODO(rgeraldes24): fix tests
 const testMessage =
 	'Title: %s\ninputSignedTransaction: %s\nexpectedTransactionHash: %s\nexpectedTransactionReceipt: %s\n';
-describe.skip('watchTransactionForConfirmations', () => {
+describe('watchTransactionForConfirmations', () => {
 	describe('should throw when transaction receipt has something wrong', () => {
 		let web3Context: Web3Context<Web3ZondExecutionAPI>;
 
@@ -104,13 +103,7 @@ describe.skip('watchTransactionForConfirmations', () => {
 		let web3Context: Web3Context<Web3ZondExecutionAPI>;
 
 		beforeAll(() => {
-			web3Context = new Web3Context(
-				// dummy provider that supports subscription
-				{
-					request: jest.fn(),
-					supportsSubscriptions: () => true,
-				},
-			);
+			web3Context = new Web3Context('ws://localhost:8545');
 		});
 
 		afterEach(() => jest.resetAllMocks());
@@ -169,13 +162,7 @@ describe.skip('watchTransactionForConfirmations', () => {
 		let web3Context: Web3Context<Web3ZondExecutionAPI>;
 
 		beforeAll(() => {
-			web3Context = new Web3Context(
-				// dummy provider that does not supports subscription
-				{
-					request: jest.fn(),
-					supportsSubscriptions: () => false,
-				},
-			);
+			web3Context = new Web3Context('http://127.0.0.1:8545');
 		});
 
 		afterEach(() => jest.resetAllMocks());
