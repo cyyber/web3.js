@@ -37,19 +37,13 @@ const mockBlockData = {
 	hash: '0xdc0818cf78f21a8e70579cb46a43643f78291264dda342ae31049421c82d21ae',
 };
 
-// TODO(rgeraldes24): fix test
 const testMessage = 'Title: %s\ninputSignedTransaction: %s\nexpectedTransactionHash: %s\nexpectedTransactionReceipt: %s\n';
-describe.skip('watchTransactionByPolling', () => {
+describe('watchTransactionByPolling', () => {
 	describe('should call getBlockByNumber', () => {
 		let web3Context: Web3Context<Web3ZondExecutionAPI>;
 
 		beforeAll(() => {
-			web3Context = new Web3Context(
-				// dummy provider that does not supports subscription
-				{
-					request: jest.fn(),
-				},
-			);
+			web3Context = new Web3Context('http://127.0.0.1:8545');
 
 			jest.spyOn(zondRpcMethods, 'getBlockByNumber').mockResolvedValue(mockBlockData as any);
 		});
