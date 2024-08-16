@@ -81,8 +81,6 @@ describe('web3.accounts', () => {
 
 				const txWithGas = {
 					...tx,
-					maxFeePerGas: '0x271000',
-					maxPriorityFeePerGas: '0x0',
 				};
 				// Sign the tx from that account
 				const signedTx = await account.signTransaction(txWithGas);
