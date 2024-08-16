@@ -38,8 +38,7 @@ describe('ContractMethodWrappersPlugin', () => {
 		expect(web3.contractMethodWrappersPlugin).toBeDefined();
 	});
 
-	// TODO(rgeraldes24): fix tests
-	describe.skip('methods', () => {
+	describe('methods', () => {
 		const contractAddress = '0xdAC17F958D2ee523a2206206994597C13D831ec7';
 		const sender = '0x8da5e39ec14b57fb9bcd9aa2b4500e909119795d';
 		const recipient = '0x4f641def1e7845caab95ac717c80416082430d0d';
@@ -82,14 +81,13 @@ describe('ContractMethodWrappersPlugin', () => {
 		});
 
 		it('should call `transferAndGetBalances` with expected RPC object', async () => {
-			const expectedMaxFeePerGas = '0x1ca14bd70';
-			const expectedMaxPriorityFeePerGas = '0x1ca14bd70';
+			const expectedMaxFeePerGas = '0x10c388d00';
+			const expectedMaxPriorityFeePerGas = '0x9502f900';
 			const expectedTransactionHash =
 				'0xc41b9a4f654c44552e135f770945916f57c069b80326f9a5f843e613491ab6b1';
 
-			// TODO(rgeraldes24): review and remove
-			// requestManagerSendSpy.mockResolvedValueOnce(expectedGasPrice);
-			requestManagerSendSpy.mockResolvedValueOnce(expectedMaxFeePerGas);
+			// Mocking getBlockByNumber for getEip1559GasPricing
+			requestManagerSendSpy.mockResolvedValueOnce({"baseFeePerGas": "1000000000"});
 			// Mocking block number for trySendTransaction call
 			requestManagerSendSpy.mockResolvedValueOnce('0x1');
 			requestManagerSendSpy.mockResolvedValueOnce(expectedTransactionHash);
@@ -105,8 +103,7 @@ describe('ContractMethodWrappersPlugin', () => {
 				recipient,
 				amount,
 			);
-			// TODO(rgeraldes24): desc
-			// The first call will be to `zond_gasPrice` and the second is to `zond_blockNumber`. And the third one will be to `zond_sendTransaction`:
+			// The first call will be to `zond_getBlockByNumber` and the second is to `zond_blockNumber`. And the third one will be to `zond_sendTransaction`:
 			expect(requestManagerSendSpy).toHaveBeenNthCalledWith(3, {
 				method: 'zond_sendTransaction',
 				params: [
