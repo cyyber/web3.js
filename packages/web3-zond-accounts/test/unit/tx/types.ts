@@ -33,25 +33,6 @@ export interface TxData {
 	signature: string;
 }
 
-// The type of each entry from ./ttTransactionTestEip155VitaliksTests.json
-export interface VitaliksTestsDataEntry {
-	blocknumber: string;
-	hash: string;
-	rlp: string;
-	sender: string;
-	transaction: TxData;
-}
-
-// The type of ./txs.json
-export type TxsJsonEntry = {
-	seed: string;
-	sendersAddress: string;
-	type: string;
-	cost: number;
-	raw: string[];
-	data: TxData;
-};
-
 export type ForksData = {
 	[forkName in ForkName]: { hash?: string; sender?: string; exception?: string };
 };
