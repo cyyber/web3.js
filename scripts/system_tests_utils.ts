@@ -416,3 +416,10 @@ export const sendFewSampleTxs = async (cnt = 1) => {
 	await closeOpenConnection(web3);
 	return res;
 };
+
+export const objectBigintToString = (obj: object): object =>
+	// eslint-disable-next-line @typescript-eslint/no-unsafe-return
+	JSON.parse(
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-return
+		JSON.stringify(obj, (_, value) => (typeof value === 'bigint' ? value.toString() : value)),
+	);

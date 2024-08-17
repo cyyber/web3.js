@@ -146,7 +146,7 @@ export const numbersAsStringTransaction: FormatType<
 	to: '0x3535353535353535353535353535353535353535',
 	value: '100000000000',
 	gas: '21000',
-	type: '0',
+	type: '2',
 	maxFeePerGas: '78000000000',
 	maxPriorityFeePerGas: '1230000000',
 	data: '0x',

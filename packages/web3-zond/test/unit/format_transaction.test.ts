@@ -26,6 +26,7 @@ import {
 	numbersAsNumberTransaction,
 	bytesAsUint8ArrayTransaction,
 } from '../fixtures/format_transaction';
+import { objectBigintToString } from '../fixtures/system_test_utils';
 
 const transactionsDataForNumberTypes: Record<FMT_NUMBER, Record<string, unknown>> = {
 	[FMT_NUMBER.BIGINT]: numbersAsBigIntTransaction,
@@ -39,8 +40,7 @@ const transactionsDataForByteTypes: Record<FMT_BYTES, Record<string, unknown>> =
 	[FMT_BYTES.UINT8ARRAY]: bytesAsUint8ArrayTransaction,
 };
 
-// TODO(rgeraldes24): fix tests
-describe.skip('formatTransaction', () => {
+describe('formatTransaction', () => {
 	it.skip('should call override method', () => {
 		const overrideFunction = jest.fn();
 		formatTransaction(numbersAsHexStringTransaction, DEFAULT_RETURN_FORMAT);
@@ -60,14 +60,16 @@ describe.skip('formatTransaction', () => {
 					delete expectedFormattedTransaction.data;
 
 					expect(
-						formatTransaction(
-							transactionsDataForNumberTypes[sourceType as FMT_NUMBER],
-							{
-								...DEFAULT_RETURN_FORMAT,
-								number: destinationType as FMT_NUMBER,
-							},
+						objectBigintToString(
+							formatTransaction(
+								transactionsDataForNumberTypes[sourceType as FMT_NUMBER],
+								{
+									...DEFAULT_RETURN_FORMAT,
+									number: destinationType as FMT_NUMBER,
+								},
+							),
 						),
-					).toStrictEqual(expectedFormattedTransaction);
+					).toStrictEqual(objectBigintToString(expectedFormattedTransaction));
 				});
 			}
 		}
@@ -86,11 +88,16 @@ describe.skip('formatTransaction', () => {
 					delete expectedFormattedTransaction.data;
 
 					expect(
-						formatTransaction(transactionsDataForByteTypes[sourceType as FMT_BYTES], {
-							...DEFAULT_RETURN_FORMAT,
-							bytes: destinationType as FMT_BYTES,
-						}),
-					).toStrictEqual(expectedFormattedTransaction);
+						objectBigintToString(
+							formatTransaction(
+								transactionsDataForByteTypes[sourceType as FMT_BYTES],
+								{
+									...DEFAULT_RETURN_FORMAT,
+									bytes: destinationType as FMT_BYTES,
+								},
+							),
+						),
+					).toStrictEqual(objectBigintToString(expectedFormattedTransaction));
 				});
 			}
 		}
