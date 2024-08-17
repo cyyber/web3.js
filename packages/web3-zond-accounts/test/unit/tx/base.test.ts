@@ -245,6 +245,8 @@ describe('[BaseTransaction]', () => {
 		const tx = FeeMarketEIP1559Transaction.fromTxData({
 			nonce: '',
 			gasLimit: '',
+			maxFeePerGas: '',
+			maxPriorityFeePerGas: '',
 			to: '',
 			value: '',
 			data: '',
@@ -256,6 +258,8 @@ describe('[BaseTransaction]', () => {
 		expect(tx.to).toBeUndefined();
 		expect(tx.value).toBe(uint8ArrayToBigInt(uInt8ArrayZero));
 		expect(tx.data).toEqual(uInt8ArrayZero);
+		expect(tx.maxFeePerGas).toEqual(uInt8ArrayZero);
+		expect(tx.maxPriorityFeePerGas).toEqual(uInt8ArrayZero);
 		expect(tx.gasLimit).toBe(uint8ArrayToBigInt(uInt8ArrayZero));
 		expect(tx.nonce).toBe(uint8ArrayToBigInt(uInt8ArrayZero));
 	});
