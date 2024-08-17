@@ -31,7 +31,6 @@ describe('[Common]: Hardfork logic', () => {
 		}
 	});
 
-	
 	it('getHardforkByBlockNumber() / setHardforkByBlockNumber()', () => {
 		let c = new Common({ chain: Chain.Mainnet });
 

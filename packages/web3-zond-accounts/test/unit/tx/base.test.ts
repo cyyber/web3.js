@@ -243,7 +243,6 @@ describe('[BaseTransaction]', () => {
 	it('initialization with defaults', () => {
 		const uInt8ArrayZero = toUint8Array('0x');
 		const tx = FeeMarketEIP1559Transaction.fromTxData({
-		// const tx = Transaction.fromTxData({
 			nonce: '',
 			gasLimit: '',
 			to: '',
