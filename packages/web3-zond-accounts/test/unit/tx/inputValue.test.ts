@@ -29,30 +29,32 @@ import type {
 } from '../../../src';
 // import type { BigIntLike, PrefixedHexString } from '../../../src/common/types';
 
-// type AddressLike = Address | Uint8Array | PrefixedHexString;
-// @returns: Array with subtypes of the AddressLike type for a given address
-// function generateAddressLikeValues(address: string): AddressLike[] {
-// 	return [address, toUint8Array(address), new Address(toUint8Array(address))];
-// }
-
-// // @returns: Array with subtypes of the BigIntLike type for a given number
-// function generateBigIntLikeValues(value: number): BigIntLike[] {
-// 	return [value, BigInt(value), `0x${value.toString(16)}`, toUint8Array(value)];
-// }
-
-// // @returns: Array with subtypes of the BufferLike type for a given string
-// function generateBufferLikeValues(value: string): Bytes[] {
-// 	return [value, toUint8Array(value)];
-// }
-
-// interface GenerateCombinationsArgs {
-// 	options: { [x: string]: any };
-// 	optionIndex?: number;
-// 	results?: { [x: string]: any }[];
-// 	current?: { [x: string]: any };
-// }
-
+// NOTE(rgeraldes24): test 'Transaction Input Values' not valid atm
 /*
+type AddressLike = Address | Uint8Array | PrefixedHexString;
+// @returns: Array with subtypes of the AddressLike type for a given address
+function generateAddressLikeValues(address: string): AddressLike[] {
+	return [address, toUint8Array(address), new Address(toUint8Array(address))];
+}
+
+// @returns: Array with subtypes of the BigIntLike type for a given number
+function generateBigIntLikeValues(value: number): BigIntLike[] {
+	return [value, BigInt(value), `0x${value.toString(16)}`, toUint8Array(value)];
+}
+
+// @returns: Array with subtypes of the BufferLike type for a given string
+function generateBufferLikeValues(value: string): Bytes[] {
+	return [value, toUint8Array(value)];
+}
+
+interface GenerateCombinationsArgs {
+	options: { [x: string]: any };
+	optionIndex?: number;
+	results?: { [x: string]: any }[];
+	current?: { [x: string]: any };
+}
+
+
 function generateCombinations({
 	options,
 	optionIndex = 0,
@@ -119,16 +121,16 @@ const baseTxValues = {
 };
 
 const accessListEip2930TxValues = {
-	chainId: generateBigIntLikeValues(4),
+	chainId: generateBigIntLikeValues(1),
 };
 
 const eip1559TxValues = {
 	maxFeePerGas: generateBigIntLikeValues(100),
 	maxPriorityFeePerGas: generateBigIntLikeValues(50),
 };
-*/
 
-/*
+
+
 describe('[Transaction Input Values]', () => {
 	it('EIP-1559 Transaction Values', () => {
 		const common = new Common({ chain: Chain.Mainnet, hardfork: Hardfork.Shanghai });
