@@ -169,7 +169,7 @@ export class Web3Zond extends Web3Context<Web3ZondExecutionAPI, RegisteredSubscr
 		return rpcMethodsWrappers.getMaxPriorityFeePerGas(this, returnFormat);
 	}
 
-		/**
+	/**
 	 * Calculates the current Fee Data.
 	 * `maxFeePerGas` and `maxPriorityFeePerGas` will be calculated.
 	 *
@@ -1004,7 +1004,7 @@ export class Web3Zond extends Web3Context<Web3ZondExecutionAPI, RegisteredSubscr
 	 *      value: '0x1',
 	 *      gas: '21000',
 	 *      maxFeePerGas: '1000000001',
-	 * 	    maxPriorityFeePerGas: '0',
+	 *      maxPriorityFeePerGas: '0',
 	 *      nonce: '0x1',
 	 *      type: '0x2'
 	 * }
@@ -1399,7 +1399,6 @@ export class Web3Zond extends Web3Context<Web3ZondExecutionAPI, RegisteredSubscr
 		return rpcMethodsWrappers.createAccessList(this, transaction, blockNumber, returnFormat);
 	}
 
-	// TODO(rgeraldes24): legacy
 	/**
 	 * This method sends EIP-712 typed data to the RPC provider to be signed.
 	 *
