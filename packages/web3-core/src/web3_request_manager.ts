@@ -225,6 +225,7 @@ export class Web3RequestManager<
 				);
 		}
 
+		// NOTE(rgeraldes24): there are unit/integration tests that depend on the legacy providers
 		// TODO: This could be deprecated and removed.
 		if (isLegacyRequestProvider(provider)) {
 			return new Promise<JsonRpcResponse<ResponseType>>((resolve, reject) => {
@@ -288,7 +289,6 @@ export class Web3RequestManager<
 			});
 		}
 
-		// NOTE(rgeraldes24): there are unit/integration tests that depend on the legacy providers
 		// TODO: This could be deprecated and removed.
 		if (isLegacySendProvider(provider)) {
 			return new Promise<JsonRpcResponse<ResponseType>>((resolve, reject): void => {
