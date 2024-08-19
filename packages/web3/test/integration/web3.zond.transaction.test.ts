@@ -18,6 +18,7 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 import * as httpProvider from '@theqrl/web3-providers-http';
 import { Web3Account } from '@theqrl/web3-zond-accounts';
 import Web3, { DEFAULT_RETURN_FORMAT, Transaction } from '../../src';
+// TODO(youtrack/theqrl/web3.js/8)
 import testsData from '../fixtures/transactions.json';
 
 jest.mock('@theqrl/web3-providers-http');
