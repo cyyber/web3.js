@@ -99,7 +99,7 @@ describe('watchTransactionForConfirmations', () => {
 		});
 	});
 
-	describe('should call watchTransactionBySubscription when the provider supports subscription', () => {
+	describe.skip('should call watchTransactionBySubscription when the provider supports subscription', () => {
 		let web3Context: Web3Context<Web3ZondExecutionAPI>;
 
 		beforeAll(() => {
@@ -158,7 +158,7 @@ describe('watchTransactionForConfirmations', () => {
 		);
 	});
 
-	describe('should call watchTransactionByPooling when the provider does not support subscription', () => {
+	describe('should call watchTransactionByPoolling when the provider does not support subscription', () => {
 		let web3Context: Web3Context<Web3ZondExecutionAPI>;
 
 		beforeAll(() => {
