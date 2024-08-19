@@ -326,9 +326,6 @@ describe('Web3Zond.sendTransaction', () => {
 			};
 			const response = await web3Zond.sendTransaction(transaction);
 
-			// TOOD(rgeraldes24)
-			// eslint-disable-next-line jest/no-standalone-expect
-			// expect(response.events).toBeUndefined();
 			// eslint-disable-next-line jest/no-standalone-expect
 			expect(response.type).toBe(BigInt(2));
 			// eslint-disable-next-line jest/no-standalone-expect
