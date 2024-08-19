@@ -43,7 +43,12 @@ describe('watchTransactionByPolling', () => {
 		let web3Context: Web3Context<Web3ZondExecutionAPI>;
 
 		beforeAll(() => {
-			web3Context = new Web3Context('http://127.0.0.1:8545');
+			web3Context = new Web3Context(
+				// dummy provider that does not supports subscription
+				{
+					request: jest.fn(),
+				},
+			);
 
 			jest.spyOn(zondRpcMethods, 'getBlockByNumber').mockResolvedValue(mockBlockData as any);
 		});
