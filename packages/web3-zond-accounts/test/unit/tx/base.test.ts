@@ -103,21 +103,6 @@ describe('[BaseTransaction]', () => {
 	});
 
 	it('fromValuesArray()', () => {
-		// let rlpData: any = legacyTxs[0].raw();
-		// rlpData[0] = toUint8Array('0x00');
-		// expect(() => {
-		// 	Transaction.fromValuesArray(rlpData);
-		// }).toThrow('nonce cannot have leading zeroes');
-		// rlpData[0] = toUint8Array('0x');
-		// // rlpData[6] = toUint8Array('0x00');
-		// // expect(() => {
-		// // 	Transaction.fromValuesArray(rlpData);
-		// // }).toThrow('v cannot have leading zeroes');
-		// rlpData = eip2930Txs[0].raw();
-		// rlpData[3] = toUint8Array('0x0');
-		// expect(() => {
-		// 	AccessListEIP2930Transaction.fromValuesArray(rlpData);
-		// }).toThrow('gasLimit cannot have leading zeroes');
 		let rlpData: any = eip1559Txs[0].raw();
 		rlpData[2] = toUint8Array('0x0');
 		expect(() => {

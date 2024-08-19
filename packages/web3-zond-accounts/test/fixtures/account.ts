@@ -71,6 +71,7 @@ export const validSeedtoAccountData: [any, any][] = [
 			seed: '0x034da61fe50c659a3285549dc395571e2bf6891c462c041e3c6b9061fc73eb3687d03f940e5e65d582019ef10ce1327f',
 			sign,
 			signTransaction,
+			// TODO(youtrack/theqrl/web3.js/3)
 			//encrypt,
 		},
 	],

@@ -183,7 +183,6 @@ describe('defaults', () => {
 			});
 			expect(zond2.handleRevert).toBe(true);
 		});
-		// TODO(rgeraldes24): use new account instead of temp account
 		it('defaultBlock', async () => {
 			const contractDeployed = await contract.deploy(deployOptions).send(sendOptions);
 			// default

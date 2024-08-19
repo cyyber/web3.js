@@ -14,7 +14,7 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
-// TODO(theQRL/web3.js/issues/19)
+// TODO(youtrack/theqrl/web3.js/2)
 export const mainnetBlockHydrated = {
 	baseFeePerGas: '0x474472184',
 	extraData: '0xd883010b05846765746888676f312e32302e32856c696e7578',
