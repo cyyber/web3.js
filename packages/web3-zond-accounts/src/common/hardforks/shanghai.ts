@@ -442,10 +442,6 @@ export default {
 			"v": 32000,
 			"d": "Base fee of the CREATE2 opcode"
 		},
-		"blake2Round": {
-			"v": 1,
-			"d": "Gas cost per round for the Blake2 F precompile"
-		},
 		"sstoreSentryGasEIP2200": {
 			"v": 2300,
 			"d": "Minimum gas required to be present for an SSTORE call, not consumed"
