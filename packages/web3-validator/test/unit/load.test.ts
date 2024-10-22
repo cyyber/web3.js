@@ -64,8 +64,8 @@ const simpleSchema = {
 const simpleData = {
 	blockHash: '0x0dec0518fa672a70027b04c286582e543ab17319fbdd384fa7bc8f3d5a542c0b',
 	blockNumber: BigInt(2),
-	from: '0xCB00CDE33a7a0Fba30C63745534F1f7Ae607076b',
-	to: '0xCB00CDE33a7a0Fba30C63745534F1f7Ae607076b',
+	from: 'QCB00CDE33a7a0Fba30C63745534F1f7Ae607076b',
+	to: 'QCB00CDE33a7a0Fba30C63745534F1f7Ae607076b',
 	data: '0xafea',
 } as unknown as ValidationSchemaInput;
 

@@ -259,7 +259,7 @@ export class Iban {
 	 *
 	 * @example
 	 * ```ts
-	 * web3.zond.Iban.fromAddress("0x00c5496aEe77C1bA1f0854206A26DdA82a81D6D8");
+	 * web3.zond.Iban.fromAddress("Q00c5496aEe77C1bA1f0854206A26DdA82a81D6D8");
 	 * > Iban {_iban: "XE7338O073KYGTWWZN0F2WZ0R8PX5ZPPZS"}
 	 * ```
 	 */
@@ -286,7 +286,7 @@ export class Iban {
 	 * @example
 	 * ```ts
 	 * web3.zond.Iban.toAddress("XE7338O073KYGTWWZN0F2WZ0R8PX5ZPPZS");
-	 * > "0x00c5496aEe77C1bA1f0854206A26DdA82a81D6D8"
+	 * > "Q00c5496aEe77C1bA1f0854206A26DdA82a81D6D8"
 	 * ```
 	 */
 	public static toAddress = (iban: string): HexString => {
@@ -306,7 +306,7 @@ export class Iban {
 	 * ```ts
 	 * const iban = new web3.zond.Iban("XE7338O073KYGTWWZN0F2WZ0R8PX5ZPPZS");
 	 * iban.toAddress();
-	 * > "0x00c5496aEe77C1bA1f0854206A26DdA82a81D6D8"
+	 * > "Q00c5496aEe77C1bA1f0854206A26DdA82a81D6D8"
 	 * ```
 	 */
 	public toAddress = (): HexString => {
@@ -328,10 +328,11 @@ export class Iban {
 	 *
 	 * @example
 	 * ```ts
-	 * web3.zond.Iban.toIban("0x00c5496aEe77C1bA1f0854206A26DdA82a81D6D8");
+	 * web3.zond.Iban.toIban("Q00c5496aEe77C1bA1f0854206A26DdA82a81D6D8");
 	 * > "XE7338O073KYGTWWZN0F2WZ0R8PX5ZPPZS"
 	 * ```
 	 */
+	// TODO(rgeraldes24)
 	public static toIban(address: HexString): string {
 		return Iban.fromAddress(address).toString();
 	}

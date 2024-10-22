@@ -288,7 +288,7 @@ describe('contract', () => {
 								.send(sendOptions);
 						}),
 					).resolves.toEqual({
-						from: '0x0000000000000000000000000000000000000000',
+						from: 'Q0000000000000000000000000000000000000000',
 						to: toUpperCaseHex(acc2.address),
 						tokenId: BigInt(0),
 					});

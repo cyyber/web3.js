@@ -53,7 +53,7 @@ export class ENS extends Web3Context<ZondExecutionAPI & Web3NetAPI> {
 	 * @example
 	 * ```ts
 	 * const ens = new ENS(
-	 * 	"0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e",
+	 * 	"Q00000000000C2E074eC69A0dFb2997BA6C7d2e1e",
 	 * 	"http://localhost:8545"
 	 * );
 	 *

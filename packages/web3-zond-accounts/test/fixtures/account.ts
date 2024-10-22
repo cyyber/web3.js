@@ -63,11 +63,11 @@ export const invalidPublicKeyToAddressData: [
 export const validSeedtoAccountData: [any, any][] = [
 	[
 		{
-			address: '0x034da61fe50c659a3285549dc395571e2bf6891c462c041e3c6b9061fc73eb3687d03f940e5e65d582019ef10ce1327f',
+			address: 'Q034da61fe50c659a3285549dc395571e2bf6891c462c041e3c6b9061fc73eb3687d03f940e5e65d582019ef10ce1327f',
 			ignoreLength: false,
 		},
 		{
-			address: '0x2054f0f00cB9925477DCd3Cd506dBb3d37742026',
+			address: 'Q2054f0f00cB9925477DCd3Cd506dBb3d37742026',
 			seed: '0x034da61fe50c659a3285549dc395571e2bf6891c462c041e3c6b9061fc73eb3687d03f940e5e65d582019ef10ce1327f',
 			sign,
 			signTransaction,
@@ -76,9 +76,9 @@ export const validSeedtoAccountData: [any, any][] = [
 		},
 	],
 	[
-		{ address: '0x7fc43a2ccb557f900d4ca924c187b4438a7f8185b8edbfbabdd26b87f125594495268f55ceac9c9eb23efaab76b0d4c5' },
+		{ address: 'Q7fc43a2ccb557f900d4ca924c187b4438a7f8185b8edbfbabdd26b87f125594495268f55ceac9c9eb23efaab76b0d4c5' },
 		{
-			address: '0x20618F56c422D34b190B9B49a636a3429B927A91',
+			address: 'Q20618F56c422D34b190B9B49a636a3429B927A91',
 			seed: '0x7fc43a2ccb557f900d4ca924c187b4438a7f8185b8edbfbabdd26b87f125594495268f55ceac9c9eb23efaab76b0d4c5',
 			sign,
 			signTransaction,
@@ -87,11 +87,11 @@ export const validSeedtoAccountData: [any, any][] = [
 	],
 	[
 		{
-			address: '0xc902ea9bbf1dd51aaa2ee9bed126aba921f6a6afac9cf09a21f3d915b057bace6787a894a71d1d103992aca0a6a4250c', // ignoreLength parameter set true
+			address: 'Qc902ea9bbf1dd51aaa2ee9bed126aba921f6a6afac9cf09a21f3d915b057bace6787a894a71d1d103992aca0a6a4250c', // ignoreLength parameter set true
 			ignoreLength: true,
 		},
 		{
-			address: '0x2046B4F923f908201Ab8Ddd86330b3228720D589',
+			address: 'Q2046B4F923f908201Ab8Ddd86330b3228720D589',
 			seed: '0xc902ea9bbf1dd51aaa2ee9bed126aba921f6a6afac9cf09a21f3d915b057bace6787a894a71d1d103992aca0a6a4250c',
 			sign,
 			signTransaction,
@@ -104,7 +104,7 @@ export const signatureRecoverData: [string, any][] = [
 	[
 		'Some long text with integers 1233 and special characters and unicode \u1234 as well.',
 		{
-			address: '0x20Ab9b8384f91B69839FDC0b16856eAeb508d551',
+			address: 'Q20Ab9b8384f91B69839FDC0b16856eAeb508d551',
 			seed: '0x77eda0d9c08a5a7134c79973c8fa16a1191f21c29a85f4d913b8d1289d0d1c3944d63d11d7e1c35a51925216de64e052',
 			data: 'Some long text with integers 1233 and special characters and unicode \u1234 as well.',
 			signature:
@@ -114,7 +114,7 @@ export const signatureRecoverData: [string, any][] = [
 	[
 		'Some data',
 		{
-			address: '0x205f2Cd3c4B65a999Fabb5496D78c896d141B018',
+			address: 'Q205f2Cd3c4B65a999Fabb5496D78c896d141B018',
 			seed: '0xef3a996efd6133a749a1cb9a15e7679adf68d240d9eaba3349e679969068e5f83ed6f1f7506eeb0d87e2d94f8ebcd914',
 			data: 'Some data',
 			signature:
@@ -124,7 +124,7 @@ export const signatureRecoverData: [string, any][] = [
 	[
 		'Some data!%$$%&@*',
 		{
-			address: '0x20fE39238877509b60DF7e2958bdBc6f88398F1a',
+			address: 'Q20fE39238877509b60DF7e2958bdBc6f88398F1a',
 			seed: '0x6ca868b6b469e210b079f6742d2e149b6db46f4ed416c11f5d9636e1bd7f35f14d5b5daa84f0a69e54052bcff1897ba2',
 			data: 'Some data!%$$%&@*',
 			signature:
@@ -134,7 +134,7 @@ export const signatureRecoverData: [string, any][] = [
 	[
 		'102',
 		{
-			address: '0x20f3531Ff6BdBbED17F5DB48d1129f5395011b79',
+			address: 'Q20f3531Ff6BdBbED17F5DB48d1129f5395011b79',
 			seed: '0x7815f4ef272b06985c8089e2c28ff8076fdfa9feed8cefdcecbfbee3d0b52cbddc59fdb1226b95292464567b9fca978e',
 			data: '102',
 			signature:
@@ -147,7 +147,7 @@ export const signatureRecoverData: [string, any][] = [
 		'some data',
 		{
 			prefixedOrR: '0xb9be9700e1c7fd9c3e5e1b511de5c6f62680480a7f8c68962a74375cabe51c18',
-			address: '0x54BF9ed7F22b64a5D69Beea57cFCd378763bcdc5',
+			address: 'Q54BF9ed7F22b64a5D69Beea57cFCd378763bcdc5',
 			privateKey: '0x03a0021a87dc354855f900fd15c063bcc9c155c33b8f2321ec294e0933ef29d2',
 			signature:
 				'0xb9be9700e1c7fd9c3e5e1b511de5c6f62680480a7f8c68962a74375cabe51c186fcbbcf5b1bc357d3e56bef2ef8a1b3ad7e48564dd886d7636eb1c18e1e41f1b1c',
@@ -161,7 +161,7 @@ export const transactionsTestData: [FeeMarketEIP1559TxData][] = [
 		// 'Tx1559'
 		{
 			type: 2,
-			to: '0xF0109fC8DF283027b6285cc889F5aA624EaC1F55',
+			to: 'QF0109fC8DF283027b6285cc889F5aA624EaC1F55',
 			maxPriorityFeePerGas: '0x3B9ACA00',
 			maxFeePerGas: '0xB2D05E00',
 			gasLimit: '0x6A4012',

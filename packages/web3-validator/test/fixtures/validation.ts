@@ -301,39 +301,39 @@ export const invalidStringNumbers: ValidInputTypes[] = [
 	new Uint8Array(hexToBytes('abcd')),
 ];
 export const validCheckAddressCheckSumData: any[] = [
-	'0xc1912fEE45d61C87Cc5EA59DaE31190FFFFf232d',
-	'0x52908400098527886E0F7030069857D2E4169EE7',
-	'0x8617E340B3D01FA5F11F306F4090FD50E238070D',
-	'0x27b1fdb04752bbc536007a920d24acb045561c26',
-	'0x5aAeb6053F3E94C9b9A09f33669435E7Ef1BeAed',
-	'0xfB6916095ca1df60bB79Ce92cE3Ea74c37c5d359',
-	'0xdbF03B407c01E7cD3CBea99509d93f8DDDC8C6FB',
-	'0xD1220A0cf47c7B9Be7A2E6BA89F429762e7b9aDb',
+	'Qc1912fEE45d61C87Cc5EA59DaE31190FFFFf232d',
+	'Q52908400098527886E0F7030069857D2E4169EE7',
+	'Q8617E340B3D01FA5F11F306F4090FD50E238070D',
+	'Q27b1fdb04752bbc536007a920d24acb045561c26',
+	'Q5aAeb6053F3E94C9b9A09f33669435E7Ef1BeAed',
+	'QfB6916095ca1df60bB79Ce92cE3Ea74c37c5d359',
+	'QdbF03B407c01E7cD3CBea99509d93f8DDDC8C6FB',
+	'QD1220A0cf47c7B9Be7A2E6BA89F429762e7b9aDb',
 ];
 
 export const invalidCheckAddressCheckSumData: any[] = [
-	'0xc1912fee45d61c87cc5ea59dae31190fffff232d',
-	'0xd1220a0cf47c7b9be7a2e6ba89f429762e7b9adb',
-	'0XD1220A0CF47C7B9BE7A2E6BA89F429762E7B9ADB',
+	'Qc1912fee45d61c87cc5ea59dae31190fffff232d',
+	'Qd1220a0cf47c7b9be7a2e6ba89f429762e7b9adb',
+	'QD1220A0CF47C7B9BE7A2E6BA89F429762E7B9ADB',
 	'1234',
 	'0xa1b2',
 ];
 
 export const validAddressData: any[] = [
-	'0xc6d9d2cd449a754c494264e1809c50e34d64562b',
+	'Qc6d9d2cd449a754c494264e1809c50e34d64562b',
 	'c6d9d2cd449a754c494264e1809c50e34d64562b',
-	'0xE247A45c287191d435A8a5D72A7C8dc030451E9F',
-	'0xe247a45c287191d435a8a5d72a7c8dc030451e9f',
-	'0xE247A45C287191D435A8A5D72A7C8DC030451E9F',
-	'0XE247A45C287191D435A8A5D72A7C8DC030451E9F',
+	'QE247A45c287191d435A8a5D72A7C8dc030451E9F',
+	'Qe247a45c287191d435a8a5d72a7c8dc030451e9f',
+	'QE247A45C287191D435A8A5D72A7C8DC030451E9F',
+	'QE247A45C287191D435A8A5D72A7C8DC030451E9F',
 	new Uint8Array(hexToBytes('0xE247A45C287191D435A8A5D72A7C8DC030451E9F')),
 ];
 
 export const invalidAddressData: any[] = [
 	...invalidHexStrictData,
-	'0x1',
-	'0xE247a45c287191d435A8a5D72A7C8dc030451E9F', // Invalid checksum
-	'-0x407d73d8a49eeb85d32cf465507dd71d507100c1',
+	'Q1',
+	'QE247a45c287191d435A8a5D72A7C8dc030451E9F', // Invalid checksum
+	'-Q407d73d8a49eeb85d32cf465507dd71d507100c1',
 ];
 
 export const validBloomData: any[] = [
@@ -549,12 +549,12 @@ export const validFilterObjectData: Filter[] = [
 		toBlock: '0xc0ff3',
 	},
 	{
-		address: '0x98afe7a8d28bbc88dcf41f8e06d97c74958a47dc',
+		address: 'Q98afe7a8d28bbc88dcf41f8e06d97c74958a47dc',
 	},
 	{
 		address: [
-			'0x98afe7a8d28bbc88dcf41f8e06d97c74958a47dc',
-			'0xdfd5293d8e347dfe59e90efd55b2956a1343963d',
+			'Q98afe7a8d28bbc88dcf41f8e06d97c74958a47dc',
+			'Qdfd5293d8e347dfe59e90efd55b2956a1343963d',
 		],
 	},
 	{
@@ -573,8 +573,8 @@ export const validFilterObjectData: Filter[] = [
 		fromBlock: '0xc0ff3',
 		toBlock: '0xc0ff3',
 		address: [
-			'0x98afe7a8d28bbc88dcf41f8e06d97c74958a47dc',
-			'0xdfd5293d8e347dfe59e90efd55b2956a1343963d',
+			'Q98afe7a8d28bbc88dcf41f8e06d97c74958a47dc',
+			'Qdfd5293d8e347dfe59e90efd55b2956a1343963d',
 		],
 		topics: [
 			'0x000000000000000000000000a94f5374fce5edbc8e2a8697c15331677e6ebf0b',
@@ -597,12 +597,12 @@ export const invalidFilterObjectData: any[] = [
 		toBlock: -42,
 	},
 	{
-		address: '0x98',
+		address: 'Q98',
 	},
 	{
 		address: [
-			'0x98afe7a8d28bbc88dcf41f8e06d97c74958a47dc',
-			'0xdfd5293d8e347dfe59e90efd55b2956a1343963d',
+			'Q98afe7a8d28bbc88dcf41f8e06d97c74958a47dc',
+			'Qdfd5293d8e347dfe59e90efd55b2956a1343963d',
 			// Using "null" value intentionally for validation
 			// eslint-disable-next-line no-null/no-null
 			null,
@@ -624,8 +624,8 @@ export const invalidFilterObjectData: any[] = [
 		fromBlock: '0xc0ff3',
 		toBlock: '0xc0ff3',
 		address: [
-			'0x98afe7a8d28bbc88dcf41f8e06d97c74958a47dc',
-			'0xdfd5293d8e347dfe59e90efd55b2956a1343963d',
+			'Q98afe7a8d28bbc88dcf41f8e06d97c74958a47dc',
+			'Qdfd5293d8e347dfe59e90efd55b2956a1343963d',
 			42,
 		],
 		topics: [

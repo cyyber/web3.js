@@ -25,8 +25,8 @@ import { isHexStrict } from './string.js';
  * Checks the checksum of a given address. Will also return false on non-checksum addresses.
  */
 export const checkAddressCheckSum = (data: string): boolean => {
-	if (!/^(0x)?[0-9a-f]{40}$/i.test(data)) return false;
-	const address = data.slice(2);
+	if (!/^(Q)?[0-9a-f]{40}$/i.test(data)) return false;
+	const address = data.slice(1);
 	const updatedData = utf8ToBytes(address.toLowerCase());
 
 	const addressHash = uint8ArrayToHexString(keccak256(updatedData)).slice(2);
@@ -56,19 +56,19 @@ export const isAddress = (value: ValidInputTypes, checkChecksum = true) => {
 	if (value instanceof Uint8Array) {
 		valueToCheck = uint8ArrayToHexString(value);
 	} else if (typeof value === 'string' && !isHexStrict(value)) {
-		valueToCheck = value.toLowerCase().startsWith('0x') ? value : `0x${value}`;
+		valueToCheck = value.startsWith('Q') ? value : `Q${value}`;
 	} else {
 		valueToCheck = value;
 	}
 
 	// check if it has the basic requirements of an address
-	if (!/^(0x)?[0-9a-f]{40}$/i.test(valueToCheck)) {
+	if (!/^(Q)?[0-9a-f]{40}$/i.test(valueToCheck)) {
 		return false;
 	}
 	// If it's ALL lowercase or ALL upppercase
 	if (
-		/^(0x|0X)?[0-9a-f]{40}$/.test(valueToCheck) ||
-		/^(0x|0X)?[0-9A-F]{40}$/.test(valueToCheck)
+		/^(Q)?[0-9a-f]{40}$/.test(valueToCheck) ||
+		/^(Q)?[0-9A-F]{40}$/.test(valueToCheck)
 	) {
 		return true;
 		// Otherwise check each case

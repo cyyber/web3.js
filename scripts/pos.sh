@@ -31,12 +31,12 @@ download(){
 
     if [ ! -e "$TMP_FOLDER/go-zond" ]
     then
-        git clone https://github.com/cyyber/go-zond ${TMP_FOLDER}/go-zond
+        git clone -b feature/fix-tests https://github.com/rgeraldes24/go-zond ${TMP_FOLDER}/go-zond
     fi
 
 	if [ ! -e "$TMP_FOLDER/qrysm" ]
     then
-        git clone https://github.com/cyyber/qrysm ${TMP_FOLDER}/qrysm
+        git clone -b feature/go-zond https://github.com/rgeraldes24/qrysm ${TMP_FOLDER}/qrysm
     fi
 }
 
@@ -109,7 +109,7 @@ start() {
 		--accept-terms-of-use \
 		--jwt-secret=${TMP_FOLDER}/data/gzond/jwtsecret \
 		--contract-deployment-block=0 \
-		--suggested-fee-recipient=0x123463a4b065722e99115d6c222f267d9cabb524 \
+		--suggested-fee-recipient=Q123463a4b065722e99115d6c222f267d9cabb524 \
 		--enable-debug-rpc-endpoints >> ${TMP_FOLDER}/logs/beacon.log 2>&1 &
 
 	echo "Waiting for validator..."

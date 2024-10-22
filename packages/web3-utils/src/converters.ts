@@ -561,14 +561,15 @@ export const toWei = (number: Numbers, unit: EtherUnits): string => {
 	return updatedValue.toString().padStart(decimals, '0').slice(0, -decimals);
 };
 
+// TODO(rgeraldes24)
 /**
  * Will convert an upper or lowercase Zond address to a checksum address.
  * @param address - An address string
  * @returns	The checksum address
  * @example
  * ```ts
- * web3.utils.toChecksumAddress('0xc1912fee45d61c87cc5ea59dae31190fffff232d');
- * > "0xc1912fEE45d61C87Cc5EA59DaE31190FFFFf232d"
+ * web3.utils.toChecksumAddress('Qc1912fee45d61c87cc5ea59dae31190fffff232d');
+ * > "Qc1912fEE45d61C87Cc5EA59DaE31190FFFFf232d"
  * ```
  */
 export const toChecksumAddress = (address: Address): string => {

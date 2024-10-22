@@ -150,10 +150,10 @@ describe('Contract', () => {
 
 			// @ts-expect-error run protected method
 			const parseAndSetAddressSpy = jest.spyOn(contract, '_parseAndSetAddress');
-			contract.options.address = '0x6e599da0bff7a6598ac1224e4985430bf16458a4';
+			contract.options.address = 'Q6e599da0bff7a6598ac1224e4985430bf16458a4';
 
 			expect(parseAndSetAddressSpy).toHaveBeenCalledWith(
-				'0x6e599da0bff7a6598ac1224e4985430bf16458a4',
+				'Q6e599da0bff7a6598ac1224e4985430bf16458a4',
 				ZOND_DATA_FORMAT,
 			);
 			const parseAndSetJsonInterfaceSpy = jest.spyOn(
@@ -170,10 +170,10 @@ describe('Contract', () => {
 
 			// @ts-expect-error run protected method
 			const parseAndSetAddressSpy = jest.spyOn(contract, '_parseAndSetAddress');
-			contract.options.address = '0x6e599da0bff7a6598ac1224e4985430bf16458a4';
+			contract.options.address = 'Q6e599da0bff7a6598ac1224e4985430bf16458a4';
 
 			expect(parseAndSetAddressSpy).toHaveBeenCalledWith(
-				'0x6e599da0bff7a6598ac1224e4985430bf16458a4',
+				'Q6e599da0bff7a6598ac1224e4985430bf16458a4',
 				ZOND_DATA_FORMAT,
 			);
 			const parseAndSetJsonInterfaceSpy = jest.spyOn(
@@ -190,10 +190,10 @@ describe('Contract', () => {
 
 			// @ts-expect-error run protected method
 			const parseAndSetAddressSpy = jest.spyOn(contract, '_parseAndSetAddress');
-			contract.options.address = '0x6e599da0bff7a6598ac1224e4985430bf16458a4';
+			contract.options.address = 'Q6e599da0bff7a6598ac1224e4985430bf16458a4';
 
 			expect(parseAndSetAddressSpy).toHaveBeenCalledWith(
-				'0x6e599da0bff7a6598ac1224e4985430bf16458a4',
+				'Q6e599da0bff7a6598ac1224e4985430bf16458a4',
 				ZOND_DATA_FORMAT,
 			);
 			const parseAndSetJsonInterfaceSpy = jest.spyOn(
@@ -212,7 +212,7 @@ describe('Contract', () => {
 
 		beforeEach(() => {
 			sendOptions = {
-				from: '0x12364916b10Ae90076dDa6dE756EE1395BB69ec2',
+				from: 'Q12364916b10Ae90076dDa6dE756EE1395BB69ec2',
 				gas: '1000000',
 			};
 		});
@@ -299,7 +299,7 @@ describe('Contract', () => {
 			const arg = 'Hello';
 			const contract = new Contract(GreeterAbi);
 			sendOptions = {
-				from: '0x12364916b10Ae90076dDa6dE756EE1395BB69ec2',
+				from: 'Q12364916b10Ae90076dDa6dE756EE1395BB69ec2',
 				gas: '1000000',
 			};
 			const spyTx = jest
@@ -338,7 +338,7 @@ describe('Contract', () => {
 			const arg = 'Hello';
 			const contract = new Contract(GreeterAbi);
 			sendOptions = {
-				from: '0x12364916b10Ae90076dDa6dE756EE1395BB69ec2',
+				from: 'Q12364916b10Ae90076dDa6dE756EE1395BB69ec2',
 				gas: '1000000',
 				data: '0xa41368620000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000548656c6c6f000000000000000000000000000000000000000000000000000000',
 			};
@@ -386,7 +386,7 @@ describe('Contract', () => {
 			const arg = 'Hello';
 			const contract = new Contract(GreeterAbi, web3Context);
 			sendOptions = {
-				from: '0x12364916b10Ae90076dDa6dE756EE1395BB69ec2',
+				from: 'Q12364916b10Ae90076dDa6dE756EE1395BB69ec2',
 				gas: '1000000',
 			};
 			const spyTx = jest
@@ -432,7 +432,7 @@ describe('Contract', () => {
 			const arg = 'Hello';
 			const contract = new Contract(GreeterAbi, web3Context);
 			sendOptions = {
-				from: '0x12364916b10Ae90076dDa6dE756EE1395BB69ec2',
+				from: 'Q12364916b10Ae90076dDa6dE756EE1395BB69ec2',
 				gas: '1000000',
 			};
 			const spyTx = jest
@@ -482,7 +482,7 @@ describe('Contract', () => {
 			const arg = 'Hello';
 			const contract = new Contract(GreeterAbi, web3Context);
 			sendOptions = {
-				from: '0x12364916b10Ae90076dDa6dE756EE1395BB69ec2',
+				from: 'Q12364916b10Ae90076dDa6dE756EE1395BB69ec2',
 				gas: '1000000',
 			};
 			const spyTx = jest
@@ -1416,7 +1416,7 @@ describe('Contract', () => {
 			const arg = 'Hello';
 
 			const contract = new Contract(GreeterAbi);
-			contract.options.address = '0x12364916b10Ae90076dDa6dE756EE1395BB69ec2';
+			contract.options.address = 'Q12364916b10Ae90076dDa6dE756EE1395BB69ec2';
 
 			/* eslint-disable no-useless-escape */
 			await expect(async () => {
@@ -1425,7 +1425,7 @@ describe('Contract', () => {
 		});
 
 		it('contract method createAccessList should work', async () => {
-			const fromAddr: Address = '0x20bc23D0598b12c34cBDEf1fae439Ba8744DB426';
+			const fromAddr: Address = 'Q20bc23D0598b12c34cBDEf1fae439Ba8744DB426';
 			const result: AccessListResult = {
 				accessList: [
 					{
@@ -1462,7 +1462,7 @@ describe('Contract', () => {
 				provider: expectedProvider,
 				config: { contractDataInputFill: 'data' },
 			});
-			const fromAddr: Address = '0x20bc23D0598b12c34cBDEf1fae439Ba8744DB426';
+			const fromAddr: Address = 'Q20bc23D0598b12c34cBDEf1fae439Ba8744DB426';
 			const result: AccessListResult = {
 				accessList: [
 					{
@@ -1498,7 +1498,7 @@ describe('Contract', () => {
 				provider: expectedProvider,
 				config: { contractDataInputFill: 'both' },
 			});
-			const fromAddr: Address = '0x20bc23D0598b12c34cBDEf1fae439Ba8744DB426';
+			const fromAddr: Address = 'Q20bc23D0598b12c34cBDEf1fae439Ba8744DB426';
 			const result: AccessListResult = {
 				accessList: [
 					{
