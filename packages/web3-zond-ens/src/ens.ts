@@ -187,7 +187,7 @@ export class ENS extends Web3Context<ZondExecutionAPI & Web3NetAPI> {
 	 * @example
 	 * ```ts
 	 * console.log(await web3.zond.ens.checkNetwork());
-	 * > '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e'
+	 * > 'Q00000000000C2E074eC69A0dFb2997BA6C7d2e1e'
 	 * ```
 	 */
 	public async checkNetwork() {

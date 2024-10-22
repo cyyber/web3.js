@@ -252,7 +252,7 @@ export const invalidGetTransactionFromOrToAttrData: { input: any; output: any }[
 				from: 'Q1',
 			},
 		},
-		output: 'Invalid value given "0x1". Error: invalid transaction with invalid sender',
+		output: 'Invalid value given "Q1". Error: invalid transaction with invalid sender',
 	},
 	{
 		input: {

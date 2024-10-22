@@ -577,7 +577,7 @@ export const toChecksumAddress = (address: Address): string => {
 		throw new InvalidAddressError(address);
 	}
 
-	const lowerCaseAddress = address.toLowerCase().replace(/^0x/i, '');
+	const lowerCaseAddress = address.toLowerCase().replace(/^q/i, '');
 
 	const hash = bytesToHex(keccak256(utf8ToBytes(lowerCaseAddress)));
 
@@ -587,7 +587,7 @@ export const toChecksumAddress = (address: Address): string => {
 	)
 		return ''; // // EIP-1052 if hash is equal to c5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470, keccak was given empty data
 
-	let checksumAddress = '0x';
+	let checksumAddress = 'Q';
 
 	const addressHash = hash.replace(/^0x/i, '');
 

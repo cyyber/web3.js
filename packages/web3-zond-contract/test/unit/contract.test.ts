@@ -52,7 +52,7 @@ describe('Contract', () => {
 		});
 
 		it('should init with abi and address', () => {
-			const contract = new Contract([], '0x00000000219ab540356cBB839Cbe05303d7705Fa');
+			const contract = new Contract([], 'Q00000000219ab540356cBB839Cbe05303d7705Fa');
 
 			expect(contract).toBeInstanceOf(Contract);
 		});
@@ -89,14 +89,14 @@ describe('Contract', () => {
 			const contract = new Contract(
 				[],
 				{ gas: '123' },
-				{ config: { defaultAccount: '0x00000000219ab540356cBB839Cbe05303d7705Fa' } },
+				{ config: { defaultAccount: 'Q00000000219ab540356cBB839Cbe05303d7705Fa' } },
 			);
 
 			expect(contract).toBeInstanceOf(Contract);
 		});
 
 		it('should init with abi, address and options', () => {
-			const contract = new Contract([], '0x00000000219ab540356cBB839Cbe05303d7705Fa', {
+			const contract = new Contract([], 'Q00000000219ab540356cBB839Cbe05303d7705Fa', {
 				gas: '123',
 			});
 
@@ -106,9 +106,9 @@ describe('Contract', () => {
 		it('should init with abi, address, options and context', () => {
 			const contract = new Contract(
 				[],
-				'0x00000000219ab540356cBB839Cbe05303d7705Fa',
+				'Q00000000219ab540356cBB839Cbe05303d7705Fa',
 				{ gas: '123' },
-				{ config: { defaultAccount: '0x00000000219ab540356cBB839Cbe05303d7705Fa' } },
+				{ config: { defaultAccount: 'Q00000000219ab540356cBB839Cbe05303d7705Fa' } },
 			);
 
 			expect(contract).toBeInstanceOf(Contract);
@@ -208,7 +208,7 @@ describe('Contract', () => {
 
 	describe('Contract functions and defaults', () => {
 		let sendOptions: Record<string, unknown>;
-		const deployedAddr = '0x20bc23D0598b12c34cBDEf1fae439Ba8744DB426';
+		const deployedAddr = 'Q20bc23D0598b12c34cBDEf1fae439Ba8744DB426';
 
 		beforeEach(() => {
 			sendOptions = {
@@ -380,7 +380,7 @@ describe('Contract', () => {
 				provider: expectedProvider,
 				config: {
 					contractDataInputFill: 'data',
-					defaultAccount: '0x00000000219ab540356cBB839Cbe05303d7705Fa',
+					defaultAccount: 'Q00000000219ab540356cBB839Cbe05303d7705Fa',
 				},
 			});
 			const arg = 'Hello';
@@ -426,7 +426,7 @@ describe('Contract', () => {
 				provider: expectedProvider,
 				config: {
 					contractDataInputFill: 'both',
-					defaultAccount: '0x00000000219ab540356cBB839Cbe05303d7705Fa',
+					defaultAccount: 'Q00000000219ab540356cBB839Cbe05303d7705Fa',
 				},
 			});
 			const arg = 'Hello';
@@ -476,7 +476,7 @@ describe('Contract', () => {
 				provider: expectedProvider,
 				config: {
 					contractDataInputFill: 'input',
-					defaultAccount: '0x00000000219ab540356cBB839Cbe05303d7705Fa',
+					defaultAccount: 'Q00000000219ab540356cBB839Cbe05303d7705Fa',
 				},
 			});
 			const arg = 'Hello';
@@ -551,7 +551,7 @@ describe('Contract', () => {
 		it('should clone pre deployed contract with address', () => {
 			const contract = new Contract(
 				sampleStorageContractABI,
-				'0x00000000219ab540356cBB839Cbe05303d7705Fa',
+				'Q00000000219ab540356cBB839Cbe05303d7705Fa',
 				{ gas: '0x97254' },
 			);
 
@@ -590,9 +590,9 @@ describe('Contract', () => {
 		});
 
 		it('defaults set and get should work', () => {
-			const contract = new Contract([], '0x00000000219ab540356cBB839Cbe05303d7705Fa');
+			const contract = new Contract([], 'Q00000000219ab540356cBB839Cbe05303d7705Fa');
 
-			const defaultAddr = '0xd7E30ae310C1D1800F5B641Baa7af95b2e1FD98C';
+			const defaultAddr = 'Qd7E30ae310C1D1800F5B641Baa7af95b2e1FD98C';
 			expect(contract.defaultAccount).toBeUndefined();
 			contract.defaultAccount = defaultAddr;
 			expect(contract.defaultAccount).toStrictEqual(defaultAddr);
@@ -707,12 +707,12 @@ describe('Contract', () => {
 		});
 
 		it('should set and get correct address', () => {
-			const addr = '0x1230B93ffd14F2F022039675fA3fc3A46eE4C701';
+			const addr = 'Q1230B93ffd14F2F022039675fA3fc3A46eE4C701';
 			const contract = new Contract(
 				[],
 				'',
 				{ gas: '123' },
-				{ config: { defaultAccount: '0x00000000219ab540356cBB839Cbe05303d7705Fa' } },
+				{ config: { defaultAccount: 'Q00000000219ab540356cBB839Cbe05303d7705Fa' } },
 			);
 
 			contract.options.address = addr;
@@ -722,9 +722,9 @@ describe('Contract', () => {
 		it('should set, at the constructor, and later get jsonInterface', () => {
 			const contract = new Contract(
 				sampleStorageContractABI,
-				'0x1230B93ffd14F2F022039675fA3fc3A46eE4C701',
+				'Q1230B93ffd14F2F022039675fA3fc3A46eE4C701',
 				{ gas: '123' },
-				{ config: { defaultAccount: '0x00000000219ab540356cBB839Cbe05303d7705Fa' } },
+				{ config: { defaultAccount: 'Q00000000219ab540356cBB839Cbe05303d7705Fa' } },
 			);
 
 			expect(contract.options.jsonInterface).toMatchObject(sampleStorageContractABI);
@@ -733,9 +733,9 @@ describe('Contract', () => {
 		it('should set and get jsonInterface', () => {
 			const contract = new Contract(
 				sampleStorageContractABI,
-				'0x1230B93ffd14F2F022039675fA3fc3A46eE4C701',
+				'Q1230B93ffd14F2F022039675fA3fc3A46eE4C701',
 				{ gas: '123' },
-				{ config: { defaultAccount: '0x00000000219ab540356cBB839Cbe05303d7705Fa' } },
+				{ config: { defaultAccount: 'Q00000000219ab540356cBB839Cbe05303d7705Fa' } },
 			);
 
 			contract.options.jsonInterface = ERC20TokenAbi;
@@ -745,15 +745,15 @@ describe('Contract', () => {
 		it('should be able to call a payable method', async () => {
 			const contract = new Contract(
 				erc721Abi,
-				'0x1230B93ffd14F2F022039675fA3fc3A46eE4C701',
+				'Q1230B93ffd14F2F022039675fA3fc3A46eE4C701',
 				{ gas: '123' },
-				{ config: { defaultAccount: '0x00000000219ab540356cBB839Cbe05303d7705Fa' } },
+				{ config: { defaultAccount: 'Q00000000219ab540356cBB839Cbe05303d7705Fa' } },
 			);
 
 			const spyZondCall = jest
 				.spyOn(zond, 'call')
 				.mockImplementation(async (_objInstance, _tx) => {
-					expect(_tx.to).toBe('0x1230B93ffd14F2F022039675fA3fc3A46eE4C701');
+					expect(_tx.to).toBe('Q1230B93ffd14F2F022039675fA3fc3A46eE4C701');
 					expect(_tx.input).toBe(
 						'0x095ea7b300000000000000000000000000000000219ab540356cbb839cbe05303d7705fa0000000000000000000000000000000000000000000000000000000000000001',
 					);
@@ -761,7 +761,7 @@ describe('Contract', () => {
 				});
 
 			await expect(
-				contract.methods.approve('0x00000000219ab540356cBB839Cbe05303d7705Fa', 1).call(),
+				contract.methods.approve('Q00000000219ab540356cBB839Cbe05303d7705Fa', 1).call(),
 			).resolves.toBeTruthy();
 
 			spyZondCall.mockClear();
@@ -770,15 +770,15 @@ describe('Contract', () => {
 		it('should be able to call a payable method with data as a contract init option', async () => {
 			const contract = new Contract(
 				erc721Abi,
-				'0x1230B93ffd14F2F022039675fA3fc3A46eE4C701',
+				'Q1230B93ffd14F2F022039675fA3fc3A46eE4C701',
 				{ gas: '123', dataInputFill: 'data' },
-				{ config: { defaultAccount: '0x00000000219ab540356cBB839Cbe05303d7705Fa' } },
+				{ config: { defaultAccount: 'Q00000000219ab540356cBB839Cbe05303d7705Fa' } },
 			);
 
 			const spyZondCall = jest
 				.spyOn(zond, 'call')
 				.mockImplementation(async (_objInstance, _tx) => {
-					expect(_tx.to).toBe('0x1230B93ffd14F2F022039675fA3fc3A46eE4C701');
+					expect(_tx.to).toBe('Q1230B93ffd14F2F022039675fA3fc3A46eE4C701');
 					expect(_tx.data).toBe(
 						'0x095ea7b300000000000000000000000000000000219ab540356cbb839cbe05303d7705fa0000000000000000000000000000000000000000000000000000000000000001',
 					);
@@ -786,7 +786,7 @@ describe('Contract', () => {
 				});
 
 			await expect(
-				contract.methods.approve('0x00000000219ab540356cBB839Cbe05303d7705Fa', 1).call(),
+				contract.methods.approve('Q00000000219ab540356cBB839Cbe05303d7705Fa', 1).call(),
 			).resolves.toBeTruthy();
 
 			spyZondCall.mockClear();
@@ -795,15 +795,15 @@ describe('Contract', () => {
 		it('should be able to call a payable method with input as a contract init option', async () => {
 			const contract = new Contract(
 				erc721Abi,
-				'0x1230B93ffd14F2F022039675fA3fc3A46eE4C701',
+				'Q1230B93ffd14F2F022039675fA3fc3A46eE4C701',
 				{ gas: '123', dataInputFill: 'input' },
-				{ config: { defaultAccount: '0x00000000219ab540356cBB839Cbe05303d7705Fa' } },
+				{ config: { defaultAccount: 'Q00000000219ab540356cBB839Cbe05303d7705Fa' } },
 			);
 
 			const spyZondCall = jest
 				.spyOn(zond, 'call')
 				.mockImplementation(async (_objInstance, _tx) => {
-					expect(_tx.to).toBe('0x1230B93ffd14F2F022039675fA3fc3A46eE4C701');
+					expect(_tx.to).toBe('Q1230B93ffd14F2F022039675fA3fc3A46eE4C701');
 					expect(_tx.input).toBe(
 						'0x095ea7b300000000000000000000000000000000219ab540356cbb839cbe05303d7705fa0000000000000000000000000000000000000000000000000000000000000001',
 					);
@@ -811,7 +811,7 @@ describe('Contract', () => {
 				});
 
 			await expect(
-				contract.methods.approve('0x00000000219ab540356cBB839Cbe05303d7705Fa', 1).call(),
+				contract.methods.approve('Q00000000219ab540356cBB839Cbe05303d7705Fa', 1).call(),
 			).resolves.toBeTruthy();
 
 			spyZondCall.mockClear();
@@ -823,12 +823,12 @@ describe('Contract', () => {
 				provider: expectedProvider,
 				config: {
 					contractDataInputFill: 'data',
-					defaultAccount: '0x00000000219ab540356cBB839Cbe05303d7705Fa',
+					defaultAccount: 'Q00000000219ab540356cBB839Cbe05303d7705Fa',
 				},
 			});
 			const contract = new Contract(
 				erc721Abi,
-				'0x1230B93ffd14F2F022039675fA3fc3A46eE4C701',
+				'Q1230B93ffd14F2F022039675fA3fc3A46eE4C701',
 				{ gas: '123' },
 				web3Context,
 			);
@@ -836,7 +836,7 @@ describe('Contract', () => {
 			const spyZondCall = jest
 				.spyOn(zond, 'call')
 				.mockImplementation(async (_objInstance, _tx) => {
-					expect(_tx.to).toBe('0x1230B93ffd14F2F022039675fA3fc3A46eE4C701');
+					expect(_tx.to).toBe('Q1230B93ffd14F2F022039675fA3fc3A46eE4C701');
 					expect(_tx.data).toBe(
 						'0x095ea7b300000000000000000000000000000000219ab540356cbb839cbe05303d7705fa0000000000000000000000000000000000000000000000000000000000000001',
 					);
@@ -844,7 +844,7 @@ describe('Contract', () => {
 				});
 
 			await expect(
-				contract.methods.approve('0x00000000219ab540356cBB839Cbe05303d7705Fa', 1).call(),
+				contract.methods.approve('Q00000000219ab540356cBB839Cbe05303d7705Fa', 1).call(),
 			).resolves.toBeTruthy();
 
 			spyZondCall.mockClear();
@@ -856,12 +856,12 @@ describe('Contract', () => {
 				provider: expectedProvider,
 				config: {
 					contractDataInputFill: 'both',
-					defaultAccount: '0x00000000219ab540356cBB839Cbe05303d7705Fa',
+					defaultAccount: 'Q00000000219ab540356cBB839Cbe05303d7705Fa',
 				},
 			});
 			const contract = new Contract(
 				erc721Abi,
-				'0x1230B93ffd14F2F022039675fA3fc3A46eE4C701',
+				'Q1230B93ffd14F2F022039675fA3fc3A46eE4C701',
 				{ gas: '123' },
 				web3Context,
 			);
@@ -869,7 +869,7 @@ describe('Contract', () => {
 			const spyZondCall = jest
 				.spyOn(zond, 'call')
 				.mockImplementation(async (_objInstance, _tx) => {
-					expect(_tx.to).toBe('0x1230B93ffd14F2F022039675fA3fc3A46eE4C701');
+					expect(_tx.to).toBe('Q1230B93ffd14F2F022039675fA3fc3A46eE4C701');
 					expect(_tx.data).toBe(
 						'0x095ea7b300000000000000000000000000000000219ab540356cbb839cbe05303d7705fa0000000000000000000000000000000000000000000000000000000000000001',
 					);
@@ -880,7 +880,7 @@ describe('Contract', () => {
 				});
 
 			await expect(
-				contract.methods.approve('0x00000000219ab540356cBB839Cbe05303d7705Fa', 1).call(),
+				contract.methods.approve('Q00000000219ab540356cBB839Cbe05303d7705Fa', 1).call(),
 			).resolves.toBeTruthy();
 
 			spyZondCall.mockClear();
