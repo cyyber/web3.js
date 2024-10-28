@@ -568,8 +568,8 @@ export const toWei = (number: Numbers, unit: EtherUnits): string => {
  * @returns	The checksum address
  * @example
  * ```ts
- * web3.utils.toChecksumAddress('Qc1912fee45d61c87cc5ea59dae31190fffff232d');
- * > "Qc1912fEE45d61C87Cc5EA59DaE31190FFFFf232d"
+ * web3.utils.toChecksumAddress('Zc1912fee45d61c87cc5ea59dae31190fffff232d');
+ * > "Zc1912fEE45d61C87Cc5EA59DaE31190FFFFf232d"
  * ```
  */
 export const toChecksumAddress = (address: Address): string => {
@@ -577,7 +577,7 @@ export const toChecksumAddress = (address: Address): string => {
 		throw new InvalidAddressError(address);
 	}
 
-	const lowerCaseAddress = address.toLowerCase().replace(/^q/i, '');
+	const lowerCaseAddress = address.toLowerCase().replace(/^z/i, '');
 
 	const hash = bytesToHex(keccak256(utf8ToBytes(lowerCaseAddress)));
 
@@ -587,7 +587,7 @@ export const toChecksumAddress = (address: Address): string => {
 	)
 		return ''; // // EIP-1052 if hash is equal to c5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470, keccak was given empty data
 
-	let checksumAddress = 'Q';
+	let checksumAddress = 'Z';
 
 	const addressHash = hash.replace(/^0x/i, '');
 

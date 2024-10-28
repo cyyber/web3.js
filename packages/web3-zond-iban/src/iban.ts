@@ -268,6 +268,7 @@ export class Iban {
 			throw new InvalidAddressError(address);
 		}
 
+		// TODO(rgeraldes24)
 		const num = BigInt(hexToNumber(address));
 		const base36 = num.toString(36);
 		const padded = leftPad(base36, 15);

@@ -230,8 +230,8 @@ export const toHexValidData: [Numbers | Bytes | Address | boolean, [HexString, V
 	[false, ['0x00', 'bool']],
 	['0x123c', ['0x123c', 'bytes']],
 	[
-		'0x72fdb1c1ddd4c67804f42b93de95cf6a8c51d2d1',
-		['0x72fdb1c1ddd4c67804f42b93de95cf6a8c51d2d1', 'address'],
+		'Q72fdb1c1ddd4c67804f42b93de95cf6a8c51d2d1',
+		['Q72fdb1c1ddd4c67804f42b93de95cf6a8c51d2d1', 'address'],
 	],
 	['-0x01', ['-0x1', 'int256']],
 	['123c', ['0x123c', 'bytes']],
@@ -309,9 +309,9 @@ export const toWeiInvalidData: [[any, any], string][] = [
 	[['1234', 'uwei'], 'Invalid value given "uwei". Error: invalid unit.'],
 ];
 export const toCheckSumValidData: [string, string][] = [
-	['0x0089d53f703f7e0843953d48133f74ce247184c2', '0x0089d53F703f7E0843953D48133f74cE247184c2'],
-	['0x5fbc2b6c19ee3dd5f9af96ff337ddc89e30ceaef', '0x5FBc2b6C19EE3DD5f9Af96ff337DDC89e30ceAef'],
-	['0xa54D3c09E34aC96807c1CC397404bF2B98DC4eFb', '0xa54d3c09E34aC96807c1CC397404bF2B98DC4eFb'],
+	['Q0089d53f703f7e0843953d48133f74ce247184c2', 'Q0089d53F703f7E0843953D48133f74cE247184c2'],
+	['Q5fbc2b6c19ee3dd5f9af96ff337ddc89e30ceaef', 'Q5FBc2b6C19EE3DD5f9Af96ff337DDC89e30ceAef'],
+	['Qa54D3c09E34aC96807c1CC397404bF2B98DC4eFb', 'Qa54d3c09E34aC96807c1CC397404bF2B98DC4eFb'],
 ];
 export const toCheckSumInvalidData: [string, string][] = [
 	['not an address', 'Invalid value given "not an address". Error: invalid zond address.'],
