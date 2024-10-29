@@ -16,7 +16,7 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 import { Address, Eip712TypedData } from '@theqrl/web3-types';
 
-const address = 'Q407d73d8a49eeb85d32cf465507dd71d507100c1';
+const address = 'Z407d73d8a49eeb85d32cf465507dd71d507100c1';
 
 const typedData = {
 	types: {

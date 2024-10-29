@@ -53,18 +53,18 @@ describe('Web3 extend tests', () => {
 			],
 		});
 
-		await web3.myModule.getBalance('Q5b43746580AAF00A69019fA59D9ed7d9c85dDd70', 'latest');
+		await web3.myModule.getBalance('Z5b43746580AAF00A69019fA59D9ed7d9c85dDd70', 'latest');
 
 		expect(requestManagerSendSpy).toHaveBeenCalledWith({
 			method: 'zond_getBalance',
-			params: ['Q5b43746580AAF00A69019fA59D9ed7d9c85dDd70', 'latest'],
+			params: ['Z5b43746580AAF00A69019fA59D9ed7d9c85dDd70', 'latest'],
 		});
 
-		await web3.myModule.getL2Balance('Q5b43746580AAF00A69019fA59D9ed7d9c85dDd70', 'latest');
+		await web3.myModule.getL2Balance('Z5b43746580AAF00A69019fA59D9ed7d9c85dDd70', 'latest');
 
 		expect(requestManagerSendSpy).toHaveBeenCalledWith({
 			method: 'zond_getBalance',
-			params: ['Q5b43746580AAF00A69019fA59D9ed7d9c85dDd70', 'latest'],
+			params: ['Z5b43746580AAF00A69019fA59D9ed7d9c85dDd70', 'latest'],
 		});
 	});
 
@@ -87,18 +87,18 @@ describe('Web3 extend tests', () => {
 			],
 		});
 
-		await web3.getBalance('Q5b43746580AAF00A69019fA59D9ed7d9c85dDd70', 'latest');
+		await web3.getBalance('Z5b43746580AAF00A69019fA59D9ed7d9c85dDd70', 'latest');
 
 		expect(requestManagerSendSpy).toHaveBeenCalledWith({
 			method: 'zond_getBalance',
-			params: ['Q5b43746580AAF00A69019fA59D9ed7d9c85dDd70', 'latest'],
+			params: ['Z5b43746580AAF00A69019fA59D9ed7d9c85dDd70', 'latest'],
 		});
 
-		await web3.getL2Balance('Q5b43746580AAF00A69019fA59D9ed7d9c85dDd70', 'latest');
+		await web3.getL2Balance('Z5b43746580AAF00A69019fA59D9ed7d9c85dDd70', 'latest');
 
 		expect(requestManagerSendSpy).toHaveBeenCalledWith({
 			method: 'zond_getBalance',
-			params: ['Q5b43746580AAF00A69019fA59D9ed7d9c85dDd70', 'latest'],
+			params: ['Z5b43746580AAF00A69019fA59D9ed7d9c85dDd70', 'latest'],
 		});
 	});
 });
