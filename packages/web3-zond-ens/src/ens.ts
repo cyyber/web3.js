@@ -84,7 +84,7 @@ export class ENS extends Web3Context<ZondExecutionAPI & Web3NetAPI> {
 	 * const resolver = await ens.getResolver('resolver');
 	 *
 	 * console.log(resolver.options.address);
-	 * > '0x1234567890123456789012345678901234567890'
+	 * > 'Z1234567890123456789012345678901234567890'
 	 * ```
 	 */
 	public async getResolver(name: string): Promise<Contract<typeof PublicResolverAbi>> {
