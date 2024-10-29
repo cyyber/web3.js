@@ -65,7 +65,7 @@ describe('parameters_api', () => {
 	});
 
 	describe('decodeParameters', () => {
-		// TODO(rgeraldes24)
+		// TODO(rgeraldes24): fix
 		describe.skip('valid data', () => {
 			it.each(validDecodeParametersData)(
 				'%#: should pass for valid values: %j',

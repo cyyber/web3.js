@@ -268,7 +268,7 @@ export class Iban {
 			throw new InvalidAddressError(address);
 		}
 
-		// TODO(rgeraldes24)
+		// TODO(rgeraldes24): fix
 		const num = BigInt(hexToNumber(address));
 		const base36 = num.toString(36);
 		const padded = leftPad(base36, 15);
@@ -333,7 +333,7 @@ export class Iban {
 	 * > "XE7338O073KYGTWWZN0F2WZ0R8PX5ZPPZS"
 	 * ```
 	 */
-	// TODO(rgeraldes24)
+	// TODO(rgeraldes24): fix
 	public static toIban(address: HexString): string {
 		return Iban.fromAddress(address).toString();
 	}

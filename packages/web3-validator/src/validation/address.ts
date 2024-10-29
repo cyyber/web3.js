@@ -55,6 +55,7 @@ export const isAddress = (value: ValidInputTypes, checkChecksum = true) => {
 
 	if (value instanceof Uint8Array) {
 		valueToCheck = uint8ArrayToHexString(value);
+		// TODO(rgeraldes24): isHexStrict
 	} else if (typeof value === 'string' && !isHexStrict(value)) {
 		valueToCheck = value.startsWith('Z') ? value : `Z${value}`;
 	} else {

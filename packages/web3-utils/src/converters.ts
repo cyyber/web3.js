@@ -561,7 +561,7 @@ export const toWei = (number: Numbers, unit: EtherUnits): string => {
 	return updatedValue.toString().padStart(decimals, '0').slice(0, -decimals);
 };
 
-// TODO(rgeraldes24)
+// TODO(rgeraldes24): fix
 /**
  * Will convert an upper or lowercase Zond address to a checksum address.
  * @param address - An address string
