@@ -258,7 +258,7 @@ export class Contract<Abi extends ContractAbi>
 	 * @returns - The contract instance with all its methods and events.
 	 *
 	 * ```ts title="Example"
-	 * var myContract = new web3.zond.Contract([...], '0xde0B295669a9FD93d5F28D9Ec85E40f4cb697BAe', {
+	 * var myContract = new web3.zond.Contract([...], 'Zde0B295669a9FD93d5F28D9Ec85E40f4cb697BAe', {
 	 *   from: 'Z1234567890123456789012345678901234567891', // default from address
 	 *   maxFeePerGas: '20000000000' // default max fee per gas in wei, 20 gwei in this case
 	 * });
@@ -268,7 +268,7 @@ export class Contract<Abi extends ContractAbi>
 	 *
 	 * ```ts title="Example"
 	 * const myContractAbi = [....] as const; // ABI definitions
-	 * const myContract = new web3.zond.Contract(myContractAbi, '0xde0B295669a9FD93d5F28D9Ec85E40f4cb697BAe');
+	 * const myContract = new web3.zond.Contract(myContractAbi, 'Zde0B295669a9FD93d5F28D9Ec85E40f4cb697BAe');
 	 * ```
 	 */
 	public constructor(

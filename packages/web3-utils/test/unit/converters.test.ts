@@ -366,8 +366,7 @@ describe('converters', () => {
 		});
 	});
 	describe('toChecksumAddress', () => {
-		// TODO(rgeraldes24): fix
-		describe.skip('valid cases', () => {
+		describe('valid cases', () => {
 			it.each(toCheckSumValidData)('%s', (input, output) => {
 				expect(toChecksumAddress(input)).toEqual(output);
 			});

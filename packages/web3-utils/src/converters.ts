@@ -104,7 +104,7 @@ export const bytesToUint8Array = (data: Bytes): Uint8Array | never => {
 /**
  * @internal
  */
-const { uint8ArrayToHexString } = validatorUtils;
+const { uint8ArrayToHexString, uint8ArrayToAddressHexString } = validatorUtils;
 
 /**
  * Convert a byte array to a hex string
@@ -119,6 +119,20 @@ const { uint8ArrayToHexString } = validatorUtils;
  */
 export const bytesToHex = (bytes: Bytes): HexString =>
 	uint8ArrayToHexString(bytesToUint8Array(bytes));
+
+/**
+ * Convert a byte array to a hex string
+ * @param bytes - Byte array to be converted
+ * @returns - The hex string representation of the input byte array
+ *
+ * @example
+ * ```ts
+ * console.log(web3.utils.bytesToHex(new Uint8Array([72, 12])));
+ * > "0x480c"
+ *
+ */
+export const bytesToAddressHex = (bytes: Bytes): HexString =>
+	uint8ArrayToAddressHexString(bytesToUint8Array(bytes));
 
 /**
  * Convert a hex string to a byte array
@@ -336,7 +350,7 @@ export const toHex = (
 	returnType?: boolean,
 ): HexString | ValueTypes => {
 	if (typeof value === 'string' && isAddress(value)) {
-		return returnType ? 'address' : `0x${value.toLowerCase().replace(/^0x/i, '')}`;
+		return returnType ? 'address' : `Z${value.toLowerCase().replace(/^z/i, '')}`;
 	}
 
 	if (typeof value === 'boolean') {
@@ -561,7 +575,6 @@ export const toWei = (number: Numbers, unit: EtherUnits): string => {
 	return updatedValue.toString().padStart(decimals, '0').slice(0, -decimals);
 };
 
-// TODO(rgeraldes24): fix
 /**
  * Will convert an upper or lowercase Zond address to a checksum address.
  * @param address - An address string
@@ -577,7 +590,7 @@ export const toChecksumAddress = (address: Address): string => {
 		throw new InvalidAddressError(address);
 	}
 
-	const lowerCaseAddress = address.toLowerCase().replace(/^z/i, '');
+	const lowerCaseAddress = address.replace(/^Z/i, '');
 
 	const hash = bytesToHex(keccak256(utf8ToBytes(lowerCaseAddress)));
 

@@ -99,7 +99,9 @@ export abstract class BaseTransaction<TransactionObject> {
 
 		this.txOptions = opts;
 
-		const toB = toUint8Array(to === '' ? '0x' : to);
+		// TODO(rgeraldes24)
+		// const toB = toUint8Array(to === '' ? '0x' : to);
+		const toB = toUint8Array(to === '' ? 'Z' : to);
 		const signatureB = toUint8Array(signature === '' ? '0x' : signature);
 		const publicKeyB = toUint8Array(publicKey === '' ? '0x' : publicKey);
 

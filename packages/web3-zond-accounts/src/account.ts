@@ -32,6 +32,7 @@ import {
 import {
 	bytesToUint8Array,
 	bytesToHex,
+	bytesToAddressHex,
 	fromUtf8,
 	hexToBytes,
 	randomBytes,
@@ -230,7 +231,7 @@ export const publicKeyToAddress = (publicKey: Bytes): string => {
 	const publicKeyUint8Array = parseAndValidatePublicKey(publicKey);	
 	const address = getDilithiumAddressFromPK(publicKeyUint8Array);
 
-	return toChecksumAddress(bytesToHex(address));
+	return toChecksumAddress(bytesToAddressHex(address));
 };
 
 

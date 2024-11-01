@@ -19,7 +19,7 @@ import { keccak256 } from 'ethereum-cryptography/keccak.js';
 import { utf8ToBytes } from 'ethereum-cryptography/utils.js';
 import { ValidInputTypes } from '../types.js';
 import { uint8ArrayToHexString } from '../utils.js';
-import { isHexStrict } from './string.js';
+import { isAddressHexStrict } from './string.js';
 
 /**
  * Checks the checksum of a given address. Will also return false on non-checksum addresses.
@@ -55,8 +55,7 @@ export const isAddress = (value: ValidInputTypes, checkChecksum = true) => {
 
 	if (value instanceof Uint8Array) {
 		valueToCheck = uint8ArrayToHexString(value);
-		// TODO(rgeraldes24): isHexStrict
-	} else if (typeof value === 'string' && !isHexStrict(value)) {
+	} else if (typeof value === 'string' && !isAddressHexStrict(value)) { // TODO(rgeraldes24): isHexStrict
 		valueToCheck = value.startsWith('Z') ? value : `Z${value}`;
 	} else {
 		valueToCheck = value;

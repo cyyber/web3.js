@@ -36,7 +36,7 @@ import {
 import { Web3Context } from '@theqrl/web3-core';
 import { publicKeyToAddress } from '@theqrl/web3-zond-accounts';
 import { getId } from '@theqrl/web3-net';
-import { isNullish, isNumber, isHexStrict, isAddress } from '@theqrl/web3-validator';
+import { isNullish, isNumber, /*isHexStrict,*/ isAddressHexStrict, isAddress } from '@theqrl/web3-validator';
 import {
 	InvalidTransactionWithSender,
 	InvalidTransactionWithReceiver,
@@ -69,7 +69,8 @@ export const getTransactionFromOrToAttr = (
 		if (typeof transaction[attr] === 'string' && isAddress(transaction[attr] as string)) {
 			return transaction[attr] as Address;
 		}
-		if (!isHexStrict(transaction[attr] as string) && isNumber(transaction[attr] as Numbers)) {
+		// TODO(rgeraldes24)
+		if (!isAddressHexStrict(transaction[attr] as string) && isNumber(transaction[attr] as Numbers)) {
 			if (web3Context.wallet) {
 				const account = web3Context.wallet.get(
 					format({ format: 'uint' }, transaction[attr] as Numbers, NUMBER_DATA_FORMAT),

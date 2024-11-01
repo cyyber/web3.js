@@ -122,7 +122,9 @@ describe('Web3Zond.sendTransaction', () => {
 
 		expect(minedTransactionData).toMatchObject({
 			from: tempAcc.address,
-			to: wallet.get(0)?.address.toLowerCase(),
+			// TODO(rgeraldes24)
+			// to: wallet.get(0)?.address.toLowerCase(),
+			to: wallet.get(0)?.address,
 			value: BigInt(1),
 		});
 	});
@@ -156,7 +158,8 @@ describe('Web3Zond.sendTransaction', () => {
 
 		expect(minedTransactionData).toMatchObject({
 			from: tempAcc.address,
-			to: wallet.get(1)?.address.toLowerCase(),
+			// to: wallet.get(1)?.address.toLowerCase(),
+			to: wallet.get(1)?.address,
 			value: BigInt(1),
 		});
 	});

@@ -1,4 +1,4 @@
-﻿/*
+/*
 This file is part of web3.js.
 
 web3.js is free software: you can redistribute it and/or modify
@@ -15,17 +15,10 @@ You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AbiCoder } from '@theqrl/abi';
-import type { BigNumber } from '@ethersproject/bignumber';
+// Have to use `require` because of Jest issue https://jestjs.io/docs/ecmascript-modules
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+require('jest-extended');
 
-const ethersAbiCoder = new AbiCoder((_, value) => {
-	if ((value as BigNumber)?._isBigNumber) {
-		return (value as BigNumber).toBigInt();
-	}
+// @todo extend jest to have "toHaveBeenCalledOnceWith" matcher.
 
-	// Because of the type def from @ethersproject/abi
-	// eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-	return value;
-});
-
-export default ethersAbiCoder;
+process.env.NODE_ENV = 'test';

@@ -42,14 +42,16 @@ const common = new Common({
 common._chainParams.chainId = 1;
 // TODO(rgeraldes24): fix
 describe.skip('[BaseTransaction]', () => {
+	
 	// eslint-disable-next-line @typescript-eslint/no-shadow
 	const common = new Common({ chain: Chain.Mainnet, hardfork: Hardfork.Shanghai });
 
 	const eip1559Txs: BaseTransaction<FeeMarketEIP1559Transaction>[] = [];
+	/*
 	for (const tx of eip1559Fixtures) {
 		eip1559Txs.push(FeeMarketEIP1559Transaction.fromTxData(tx.data, { common }));
 	}
-
+	*/
 	const zero = new Uint8Array(0);
 	const txTypes = [
 		{

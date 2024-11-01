@@ -29,11 +29,11 @@ type ConfigHardfork =
  * @param str the string value
  * @returns the string without 0x prefix
  */
-export const stripHexPrefix = (str: string): string => {
+export const stripHexPrefix = (str: string, prefix: string = '0x'): string => {
 	if (typeof str !== 'string')
 		throw new Error(`[stripHexPrefix] input must be type 'string', received ${typeof str}`);
 
-	return isHexPrefixed(str) ? str.slice(2) : str;
+	return isHexPrefixed(str, prefix) ? str.slice(prefix.length) : str;
 };
 
 /**
@@ -241,12 +241,15 @@ export const toUint8Array = function (v: ToBytesInputTypes): Uint8Array {
 	}
 
 	if (typeof v === 'string') {
-		if (!isHexString(v)) {
+		if (isHexString(v, '0x')) {
+			return hexToBytes(padToEven(stripHexPrefix(v, '0x')));
+		} else if (isHexString(v, 'Z')) {
+			return hexToBytes(padToEven(stripHexPrefix(v, 'Z')));
+		} else {
 			throw new Error(
-				`Cannot convert string to Uint8Array. only supports 0x-prefixed hex strings and this string was given: ${v}`,
+				`Cannot convert string to Uint8Array. only supports 0x-prefixed or Z-prefixed hex strings and this string was given: ${v}`,
 			);
-		}
-		return hexToBytes(padToEven(stripHexPrefix(v)));
+		}		
 	}
 
 	if (typeof v === 'number') {
