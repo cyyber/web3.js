@@ -159,8 +159,7 @@ describe('Web3 instance', () => {
 	});
 
 	describe('Web3 providers', () => {
-		// TODO(rgeraldes24): fix
-		it.skip('should set the provider with `.provider=`', async () => {
+		it('should set the provider with `.provider=`', async () => {
 			web3 = new Web3('http://dummy.com');
 
 			web3.provider = provider;

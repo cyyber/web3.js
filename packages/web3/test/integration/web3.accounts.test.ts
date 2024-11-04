@@ -60,8 +60,7 @@ describe('web3.accounts', () => {
 
 		
 		describe('signTransaction', () => {
-			// TODO(rgeraldes24): fix
-			it.skip('should be able to sign the transaction from created account', async () => {
+			it('should be able to sign the transaction from created account', async () => {
 				const account: Web3Account = web3.zond.accounts.create();
 				const tx = {
 					from: account.address,
@@ -140,8 +139,7 @@ describe('web3.accounts', () => {
 	});
 
 	describe('signTransaction', () => {
-		// TODO(rgeraldes24): fix
-		it.skip('should be able to sign the transaction from created account', async () => {
+		it('should be able to sign the transaction from created account', async () => {
 			const account: Web3Account = web3.zond.accounts.create();
 
 			const tx = {

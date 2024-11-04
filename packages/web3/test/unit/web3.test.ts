@@ -19,8 +19,7 @@ import { Contract } from '@theqrl/web3-zond-contract';
 import { ContractInitOptions } from '@theqrl/web3-types';
 import { Web3 } from '../../src/web3';
 
-// TODO(rgeraldes24): fix
-describe.skip('Web3 object', () => {
+describe('Web3 object', () => {
 	it('should be able to set and read web3 providers', () => {
 		const web3NoProvider = new Web3();
 		expect(web3NoProvider).toBeTruthy();
