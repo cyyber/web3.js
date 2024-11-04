@@ -830,6 +830,7 @@ export async function signTransaction<ReturnFormat extends DataFormat>(
 		web3Context.requestManager,
 		formatTransaction(transaction, ZOND_DATA_FORMAT),
 	);
+
 	// Some clients only return the encoded signed transaction (e.g. Ganache)
 	// while clients such as Gzond return the desired SignedTransactionInfoAPI object
 	return isString(response as HexStringBytes)

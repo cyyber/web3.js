@@ -41,7 +41,7 @@ jest.mock('@theqrl/web3-net', () => ({
 }));
 
 describe('defaultTransactionBuilder', () => {
-	const expectedFrom = '0x206E7Ec6854337F059BF6b637ac7cECd2F3D1933';
+	const expectedFrom = 'Z206E7Ec6854337F059BF6b637ac7cECd2F3D1933';
 	const expectedNonce = '0x42';
 	const expectedGas = BigInt(21000);
 	const expectedGasLimit = expectedGas;
@@ -113,7 +113,6 @@ describe('defaultTransactionBuilder', () => {
 		web3Context = new Web3Context<ZondExecutionAPI>(new HttpProvider('http://127.0.0.1'));
 	});
 
-	// TODO(rgeraldes24): expect(jest.fn()).toHaveBeenCalledWith(...expected)
 	it.skip('should call override method', async () => {
 		const overrideFunction = jest.fn();
 		const input = { ...transaction };
@@ -129,7 +128,7 @@ describe('defaultTransactionBuilder', () => {
 	});
 
 	// TODO(rgeraldes24): fix
-	describe.skip('should populate from', () => {
+	describe('should populate from', () => {
 		it('should use seed to populate', async () => {
 			const input = { ...transaction };
 			delete input.from;

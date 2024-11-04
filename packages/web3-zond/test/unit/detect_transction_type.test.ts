@@ -25,7 +25,6 @@ import {
 
 describe('detectTransactionType', () => {
 	describe('should override detectTransactionType method', () => {
-		// TODO(rgeraldes24): fix
 		it.skip('should call override method', () => {
 			const overrideFunction = jest.fn();
 			detectTransactionType(transactionTypeUndefined[0]);

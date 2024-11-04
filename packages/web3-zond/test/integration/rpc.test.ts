@@ -278,8 +278,7 @@ describe('rpc', () => {
 			// expect(res[0]).toEqual(tempAcc.address);
 		});
 
-		// TODO(rgeraldes24): fix
-		it.skip('getPastLogs', async () => {
+		it('getPastLogs', async () => {
 			const listOfStrings = ['t1', 't2', 't3'];
 			const resTx = [];
 			for (const l of listOfStrings) {

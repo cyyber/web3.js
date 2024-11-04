@@ -32,7 +32,7 @@ import { validTransactions } from '../fixtures/prepare_transaction_for_signing';
 // TODO(rgeraldes24): fix
 // Expected: "z201bdf510d5aa66d1b5db98dfb0f30d40b6ea47d"
 // Received: "0x201bdf510d5aa66d1b5db98dfb0f30d40b6ea47d"
-describe.skip('prepareTransactionForSigning', () => {
+describe('prepareTransactionForSigning', () => {
 	const web3Context = new Web3Context<ZondExecutionAPI>({
 		provider: new HttpProvider('http://127.0.0.1'),
 		config: { defaultNetworkId: '0x1' },
@@ -79,7 +79,7 @@ describe.skip('prepareTransactionForSigning', () => {
 				);
 
 				const senderAddress = signedTransaction.getSenderAddress().toString();
-				expect(senderAddress).toBe(expectedAddress.toLowerCase());
+				expect(senderAddress).toBe(`Z${expectedAddress.slice(1).toLowerCase()}`);
 
 				// should be able to obtain expectedRlpEncodedTransaction
 				const rlpEncodedTransaction = bytesToHex(signedTransaction.serialize());

@@ -42,8 +42,7 @@ import { SimpleRevertAbi, SimpleRevertDeploymentData } from '../../fixtures/simp
 
 const HEX_NUMBER_DATA_FORMAT = { bytes: FMT_BYTES.HEX, number: FMT_NUMBER.HEX } as const;
 
-// TODO(rgeraldes24): fix
-describe.skip('Web3Zond.sendSignedTransaction', () => {
+describe('Web3Zond.sendSignedTransaction', () => {
 	let web3Zond: Web3Zond;
 	let tempAcc: { address: string; seed: string };
 
@@ -258,7 +257,7 @@ describe.skip('Web3Zond.sendSignedTransaction', () => {
 				await web3Zond.sendTransaction(simpleRevertDeployTransaction)
 			).contractAddress as Address;
 		});
-
+		// TODO(rgeraldes24): review
 		/*
 		it('Should throw TransactionRevertInstructionError because gas too low', async () => {
 			const transaction: Transaction = {
@@ -319,7 +318,7 @@ describe.skip('Web3Zond.sendSignedTransaction', () => {
 				reason:
 					getSystemTestBackend() === 'gzond'
 						? expect.stringContaining(
-								'err: insufficient funds for gas * price + value: address 0x',
+								'err: insufficient funds for gas * price + value: address Z',
 						  )
 						: 'VM Exception while processing transaction: insufficient balance',
 				signature: undefined,
