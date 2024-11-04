@@ -110,8 +110,8 @@ export class Wallet<
 	 *     decrypt: [Function: decrypt]
 	 *   },
 	 *   _addressMap: Map(2) {
-	 *     '0xde38310a42b751ae57d30cfff4a0a3c52a442fce' => 0,
-	 *     '0x766bf755246d924b1d017fdb5390f38a60166691' => 1
+	 *     'Zde38310a42b751ae57d30cfff4a0a3c52a442fce' => 0,
+	 *     'Z766bf755246d924b1d017fdb5390f38a60166691' => 1
 	 *   },
 	 *   _defaultKeyName: 'web3js_wallet'
 	 * ]
@@ -197,7 +197,7 @@ export class Wallet<
 	 * ```ts
 	 * web3.zond.accounts.wallet.add('0xbce9b59981303e76c4878b1a6d7b088ec6b9dd5c966b7d5f54d7a749ff683387');
 	 *
-	 * web3.zond.accounts.wallet.remove('0x85D70633b90e03e0276B98880286D0D055685ed7');
+	 * web3.zond.accounts.wallet.remove('Z85D70633b90e03e0276B98880286D0D055685ed7');
 	 * > true
 	 * web3.zond.accounts.wallet
 	 * > Wallet(0) [

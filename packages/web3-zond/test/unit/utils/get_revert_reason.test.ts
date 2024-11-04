@@ -70,7 +70,7 @@ describe('getRevertReason', () => {
 			error: {
 				code: -32000,
 				message:
-					'err: insufficient funds for gas * price + value: address 0x0000000000000000000000000000000000000000 have 66 want 9983799287684 (supplied gas 26827)',
+					'err: insufficient funds for gas * price + value: address Z0000000000000000000000000000000000000000 have 66 want 9983799287684 (supplied gas 26827)',
 			},
 		};
 		const parseTransactionErrorSpy = jest
@@ -98,7 +98,7 @@ describe('getRevertReason', () => {
 			error: {
 				code: -32000,
 				message:
-					'err: insufficient funds for gas * price + value: address 0x0000000000000000000000000000000000000000 have 66 want 9983799287684 (supplied gas 26827)',
+					'err: insufficient funds for gas * price + value: address Z0000000000000000000000000000000000000000 have 66 want 9983799287684 (supplied gas 26827)',
 			},
 		};
 		const parseTransactionErrorSpy = jest

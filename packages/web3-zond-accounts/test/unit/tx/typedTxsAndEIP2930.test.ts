@@ -23,6 +23,7 @@ import { Chain, Common, Hardfork/*, uint8ArrayToBigInt*/ } from '../../../src/co
 import type { AccessList } from '../../../src';
 
 const seed = hexToBytes('0xec3077d539c7b333e596b9e6c0b5f5952d26469ab9a60d1fd54c329ef9959593850a2daf60369e434a7c55939f99e149');
+// TODO(rgeraldes24): addressToBytes
 const address = hexToBytes('0x20982e08c8b5b4d007e4f6c4a637033ce90aa352');
 
 const common = new Common({

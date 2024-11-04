@@ -11,6 +11,7 @@ export class AddressCoder extends Coder {
         super("address", "address", localName, false);
     }
 
+    // TODO(rgeraldes24): review
     defaultValue(): string {
         return "0x0000000000000000000000000000000000000000";
     }

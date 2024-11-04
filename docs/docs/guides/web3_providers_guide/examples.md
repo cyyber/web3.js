@@ -331,7 +331,7 @@ If everything is set up properly, you should see the list of accounts and transa
 
 ```bash
 Do the provider supports subscription?: true
-Accounts: [ '0x82333ED0FAA7a883297C4d8e0FDE1E1CFABAeB7D' ]
+Accounts: [ 'Z82333ED0FAA7a883297C4d8e0FDE1E1CFABAeB7D' ]
 Transaction Receipt: {
   blockHash: '0xd1220a9b6f86083e420da025179593f5aad3732165a687019a89528a4ab2bcd8',
   blockNumber: 1n,

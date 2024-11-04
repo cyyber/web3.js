@@ -340,7 +340,7 @@ export class Web3Zond extends Web3Context<Web3ZondExecutionAPI, RegisteredSubscr
 	 * > "0x600160008035811a818181146012578301005b601b6001356025565b8060005260206000f25b600060078202905091905056"
 	 *
 	 * web3.zond.getCode(
-	 *      "0x407d73d8a49eeb85d32cf465507dd71d507100c1",
+	 *      "Z407d73d8a49eeb85d32cf465507dd71d507100c1",
 	 *      undefined,
 	 *      { number: FMT_NUMBER.HEX , bytes: FMT_BYTES.UINT8ARRAY }
 	 * ).then(console.log);
@@ -1057,7 +1057,7 @@ export class Web3Zond extends Web3Context<Web3ZondExecutionAPI, RegisteredSubscr
 	 * Executes a message call within the EVM without creating a transaction.
 	 * It does not publish anything to the blockchain and does not consume any gas.
 	 *
-	 * @param transaction - A transaction object where all properties are optional except `to`, however it's recommended to include the `from` property or it may default to `0x0000000000000000000000000000000000000000` depending on your node or provider.
+	 * @param transaction - A transaction object where all properties are optional except `to`, however it's recommended to include the `from` property or it may default to `Z0000000000000000000000000000000000000000` depending on your node or provider.
 	 * @param blockNumber ({@link BlockNumberOrTag} defaults to {@link Web3Zond.defaultBlock}) - Specifies what block to use as the current state of the blockchain while processing the transaction.
 	 * @param returnFormat ({@link DataFormat} defaults to {@link DEFAULT_RETURN_FORMAT}) - Specifies how the return data from the call should be formatted.
 	 * @returns The returned data of the call, e.g. a smart contract function's return value.
@@ -1155,6 +1155,7 @@ export class Web3Zond extends Web3Context<Web3ZondExecutionAPI, RegisteredSubscr
 		return rpcMethodsWrappers.getLogs(this, filter, returnFormat);
 	}
 
+	// TODO(rgeraldes24): review
 	// TODO - Format addresses
 	/**
 	 * This method will request/enable the accounts from the current environment and for supporting [EIP 1102](https://eips.ethereum.org/EIPS/eip-1102)
