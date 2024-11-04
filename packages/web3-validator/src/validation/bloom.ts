@@ -101,7 +101,7 @@ export const isUserZondAddressInBloom = (bloom: string, zondAddress: string): bo
 	// hence why we have 2 methods
 	// (0x is not in the 2nd parameter of padleft so 64 chars is fine)
 
-	const address = padLeft(zondAddress, 64);
+	const address = padLeft(zondAddress.replace('Z', '0x'), 64);
 
 	return isInBloom(bloom, address);
 };
@@ -119,5 +119,5 @@ export const isContractAddressInBloom = (bloom: string, contractAddress: string)
 		return false;
 	}
 
-	return isInBloom(bloom, contractAddress);
+	return isInBloom(bloom, contractAddress.replace('Z', '0x'));
 };

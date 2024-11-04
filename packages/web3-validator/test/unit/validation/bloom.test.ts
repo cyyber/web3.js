@@ -39,9 +39,10 @@ describe('validation', () => {
 			});
 		});
 
-		describe('isInBloom', () => {
-			// TODO(rgeraldes24): fix
-			describe.skip('valid cases', () => {
+		// TODO(rgeraldes24): fix: shared examples: create new examples
+		describe.skip('isInBloom', () => {
+			describe('valid cases', () => {
+				// TODO(rgeraldes24): fix
 				it.each(validInBloomData)('%s', (bloom, value) => {
 					expect(isInBloom(bloom, value)).toBeTruthy();
 				});
@@ -55,8 +56,7 @@ describe('validation', () => {
 		});
 
 		describe('isUserZondAddressInBloom', () => {
-			// TODO(rgeraldes24): fix
-			describe.skip('valid cases', () => {
+			describe('valid cases', () => {
 				it.each(validUserZondAddressInBloomData)('%s', (bloom, address) => {
 					expect(isUserZondAddressInBloom(bloom, address)).toBeTruthy();
 				});
@@ -70,8 +70,7 @@ describe('validation', () => {
 		});
 
 		describe('isContractAddressInBloom', () => {
-			// TODO(rgeraldes24): fix: hex utils
-			describe.skip('valid cases', () => {
+			describe('valid cases', () => {
 				it.each(validInBloomData)('%s', (bloom, address) => {
 					expect(isContractAddressInBloom(bloom, address)).toBeTruthy();
 				});

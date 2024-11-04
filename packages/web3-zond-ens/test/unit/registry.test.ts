@@ -20,8 +20,7 @@ import { NonPayableMethodObject } from '@theqrl/web3-zond-contract';
 import { Registry } from '../../src/registry';
 import { namehash } from '../../src/utils';
 
-// TODO(rgeraldes24): fix
-describe.skip('registry', () => {
+describe('registry', () => {
 	let object: Web3ContextObject;
 	let registry: Registry;
 	const mockAddress = 'Z0000000000000000000000000000000000000000';

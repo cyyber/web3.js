@@ -40,8 +40,7 @@ describe('iban', () => {
 	});
 
 	describe('toAddress', () => {
-		// TODO(rgeraldes24): fix
-		describe.skip('valid cases', () => {
+		describe('valid cases', () => {
 			it.each(validIbanToAddressData)('%s', (input, output) => {
 				const iban = new Iban(input);
 				expect(iban.toAddress()).toBe(output);
@@ -56,8 +55,7 @@ describe('iban', () => {
 	});
 
 	describe('toAddress static method', () => {
-		// TODO(rgeraldes24): fix
-		describe.skip('valid cases', () => {
+		describe('valid cases', () => {
 			it.each(validIbanToAddressData)('%s', (input, output) => {
 				expect(Iban.toAddress(input)).toBe(output);
 			});
@@ -69,8 +67,7 @@ describe('iban', () => {
 		});
 	});
 
-	// TODO(rgeraldes24): fix
-	describe.skip('toIban', () => {
+	describe('toIban', () => {
 		describe('valid cases', () => {
 			it.each(validIbanToAddressData)('%s', (output, input) => {
 				expect(Iban.toIban(input)).toBe(output);
@@ -78,8 +75,7 @@ describe('iban', () => {
 		});
 	});
 
-	// TODO(rgeraldes24): fix
-	describe.skip('fromAddress', () => {
+	describe('fromAddress', () => {
 		describe('valid cases', () => {
 			it.each(validIbanToAddressData)('%s', (output, input) => {
 				expect(Iban.fromAddress(input).toString()).toBe(output);

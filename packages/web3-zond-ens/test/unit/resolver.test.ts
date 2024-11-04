@@ -25,8 +25,7 @@ import { Registry } from '../../src/registry';
 import { Resolver } from '../../src/resolver';
 import { namehash } from '../../src/utils';
 
-// TODO(rgeraldes24): fix
-describe.skip('resolver', () => {
+describe('resolver', () => {
 	let object: Web3ContextObject;
 	let registry: Registry;
 	let resolver: Resolver;
@@ -44,8 +43,7 @@ describe.skip('resolver', () => {
 	});
 
 	describe('checkInterfaceSupport', () => {
-		// TODO(rgeraldes24): fix
-		it.skip('isNullish interface', async () => {
+		it('isNullish interface', async () => {
 			const methodName = 'nullish';
 			await expect(resolver.checkInterfaceSupport(contract, methodName)).rejects.toThrow(
 				new ResolverMethodMissingError(mockAddress, methodName),
@@ -59,8 +57,7 @@ describe.skip('resolver', () => {
 			);
 		});
 
-		// TODO(rgeraldes24): fix
-		it.skip('Doesn"t support interface', async () => {
+		it('Doesn"t support interface', async () => {
 			const methodName = methodsInInterface.setAddr; // Just a method to pass first check
 
 			const supportsInterfaceMock = jest

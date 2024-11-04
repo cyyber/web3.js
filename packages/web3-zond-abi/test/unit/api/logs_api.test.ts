@@ -20,8 +20,7 @@ import { validDecodeLogsData } from '../../fixtures/data';
 
 describe('logs_api', () => {
 	describe('decodeLog', () => {
-		// TODO(rgeraldes24): fix
-		describe.skip('valid data', () => {
+		describe('valid data', () => {
 			it.each(validDecodeLogsData)(
 				'should pass for valid values: %j',
 				({ input: { abi, data, topics }, output }) => {

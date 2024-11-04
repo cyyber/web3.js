@@ -45,8 +45,7 @@ import {
 import { TransactionFactory } from '../../src/tx/transactionFactory';
 import { TxData } from '../../src/tx/types';
 
-// TODO(rgeraldes24): fix
-describe.skip('accounts', () => {
+describe('accounts', () => {
 	describe('create', () => {
 		describe('valid cases', () => {
 			it('%s', () => {
@@ -77,8 +76,7 @@ describe.skip('accounts', () => {
 	});
 
 	describe('seedToAccount', () => {
-		// TODO(rgeraldes24): fix
-		describe.skip('valid cases', () => {
+		describe('valid cases', () => {
 			it.each(validSeedtoAccountData)('%s', (input, output) => {
 				expect(
 					JSON.stringify(seedToAccount(input.address, input.ignoreLength)),
@@ -93,8 +91,7 @@ describe.skip('accounts', () => {
 		});
 	});
 
-	// TODO(rgeraldes24): fix
-	describe.skip('Signing and Recovery of Transaction', () => {
+	describe('Signing and Recovery of Transaction', () => {
 		it.each(transactionsTestData)('sign transaction', async txData => {
 			const account = create();
 
@@ -107,7 +104,7 @@ describe.skip('accounts', () => {
 			expect(signedResult.messageHash).toBeDefined();
 			expect(signedResult.rawTransaction).toBeDefined();
 			expect(signedResult.transactionHash).toBeDefined();
-			expect(signedResult.signature).toMatch(/0[xX][0-9a-fA-F]{64}/);
+			expect(signedResult.signature).toMatch(/0[xX][0-9a-fA-F]{9190}/);
 		});
 
 		it.each(transactionsTestData)('Recover transaction', async txData => {

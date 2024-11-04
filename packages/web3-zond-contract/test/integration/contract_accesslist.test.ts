@@ -61,7 +61,7 @@ describe('contract', () => {
 			const accessListResult = {
 				accessList: [
 					{
-						address: deployedContract.options.address?.toLowerCase(),
+						address: `Z${deployedContract.options.address?.slice(1).toLowerCase()}`,
 						storageKeys: [
 							'0x0000000000000000000000000000000000000000000000000000000000000001',
 						],
@@ -87,7 +87,7 @@ describe('contract', () => {
 			const accessListResult = {
 				accessList: [
 					{
-						address: deployedContract.options.address?.toLowerCase(),
+						address: `Z${deployedContract.options.address?.slice(1).toLowerCase()}`,
 						storageKeys: [
 							'0x0000000000000000000000000000000000000000000000000000000000000001',
 						],

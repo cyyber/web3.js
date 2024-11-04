@@ -39,8 +39,7 @@ import {
 	validateTransactionWithSenderInvalidData,
 } from '../fixtures/validation';
 
-// TODO(rgeraldes24): fix
-describe.skip('validation', () => {
+describe('validation', () => {
 	describe('isBaseTransaction', () => {
 		it.each(isBaseTransactionValidData)('%s', (input, output) => {
 			expect(isBaseTransaction(input)).toEqual(output);

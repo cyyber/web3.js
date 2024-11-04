@@ -54,7 +54,9 @@ export class Address {
 	 * Returns hex encoding of address.
 	 */
 	public toString(): string {
-		return bytesToHex(this.buf);
+		// TODO(rgeraldes24)
+		// return bytesToHex(this.buf);
+		return `Z${bytesToHex(this.buf).slice(2)}`;
 	}
 
 	/**

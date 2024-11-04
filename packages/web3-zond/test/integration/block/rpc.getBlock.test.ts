@@ -23,7 +23,7 @@ import {
 } from '@theqrl/web3-types';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { Contract } from '@theqrl/web3-zond-contract';
-import { validator } from '@theqrl/web3-validator';
+// import { validator } from '@theqrl/web3-validator';
 import { Web3Zond } from '../../../src';
 import {
 	getSystemTestProvider,
@@ -37,7 +37,7 @@ import {
 import { BasicAbi, BasicBytecode } from '../../shared_fixtures/build/Basic';
 import { toAllVariants } from '../../shared_fixtures/utils';
 import { sendFewTxes } from '../helper';
-import { blockSchema } from '../../../src/schemas';
+// import { blockSchema } from '../../../src/schemas';
 
 describe('rpc with block', () => {
 	let web3Zond: Web3Zond;

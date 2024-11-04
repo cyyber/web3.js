@@ -28,7 +28,7 @@ import { createAccountProvider } from '../../fixtures/system_test_utils';
 
 import Web3Zond from '../../../src';
 
-describe.skip('getTransactionFromOrToAttr', () => {
+describe('getTransactionFromOrToAttr', () => {
 	const web3Context = new Web3Context();
 
 	describe('valid data', () => {

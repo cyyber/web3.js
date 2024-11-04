@@ -113,6 +113,7 @@ describe('defaultTransactionBuilder', () => {
 		web3Context = new Web3Context<ZondExecutionAPI>(new HttpProvider('http://127.0.0.1'));
 	});
 
+	// TODO(rgeraldes24): expect(jest.fn()).toHaveBeenCalledWith(...expected)
 	it.skip('should call override method', async () => {
 		const overrideFunction = jest.fn();
 		const input = { ...transaction };

@@ -67,3 +67,11 @@ export const toUpperCaseHex = (str: string) => {
 
 	return `0x${str.toUpperCase()}`;
 };
+
+export const toUpperCaseZPrefixedHex = (str: string) => {
+	if (str.startsWith('Z')) {
+		return `Z${str.toUpperCase().slice(1)}`;
+	}
+
+	return `Z${str.toUpperCase()}`;
+};

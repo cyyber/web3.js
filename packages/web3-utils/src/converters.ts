@@ -590,7 +590,7 @@ export const toChecksumAddress = (address: Address): string => {
 		throw new InvalidAddressError(address);
 	}
 
-	const lowerCaseAddress = address.replace(/^Z/i, '');
+	const lowerCaseAddress = address.toLowerCase().replace(/^z/i, '');
 
 	const hash = bytesToHex(keccak256(utf8ToBytes(lowerCaseAddress)));
 

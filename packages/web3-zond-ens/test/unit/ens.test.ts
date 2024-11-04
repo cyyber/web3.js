@@ -40,8 +40,7 @@ jest.mock('@theqrl/web3-net', () => ({
 // eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires
 const { getId } = require('@theqrl/web3-net');
 
-// TODO(rgeraldes24): fix
-describe.skip('ens', () => {
+describe('ens', () => {
 	let object: Web3ContextObject;
 	let resolverContract: Contract<typeof PublicResolverAbi>;
 	const mockAddress = 'Z0000000000000000000000000000000000000000';

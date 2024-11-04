@@ -21,8 +21,7 @@ import { Resolver } from '../../src/resolver';
 import { ENS } from '../../src/ens';
 import { registryAddresses } from '../../src/config';
 
-// TODO(rgeraldes24): fix
-describe.skip('ens', () => {
+describe('ens', () => {
 	let object: Web3ContextObject;
 
 	beforeAll(() => {

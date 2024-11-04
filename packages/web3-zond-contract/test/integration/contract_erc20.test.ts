@@ -27,7 +27,7 @@ import {
 	refillAccount,
 	signAndSendContractMethodEIP1559,
 } from '../fixtures/system_test_utils';
-import { processAsync, toUpperCaseHex } from '../shared_fixtures/utils';
+import { processAsync, toUpperCaseZPrefixedHex } from '../shared_fixtures/utils';
 
 const initialSupply = BigInt('5000000000');
 
@@ -133,7 +133,7 @@ describe('contract', () => {
 						expect(res.status).toBe(BigInt(1));
 						expect(
 							(res.logs as LogsOutput[])[0].topics[2].endsWith(
-								pkAccount.address.substring(2),
+								pkAccount.address.substring(1),
 							),
 						).toBe(true);
 
@@ -213,8 +213,8 @@ describe('contract', () => {
 							const event = contractDeployed.events.Transfer();
 							event.on('data', data => {
 								resolve({
-									from: toUpperCaseHex(data.returnValues.from as string),
-									to: toUpperCaseHex(data.returnValues.to as string),
+									from: toUpperCaseZPrefixedHex(data.returnValues.from as string),
+									to: toUpperCaseZPrefixedHex(data.returnValues.to as string),
 									value: data.returnValues.value,
 								});
 							});
@@ -224,8 +224,8 @@ describe('contract', () => {
 								.send(sendOptions);
 						}),
 					).resolves.toEqual({
-						from: toUpperCaseHex(sendOptions.from as string),
-						to: toUpperCaseHex(acc2.address),
+						from: toUpperCaseZPrefixedHex(sendOptions.from as string),
+						to: toUpperCaseZPrefixedHex(acc2.address),
 						value: BigInt(100),
 					});
 				});

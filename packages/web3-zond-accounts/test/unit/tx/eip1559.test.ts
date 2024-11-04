@@ -34,8 +34,7 @@ const validAddress = hexToBytes('01'.repeat(20));
 const validSlot = hexToBytes('01'.repeat(32));
 const chainId = BigInt(4);
 
-// TODO(rgeraldes24): fix
-describe.skip('[FeeMarketEIP1559Transaction]', () => {
+describe('[FeeMarketEIP1559Transaction]', () => {
 	it('cannot input decimal or negative values %s', () => {
 		const values = [
 			'maxFeePerGas',

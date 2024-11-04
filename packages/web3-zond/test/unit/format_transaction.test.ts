@@ -41,6 +41,7 @@ const transactionsDataForByteTypes: Record<FMT_BYTES, Record<string, unknown>> =
 };
 
 describe('formatTransaction', () => {
+	// TODO(rgeraldes24): fix: expect(jest.fn()).toHaveBeenCalledWith(...expected)
 	it.skip('should call override method', () => {
 		const overrideFunction = jest.fn();
 		formatTransaction(numbersAsHexStringTransaction, DEFAULT_RETURN_FORMAT);

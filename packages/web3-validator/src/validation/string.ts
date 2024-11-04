@@ -36,11 +36,10 @@ export const isAddressHexStrict = (hex: ValidInputTypes) =>
  * @returns  output the string is a hex string
  */
 export function isHexString(value: string, prefix: string = '0x', length?: number): boolean {
-
-	// TODO(rgeraldes24)
 	if (typeof value !== 'string') {
 		return false
 	} else {
+		// TODO(rgeraldes24): refactor
 		if (prefix == '0x' && !value.match(/^0x[0-9A-Fa-f]*$/)) {
 			return false
 		} else if (prefix == 'Z' && !value.match(/^Z[0-9A-Fa-f]*$/)) {

@@ -311,7 +311,7 @@ export const toWeiInvalidData: [[any, any], string][] = [
 export const toCheckSumValidData: [string, string][] = [
 	['Z0089d53f703f7e0843953d48133f74ce247184c2', 'Z0089d53F703f7E0843953D48133f74cE247184c2'],
 	['Z5fbc2b6c19ee3dd5f9af96ff337ddc89e30ceaef', 'Z5FBc2b6C19EE3DD5f9Af96ff337DDC89e30ceAef'],
-	['Za54D3c09E34aC96807c1CC397404bF2B98DC4eFb', 'ZA54D3C09E34AC96807c1CC397404bF2B98DC4eFB'],
+	['Za54D3c09E34aC96807c1CC397404bF2B98DC4eFb', 'Za54d3c09E34aC96807c1CC397404bF2B98DC4eFb'],
 ];
 export const toCheckSumInvalidData: [string, string][] = [
 	['not an address', 'Invalid value given "not an address". Error: invalid zond address.'],

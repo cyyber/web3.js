@@ -268,8 +268,7 @@ export class Iban {
 			throw new InvalidAddressError(address);
 		}
 
-		// TODO(rgeraldes24): fix
-		const num = BigInt(hexToNumber(address));
+		const num = BigInt(hexToNumber(address.replace('Z', '0x')));
 		const base36 = num.toString(36);
 		const padded = leftPad(base36, 15);
 		return Iban.fromBban(padded.toUpperCase());
@@ -316,7 +315,7 @@ export class Iban {
 			const base36 = this._iban.slice(4);
 			const parsedBigInt = Iban._parseInt(base36, 36); // convert the base36 string to a bigint
 			const paddedBigInt = leftPad(parsedBigInt, 40);
-			return toChecksumAddress(paddedBigInt);
+			return toChecksumAddress(paddedBigInt.replace('0x', 'Z'));
 		}
 		throw new Error('Iban is indirect and cannot be converted. Must be length of 34 or 35');
 	};

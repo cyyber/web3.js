@@ -332,8 +332,7 @@ describe('defaults', () => {
 			// eslint-disable-next-line jest/no-standalone-expect
 			expect(zond2.transactionConfirmationBlocks).toBe(4);
 		});
-		// TODO(rgeraldes24): fix: toUint8Array
-		it.skip('transactionConfirmationBlocks implementation', async () => {
+		it('transactionConfirmationBlocks implementation', async () => {
 			const tempAcc2 = await createTempAccount();
 			const waitConfirmations = 1;
 			const zond = new Web3Zond(web3Zond.provider);
@@ -707,8 +706,7 @@ describe('defaults', () => {
 			});
 			expect(res.chain).toBe('rinkeby');
 		});
-		// TODO(rgeraldes24): fix: toUint8Array
-		it.skip('defaultHardfork', async () => {
+		it('defaultHardfork', async () => {
 			// default
 			expect(web3Zond.defaultHardfork).toBe('shanghai');
 

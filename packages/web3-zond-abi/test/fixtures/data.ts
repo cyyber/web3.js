@@ -515,7 +515,7 @@ export const validDecodeLogsData: {
 			addr: 'ZCB00CDE33a7a0Fba30C63745534F1f7Ae607076b',
 			user: {
 				'0': 'Rick Sanchez',
-				'1': '0xCB00CDE33a7a0Fba30C63745534F1f7Ae607076b',
+				'1': 'ZCB00CDE33a7a0Fba30C63745534F1f7Ae607076b',
 				'2': {
 					'0': 'rick.c137@citadel.cfc',
 					'1': '+1 (555) 314-1593',
@@ -897,7 +897,7 @@ export const validDecodeParametersData: {
 		outputResult: {
 			'0': {
 				'0': 'Rick Sanchez',
-				'1': '0xCB00CDE33a7a0Fba30C63745534F1f7Ae607076b',
+				'1': 'ZCB00CDE33a7a0Fba30C63745534F1f7Ae607076b',
 				'2': {
 					'0': 'rick.c137@citadel.cfc',
 					'1': '+1 (555) 314-1593',
@@ -919,7 +919,7 @@ export const validDecodeParametersData: {
 			__length__: 1,
 			user: {
 				'0': 'Rick Sanchez',
-				'1': '0xCB00CDE33a7a0Fba30C63745534F1f7Ae607076b',
+				'1': 'ZCB00CDE33a7a0Fba30C63745534F1f7Ae607076b',
 				'2': {
 					'0': 'rick.c137@citadel.cfc',
 					'1': '+1 (555) 314-1593',
