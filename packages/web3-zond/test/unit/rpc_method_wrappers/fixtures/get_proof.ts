@@ -54,6 +54,7 @@ const address = 'Z407d73d8a49eeb85d32cf465507dd71d507100c1';
  */
 type TestData = [string, [Address, Bytes[] | Uint8Array[], BlockNumberOrTag | undefined]];
 export const testData: TestData[] = [
+	// TODO(rgeraldes24): address
 	// Testing storageKey cases
 	// storageKey = HexString
 	[
@@ -80,6 +81,7 @@ export const testData: TestData[] = [
 		],
 	],
 
+	// TODO(rgeraldes24): address
 	// Testing blockNumber cases
 	// blockNumber = BlockTag
 	[

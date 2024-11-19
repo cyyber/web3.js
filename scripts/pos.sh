@@ -31,12 +31,12 @@ download(){
 
     if [ ! -e "$TMP_FOLDER/go-zond" ]
     then
-        git clone -b feature/address-format https://github.com/rgeraldes24/go-zond ${TMP_FOLDER}/go-zond
+        git clone -b feature/z-prefix-address https://github.com/rgeraldes24/go-zond ${TMP_FOLDER}/go-zond
     fi
 
 	if [ ! -e "$TMP_FOLDER/qrysm" ]
     then
-        git clone -b feature/address-format https://github.com/rgeraldes24/qrysm ${TMP_FOLDER}/qrysm
+        git clone -b feature/z-prefix-address https://github.com/rgeraldes24/qrysm ${TMP_FOLDER}/qrysm
     fi
 }
 
