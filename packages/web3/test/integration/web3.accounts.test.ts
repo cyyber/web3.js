@@ -26,7 +26,7 @@ import {
 import Web3, { SupportedProviders } from '../../src/index';
 
 const hexRegx = /0[xX][0-9a-fA-F]+/;
-const addressHexRegx = /Z[0-9a-fA-F]+/;
+const addressHexRegx = /Z[0-9a-fA-F]{40}/;
 
 describe('web3.accounts', () => {
 	let clientUrl: string | SupportedProviders;
@@ -57,7 +57,6 @@ describe('web3.accounts', () => {
 				}),
 			);
 		});
-
 		
 		describe('signTransaction', () => {
 			it('should be able to sign the transaction from created account', async () => {
