@@ -173,7 +173,7 @@ export class ENS extends Web3Context<ZondExecutionAPI & Web3NetAPI> {
 	 * ```ts
 	 * const hash = await web3.zond.ens.getContenthash('zond.ens');
 	 * console.log(hash);
-	 * > '0xmaEBknbGT4bTQiQoe2VNgBJbRfygQGktnaW5TbuKixjYL'
+	 * > 'QmaEBknbGT4bTQiQoe2VNgBJbRfygQGktnaW5TbuKixjYL'
 	 * ```
 	 */
 	public async getContenthash(ENSName: string) {
