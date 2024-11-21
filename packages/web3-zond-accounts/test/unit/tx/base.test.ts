@@ -192,7 +192,7 @@ describe('[BaseTransaction]', () => {
 					continue;
 				}
 				const signedTx = tx.sign(hexToBytes(seed));
-				expect(signedTx.getSenderAddress().toString()).toBe(`Z${sendersAddress}`);
+				expect(signedTx.getSenderAddress().toString()).toBe(sendersAddress);
 			}
 		}
 	});
