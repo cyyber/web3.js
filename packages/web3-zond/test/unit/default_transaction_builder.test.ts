@@ -127,7 +127,6 @@ describe('defaultTransactionBuilder', () => {
 		expect(overrideFunction).toHaveBeenCalledWith(input);
 	});
 
-	// TODO(rgeraldes24): fix
 	describe('should populate from', () => {
 		it('should use seed to populate', async () => {
 			const input = { ...transaction };
