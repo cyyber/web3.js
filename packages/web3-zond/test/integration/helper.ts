@@ -67,9 +67,7 @@ export const sendFewTxes = async ({
 	return res;
 };
 
-const regexZPrefixedHex20 = /Z[0-9a-fA-F]{40}/i;
-// TODO(rgeraldes24): remove?
-// const regexHex20 = /0[xX][0-9a-fA-F]{40}/i;
+const regexAddress = /Z[0-9a-fA-F]{40}/i;
 const regexHex32 = /0[xX][0-9a-fA-F]{64}/i;
 
 type ExpectOptions = {
@@ -85,8 +83,8 @@ export const validateTransaction = (
 	expect(tx.blockHash).toMatch(regexHex32);
 	expect(Number(tx.blockNumber)).toBeGreaterThan(0);
 	expect(tx.transactionIndex).toBeDefined();
-	expect(tx.from).toMatch(regexZPrefixedHex20);
-	expect(tx.to).toMatch(regexZPrefixedHex20);
+	expect(tx.from).toMatch(regexAddress);
+	expect(tx.to).toMatch(regexAddress);
 	expect(Number(tx.value)).toBe(1);
 	expect(tx.input).toBe('0x');
 	expect(tx.publicKey).toBeDefined();
@@ -101,7 +99,7 @@ export const validateBlock = (b: Block) => {
 	expect(b.transactionsRoot).toMatch(regexHex32);
 	expect(b.receiptsRoot).toMatch(regexHex32);
 	expect(b.logsBloom).toBeDefined();
-	expect(b.miner).toMatch(regexZPrefixedHex20);
+	expect(b.miner).toMatch(regexAddress);
 	expect(b.stateRoot).toMatch(regexHex32);
 	expect(b.gasLimit).toBeDefined();
 	expect(b.gasUsed).toBeDefined();
@@ -117,8 +115,8 @@ export const validateReceipt = (r: TransactionReceipt) => {
 	expect(r.transactionIndex).toBeDefined();
 	expect(r.blockHash).toMatch(regexHex32);
 	expect(r.blockNumber).toBeDefined();
-	expect(r.from).toMatch(regexZPrefixedHex20);
-	expect(r.to).toMatch(regexZPrefixedHex20);
+	expect(r.from).toMatch(regexAddress);
+	expect(r.to).toMatch(regexAddress);
 	expect(r.cumulativeGasUsed).toBeDefined();
 	expect(r.gasUsed).toBeDefined();
 	expect(r.effectiveGasPrice).toBeDefined();
