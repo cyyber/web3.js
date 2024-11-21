@@ -257,8 +257,6 @@ describe('Web3Zond.sendSignedTransaction', () => {
 				await web3Zond.sendTransaction(simpleRevertDeployTransaction)
 			).contractAddress as Address;
 		});
-		// TODO(rgeraldes24): review
-		/*
 		it('Should throw TransactionRevertInstructionError because gas too low', async () => {
 			const transaction: Transaction = {
 				from: tempAcc.address,
@@ -266,6 +264,7 @@ describe('Web3Zond.sendSignedTransaction', () => {
 				value: BigInt(1),
 				gas: 1,
 				maxFeePerGas: 1,
+				maxPriorityFeePerGas: 1,
 				type: BigInt(2),
 				nonce: await web3Zond.getTransactionCount(tempAcc.address),
 			};
@@ -280,7 +279,7 @@ describe('Web3Zond.sendSignedTransaction', () => {
 				reason:
 					getSystemTestBackend() === 'gzond'
 						? expect.stringContaining(
-								'err: max fee per gas less than block base fee: address 0x',
+								'err: max fee per gas less than block base fee: address Z',
 						  )
 						: 'VM Exception while processing transaction: out of gas',
 				signature: undefined,
@@ -295,7 +294,6 @@ describe('Web3Zond.sendSignedTransaction', () => {
 					.on('error', error => expect(error).toMatchObject(expectedThrownError)),
 			).rejects.toMatchObject(expectedThrownError);
 		});
-		*/
 		it('Should throw InvalidResponseError because insufficient funds', async () => {
 			const transaction: Transaction = {
 				from: tempAcc.address,
