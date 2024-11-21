@@ -113,8 +113,6 @@ export const encodeEventABI = (
 	if (!opts.topics.length) delete opts.topics;
 
 	if (address) {
-		// TODO(rgeraldes24)
-		// opts.address = address.toLowerCase();
 		opts.address = `Z${address.slice(1).toLowerCase()}`
 	}
 
