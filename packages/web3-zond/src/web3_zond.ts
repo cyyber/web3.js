@@ -1155,8 +1155,6 @@ export class Web3Zond extends Web3Context<Web3ZondExecutionAPI, RegisteredSubscr
 		return rpcMethodsWrappers.getLogs(this, filter, returnFormat);
 	}
 
-	// TODO(rgeraldes24): review
-	// TODO - Format addresses
 	/**
 	 * This method will request/enable the accounts from the current environment and for supporting [EIP 1102](https://eips.ethereum.org/EIPS/eip-1102)
 	 * This method will only work if you’re using the injected provider from a application like Metamask, Status or TrustWallet.
@@ -1167,7 +1165,7 @@ export class Web3Zond extends Web3Context<Web3ZondExecutionAPI, RegisteredSubscr
 	 *
 	 * ```ts
 	 * web3.zond.requestAccounts().then(console.log);
-	 * > ['0aae0B295369a9FD31d5F28D9Ec85E40f4cb692BAf', '0xde0B295669a9FD93d5F28D9Ec85E40f4cb697BAe']
+	 * > ['Zae0B295369a9FD31d5F28D9Ec85E40f4cb692BAf', 'Zde0B295669a9FD93d5F28D9Ec85E40f4cb697BAe']
 	 * ```
 	 */
 	public async requestAccounts() {
