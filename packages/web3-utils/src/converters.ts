@@ -425,6 +425,10 @@ export const toNumber = (value: Numbers): number | bigint => {
 	if (typeof value === 'string' && isHexStrict(value)) {
 		return hexToNumber(value);
 	}
+	
+	if (typeof value === 'string' && isAddress(value)) {
+		return hexToNumber(value.replace('Z', '0x'));
+	}
 
 	try {
 		return toNumber(BigInt(value));
