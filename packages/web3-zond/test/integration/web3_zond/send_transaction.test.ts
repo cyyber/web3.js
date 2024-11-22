@@ -39,6 +39,7 @@ import {
 	getSystemTestProvider,
 } from '../../fixtures/system_test_utils';
 import { SimpleRevertAbi, SimpleRevertDeploymentData } from '../../fixtures/simple_revert';
+import { isNullish } from '@theqrl/web3-utils';
 
 describe('Web3Zond.sendTransaction', () => {
 	let web3Zond: Web3Zond;
@@ -120,11 +121,10 @@ describe('Web3Zond.sendTransaction', () => {
 			response.transactionHash,
 		);
 
+		const acc = wallet.get(0);
 		expect(minedTransactionData).toMatchObject({
 			from: tempAcc.address,
-			// TODO(rgeraldes24)
-			// to: wallet.get(0)?.address.toLowerCase(),
-			to: `Z${wallet.get(0)?.address.slice(1).toLowerCase()}`,
+			to: isNullish(acc) ? undefined : `Z${acc.address.slice(1).toLowerCase()}`,
 			value: BigInt(1),
 		});
 	});
@@ -156,10 +156,10 @@ describe('Web3Zond.sendTransaction', () => {
 			response.transactionHash,
 		);
 
+		const acc = wallet.get(1);
 		expect(minedTransactionData).toMatchObject({
 			from: tempAcc.address,
-			// to: wallet.get(1)?.address.toLowerCase(),
-			to: `Z${wallet.get(1)?.address.slice(1).toLowerCase()}`,
+			to: isNullish(acc) ? undefined : `Z${acc.address.slice(1).toLowerCase()}`,
 			value: BigInt(1),
 		});
 	});
