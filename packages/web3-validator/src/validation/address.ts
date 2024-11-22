@@ -17,7 +17,6 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 
 import { keccak256 } from 'ethereum-cryptography/keccak.js';
 import { utf8ToBytes } from 'ethereum-cryptography/utils.js';
-import { ValidInputTypes } from '../types.js';
 import { uint8ArrayToHexString } from '../utils.js';
 
 /**
@@ -45,7 +44,7 @@ export const checkAddressCheckSum = (data: string): boolean => {
 /**
  * Checks if a given string is a valid Zond address. It will also check the checksum, if the address has upper and lowercase letters.
  */
-export const isAddress = (value: ValidInputTypes, checkChecksum = true) => {
+export const isAddressString = (value: string, checkChecksum = true) => {
 	if (typeof value !== 'string') {
 		return false;
 	}

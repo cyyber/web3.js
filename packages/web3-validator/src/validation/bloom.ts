@@ -18,7 +18,7 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 import { keccak256 } from 'ethereum-cryptography/keccak.js';
 import { ValidInputTypes } from '../types.js';
 import { codePointToInt, hexToUint8Array, padLeft, uint8ArrayToHexString } from '../utils.js';
-import { isAddress } from './address.js';
+import { isAddressString } from './address.js';
 import { isHexStrict } from './string.js';
 
 /**
@@ -89,7 +89,7 @@ export const isUserZondAddressInBloom = (bloom: string, zondAddress: string): bo
 		return false;
 	}
 
-	if (!isAddress(zondAddress)) {
+	if (!isAddressString(zondAddress)) {
 		return false;
 	}
 
@@ -115,7 +115,7 @@ export const isContractAddressInBloom = (bloom: string, contractAddress: string)
 		return false;
 	}
 
-	if (!isAddress(contractAddress)) {
+	if (!isAddressString(contractAddress)) {
 		return false;
 	}
 

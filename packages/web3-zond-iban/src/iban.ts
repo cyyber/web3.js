@@ -17,7 +17,7 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 
 import { HexString } from '@theqrl/web3-types';
 import { toChecksumAddress, leftPad, toNumber } from '@theqrl/web3-utils';
-import { isAddress } from '@theqrl/web3-validator';
+import { isAddressString } from '@theqrl/web3-validator';
 import { InvalidAddressError } from '@theqrl/web3-errors';
 import { IbanOptions } from './types.js';
 
@@ -264,7 +264,7 @@ export class Iban {
 	 * ```
 	 */
 	public static fromAddress(address: HexString): Iban {
-		if (!isAddress(address)) {
+		if (!isAddressString(address)) {
 			throw new InvalidAddressError(address);
 		}
 

@@ -34,7 +34,7 @@ import {
 	TypedObject,
 	TypedObjectAbbreviated,
 } from '@theqrl/web3-types';
-import { isAddress, isNullish, isHexStrict } from '@theqrl/web3-validator';
+import { isAddressString, isNullish, isHexStrict } from '@theqrl/web3-validator';
 import {
 	bytesToUint8Array,
 	bytesToHex,
@@ -240,7 +240,7 @@ const solidityPack = (type: string, val: EncodingTypes): string => {
 	}
 
 	if (type === 'address') {
-		if (!isAddress(value)) {
+		if (!isAddressString(value)) {
 			throw new InvalidAddressError(value);
 		}
 		return value;

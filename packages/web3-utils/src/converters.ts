@@ -19,7 +19,7 @@ import { keccak256 } from 'ethereum-cryptography/keccak.js';
 import { bytesToUtf8, utf8ToBytes } from 'ethereum-cryptography/utils.js';
 import { Address, Bytes, HexString, Numbers, ValueTypes } from '@theqrl/web3-types';
 import {
-	isAddress,
+	isAddressString,
 	isHex,
 	isHexStrict,
 	isNullish,
@@ -349,7 +349,7 @@ export const toHex = (
 	value: Numbers | Bytes | Address | boolean | object,
 	returnType?: boolean,
 ): HexString | ValueTypes => {
-	if (typeof value === 'string' && isAddress(value)) {
+	if (typeof value === 'string' && isAddressString(value)) {
 		return returnType ? 'address' : `Z${value.toLowerCase().replace(/^z/i, '')}`;
 	}
 
@@ -426,7 +426,7 @@ export const toNumber = (value: Numbers): number | bigint => {
 		return hexToNumber(value);
 	}
 	
-	if (typeof value === 'string' && isAddress(value)) {
+	if (typeof value === 'string' && isAddressString(value)) {
 		return hexToNumber(value.replace('Z', '0x'));
 	}
 
@@ -590,7 +590,7 @@ export const toWei = (number: Numbers, unit: EtherUnits): string => {
  * ```
  */
 export const toChecksumAddress = (address: Address): string => {
-	if (!isAddress(address, false)) {
+	if (!isAddressString(address, false)) {
 		throw new InvalidAddressError(address);
 	}
 
