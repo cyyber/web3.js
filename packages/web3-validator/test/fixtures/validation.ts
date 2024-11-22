@@ -321,14 +321,11 @@ export const invalidCheckAddressCheckSumData: any[] = [
 
 export const validAddressData: any[] = [
 	'Zc6d9d2cd449a754c494264e1809c50e34d64562b',
-	'c6d9d2cd449a754c494264e1809c50e34d64562b',
 	'ZE247A45c287191d435A8a5D72A7C8dc030451E9F',
 	'Ze247a45c287191d435a8a5d72a7c8dc030451e9f',
 	'ZE247A45C287191D435A8A5D72A7C8DC030451E9F',
 	'ZE247A45C287191D435A8A5D72A7C8DC030451E9F',
 	'Z72fdb1c1ddd4c67804f42b93de95cf6a8c51d2d1',
-	// TODO(rgeraldes24): fix: hexToBytes
-	// new Uint8Array(hexToBytes('0xE247A45C287191D435A8A5D72A7C8DC030451E9F')),
 ];
 
 export const invalidAddressData: any[] = [

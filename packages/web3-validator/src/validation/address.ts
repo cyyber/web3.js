@@ -19,7 +19,6 @@ import { keccak256 } from 'ethereum-cryptography/keccak.js';
 import { utf8ToBytes } from 'ethereum-cryptography/utils.js';
 import { ValidInputTypes } from '../types.js';
 import { uint8ArrayToHexString } from '../utils.js';
-import { isAddressHexStrict } from './string.js';
 
 /**
  * Checks the checksum of a given address. Will also return false on non-checksum addresses.
@@ -47,31 +46,21 @@ export const checkAddressCheckSum = (data: string): boolean => {
  * Checks if a given string is a valid Zond address. It will also check the checksum, if the address has upper and lowercase letters.
  */
 export const isAddress = (value: ValidInputTypes, checkChecksum = true) => {
-	if (typeof value !== 'string' && !(value instanceof Uint8Array)) {
+	if (typeof value !== 'string') {
 		return false;
 	}
 
-	let valueToCheck: string;
-
-	if (value instanceof Uint8Array) {
-		valueToCheck = uint8ArrayToHexString(value);
-	} else if (typeof value === 'string' && !isAddressHexStrict(value)) { // TODO(rgeraldes24): isHexStrict
-		valueToCheck = value.startsWith('Z') ? value : `Z${value}`;
-	} else {
-		valueToCheck = value;
-	}
-
 	// check if it has the basic requirements of an address
-	if (!/^(Z)?[0-9a-f]{40}$/i.test(valueToCheck)) {
+	if (!/^Z[0-9a-f]{40}$/i.test(value)) {
 		return false;
 	}
 	// If it's ALL lowercase or ALL upppercase
 	if (
-		/^(Z)?[0-9a-f]{40}$/.test(valueToCheck) ||
-		/^(Z)?[0-9A-F]{40}$/.test(valueToCheck)
+		/^Z[0-9a-f]{40}$/.test(value) ||
+		/^Z[0-9A-F]{40}$/.test(value)
 	) {
 		return true;
 		// Otherwise check each case
 	}
-	return checkChecksum ? checkAddressCheckSum(valueToCheck) : true;
+	return checkChecksum ? checkAddressCheckSum(value) : true;
 };
