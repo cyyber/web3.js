@@ -23,7 +23,7 @@ import {
 } from '@theqrl/web3-types';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { Contract } from '@theqrl/web3-zond-contract';
-// import { validator } from '@theqrl/web3-validator';
+import { validator } from '@theqrl/web3-validator';
 import { Web3Zond } from '../../../src';
 import {
 	getSystemTestProvider,
@@ -37,7 +37,7 @@ import {
 import { BasicAbi, BasicBytecode } from '../../shared_fixtures/build/Basic';
 import { toAllVariants } from '../../shared_fixtures/utils';
 import { sendFewTxes } from '../helper';
-// import { blockSchema } from '../../../src/schemas';
+import { blockSchema } from '../../../src/schemas';
 
 describe('rpc with block', () => {
 	let web3Zond: Web3Zond;
@@ -128,12 +128,10 @@ describe('rpc with block', () => {
 				})),
 			};
 			if (blockData[block] === 'pending') {
-				// TODO(rgeraldes24)
 				b.miner = 'Z0000000000000000000000000000000000000000';
 			}
 
-			// TODO(rgeraldes24): fix: value "Z123463a4b065722e99115d6c222f267d9cabb524" at "/miner" must pass "bytes" validation
-			// expect(validator.validateJSONSchema(blockSchema, b)).toBeUndefined();
+			expect(validator.validateJSONSchema(blockSchema, b)).toBeUndefined();
 			if (hydrated && b.transactions?.length > 0) {
 				// eslint-disable-next-line jest/no-conditional-expect
 				expect(b.transactions).toBeInstanceOf(Array<Transaction>);
@@ -151,8 +149,7 @@ describe('rpc with block', () => {
 					const request = await web3Zond.getBlock(blockTag);
 
 					expect(request).toBeDefined();
-					// TODO(rgeraldes24): value "Z123463a4b065722e99115d6c222f267d9cabb524" at "/miner" must pass "bytes" validation
-					// expect(validator.validateJSONSchema(blockSchema, request)).toBeUndefined();
+					expect(validator.validateJSONSchema(blockSchema, request)).toBeUndefined();
 				},
 			);
 		},
