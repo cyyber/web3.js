@@ -23,6 +23,7 @@ import {
 	describeIf,
 	getSystemTestBackend,
 } from '../fixtures/system_test_utils';
+import { isNullish } from '@theqrl/web3-utils';
 
 describe('contract', () => {
 	describeIf(getSystemTestBackend() === 'gzond')('createAccessList', () => {
@@ -61,7 +62,7 @@ describe('contract', () => {
 			const accessListResult = {
 				accessList: [
 					{
-						address: `Z${deployedContract.options.address?.slice(1).toLowerCase()}`,
+						address: isNullish(deployedContract.options.address) ? undefined : `Z${deployedContract.options.address.slice(1).toLowerCase()}`,
 						storageKeys: [
 							'0x0000000000000000000000000000000000000000000000000000000000000001',
 						],
@@ -87,7 +88,7 @@ describe('contract', () => {
 			const accessListResult = {
 				accessList: [
 					{
-						address: `Z${deployedContract.options.address?.slice(1).toLowerCase()}`,
+						address: isNullish(deployedContract.options.address) ? undefined : `Z${deployedContract.options.address.slice(1).toLowerCase()}`,
 						storageKeys: [
 							'0x0000000000000000000000000000000000000000000000000000000000000001',
 						],

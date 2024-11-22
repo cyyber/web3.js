@@ -27,7 +27,7 @@ import {
 	refillAccount,
 	signAndSendContractMethodEIP1559,
 } from '../fixtures/system_test_utils';
-import { processAsync, toUpperCaseZPrefixedHex } from '../shared_fixtures/utils';
+import { processAsync, toUpperCaseAddress } from '../shared_fixtures/utils';
 
 const initialSupply = BigInt('5000000000');
 
@@ -213,8 +213,8 @@ describe('contract', () => {
 							const event = contractDeployed.events.Transfer();
 							event.on('data', data => {
 								resolve({
-									from: toUpperCaseZPrefixedHex(data.returnValues.from as string),
-									to: toUpperCaseZPrefixedHex(data.returnValues.to as string),
+									from: toUpperCaseAddress(data.returnValues.from as string),
+									to: toUpperCaseAddress(data.returnValues.to as string),
 									value: data.returnValues.value,
 								});
 							});
@@ -224,8 +224,8 @@ describe('contract', () => {
 								.send(sendOptions);
 						}),
 					).resolves.toEqual({
-						from: toUpperCaseZPrefixedHex(sendOptions.from as string),
-						to: toUpperCaseZPrefixedHex(acc2.address),
+						from: toUpperCaseAddress(sendOptions.from as string),
+						to: toUpperCaseAddress(acc2.address),
 						value: BigInt(100),
 					});
 				});
