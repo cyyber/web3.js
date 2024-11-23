@@ -412,7 +412,7 @@ export const toHex = (
 			return returnType ? 'bytes' : `0x${value}`;
 		}
 		if (isAddressString(value)) {
-			return returnType ? 'bytes' : addressToHex(value);
+			return returnType ? 'address' : addressToHex(value);
 		}
 
 		if (!Number.isFinite(value)) {

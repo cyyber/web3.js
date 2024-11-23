@@ -302,7 +302,6 @@ const solidityPack = (type: string, val: EncodingTypes): string => {
 	return '';
 };
 
-// TODO(rgeraldes24): 0x replace for Addresses
 /**
  * returns a string of the tightly packed value given based on the type
  * @param arg - the input to return the tightly packed value

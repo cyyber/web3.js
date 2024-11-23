@@ -311,15 +311,13 @@ describe('converters', () => {
 	});
 
 	describe('toHex', () => {
-		// TODO(rgeraldes24): fix
-		describe.skip('return value', () => {
+		describe('return value', () => {
 			it.each(toHexValidData)('%s', (input, output) => {
 				expect(toHex(input)).toEqual(output[0]);
 			});
 		});
 
-		// TODO(rgeraldes24): fix
-		describe.skip('return type', () => {
+		describe('return type', () => {
 			it.each(toHexValidData)('%s', (input, output) => {
 				expect(toHex(input, true)).toEqual(output[1]);
 			});

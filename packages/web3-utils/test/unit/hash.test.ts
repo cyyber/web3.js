@@ -74,8 +74,7 @@ describe('hash', () => {
 	});
 
 	describe('soliditySha3', () => {
-		// TODO(rgeraldes24): fix
-		describe.skip('valid cases', () => {
+		describe('valid cases', () => {
 			it.each(soliditySha3ValidData)('%s', (input, output) => {
 				expect(soliditySha3(...input)).toEqual(output);
 			});
@@ -88,8 +87,7 @@ describe('hash', () => {
 	});
 
 	describe('soliditySha3Raw', () => {
-		// TODO(rgeraldes24): fix
-		describe.skip('valid cases', () => {
+		describe('valid cases', () => {
 			it.each(soliditySha3RawValidData)('%s', (input, output) => {
 				expect(soliditySha3Raw(...input)).toEqual(output);
 			});
@@ -102,8 +100,7 @@ describe('hash', () => {
 	});
 
 	describe('encodePacked', () => {
-		// TODO(rgeraldes24): fix
-		describe.skip('valid cases', () => {
+		describe('valid cases', () => {
 			it.each(encodePackData)('%s', (input, output) => {
 				expect(encodePacked(...input)).toEqual(output);
 			});
