@@ -181,7 +181,7 @@ export const hexToAddress = (value: HexString): Address => {
  * > "0x74657374123123131231231313a1231231112312"
  * ```
  */
-export const addressToHex = (value: Address): Address => {
+export const addressToHex = (value: Address): HexString => {
 	return validatorUtils.addressToHex(value);
 };
 

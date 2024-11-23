@@ -14,7 +14,7 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
-// import { Bytes } from '@theqrl/web3-types';
+// import { Bytes, ZPrefixedHexString } from '@theqrl/web3-types';
 import { hexToBytes } from '@theqrl/web3-utils';
 // import { Chain, Common, Hardfork, toUint8Array } from '../../../src/common';
 // import { Address } from '../../../src/tx/address';
@@ -27,11 +27,11 @@ import {
 import type {
 	FeeMarketEIP1559ValuesArray,
 } from '../../../src';
-// import type { BigIntLike, PrefixedHexString } from '../../../src/common/types';
+// import type { BigIntLike } from '../../../src/common/types';
 
 // NOTE(rgeraldes24): test 'Transaction Input Values' not valid atm
 /*
-type AddressLike = Address | Uint8Array | PrefixedHexString;
+type AddressLike = Address | Uint8Array | ZPrefixedHexString;
 // @returns: Array with subtypes of the AddressLike type for a given address
 function generateAddressLikeValues(address: string): AddressLike[] {
 	return [address, toUint8Array(address), new Address(toUint8Array(address))];
