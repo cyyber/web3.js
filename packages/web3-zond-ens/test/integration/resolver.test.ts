@@ -225,6 +225,8 @@ describe('ens', () => {
 
 		await resolver.methods.setAddr(domainNode, accounts[1]).send(sendOptions);
 
+		// NOTE(rgeraldes24): resolver.methods.addr(node, coin) return type is 'bytes';
+		// value is not converted automatically to the 'address' type via ABI
 		const res = await resolver.methods.addr(domainNode, DEFAULT_COIN_TYPE).call(sendOptions);
 		expect(hexToAddress(res.toString())).toBe(accounts[1]);
 	});
@@ -236,6 +238,8 @@ describe('ens', () => {
 
 		await resolver.methods.setAddr(domainNode, accountOne).send(sendOptions);
 
+		// NOTE(rgeraldes24): ens.getAddress(domain) return type is 'bytes';
+		// value is not converted automatically to the 'address' type via ABI
 		const resultAddress = await ens.getAddress(domain);
 		expect(hexToAddress(resultAddress.toString())).toBe(accountOne);
 	});
