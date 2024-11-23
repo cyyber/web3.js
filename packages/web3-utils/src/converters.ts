@@ -164,13 +164,13 @@ export const hexToBytes = (bytes: HexString): Uint8Array => {
  * ```
  */
 export const addressToBytes = (value: Address): Uint8Array => {
-	return bytesToUint8Array(hexToAddress(value));
+	return bytesToUint8Array(addressToHex(value));
 };
 
 /**
  * Convert a hex string to an address string
  * @param hex - Hex string to be converted
- * @returns - The byte array representation of the input hex string
+ * @returns - The address representation of the input value
  *
  * @example
  * ```ts
@@ -182,6 +182,23 @@ export const hexToAddress = (value: HexString): Address => {
 	validator.validate(['hex'], [value]);
 
 	return value.replace('0x', 'Z');
+};
+
+/**
+ * Convert an address string to a hex string
+ * @param hex - Address string to be converted
+ * @returns - The hex representation of the input value
+ *
+ * @example
+ * ```ts
+ * console.log(web3.utils.addressToHex('Z74657374123123131231231313a1231231112312'));
+ * > "0x74657374123123131231231313a1231231112312"
+ * ```
+ */
+export const addressToHex = (value: Address): Address => {
+	validator.validate(['address'], [value]);
+
+	return value.replace('Z', '0x');
 };
 
 /**
