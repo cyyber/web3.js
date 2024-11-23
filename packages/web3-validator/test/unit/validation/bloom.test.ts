@@ -23,6 +23,7 @@ import {
 } from '../../../src/validation/bloom';
 import {
 	validBloomData,
+	validContractAddressInBloomData,
 	invalidInBloomData,
 	validInBloomData,
 	invalidUserZondAddressInBloomData,
@@ -39,10 +40,8 @@ describe('validation', () => {
 			});
 		});
 
-		// TODO(rgeraldes24): fix: shared examples: create new examples
-		describe.skip('isInBloom', () => {
+		describe('isInBloom', () => {
 			describe('valid cases', () => {
-				// TODO(rgeraldes24): fix
 				it.each(validInBloomData)('%s', (bloom, value) => {
 					expect(isInBloom(bloom, value)).toBeTruthy();
 				});
@@ -71,7 +70,7 @@ describe('validation', () => {
 
 		describe('isContractAddressInBloom', () => {
 			describe('valid cases', () => {
-				it.each(validInBloomData)('%s', (bloom, address) => {
+				it.each(validContractAddressInBloomData)('%s', (bloom, address) => {
 					expect(isContractAddressInBloom(bloom, address)).toBeTruthy();
 				});
 			});

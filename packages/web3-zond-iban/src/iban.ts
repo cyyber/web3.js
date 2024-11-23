@@ -16,7 +16,7 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { HexString } from '@theqrl/web3-types';
-import { toChecksumAddress, leftPad, toNumber, hexToAddress } from '@theqrl/web3-utils';
+import { toChecksumAddress, leftPad, toNumber, hexToAddress, addressToHex } from '@theqrl/web3-utils';
 import { isAddressString } from '@theqrl/web3-validator';
 import { InvalidAddressError } from '@theqrl/web3-errors';
 import { IbanOptions } from './types.js';
@@ -268,7 +268,7 @@ export class Iban {
 			throw new InvalidAddressError(address);
 		}
 
-		const num = BigInt(toNumber(address));
+		const num = BigInt(toNumber(addressToHex(address)));
 		const base36 = num.toString(36);
 		const padded = leftPad(base36, 15);
 		return Iban.fromBban(padded.toUpperCase());

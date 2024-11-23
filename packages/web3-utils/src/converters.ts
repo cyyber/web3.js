@@ -182,9 +182,7 @@ export const hexToAddress = (value: HexString): Address => {
  * ```
  */
 export const addressToHex = (value: Address): Address => {
-	validator.validate(['address'], [value]);
-
-	return value.replace('Z', '0x');
+	return validatorUtils.addressToHex(value);
 };
 
 /**
@@ -458,10 +456,6 @@ export const toNumber = (value: Numbers): number | bigint => {
 
 	if (typeof value === 'string' && isHexStrict(value)) {
 		return hexToNumber(value);
-	}
-	
-	if (typeof value === 'string' && isAddressString(value)) {
-		return hexToNumber(value.replace('Z', '0x'));
 	}
 
 	try {
