@@ -142,7 +142,6 @@ export class ENS extends Web3Context<ZondExecutionAPI & Web3NetAPI> {
 	 * ```
 	 */
 	public async getAddress(ENSName: string, coinType = 60) {
-		// TODO(rgeraldes24) returns bytes
 		return this._resolver.getAddress(ENSName, coinType);
 	}
 
