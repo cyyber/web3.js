@@ -78,8 +78,7 @@ describe('validation', () => {
 				});
 			});
 		});
-		// TODO(rgeraldes24): fix: refactor
-		describe.skip('isHexString', () => {
+		describe('isHexString', () => {
 			it.each(isHexStringData)('%s', data => {
 				expect(isHexString(data.in[0], data.in[1])).toBe(data.out);
 			});
