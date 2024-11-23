@@ -84,7 +84,6 @@ export class Resolver {
 
 		await this.checkInterfaceSupport(resolverContract, methodsInInterface.addr);
 
-		// TODO(rgeraldes24): convert from bytes to address
 		return resolverContract.methods.addr(namehash(ENSName), coinType).call();
 	}
 

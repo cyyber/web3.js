@@ -222,7 +222,7 @@ describe('ens', () => {
 		await registry.methods
 			.setResolver(domainNode, resolver.options.address as string)
 			.send(sendOptions);
-			
+
 		await resolver.methods.setAddr(domainNode, accounts[1]).send(sendOptions);
 
 		const res = await resolver.methods.addr(domainNode, DEFAULT_COIN_TYPE).call(sendOptions);

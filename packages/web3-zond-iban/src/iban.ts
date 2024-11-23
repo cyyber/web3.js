@@ -16,7 +16,7 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { HexString } from '@theqrl/web3-types';
-import { toChecksumAddress, leftPad, toNumber } from '@theqrl/web3-utils';
+import { toChecksumAddress, leftPad, toNumber, hexToAddress } from '@theqrl/web3-utils';
 import { isAddressString } from '@theqrl/web3-validator';
 import { InvalidAddressError } from '@theqrl/web3-errors';
 import { IbanOptions } from './types.js';
@@ -315,7 +315,7 @@ export class Iban {
 			const base36 = this._iban.slice(4);
 			const parsedBigInt = Iban._parseInt(base36, 36); // convert the base36 string to a bigint
 			const paddedBigInt = leftPad(parsedBigInt, 40);
-			return toChecksumAddress(paddedBigInt.replace('0x', 'Z'));
+			return toChecksumAddress(hexToAddress(paddedBigInt));
 		}
 		throw new Error('Iban is indirect and cannot be converted. Must be length of 34 or 35');
 	};

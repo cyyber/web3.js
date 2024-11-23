@@ -153,6 +153,23 @@ export const hexToBytes = (bytes: HexString): Uint8Array => {
 };
 
 /**
+ * Convert a hex string to an address string
+ * @param hex - Hex string to be converted
+ * @returns - The byte array representation of the input hex string
+ *
+ * @example
+ * ```ts
+ * console.log(web3.utils.hexToAddress('0x74657374123123131231231313a1231231112312'));
+ * > "Z74657374123123131231231313a1231231112312"
+ * ```
+ */
+export const hexToAddress = (value: HexString): Address => {
+	validator.validate(['hex'], [value]);
+
+	return value.replace('0x', 'Z');
+};
+
+/**
  * Converts value to it's number representation
  * @param value - Hex string to be converted
  * @returns - The number representation of the input value
