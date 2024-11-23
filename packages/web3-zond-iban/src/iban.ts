@@ -332,7 +332,6 @@ export class Iban {
 	 * > "XE7338O073KYGTWWZN0F2WZ0R8PX5ZPPZS"
 	 * ```
 	 */
-	// TODO(rgeraldes24): fix
 	public static toIban(address: HexString): string {
 		return Iban.fromAddress(address).toString();
 	}
