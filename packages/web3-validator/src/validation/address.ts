@@ -23,7 +23,7 @@ import { uint8ArrayToHexString } from '../utils.js';
  * Checks the checksum of a given address. Will also return false on non-checksum addresses.
  */
 export const checkAddressCheckSum = (data: string): boolean => {
-	if (!/^(Z)?[0-9a-f]{40}$/i.test(data)) return false;
+	if (!/^Z[0-9a-f]{40}$/i.test(data)) return false;
 	const address = data.slice(1);
 	const updatedData = utf8ToBytes(address.toLowerCase());
 

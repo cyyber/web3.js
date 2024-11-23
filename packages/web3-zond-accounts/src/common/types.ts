@@ -123,6 +123,7 @@ export interface GzondConfigOpts extends BaseOpts {
 	genesisHash?: Uint8Array;
 }
 
+// TODO(rgeraldes24)
 /*
  * A type that represents a `0x`-prefixed hex string.
  */

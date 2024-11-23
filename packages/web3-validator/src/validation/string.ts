@@ -25,9 +25,6 @@ export const isString = (value: ValidInputTypes) => typeof value === 'string';
 export const isHexStrict = (hex: ValidInputTypes) =>
 	typeof hex === 'string' && /^((-)?0x[0-9a-f]+|(0x))$/i.test(hex);
 
-export const isAddressHexStrict = (hex: ValidInputTypes) =>
-	typeof hex === 'string' && /^((-)?Z[0-9a-f]+|(Z))$/i.test(hex);
-
 /**
  * Is the string a hex string.
  *
@@ -35,19 +32,10 @@ export const isAddressHexStrict = (hex: ValidInputTypes) =>
  * @param  length
  * @returns  output the string is a hex string
  */
-export function isHexString(value: string, prefix: string = '0x', length?: number): boolean {
-	if (typeof value !== 'string') {
-		return false
-	} else {
-		// TODO(rgeraldes24): refactor
-		if (prefix == '0x' && !value.match(/^0x[0-9A-Fa-f]*$/)) {
-			return false
-		} else if (prefix == 'Z' && !value.match(/^Z[0-9A-Fa-f]*$/)) {
-			return false
-		}
-	}
-
-	if (typeof length !== 'undefined' && length > 0 && value.length !== prefix.length + 2 * length)
+export function isHexString(value: string, length?: number): boolean {
+	if (typeof value !== 'string' || !value.match(/^0x[0-9A-Fa-f]*$/)) return false;
+	
+	if (typeof length !== 'undefined' && length > 0 && value.length !== 2 + 2 * length)
 		return false;
 
 	return true;
@@ -70,12 +58,12 @@ export const isHexString32Bytes = (value: string, prefixed = true) =>
  * @return a boolean if it is or is not hex prefixed
  * @throws if the str input is not a string
  */
-export function isHexPrefixed(str: string, prefix: string = '0x'): boolean {
+export function isHexPrefixed(str: string): boolean {
 	if (typeof str !== 'string') {
 		throw new Error(`[isHexPrefixed] input must be type 'string', received type ${typeof str}`);
 	}
 
-	return str.startsWith(prefix);
+	return str.startsWith('0x');
 }
 
 /**

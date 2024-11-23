@@ -398,10 +398,6 @@ export const toHex = (
 	value: Numbers | Bytes | Address | boolean | object,
 	returnType?: boolean,
 ): HexString | ValueTypes => {
-	if (typeof value === 'string' && isAddressString(value)) {
-		return returnType ? 'address' : `Z${value.toLowerCase().replace(/^z/i, '')}`;
-	}
-
 	if (typeof value === 'boolean') {
 		// eslint-disable-next-line no-nested-ternary
 		return returnType ? 'bool' : value ? '0x01' : '0x00';
@@ -430,6 +426,9 @@ export const toHex = (
 		}
 		if (isHex(value) && !isInt(value)) {
 			return returnType ? 'bytes' : `0x${value}`;
+		}
+		if (isAddressString(value)) {
+			return returnType ? 'bytes' : addressToHex(value);
 		}
 
 		if (!Number.isFinite(value)) {
