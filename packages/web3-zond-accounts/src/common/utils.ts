@@ -240,13 +240,12 @@ export const toUint8Array = function (v: ToBytesInputTypes): Uint8Array {
 	}
 
 	if (typeof v === 'string') {
-		if (isHexString(v)) {
-			return hexToBytes(padToEven(stripHexPrefix(v)));
-		} else {
+		if (!isHexString(v)) {
 			throw new Error(
 				`Cannot convert string to Uint8Array. only supports 0x-prefixed hex strings and this string was given: ${v}`,
 			);
-		}		
+		}
+		return hexToBytes(padToEven(stripHexPrefix(v)));	
 	}
 
 	if (typeof v === 'number') {
