@@ -102,6 +102,7 @@ export const isInt = (
 			typeof value === 'string' && isHexStrict(value)
 				? BigInt(hexToNumber(value))
 				: BigInt(value as number);
+
 		return valueToCheck >= minSize && valueToCheck <= maxSize;
 	} catch (error) {
 		// Some invalid number value given which can not be converted via BigInt
