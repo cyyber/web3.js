@@ -104,7 +104,7 @@ export const bytesToUint8Array = (data: Bytes): Uint8Array | never => {
 /**
  * @internal
  */
-const { uint8ArrayToHexString, uint8ArrayToAddressHexString } = validatorUtils;
+const { uint8ArrayToHexString } = validatorUtils;
 
 /**
  * Convert a byte array to a hex string
@@ -119,20 +119,6 @@ const { uint8ArrayToHexString, uint8ArrayToAddressHexString } = validatorUtils;
  */
 export const bytesToHex = (bytes: Bytes): HexString =>
 	uint8ArrayToHexString(bytesToUint8Array(bytes));
-
-/**
- * Convert a byte array to a hex string
- * @param bytes - Byte array to be converted
- * @returns - The hex string representation of the input byte array
- *
- * @example
- * ```ts
- * console.log(web3.utils.bytesToHex(new Uint8Array([72, 12])));
- * > "0x480c"
- *
- */
-export const bytesToAddressHex = (bytes: Bytes): HexString =>
-	uint8ArrayToAddressHexString(bytesToUint8Array(bytes));
 
 /**
  * Convert a hex string to a byte array

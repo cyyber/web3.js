@@ -32,7 +32,6 @@ import {
 import {
 	bytesToUint8Array,
 	bytesToHex,
-	bytesToAddressHex,
 	fromUtf8,
 	hexToBytes,
 	randomBytes,
@@ -40,6 +39,7 @@ import {
 	toChecksumAddress,
 	uint8ArrayConcat,
 	utf8ToHex,
+	hexToAddress,
 } from '@theqrl/web3-utils';
 
 import { isHexStrict, isNullish } from '@theqrl/web3-validator';
@@ -231,7 +231,7 @@ export const publicKeyToAddress = (publicKey: Bytes): string => {
 	const publicKeyUint8Array = parseAndValidatePublicKey(publicKey);	
 	const address = getDilithiumAddressFromPK(publicKeyUint8Array);
 
-	return toChecksumAddress(bytesToAddressHex(address));
+	return toChecksumAddress(hexToAddress(bytesToHex(address)));
 };
 
 

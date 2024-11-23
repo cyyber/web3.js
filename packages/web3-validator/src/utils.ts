@@ -439,15 +439,6 @@ export function uint8ArrayToHexString(uint8Array: Uint8Array): string {
 	return hexString;
 }
 
-export function uint8ArrayToAddressHexString(uint8Array: Uint8Array): string {
-	let hexString = 'Z';
-	for (const e of uint8Array) {
-		const hex = e.toString(16);
-		hexString += hex.length === 1 ? `0${hex}` : hex;
-	}
-	return hexString;
-}
-
 export function hexToUint8Array(hex: string): Uint8Array {
 	let value;
 	if (hex.toLowerCase().startsWith('0x')) {
