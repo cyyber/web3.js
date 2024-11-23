@@ -217,13 +217,11 @@ describe('ens', () => {
 		const res = await ens.getContenthash(domain);
 		expect(res).toBe(contentHash);
 	});
-	
+
 	it('sets address', async () => {
 		await registry.methods
 			.setResolver(domainNode, resolver.options.address as string)
 			.send(sendOptions);
-		console.log(resolver.options.address);
-		console.log(accounts[1]);
 		await resolver.methods.setAddr(domainNode, accounts[1]).send(sendOptions);
 
 		// TODO(rgeraldes24): returns bytes
