@@ -54,7 +54,6 @@ export const isInBloom = (bloom: string, value: string | Uint8Array): boolean =>
 		return false;
 	}
 
-	// TODO(rgeraldes24)
 	const uint8Array = typeof value === 'string' ? hexToUint8Array(value) : value;
 
 	const hash = uint8ArrayToHexString(keccak256(uint8Array)).slice(2);
@@ -93,7 +92,6 @@ export const isUserZondAddressInBloom = (bloom: string, zondAddress: string): bo
 		return false;
 	}
 
-	// TODO(rgeraldes24): review comment
 	// you have to pad the zond address to 32 bytes
 	// else the bloom filter does not work
 	// this is only if your matching the USERS
@@ -101,7 +99,7 @@ export const isUserZondAddressInBloom = (bloom: string, zondAddress: string): bo
 	// hence why we have 2 methods
 	// (0x is not in the 2nd parameter of padleft so 64 chars is fine)
 
-	const address = padLeft(zondAddress.replace('Z', '0x'), 64);
+	const address = padLeft(addressToHex(zondAddress), 64);
 
 	return isInBloom(bloom, address);
 };
