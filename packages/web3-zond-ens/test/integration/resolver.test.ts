@@ -18,7 +18,7 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import Web3Zond from '@theqrl/web3-zond';
 import { Contract, PayableTxOptions } from '@theqrl/web3-zond-contract';
-import { sha3 } from '@theqrl/web3-utils';
+import { hexToAddress, sha3 } from '@theqrl/web3-utils';
 
 import { Address, Bytes, DEFAULT_RETURN_FORMAT } from '@theqrl/web3-types';
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -222,11 +222,11 @@ describe('ens', () => {
 		await registry.methods
 			.setResolver(domainNode, resolver.options.address as string)
 			.send(sendOptions);
+			
 		await resolver.methods.setAddr(domainNode, accounts[1]).send(sendOptions);
 
-		// TODO(rgeraldes24): returns bytes
 		const res = await resolver.methods.addr(domainNode, DEFAULT_COIN_TYPE).call(sendOptions);
-		expect(res).toBe(accounts[1]);
+		expect(hexToAddress(res.toString())).toBe(accounts[1]);
 	});
 
 	it('fetches address', async () => {
@@ -236,8 +236,7 @@ describe('ens', () => {
 
 		await resolver.methods.setAddr(domainNode, accountOne).send(sendOptions);
 
-		// TODO(rgeraldes24): returns bytes
 		const resultAddress = await ens.getAddress(domain);
-		expect(resultAddress).toBe(accountOne);
+		expect(hexToAddress(resultAddress.toString())).toBe(accountOne);
 	});
 });
