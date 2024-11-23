@@ -43,6 +43,7 @@ import {
 	toHex,
 	toNumber,
 	utf8ToHex,
+	addressToHex,
 } from './converters.js';
 import { leftPad, rightPad, toTwosComplement } from './string_manipulation.js';
 
@@ -243,7 +244,7 @@ const solidityPack = (type: string, val: EncodingTypes): string => {
 		if (!isAddressString(value)) {
 			throw new InvalidAddressError(value);
 		}
-		return value;
+		return addressToHex(value);
 	}
 	const name = elementaryName(type);
 	if (type.startsWith('uint')) {
