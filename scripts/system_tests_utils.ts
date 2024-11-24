@@ -235,7 +235,6 @@ export const refillAccount = async (from: string, to: string, value: string | nu
 };
 
 let mainAcc: string;
-
 export const createNewAccount = async (config?: {
 	refill?: boolean;
 	seed?: string;
@@ -254,7 +253,6 @@ export const createNewAccount = async (config?: {
 
 	return { address: `Z${acc.address.slice(1).toLowerCase()}`, seed: acc.seed! };
 };
-
 let tempAccountList: { address: string; seed: string }[] = [];
 const walletsOnWorker = 20;
 
