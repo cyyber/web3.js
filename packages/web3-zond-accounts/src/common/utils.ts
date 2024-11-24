@@ -50,8 +50,7 @@ const intToHex = function (i: number) {
 
 /**
  * Converts Gzond genesis parameters to an EthereumJS compatible `CommonOpts` object
- * @param json object representing the Gzond genesis file
- * hardfork
+ * @param json object representing the Gzond genesis file hardfork
  * @returns genesis parameters in a `CommonOpts` compliant object
  */
 function parseGzondParams(json: any) {
