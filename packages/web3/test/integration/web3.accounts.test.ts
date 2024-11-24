@@ -26,7 +26,7 @@ import {
 import Web3, { SupportedProviders } from '../../src/index';
 
 const hexRegx = /0[xX][0-9a-fA-F]+/;
-const addressHexRegx = /Z[0-9a-fA-F]{40}/;
+const addressRegx = /Z[0-9a-fA-F]{40}/;
 
 describe('web3.accounts', () => {
 	let clientUrl: string | SupportedProviders;
@@ -52,12 +52,12 @@ describe('web3.accounts', () => {
 
 			expect(account).toEqual(
 				expect.objectContaining({
-					address: expect.stringMatching(addressHexRegx),
+					address: expect.stringMatching(addressRegx),
 					seed: expect.stringMatching(hexRegx),
 				}),
 			);
 		});
-		
+
 		describe('signTransaction', () => {
 			it('should be able to sign the transaction from created account', async () => {
 				const account: Web3Account = web3.zond.accounts.create();
