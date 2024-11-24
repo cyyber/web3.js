@@ -278,6 +278,7 @@ describe('rpc', () => {
 			// expect(res[0]).toEqual(tempAcc.address);
 		});
 
+
 		it('getPastLogs', async () => {
 			const listOfStrings = ['t1', 't2', 't3'];
 			const resTx = [];
