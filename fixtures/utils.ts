@@ -69,5 +69,5 @@ export const toUpperCaseHex = (str: string) => {
 };
 
 export const toUpperCaseAddress = (str: string) => {
-	return `Z${str.toUpperCase().slice(1)}`;
+	return `Z${str.slice(1).toUpperCase()}`;
 };
