@@ -139,7 +139,7 @@ export const hexToBytes = (bytes: HexString): Uint8Array => {
 };
 
 /**
- * Convert an address string to a hex string
+ * Convert an address string to a byte array
  * @param hex - Address string to be converted
  * @returns - The byte array representation of the input address string
  *
@@ -166,7 +166,6 @@ export const addressToBytes = (value: Address): Uint8Array => {
  */
 export const hexToAddress = (value: HexString): Address => {
 	validator.validate(['hex'], [value]);
-
 	return value.replace('0x', 'Z');
 };
 
@@ -182,6 +181,7 @@ export const hexToAddress = (value: HexString): Address => {
  * ```
  */
 export const addressToHex = (value: Address): HexString => {
+	validator.validate(['address'], [value]);
 	return validatorUtils.addressToHex(value);
 };
 

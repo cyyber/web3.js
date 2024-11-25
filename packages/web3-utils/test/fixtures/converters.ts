@@ -15,7 +15,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Address, Bytes, HexString, Numbers, ValueTypes } from '@theqrl/web3-types';
+import { Address, Bytes, HexString, Numbers, ValueTypes, ZPrefixedHexString } from '@theqrl/web3-types';
 import { EtherUnits, hexToBytes } from '../../src/converters';
 
 export const bytesToHexValidData: [Bytes, HexString][] = [
@@ -345,4 +345,40 @@ export const toBigIntInvalidData: [any, string][] = [
 	[new Uint8Array([]), 'can not parse as number data'],
 	['wwwww', ' Error: can not parse as number data'],
 	['zzzzee0xiiuu', ' Error: can not parse as number data'],
+];
+
+export const addressToBytesValidData: [ZPrefixedHexString, Uint8Array][] = [
+	['Z4848484848484848484848484848484848484848', new Uint8Array([72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72])],
+	['Z3772377237723772377237723772377237723772', new Uint8Array([55, 114, 55, 114, 55, 114, 55, 114, 55, 114, 55, 114, 55, 114, 55, 114, 55, 114, 55, 114])],
+	['Z480c480c480c480c480c480c480c480c480c480c', new Uint8Array([72, 12, 72, 12, 72, 12, 72, 12, 72, 12, 72, 12, 72, 12, 72, 12, 72, 12, 72, 12])],
+];
+
+export const addressToHexValidData: [ZPrefixedHexString, HexString][] = [
+	['Z4848484848484848484848484848484848484848', '0x4848484848484848484848484848484848484848'],
+	['Z3772377237723772377237723772377237723772', '0x3772377237723772377237723772377237723772'],
+	['Z480c480c480c480c480c480c480c480c480c480c', '0x480c480c480c480c480c480c480c480c480c480c'],
+	['Z9c129c129c129c129c129c129c129c129c129c12', '0x9c129c129c129c129c129c129c129c129c129c12'],
+	['Z12c612c612c612c612c612c612c612c612c612c6', '0x12c612c612c612c612c612c612c612c612c612c6'],
+];
+
+export const invalidAddressData: [any, string][] = [
+	['Z1', 'value "Z1" at "/0" must pass "address" validation'],
+	['ZE247a45c287191d435A8a5D72A7C8dc030451E9F', 'value "ZE247a45c287191d435A8a5D72A7C8dc030451E9F" at "/0" must pass "address" validation'], // Invalid checksum
+	['-Z407d73d8a49eeb85d32cf465507dd71d507100c1', 'value "-Z407d73d8a49eeb85d32cf465507dd71d507100c1" at "/0" must pass "address" validation'],
+];
+
+export const hexToAddressValidData: [HexString, ZPrefixedHexString][] = [
+	['0x4848484848484848484848484848484848484848', 'Z4848484848484848484848484848484848484848'],
+	['0x3772377237723772377237723772377237723772', 'Z3772377237723772377237723772377237723772'],
+	['0x480c480c480c480c480c480c480c480c480c480c', 'Z480c480c480c480c480c480c480c480c480c480c'],
+	['0x9c129c129c129c129c129c129c129c129c129c12', 'Z9c129c129c129c129c129c129c129c129c129c12'],
+	['0x12c612c612c612c612c612c612c612c612c612c6', 'Z12c612c612c612c612c612c612c612c612c612c6'],
+];
+
+export const hexToAddressInvalidData: [HexString, string][] = [
+	['1a', 'value "1a" at "/0" must pass "hex" validation'],
+	['0xffdg', 'value "0xffdg" at "/0" must pass "hex" validation'],
+	['xfff', 'value "xfff" at "/0" must pass "hex" validation'],
+	['-123', 'value "-123" at "/0" must pass "hex" validation'],
+	['-9x123', 'value "-9x123" at "/0" must pass "hex" validation'],
 ];
