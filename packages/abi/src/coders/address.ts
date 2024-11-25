@@ -2,6 +2,7 @@
 
 import { getAddress } from "@ethersproject/address";
 import { hexZeroPad } from "@ethersproject/bytes";
+import { hexToAddress, addressToHex } from "@theqrl/web3-utils";
 
 import { Coder, Reader, Writer } from "./abstract-coder";
 
@@ -17,7 +18,7 @@ export class AddressCoder extends Coder {
 
     encode(writer: Writer, value: string): number {
         try {
-            value = getAddress(value.replace('Z', '0x'))
+            value = getAddress(addressToHex(value))
         } catch (error: any) {
             this._throwError(error.message, value);
         }
@@ -25,7 +26,7 @@ export class AddressCoder extends Coder {
     }
 
     decode(reader: Reader): any {
-        return getAddress(hexZeroPad(reader.readValue().toHexString(), 20)).replace('0x', 'Z');
+        return hexToAddress(getAddress(hexZeroPad(reader.readValue().toHexString(), 20)));
     }
 }
 
