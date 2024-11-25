@@ -62,7 +62,7 @@ describe('contract', () => {
 			const accessListResult = {
 				accessList: [
 					{
-						address: isNullish(deployedContract.options.address) ? undefined : `Z${deployedContract.options.address.slice(1).toLowerCase()}`,
+						address: isNullish(deployedContract.options.address) ? deployedContract.options.address : `Z${deployedContract.options.address.slice(1).toLowerCase()}`,
 						storageKeys: [
 							'0x0000000000000000000000000000000000000000000000000000000000000001',
 						],
@@ -88,7 +88,7 @@ describe('contract', () => {
 			const accessListResult = {
 				accessList: [
 					{
-						address: isNullish(deployedContract.options.address) ? undefined : `Z${deployedContract.options.address.slice(1).toLowerCase()}`,
+						address: isNullish(deployedContract.options.address) ? deployedContract.options.address : `Z${deployedContract.options.address.slice(1).toLowerCase()}`,
 						storageKeys: [
 							'0x0000000000000000000000000000000000000000000000000000000000000001',
 						],
