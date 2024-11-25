@@ -124,7 +124,7 @@ describe('Web3Zond.sendTransaction', () => {
 		const acc = wallet.get(0);
 		expect(minedTransactionData).toMatchObject({
 			from: tempAcc.address,
-			to: isNullish(acc) ? undefined : `Z${acc.address.slice(1).toLowerCase()}`,
+			to: isNullish(acc) ? acc : `Z${acc.address.slice(1).toLowerCase()}`,
 			value: BigInt(1),
 		});
 	});
@@ -159,7 +159,7 @@ describe('Web3Zond.sendTransaction', () => {
 		const acc = wallet.get(1);
 		expect(minedTransactionData).toMatchObject({
 			from: tempAcc.address,
-			to: isNullish(acc) ? undefined : `Z${acc.address.slice(1).toLowerCase()}`,
+			to: isNullish(acc) ? acc : `Z${acc.address.slice(1).toLowerCase()}`,
 			value: BigInt(1),
 		});
 	});
