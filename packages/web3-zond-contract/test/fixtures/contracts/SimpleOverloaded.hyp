@@ -1,4 +1,4 @@
-pragma solidity 0.8.19;
+pragma hyperion 0.8.19;
 
 contract SimpleOverload {
 	uint256 public secret;
