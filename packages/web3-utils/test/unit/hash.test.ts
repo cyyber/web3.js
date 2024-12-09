@@ -134,7 +134,7 @@ describe('hash', () => {
 			const res = hyperionSha3(
 				'{"contents":"pragma hyperion >=0.4.21 <0.6.0;\\n\\ncontract Migrations {\\n  address public owner;\\n  uint public last_completed_migration;\\n\\n  constructor() public {\\n    owner = msg.sender;\\n  }\\n\\n  modifier restricted() {\\n    if (msg.sender == owner) _;\\n  }\\n\\n  function setCompleted(uint completed) public restricted {\\n    last_completed_migration = completed;\\n  }\\n\\n  function upgrade(address new_address) public restricted {\\n    Migrations upgraded = Migrations(new_address);\\n    upgraded.setCompleted(last_completed_migration);\\n  }\\n}\\n","sourcePath":"/Users/gnidan/src/work/reproduce/2019/01/21/artifacts/contracts/Migrations.hyp"}',
 			);
-			expect(res).toBe('0xdb092e2751b8dcb7c8509baade3c0ac290414a71685823c3cbeb28667970b0bd');
+			expect(res).toBe('0xc8a294f5901a17c159d7d0c29fb02ea8d207f15e1879d0955d059eb6486c0dd6');
 		});
 		it('another object in string', () => {
 			const res = hyperionSha3(

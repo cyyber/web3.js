@@ -54,6 +54,7 @@ Create a new file called `MyContract.hyp` in your project directory and add the 
 
 ```hyperion
 // SPDX-License-Identifier: MIT
+// TODO(now.youtrack.cloud/issue/web3js-11)
 pragma hyperion ^0.8.0;
 
 contract MyContract {
@@ -75,10 +76,8 @@ This simple smart contract defines a `myNumber` variable that can be set by call
 ## Step 4: Compile the Hyperion code using the Hyperion Compiler and get its ABI and Bytecode.
 
 :::tip
-// TODO(rgeraldes24)
 📝 Alternatively, you can use something like `npm i hypc && npx hypcjs MyContract.hyp --bin --abi`. And then rename the files to `MyContractBytecode.bin` and `MyContractAbi.json`, in order to keep them the same as they will be used later in this tutorial.
-More on hypc-js is at https://github.com/ethereum/hypc-js
-// TODO(rgeraldes24)
+More on hypc-js is at https://github.com/ethereum/solc-js
 :::
 
 In this step, we will use the Hyperion Compiler (hypc) to compile the Hyperion code and generate the compiled code.
