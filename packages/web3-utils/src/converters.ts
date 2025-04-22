@@ -42,36 +42,30 @@ const expo10 = (expo: number) => base ** BigInt(expo);
 // Ref: https://ethdocs.org/en/latest/ether.html
 /** @internal */
 export const zondUnitMap = {
-	noether: BigInt('0'),
-	wei: BigInt(1),
-	kwei: expo10(3),
-	Kwei: expo10(3),
-	babbage: expo10(3),
-	femtoether: expo10(3),
-	mwei: expo10(6),
-	Mwei: expo10(6),
-	lovelace: expo10(6),
-	picoether: expo10(6),
-	gwei: expo10(9),
-	Gwei: expo10(9),
-	shannon: expo10(9),
-	nanoether: expo10(9),
+	noznd: BigInt('0'),
+	planck: BigInt(1),
+	kplanck: expo10(3),
+	Kplanck: expo10(3),
+	mplanck: expo10(6),
+	Mplanck: expo10(6),
+	gplanck: expo10(9),
+	Gplanck: expo10(9),
 	nano: expo10(9),
-	szabo: expo10(12),
-	microether: expo10(12),
+	tplanck: expo10(12),
+	Tplanck: expo10(12),
 	micro: expo10(12),
-	finney: expo10(15),
-	milliether: expo10(15),
+	pplanck: expo10(15),
+	Pplanck: expo10(15),
 	milli: expo10(15),
-	ether: expo10(18),
-	kether: expo10(21),
+	znd: expo10(18),
+	kznd: expo10(21),
 	grand: expo10(21),
-	mether: expo10(24),
-	gether: expo10(27),
-	tether: expo10(30),
+	mznd: expo10(24),
+	gznd: expo10(27),
+	tznd: expo10(30),
 };
 
-export type EtherUnits = keyof typeof zondUnitMap;
+export type ZNDUnits = keyof typeof zondUnitMap;
 /**
  * Convert a value from bytes to Uint8Array
  * @param data - Data to be converted
@@ -495,28 +489,28 @@ export const toBigInt = (value: unknown): bigint => {
 };
 
 /**
- * Takes a number of wei and converts it to any other ether unit.
- * @param number - The value in wei
+ * Takes a number of planck and converts it to any other znd unit.
+ * @param number - The value in planck
  * @param unit - The unit to convert to
  * @returns - Returns the converted value in the given unit
  *
  * @example
  * ```ts
- * console.log(web3.utils.fromWei("1", "ether"));
+ * console.log(web3.utils.fromPlanck("1", "znd"));
  * > 0.000000000000000001
  *
- * console.log(web3.utils.fromWei("1", "shannon"));
+ * console.log(web3.utils.fromPlanck("1", "shannon")); // TODO(rgeraldes24)
  * > 0.000000001
  * ```
  */
-export const fromWei = (number: Numbers, unit: EtherUnits): string => {
+export const fromPlanck = (number: Numbers, unit: ZNDUnits): string => {
 	const denomination = zondUnitMap[unit];
 
 	if (!denomination) {
 		throw new InvalidUnitError(unit);
 	}
 
-	// value in wei would always be integer
+	// value in planck would always be integer
 	// 13456789, 1234
 	const value = String(toNumber(number));
 
@@ -554,20 +548,20 @@ export const fromWei = (number: Numbers, unit: EtherUnits): string => {
 };
 
 /**
- * Takes a number of a unit and converts it to wei.
+ * Takes a number of a unit and converts it to planck.
  *
  * @param number - The number to convert.
- * @param unit - {@link EtherUnits} The unit of the number passed.
- * @returns The number converted to wei.
+ * @param unit - {@link ZNDUnits} The unit of the number passed.
+ * @returns The number converted to planck.
  *
  * @example
  * ```ts
- * console.log(web3.utils.toWei("0.001", "ether"));
- * > 1000000000000000 //(wei)
+ * console.log(web3.utils.toPlanck("0.001", "znd"));
+ * > 1000000000000000 //(planck)
  * ```
  */
-// todo in 1.x unit defaults to 'ether'
-export const toWei = (number: Numbers, unit: EtherUnits): string => {
+// todo in 1.x unit defaults to 'znd'
+export const toPlanck = (number: Numbers, unit: ZNDUnits): string => {
 	validator.validate(['number'], [number]);
 
 	const denomination = zondUnitMap[unit];

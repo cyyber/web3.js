@@ -81,7 +81,7 @@ To connect to the Zond network using the HTTP provider, follow these steps:
     		const transactionReceipt = await web3.zond.sendTransaction({
     			from: accounts[0],
     			to: accounts[1],
-    			value: web3.utils.toWei('0.001', 'ether'),
+    			value: web3.utils.toPlanck('0.001', 'znd'),
     		});
     		console.log('Transaction Receipt:', transactionReceipt);
 
@@ -185,7 +185,7 @@ async function main() {
 		const transactionReceipt = await web3.zond.sendTransaction({
 			from: accounts[0],
 			to: accounts[1],
-			value: web3.utils.toWei('0.001', 'ether'),
+			value: web3.utils.toPlanck('0.001', 'znd'),
 		});
 		console.log('Transaction Receipt:', transactionReceipt);
 	} catch (error) {
@@ -312,7 +312,7 @@ INFO [12-10|15:10:37.127] Mapped network port		  	proto=udp extport=0 intport=30
     		const transactionReceipt = await web3.zond.sendTransaction({
     			from: accounts[0],
     			to: accounts[0], // sending a self-transaction
-    			value: web3.utils.toWei('0.001', 'ether'),
+    			value: web3.utils.toPlanck('0.001', 'znd'),
     		});
     		console.log('Transaction Receipt:', transactionReceipt);
     	} catch (error) {
@@ -491,7 +491,7 @@ Follow these steps to connect to the Zond network with MetaMask and web3.js, inc
 						const transactionReceipt = await web3.zond.sendTransaction({
 							from: accounts[0],
 							to: accounts[0], // sending a self-transaction
-							value: web3.utils.toWei('0.001', 'ether'),
+							value: web3.utils.toPlanck('0.001', 'znd'),
 						});
 
 						document.getElementById('log').textContent =
@@ -501,7 +501,7 @@ Follow these steps to connect to the Zond network with MetaMask and web3.js, inc
 						).textContent += `\n  Transaction hash: ${transactionReceipt.transactionHash}`;
 						document.getElementById(
 							'log',
-						).textContent += `\n  Gas Used: ${transactionReceipt.gasUsed} gwei`;
+						).textContent += `\n  Gas Used: ${transactionReceipt.gasUsed} gplanck`;
 					} catch (error) {
 						console.log('error', error);
 						document.getElementById('log').textContent =

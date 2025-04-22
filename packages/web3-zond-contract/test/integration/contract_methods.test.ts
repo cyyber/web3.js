@@ -115,8 +115,8 @@ describe('contract', () => {
 					.setValues(1, 'string value', true)
 					.send({
 						...sendOptionsLocal,
-						maxFeePerGas: '0x59682F00', // 1.5 Gwei
-						maxPriorityFeePerGas: '0x1DCD6500', // .5 Gwei
+						maxFeePerGas: '0x59682F00', // 1.5 Gplanck
+						maxPriorityFeePerGas: '0x1DCD6500', // .5 Gplanck
 						type: '0x2',
 					});
 

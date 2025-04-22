@@ -541,7 +541,7 @@ describe('defaultTransactionBuilder', () => {
 				web3Context,
 				fillGasPrice: true,
 			});
-			expect(result.maxPriorityFeePerGas).toBe(expectedMaxPriorityFeePerGas); // 2.5 Gwei, hardcoded in defaultTransactionBuilder;
+			expect(result.maxPriorityFeePerGas).toBe(expectedMaxPriorityFeePerGas); // 2.5 Gplanck, hardcoded in defaultTransactionBuilder;
 			expect(result.maxFeePerGas).toBe(expectedMaxFeePerGas);
 		});
 
@@ -555,7 +555,7 @@ describe('defaultTransactionBuilder', () => {
 				web3Context,
 				fillGasPrice: true,
 			});
-			expect(result.maxPriorityFeePerGas).toBe(expectedMaxPriorityFeePerGas); // 2.5 Gwei, hardcoded in defaultTransactionBuilder;
+			expect(result.maxPriorityFeePerGas).toBe(expectedMaxPriorityFeePerGas); // 2.5 Gplanck, hardcoded in defaultTransactionBuilder;
 			expect(result.maxFeePerGas).toBe(expectedMaxFeePerGas);
 		});
 
@@ -569,7 +569,7 @@ describe('defaultTransactionBuilder', () => {
 				web3Context,
 				fillGasPrice: true,
 			});
-			expect(result.maxPriorityFeePerGas).toBe(expectedMaxPriorityFeePerGas); // 2.5 Gwei, hardcoded in defaultTransactionBuilder;
+			expect(result.maxPriorityFeePerGas).toBe(expectedMaxPriorityFeePerGas); // 2.5 Gplanck, hardcoded in defaultTransactionBuilder;
 			expect(result.maxFeePerGas).toBe(expectedMaxFeePerGas);
 		});
 
@@ -591,7 +591,7 @@ describe('defaultTransactionBuilder', () => {
 				web3Context,
 				fillGasPrice: true,
 			});
-			expect(result.maxPriorityFeePerGas).toBe(web3Context.defaultMaxPriorityFeePerGas); // 2.5 Gwei, hardcoded in defaultTransactionBuilder;
+			expect(result.maxPriorityFeePerGas).toBe(web3Context.defaultMaxPriorityFeePerGas); // 2.5 Gplanck, hardcoded in defaultTransactionBuilder;
 			expect(result.maxFeePerGas).toBe(expectedMaxFeePerGas);
 		});
 
@@ -612,7 +612,7 @@ describe('defaultTransactionBuilder', () => {
 				web3Context,
 				fillGasPrice: true,
 			});
-			expect(result.maxPriorityFeePerGas).toBe(web3Context.defaultMaxPriorityFeePerGas); // 2.5 Gwei, hardcoded in defaultTransactionBuilder;
+			expect(result.maxPriorityFeePerGas).toBe(web3Context.defaultMaxPriorityFeePerGas); // 2.5 Gplanck, hardcoded in defaultTransactionBuilder;
 			expect(result.maxFeePerGas).toBe(expectedMaxFeePerGas);
 		});
 
@@ -633,7 +633,7 @@ describe('defaultTransactionBuilder', () => {
 				web3Context,
 				fillGasPrice: true,
 			});
-			expect(result.maxPriorityFeePerGas).toBe(web3Context.defaultMaxPriorityFeePerGas); // 2.5 Gwei, hardcoded in defaultTransactionBuilder;
+			expect(result.maxPriorityFeePerGas).toBe(web3Context.defaultMaxPriorityFeePerGas); // 2.5 Gplanck, hardcoded in defaultTransactionBuilder;
 			expect(result.maxFeePerGas).toBe(expectedMaxFeePerGas);
 		});
 	});

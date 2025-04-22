@@ -16,7 +16,7 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { Address, Bytes, HexString, Numbers, ValueTypes, ZPrefixedHexString } from '@theqrl/web3-types';
-import { EtherUnits, hexToBytes } from '../../src/converters';
+import { ZNDUnits, hexToBytes } from '../../src/converters';
 
 export const bytesToHexValidData: [Bytes, HexString][] = [
 	[new Uint8Array([72]), '0x48'],
@@ -245,72 +245,72 @@ export const toHexInvalidData: [any, string][] = [
 	[undefined, 'Invalid value given "undefined". Error: can not be converted to hex.'],
 ];
 
-const conversionBaseData: [[Numbers, EtherUnits], string][] = [
-	[[0, 'wei'], '0'],
-	[[123, 'wei'], '123'],
-	[['123', 'wei'], '123'],
-	[[BigInt(123), 'wei'], '123'],
-	[['1000', 'wei'], '1000'],
-	[['1', 'kwei'], '0.001'],
-	[['1', 'mwei'], '0.000001'],
-	[['1', 'gwei'], '0.000000001'],
+const conversionBaseData: [[Numbers, ZNDUnits], string][] = [
+	[[0, 'planck'], '0'],
+	[[123, 'planck'], '123'],
+	[['123', 'planck'], '123'],
+	[[BigInt(123), 'planck'], '123'],
+	[['1000', 'planck'], '1000'],
+	[['1', 'kplanck'], '0.001'],
+	[['1', 'mplanck'], '0.000001'],
+	[['1', 'gplanck'], '0.000000001'],
 	[['1', 'micro'], '0.000000000001'],
 	[['1', 'milli'], '0.000000000000001'],
-	[['1', 'ether'], '0.000000000000000001'],
-	[['1', 'kether'], '0.000000000000000000001'],
-	[['1', 'mether'], '0.000000000000000000000001'],
-	[['1', 'gether'], '0.000000000000000000000000001'],
-	[['1', 'tether'], '0.000000000000000000000000000001'],
-	[['900000000000000000000000000001', 'tether'], '0.900000000000000000000000000001'],
-	[['1000', 'kwei'], '1'],
-	[['1000000', 'mwei'], '1'],
-	[['1000000000', 'gwei'], '1'],
+	[['1', 'znd'], '0.000000000000000001'],
+	[['1', 'kznd'], '0.000000000000000000001'],
+	[['1', 'mznd'], '0.000000000000000000000001'],
+	[['1', 'gznd'], '0.000000000000000000000000001'],
+	[['1', 'tznd'], '0.000000000000000000000000000001'],
+	[['900000000000000000000000000001', 'tznd'], '0.900000000000000000000000000001'],
+	[['1000', 'kplanck'], '1'],
+	[['1000000', 'mplanck'], '1'],
+	[['1000000000', 'gplanck'], '1'],
 	[['1000000000000', 'micro'], '1'],
 	[['1000000000000000', 'milli'], '1'],
-	[['1000000000000000000', 'ether'], '1'],
-	[['1000000000000000000000', 'kether'], '1'],
-	[['1000000000000000000000000', 'mether'], '1'],
-	[['1000000000000000000000000000', 'gether'], '1'],
-	[['1000000000000000000000000000000', 'tether'], '1'],
-	[['1000000000000000000000000000000', 'tether'], '1'],
-	[['12345678', 'gwei'], '0.012345678'],
-	[['76912345678', 'gwei'], '76.912345678'],
-	[['134439381738', 'gwei'], '134.439381738'],
-	[['178373938391829348', 'ether'], '0.178373938391829348'],
-	[['879123456788877661', 'gwei'], '879123456.788877661'],
-	[['879123456788877661', 'tether'], '0.000000000000879123456788877661'],
+	[['1000000000000000000', 'znd'], '1'],
+	[['1000000000000000000000', 'kznd'], '1'],
+	[['1000000000000000000000000', 'mznd'], '1'],
+	[['1000000000000000000000000000', 'gznd'], '1'],
+	[['1000000000000000000000000000000', 'tznd'], '1'],
+	[['1000000000000000000000000000000', 'tznd'], '1'],
+	[['12345678', 'gplanck'], '0.012345678'],
+	[['76912345678', 'gplanck'], '76.912345678'],
+	[['134439381738', 'gplanck'], '134.439381738'],
+	[['178373938391829348', 'znd'], '0.178373938391829348'],
+	[['879123456788877661', 'gplanck'], '879123456.788877661'],
+	[['879123456788877661', 'tznd'], '0.000000000000879123456788877661'],
 ];
 
-export const fromWeiValidData: [[Numbers, EtherUnits], string][] = [
+export const fromPlanckValidData: [[Numbers, ZNDUnits], string][] = [
 	...conversionBaseData,
-	[['0xff', 'wei'], '255'],
+	[['0xff', 'planck'], '255'],
 ];
 
-export const toWeiValidData: [[Numbers, EtherUnits], string][] = [
+export const toPlanckValidData: [[Numbers, ZNDUnits], string][] = [
 	...conversionBaseData,
-	[['255', 'wei'], '0xFF'],
+	[['255', 'planck'], '0xFF'],
 ];
 
-export const fromWeiInvalidData: [[any, any], string][] = [
+export const fromPlanckInvalidData: [[any, any], string][] = [
 	// eslint-disable-next-line no-useless-escape
-	[['123.34', 'kwei'], 'Invalid value given "123.34". Error: can not parse as number data.'],
+	[['123.34', 'kplanck'], 'Invalid value given "123.34". Error: can not parse as number data.'],
 	// Using "null" value intentionally for validation
 	// eslint-disable-next-line no-null/no-null
-	[[null, 'kwei'], 'Invalid value given "undefined". Error: can not parse as number data.'],
-	[[undefined, 'kwei'], 'Invalid value given "undefined". Error: can not parse as number data.'],
-	[[{}, 'kwei'], 'Invalid value given "{}". Error: can not parse as number data'],
-	[['data', 'kwei'], 'Invalid value given "data". Error: can not parse as number data.'],
-	[['1234', 'uwei'], 'Invalid value given "uwei". Error: invalid unit.'],
+	[[null, 'kplanck'], 'Invalid value given "undefined". Error: can not parse as number data.'],
+	[[undefined, 'kplanck'], 'Invalid value given "undefined". Error: can not parse as number data.'],
+	[[{}, 'kplanck'], 'Invalid value given "{}". Error: can not parse as number data'],
+	[['data', 'kplanck'], 'Invalid value given "data". Error: can not parse as number data.'],
+	[['1234', 'uplanck'], 'Invalid value given "uplanck". Error: invalid unit.'],
 ];
 
-export const toWeiInvalidData: [[any, any], string][] = [
+export const toPlanckInvalidData: [[any, any], string][] = [
 	// Using "null" value intentionally for validation
 	// eslint-disable-next-line no-null/no-null
-	[[null, 'kwei'], 'value "null" at "/0" must pass "number" validation'],
-	[[undefined, 'kwei'], 'Web3 validator found 1 error[s]:\nvalue at "/0" is required'],
-	[[{}, 'kwei'], 'value "{}" at "/0" must pass "number" validation'],
-	[['data', 'kwei'], 'value "data" at "/0" must pass "number" validation'],
-	[['1234', 'uwei'], 'Invalid value given "uwei". Error: invalid unit.'],
+	[[null, 'kplanck'], 'value "null" at "/0" must pass "number" validation'],
+	[[undefined, 'kplanck'], 'Web3 validator found 1 error[s]:\nvalue at "/0" is required'],
+	[[{}, 'kplanck'], 'value "{}" at "/0" must pass "number" validation'],
+	[['data', 'kplanck'], 'value "data" at "/0" must pass "number" validation'],
+	[['1234', 'uplanck'], 'Invalid value given "uplanck". Error: invalid unit.'],
 ];
 export const toCheckSumValidData: [string, string][] = [
 	['Z0089d53f703f7e0843953d48133f74ce247184c2', 'Z0089d53F703f7E0843953D48133f74cE247184c2'],
