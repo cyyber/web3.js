@@ -193,6 +193,7 @@ export class ContractMethodWrappersPlugin extends Web3PluginBase {
 		returnFormat?: ReturnFormat,
 	) {
 		return utils.format(
+			// TODO(rgeraldes24)
 			{ eth: 'unit' },
 			await this._contract.methods.balanceOf(address).call(),
 			returnFormat ?? types.DEFAULT_RETURN_FORMAT,

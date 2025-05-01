@@ -1,0 +1,13 @@
+participants:
+  - el_type: gzond
+    el_image: qrledger/go-zond:stable
+    cl_type: qrysm
+    cl_image: qrledger/qrysm:beacon-chain-latest
+    vc_type: qrysm
+    vc_image: qrledger/qrysm:validator-latest
+    count: 2
+network_params:
+  preset: "mainnet"
+  prefunded_accounts: '{"Z2099d76d9a34cdd2694c4dc703930a6fbbc1d402": {"balance": "2000000ZND"}}'
+zond_genesis_generator_params:
+  image: local/zond-genesis-generator

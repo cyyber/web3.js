@@ -64,19 +64,19 @@ describe('web3.accounts', () => {
 				const tx = {
 					from: account.address,
 					to: tempAccount,
-					value: web3.utils.toPlanck('0.00001', 'znd'),
+					value: web3.utils.toPlanck('0.00001', 'zond'),
 					gas: '0x5218',
 					data: '0x1',
 					maxFeePerGas: '0x19475bd7f8',
 					maxPriorityFeePerGas: '0x5eae5feec',
 				};
 
-				// Fund this account with some znd
+				// Fund this account with some zond
 				await expect(
 					web3.zond.sendTransaction({
 						from: tempAccount,
 						to: account.address,
-						value: web3.utils.toPlanck('2', 'znd'),
+						value: web3.utils.toPlanck('2', 'zond'),
 					}),
 				).resolves.toBeDefined();
 
@@ -109,7 +109,7 @@ describe('web3.accounts', () => {
 				const tx = {
 					from: account.address,
 					to: tempAccount,
-					value: web3.utils.toPlanck('0.1', 'znd'),
+					value: web3.utils.toPlanck('0.1', 'zond'),
 					gas: '0x1',
 					data: '0x1',
 					maxFeePerGas: '0x19475bd7f8',
@@ -127,7 +127,7 @@ describe('web3.accounts', () => {
 				const tx = {
 					from: tempAccount,
 					to: account.address,
-					value: web3.utils.toPlanck('0.1', 'znd'),
+					value: web3.utils.toPlanck('0.1', 'zond'),
 					gas: '0x1',
 					data: '0x1',
 				};
@@ -144,19 +144,19 @@ describe('web3.accounts', () => {
 			const tx = {
 				from: account.address,
 				to: tempAccount,
-				value: web3.utils.toPlanck('0.1', 'znd'),
+				value: web3.utils.toPlanck('0.1', 'zond'),
 				gas: '0x5218',
 				data: '0x1',
 				maxFeePerGas: '0x19475bd7f8',
 				maxPriorityFeePerGas: '0x5eae5feec',
 			};
 
-			// Fund this account with some znd
+			// Fund this account with some zond
 			await expect(
 				web3.zond.sendTransaction({
 					from: tempAccount,
 					to: account.address,
-					value: web3.utils.toPlanck('0.5', 'znd'),
+					value: web3.utils.toPlanck('0.5', 'zond'),
 				}),
 			).resolves.toBeDefined();
 
@@ -184,7 +184,7 @@ describe('web3.accounts', () => {
 			const tx = {
 				from: account.address,
 				to: tempAccount,
-				value: web3.utils.toPlanck('0.1', 'znd'),
+				value: web3.utils.toPlanck('0.1', 'zond'),
 				gas: '0x1',
 				data: '0x1',
 				maxFeePerGas: '0x19475bd7f8',

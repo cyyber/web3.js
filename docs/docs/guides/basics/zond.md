@@ -113,17 +113,17 @@ async function interact() {
 	console.log(accounts);
 
 	let balance1, balance2;
-	//The initial balances of the accounts should be 100 ZND (10^18 planck)
+	//The initial balances of the accounts should be 100 Zond (10^18 planck)
 	balance1 = await web3.zond.getBalance(accounts[0]);
 	balance2 = await web3.zond.getBalance(accounts[1]);
 
 	console.log(balance1, balance2);
 
-	//create a transaction sending 1 ZND from account 0 to account 1
+	//create a transaction sending 1 Zond from account 0 to account 1
 	const transaction = {
 		from: accounts[0],
 		to: accounts[1],
-		value: web3.utils.toPlanck('1', 'znd'), // value should be passed in planck. For easier use and to avoid mistakes we utilize the auxiliary `toPlanck` function.
+		value: web3.utils.toPlanck('1', 'zond'), // value should be passed in planck. For easier use and to avoid mistakes we utilize the auxiliary `toPlanck` function.
 	};
 
 	//send the actual transaction
@@ -194,9 +194,9 @@ transactionHash {
 ```
 
 :::note
-📝 In order to calculate the actual znd spent, we have to calculate the value sent plus the fees. Initial_balance = (Remaining_balance + value + gasUsed\*gasPrice). In our case:
+📝 In order to calculate the actual zond spent, we have to calculate the value sent plus the fees. Initial_balance = (Remaining_balance + value + gasUsed\*gasPrice). In our case:
 
-98999580000000000000 + 1000000000000000000 + (20000000000\*21000) = 100 ZND
+98999580000000000000 + 1000000000000000000 + (20000000000\*21000) = 100 Zond
 :::
 
 In the next example, we are going to use `estimateGas` function to see the expected gas for contract deployment. (For more on contracts, please see the corresponding tutotial). Create a file named `estimate.ts` and fill it with the following code:
@@ -289,7 +289,7 @@ const web3 = new Web3('http://localhost:7545');
 
 //make sure to copy the private key from ganache
 const privateKey = '0x0fed6f64e01bc9fac9587b6e7245fd9d056c3c004ad546a17d3d029977f0930a';
-const value = web3.utils.toPlanck('1', 'znd');
+const value = web3.utils.toPlanck('1', 'zond');
 
 async function sendSigned() {
 	const accounts = await web3.zond.getAccounts();

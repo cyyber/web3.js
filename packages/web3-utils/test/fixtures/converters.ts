@@ -16,7 +16,7 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { Address, Bytes, HexString, Numbers, ValueTypes, ZPrefixedHexString } from '@theqrl/web3-types';
-import { ZNDUnits, hexToBytes } from '../../src/converters';
+import { ZondUnits, hexToBytes } from '../../src/converters';
 
 export const bytesToHexValidData: [Bytes, HexString][] = [
 	[new Uint8Array([72]), '0x48'],
@@ -245,7 +245,7 @@ export const toHexInvalidData: [any, string][] = [
 	[undefined, 'Invalid value given "undefined". Error: can not be converted to hex.'],
 ];
 
-const conversionBaseData: [[Numbers, ZNDUnits], string][] = [
+const conversionBaseData: [[Numbers, ZondUnits], string][] = [
 	[[0, 'planck'], '0'],
 	[[123, 'planck'], '123'],
 	[['123', 'planck'], '123'],
@@ -256,37 +256,37 @@ const conversionBaseData: [[Numbers, ZNDUnits], string][] = [
 	[['1', 'gplanck'], '0.000000001'],
 	[['1', 'micro'], '0.000000000001'],
 	[['1', 'milli'], '0.000000000000001'],
-	[['1', 'znd'], '0.000000000000000001'],
-	[['1', 'kznd'], '0.000000000000000000001'],
-	[['1', 'mznd'], '0.000000000000000000000001'],
-	[['1', 'gznd'], '0.000000000000000000000000001'],
-	[['1', 'tznd'], '0.000000000000000000000000000001'],
-	[['900000000000000000000000000001', 'tznd'], '0.900000000000000000000000000001'],
+	[['1', 'zond'], '0.000000000000000001'],
+	[['1', 'kzond'], '0.000000000000000000001'],
+	[['1', 'mzond'], '0.000000000000000000000001'],
+	[['1', 'gzond'], '0.000000000000000000000000001'],
+	[['1', 'tzond'], '0.000000000000000000000000000001'],
+	[['900000000000000000000000000001', 'tzond'], '0.900000000000000000000000000001'],
 	[['1000', 'kplanck'], '1'],
 	[['1000000', 'mplanck'], '1'],
 	[['1000000000', 'gplanck'], '1'],
 	[['1000000000000', 'micro'], '1'],
 	[['1000000000000000', 'milli'], '1'],
-	[['1000000000000000000', 'znd'], '1'],
-	[['1000000000000000000000', 'kznd'], '1'],
-	[['1000000000000000000000000', 'mznd'], '1'],
-	[['1000000000000000000000000000', 'gznd'], '1'],
-	[['1000000000000000000000000000000', 'tznd'], '1'],
-	[['1000000000000000000000000000000', 'tznd'], '1'],
+	[['1000000000000000000', 'zond'], '1'],
+	[['1000000000000000000000', 'kzond'], '1'],
+	[['1000000000000000000000000', 'mzond'], '1'],
+	[['1000000000000000000000000000', 'gzond'], '1'],
+	[['1000000000000000000000000000000', 'tzond'], '1'],
+	[['1000000000000000000000000000000', 'tzond'], '1'],
 	[['12345678', 'gplanck'], '0.012345678'],
 	[['76912345678', 'gplanck'], '76.912345678'],
 	[['134439381738', 'gplanck'], '134.439381738'],
-	[['178373938391829348', 'znd'], '0.178373938391829348'],
+	[['178373938391829348', 'zond'], '0.178373938391829348'],
 	[['879123456788877661', 'gplanck'], '879123456.788877661'],
-	[['879123456788877661', 'tznd'], '0.000000000000879123456788877661'],
+	[['879123456788877661', 'tzond'], '0.000000000000879123456788877661'],
 ];
 
-export const fromPlanckValidData: [[Numbers, ZNDUnits], string][] = [
+export const fromPlanckValidData: [[Numbers, ZondUnits], string][] = [
 	...conversionBaseData,
 	[['0xff', 'planck'], '255'],
 ];
 
-export const toPlanckValidData: [[Numbers, ZNDUnits], string][] = [
+export const toPlanckValidData: [[Numbers, ZondUnits], string][] = [
 	...conversionBaseData,
 	[['255', 'planck'], '0xFF'],
 ];

@@ -13,7 +13,7 @@ Using this JSON interface, web3.js is able to create a JavaScript object represe
 -   `type`: `"function"`, `"constructor"` (can be omitted, defaulting to `"function"`; `"fallback"` also possible but not relevant in web3.js);
 -   `name`: the name of the function (only present for function types);
 -   `constant`: `true` if function is specified to not modify the blockchain state;
--   `payable`: `true` if function accepts znd, defaults to false;
+-   `payable`: `true` if function accepts zond, defaults to false;
 -   `stateMutability`: a `string` with one of the following values: `"pure"` (specified to not read blockchain state), `"view"` (same as constant above), `"non-payable"` and `"payable"` (same as payable above);
 -   `inputs`: an `Array of objects`, each of which contains:
     -- `name`: the name of the parameter;

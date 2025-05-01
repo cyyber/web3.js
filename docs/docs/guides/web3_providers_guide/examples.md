@@ -81,7 +81,7 @@ To connect to the Zond network using the HTTP provider, follow these steps:
     		const transactionReceipt = await web3.zond.sendTransaction({
     			from: accounts[0],
     			to: accounts[1],
-    			value: web3.utils.toPlanck('0.001', 'znd'),
+    			value: web3.utils.toPlanck('0.001', 'zond'),
     		});
     		console.log('Transaction Receipt:', transactionReceipt);
 
@@ -185,7 +185,7 @@ async function main() {
 		const transactionReceipt = await web3.zond.sendTransaction({
 			from: accounts[0],
 			to: accounts[1],
-			value: web3.utils.toPlanck('0.001', 'znd'),
+			value: web3.utils.toPlanck('0.001', 'zond'),
 		});
 		console.log('Transaction Receipt:', transactionReceipt);
 	} catch (error) {
@@ -312,7 +312,7 @@ INFO [12-10|15:10:37.127] Mapped network port		  	proto=udp extport=0 intport=30
     		const transactionReceipt = await web3.zond.sendTransaction({
     			from: accounts[0],
     			to: accounts[0], // sending a self-transaction
-    			value: web3.utils.toPlanck('0.001', 'znd'),
+    			value: web3.utils.toPlanck('0.001', 'zond'),
     		});
     		console.log('Transaction Receipt:', transactionReceipt);
     	} catch (error) {
@@ -491,7 +491,7 @@ Follow these steps to connect to the Zond network with MetaMask and web3.js, inc
 						const transactionReceipt = await web3.zond.sendTransaction({
 							from: accounts[0],
 							to: accounts[0], // sending a self-transaction
-							value: web3.utils.toPlanck('0.001', 'znd'),
+							value: web3.utils.toPlanck('0.001', 'zond'),
 						});
 
 						document.getElementById('log').textContent =

@@ -42,7 +42,7 @@ const expo10 = (expo: number) => base ** BigInt(expo);
 // Ref: https://ethdocs.org/en/latest/ether.html
 /** @internal */
 export const zondUnitMap = {
-	noznd: BigInt('0'),
+	nozond: BigInt('0'),
 	planck: BigInt(1),
 	kplanck: expo10(3),
 	Kplanck: expo10(3),
@@ -57,15 +57,15 @@ export const zondUnitMap = {
 	pplanck: expo10(15),
 	Pplanck: expo10(15),
 	milli: expo10(15),
-	znd: expo10(18),
-	kznd: expo10(21),
+	zond: expo10(18),
+	kzond: expo10(21),
 	grand: expo10(21),
-	mznd: expo10(24),
-	gznd: expo10(27),
-	tznd: expo10(30),
+	mzond: expo10(24),
+	gzond: expo10(27),
+	tzond: expo10(30),
 };
 
-export type ZNDUnits = keyof typeof zondUnitMap;
+export type ZondUnits = keyof typeof zondUnitMap;
 /**
  * Convert a value from bytes to Uint8Array
  * @param data - Data to be converted
@@ -489,21 +489,21 @@ export const toBigInt = (value: unknown): bigint => {
 };
 
 /**
- * Takes a number of planck and converts it to any other znd unit.
+ * Takes a number of planck and converts it to any other zond unit.
  * @param number - The value in planck
  * @param unit - The unit to convert to
  * @returns - Returns the converted value in the given unit
  *
  * @example
  * ```ts
- * console.log(web3.utils.fromPlanck("1", "znd"));
+ * console.log(web3.utils.fromPlanck("1", "zond"));
  * > 0.000000000000000001
  *
  * console.log(web3.utils.fromPlanck("1", "shannon")); // TODO(rgeraldes24)
  * > 0.000000001
  * ```
  */
-export const fromPlanck = (number: Numbers, unit: ZNDUnits): string => {
+export const fromPlanck = (number: Numbers, unit: ZondUnits): string => {
 	const denomination = zondUnitMap[unit];
 
 	if (!denomination) {
@@ -551,17 +551,17 @@ export const fromPlanck = (number: Numbers, unit: ZNDUnits): string => {
  * Takes a number of a unit and converts it to planck.
  *
  * @param number - The number to convert.
- * @param unit - {@link ZNDUnits} The unit of the number passed.
+ * @param unit - {@link ZondUnits} The unit of the number passed.
  * @returns The number converted to planck.
  *
  * @example
  * ```ts
- * console.log(web3.utils.toPlanck("0.001", "znd"));
+ * console.log(web3.utils.toPlanck("0.001", "zond"));
  * > 1000000000000000 //(planck)
  * ```
  */
-// todo in 1.x unit defaults to 'znd'
-export const toPlanck = (number: Numbers, unit: ZNDUnits): string => {
+// todo in 1.x unit defaults to 'zond'
+export const toPlanck = (number: Numbers, unit: ZondUnits): string => {
 	validator.validate(['number'], [number]);
 
 	const denomination = zondUnitMap[unit];
