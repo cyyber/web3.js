@@ -1,0 +1,11 @@
+// SPDX-License-Identifier: GNU
+// TODO(now.youtrack.cloud/issue/web3js-11)
+pragma hyperion ^0.8.13;
+
+import '@openzeppelin/contracts/token/ZRC20/ZRC20.hyp';
+
+contract ZRC20Token is ZRC20 {
+	constructor(uint256 initialSupply) ZRC20('Gold', 'GLD') {
+		_mint(msg.sender, initialSupply);
+	}
+}

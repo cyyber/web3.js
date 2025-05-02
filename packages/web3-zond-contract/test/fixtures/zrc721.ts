@@ -19,7 +19,7 @@ import { Address, Numbers } from '@theqrl/web3-types';
 import { LogsSubscription } from '../../src/log_subscription';
 import { ContractEventOptions, NonPayableMethodObject, PayableMethodObject } from '../../src/types';
 
-export interface Erc721Interface {
+export interface Zrc721Interface {
 	methods: {
 		[key: string]: (
 			...args: ReadonlyArray<any>
@@ -64,7 +64,7 @@ export interface Erc721Interface {
 
 // https://eips.ethereum.org/EIPS/eip-721
 // Copied interface from above link to Remix and compile
-export const erc721Abi = [
+export const zrc721Abi = [
 	{
 		constant: true,
 		inputs: [

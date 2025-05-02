@@ -20,29 +20,29 @@ import Web3 from '@theqrl/web3';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { Web3Account } from '@theqrl/web3-zond-accounts';
 import { Contract } from '../../../src';
-import { ERC20TokenAbi, ERC20TokenBytecode } from '../../shared_fixtures/build/ERC20Token';
+import { ZRC20TokenAbi, ZRC20TokenBytecode } from '../../shared_fixtures/build/ZRC20Token';
 import { getSystemTestProvider, createLocalAccount } from '../../fixtures/system_test_utils';
 
 const initialSupply = BigInt('5000000000');
 
 describe('contract', () => {
-	describe('erc20', () => {
-		let contract: Contract<typeof ERC20TokenAbi>;
+	describe('zrc20', () => {
+		let contract: Contract<typeof ZRC20TokenAbi>;
 		let sendOptions: Record<string, unknown>;
 		let deployOptions: Record<string, unknown>;
 		let localAccount: Web3Account;
 		let web3: Web3;
-		let contractDeployed: Contract<typeof ERC20TokenAbi>;
+		let contractDeployed: Contract<typeof ZRC20TokenAbi>;
 
 		beforeAll(async () => {
 			web3 = new Web3(getSystemTestProvider());
 			localAccount = await createLocalAccount(web3);
-			contract = new web3.zond.Contract(ERC20TokenAbi) as unknown as Contract<
-				typeof ERC20TokenAbi
+			contract = new web3.zond.Contract(ZRC20TokenAbi) as unknown as Contract<
+				typeof ZRC20TokenAbi
 			>;
 
 			deployOptions = {
-				data: ERC20TokenBytecode,
+				data: ZRC20TokenBytecode,
 				arguments: [initialSupply],
 			};
 

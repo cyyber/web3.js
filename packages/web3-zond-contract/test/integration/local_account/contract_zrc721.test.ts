@@ -20,27 +20,27 @@ import Web3 from '@theqrl/web3';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { Web3Account } from '@theqrl/web3-zond-accounts';
 import { Contract, EventLog } from '../../../src';
-import { ERC721TokenAbi, ERC721TokenBytecode } from '../../shared_fixtures/build/ERC721Token';
+import { ZRC721TokenAbi, ZRC721TokenBytecode } from '../../shared_fixtures/build/ZRC721Token';
 import { getSystemTestProvider, createLocalAccount } from '../../fixtures/system_test_utils';
 import { toUpperCaseHex } from '../../shared_fixtures/utils';
 
 describe('contract', () => {
-	describe('erc721', () => {
-		let contract: Contract<typeof ERC721TokenAbi>;
+	describe('zrc721', () => {
+		let contract: Contract<typeof ZRC721TokenAbi>;
 		let sendOptions: Record<string, unknown>;
 		let deployOptions: Record<string, unknown>;
 		let localAccount: Web3Account;
 		let web3: Web3;
-		let contractDeployed: Contract<typeof ERC721TokenAbi>;
+		let contractDeployed: Contract<typeof ZRC721TokenAbi>;
 		beforeAll(async () => {
 			web3 = new Web3(getSystemTestProvider());
 			localAccount = await createLocalAccount(web3);
-			contract = new web3.zond.Contract(ERC721TokenAbi) as unknown as Contract<
-				typeof ERC721TokenAbi
+			contract = new web3.zond.Contract(ZRC721TokenAbi) as unknown as Contract<
+				typeof ZRC721TokenAbi
 			>;
 
 			deployOptions = {
-				data: ERC721TokenBytecode,
+				data: ZRC721TokenBytecode,
 				arguments: [],
 			};
 

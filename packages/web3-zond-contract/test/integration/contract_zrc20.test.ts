@@ -17,7 +17,7 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 
 import { LogsOutput } from '@theqrl/web3-types';
 import { Contract } from '../../src';
-import { ERC20TokenAbi, ERC20TokenBytecode } from '../shared_fixtures/build/ERC20Token';
+import { ZRC20TokenAbi, ZRC20TokenBytecode } from '../shared_fixtures/build/ZRC20Token';
 import {
 	getSystemTestProvider,
 	describeIf,
@@ -32,18 +32,18 @@ import { processAsync, toUpperCaseAddress } from '../shared_fixtures/utils';
 const initialSupply = BigInt('5000000000');
 
 describe('contract', () => {
-	describe('erc20', () => {
-		let contract: Contract<typeof ERC20TokenAbi>;
+	describe('zrc20', () => {
+		let contract: Contract<typeof ZRC20TokenAbi>;
 		let deployOptions: Record<string, unknown>;
 		let sendOptions: Record<string, unknown>;
 
 		beforeAll(() => {
-			contract = new Contract(ERC20TokenAbi, undefined, {
+			contract = new Contract(ZRC20TokenAbi, undefined, {
 				provider: getSystemTestProvider(),
 			});
 
 			deployOptions = {
-				data: ERC20TokenBytecode,
+				data: ZRC20TokenBytecode,
 				arguments: [initialSupply],
 			};
 		});
@@ -57,7 +57,7 @@ describe('contract', () => {
 		});
 
 		describe('contract instance', () => {
-			let contractDeployed: Contract<typeof ERC20TokenAbi>;
+			let contractDeployed: Contract<typeof ZRC20TokenAbi>;
 			let pkAccount: { address: string; seed: string };
 			let mainAcc: { address: string; seed: string };
 			const prepareForTransfer = async (value: string) => {

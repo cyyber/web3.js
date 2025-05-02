@@ -17,7 +17,7 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 import { Web3Zond } from '@theqrl/web3-zond';
 import { Contract } from '../../src';
 import { sleep } from '../shared_fixtures/utils';
-import { ERC721TokenAbi, ERC721TokenBytecode } from '../shared_fixtures/build/ERC721Token';
+import { ZRC721TokenAbi, ZRC721TokenBytecode } from '../shared_fixtures/build/ZRC721Token';
 import { GreeterBytecode, GreeterAbi } from '../shared_fixtures/build/Greeter';
 import { DeployRevertAbi, DeployRevertBytecode } from '../shared_fixtures/build/DeployRevert';
 import {
@@ -108,11 +108,11 @@ describe('contract', () => {
 				expect(Number(estimatedGas)).toBeGreaterThan(0);
 			});
 			it('should return estimated gas of contract constructor without arguments', async () => {
-				const estimatedGas = await new Contract(ERC721TokenAbi, undefined, {
+				const estimatedGas = await new Contract(ZRC721TokenAbi, undefined, {
 					provider: getSystemTestProvider(),
 				})
 					.deploy({
-						data: ERC721TokenBytecode,
+						data: ZRC721TokenBytecode,
 						arguments: [],
 					})
 					.estimateGas({

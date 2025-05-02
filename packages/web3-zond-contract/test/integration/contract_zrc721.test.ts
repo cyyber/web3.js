@@ -17,7 +17,7 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 
 import { toBigInt } from '@theqrl/web3-utils';
 import { Contract } from '../../src';
-import { ERC721TokenAbi, ERC721TokenBytecode } from '../shared_fixtures/build/ERC721Token';
+import { ZRC721TokenAbi, ZRC721TokenBytecode } from '../shared_fixtures/build/ZRC721Token';
 import {
 	getSystemTestProvider,
 	describeIf,
@@ -30,21 +30,21 @@ import {
 import { processAsync, toUpperCaseAddress } from '../shared_fixtures/utils';
 
 describe('contract', () => {
-	describe('erc721', () => {
-		let contract: Contract<typeof ERC721TokenAbi>;
-		let contractDeployed: Contract<typeof ERC721TokenAbi>;
+	describe('zrc721', () => {
+		let contract: Contract<typeof ZRC721TokenAbi>;
+		let contractDeployed: Contract<typeof ZRC721TokenAbi>;
 		let deployOptions: Record<string, unknown>;
 		let sendOptions: Record<string, unknown>;
 
 		beforeAll(async () => {
-			contract = new Contract(ERC721TokenAbi, undefined, {
+			contract = new Contract(ZRC721TokenAbi, undefined, {
 				provider: getSystemTestProvider(),
 			});
 
 			const acc = await createTempAccount();
 
 			deployOptions = {
-				data: ERC721TokenBytecode,
+				data: ZRC721TokenBytecode,
 				arguments: [],
 			};
 			sendOptions = { from: acc.address, /*gas: '10000000'*/ };

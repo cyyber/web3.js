@@ -25,8 +25,8 @@ import { sampleStorageContractABI } from '../fixtures/storage';
 import { GreeterAbi, GreeterBytecode } from '../shared_fixtures/build/Greeter';
 import { AllGetPastEventsData, getLogsData, getPastEventsData } from '../fixtures/unitTestFixtures';
 import { getSystemTestProvider, isHttp, itIf } from '../fixtures/system_test_utils';
-import { erc721Abi } from '../fixtures/erc721';
-import { ERC20TokenAbi } from '../shared_fixtures/build/ERC20Token';
+import { zrc721Abi } from '../fixtures/zrc721';
+import { ZRC20TokenAbi } from '../shared_fixtures/build/ZRC20Token';
 import { processAsync } from '../shared_fixtures/utils';
 
 jest.mock('@theqrl/web3-zond');
@@ -738,13 +738,13 @@ describe('Contract', () => {
 				{ config: { defaultAccount: 'Z00000000219ab540356cBB839Cbe05303d7705Fa' } },
 			);
 
-			contract.options.jsonInterface = ERC20TokenAbi;
-			expect(contract.options.jsonInterface).toMatchObject(ERC20TokenAbi);
+			contract.options.jsonInterface = ZRC20TokenAbi;
+			expect(contract.options.jsonInterface).toMatchObject(ZRC20TokenAbi);
 		});
 
 		it('should be able to call a payable method', async () => {
 			const contract = new Contract(
-				erc721Abi,
+				zrc721Abi,
 				'Z1230B93ffd14F2F022039675fA3fc3A46eE4C701',
 				{ gas: '123' },
 				{ config: { defaultAccount: 'Z00000000219ab540356cBB839Cbe05303d7705Fa' } },
@@ -769,7 +769,7 @@ describe('Contract', () => {
 
 		it('should be able to call a payable method with data as a contract init option', async () => {
 			const contract = new Contract(
-				erc721Abi,
+				zrc721Abi,
 				'Z1230B93ffd14F2F022039675fA3fc3A46eE4C701',
 				{ gas: '123', dataInputFill: 'data' },
 				{ config: { defaultAccount: 'Z00000000219ab540356cBB839Cbe05303d7705Fa' } },
@@ -794,7 +794,7 @@ describe('Contract', () => {
 
 		it('should be able to call a payable method with input as a contract init option', async () => {
 			const contract = new Contract(
-				erc721Abi,
+				zrc721Abi,
 				'Z1230B93ffd14F2F022039675fA3fc3A46eE4C701',
 				{ gas: '123', dataInputFill: 'input' },
 				{ config: { defaultAccount: 'Z00000000219ab540356cBB839Cbe05303d7705Fa' } },
@@ -827,7 +827,7 @@ describe('Contract', () => {
 				},
 			});
 			const contract = new Contract(
-				erc721Abi,
+				zrc721Abi,
 				'Z1230B93ffd14F2F022039675fA3fc3A46eE4C701',
 				{ gas: '123' },
 				web3Context,
@@ -860,7 +860,7 @@ describe('Contract', () => {
 				},
 			});
 			const contract = new Contract(
-				erc721Abi,
+				zrc721Abi,
 				'Z1230B93ffd14F2F022039675fA3fc3A46eE4C701',
 				{ gas: '123' },
 				web3Context,
