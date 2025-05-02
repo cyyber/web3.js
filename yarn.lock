@@ -1659,11 +1659,6 @@
   dependencies:
     "@octokit/openapi-types" "^13.1.0"
 
-"@openzeppelin/contracts@^4.7.1":
-  version "4.9.3"
-  resolved "https://registry.yarnpkg.com/@openzeppelin/contracts/-/contracts-4.9.3.tgz#00d7a8cf35a475b160b3f0293a6403c511099364"
-  integrity sha512-He3LieZ1pP2TNt5JbkPA4PNT9WC3gOTOlDcFGJW4Le4QKqwmiNJCRt44APfxMxvq7OugU/cqYuPcSBzOw38DAg==
-
 "@parcel/watcher@2.0.4":
   version "2.0.4"
   resolved "https://registry.yarnpkg.com/@parcel/watcher/-/watcher-2.0.4.tgz#f300fef4cc38008ff4b8c29d92588eced3ce014b"
@@ -1853,6 +1848,9 @@
     "@theqrl/dilithium5" "^0.0.9"
     randombytes "^2.1.0"
     sha3 "^2.1.4"
+
+"@theqrl/zond-contracts@file:../zond-contracts":
+  version "0.1.0"
 
 "@tootallnate/once@2":
   version "2.0.0"
