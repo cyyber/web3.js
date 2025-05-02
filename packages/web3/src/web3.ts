@@ -24,7 +24,7 @@ import {
 } from '@theqrl/web3-core';
 import { Web3Zond, RegisteredSubscription, registeredSubscriptions } from '@theqrl/web3-zond';
 import Contract from '@theqrl/web3-zond-contract';
-import { ENS, registryAddresses } from '@theqrl/web3-zond-ens';
+import { ZNS, registryAddresses } from '@theqrl/web3-zond-zns';
 import { Iban } from '@theqrl/web3-zond-iban';
 import { Net } from '@theqrl/web3-net';
 import * as utils from '@theqrl/web3-utils';
@@ -53,7 +53,7 @@ export class Web3<
 		Web3Zond,
 		Iban,
 		Net,
-		ENS,
+		ZNS,
 	};
 
 	public utils: typeof utils;
@@ -155,8 +155,8 @@ export class Web3<
 
 		// Zond Module
 		this.zond = Object.assign(zond, {
-			// ENS module
-			ens: self.use(ENS, registryAddresses.main), // registry address defaults to main network
+			// ZNS module
+			zns: self.use(ZNS, registryAddresses.main), // registry address defaults to main network
 
 			// Iban helpers
 			Iban,
