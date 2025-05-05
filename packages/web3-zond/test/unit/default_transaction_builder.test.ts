@@ -329,22 +329,6 @@ describe('defaultTransactionBuilder', () => {
 	});
 
 	describe('should populate hardfork', () => {
-		/*
-		it('should populate with london', async () => {
-			const input = { ...transaction };
-			delete input.hardfork;
-			delete input.common;
-			delete input.maxPriorityFeePerGas;
-			delete input.maxFeePerGas;
-
-			const result = await defaultTransactionBuilder({
-				transaction: input,
-				web3Context,
-				fillGasPrice: true,
-			});
-			expect(result.hardfork).toBe('london');
-		});
-		*/
 		it('should populate with shanghai', async () => {
 			const input = { ...transaction };
 			delete input.hardfork;

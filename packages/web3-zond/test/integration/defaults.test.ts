@@ -798,11 +798,6 @@ describe('defaults', () => {
 			);
 			expect(res).toBe('0x4444');
 
-			// test override to 0x2 if:
-			// tx.maxFeePerGas !== undefined ||
-			// tx.maxPriorityFeePerGas !== undefined ||
-			// tx.hardfork === 'london' ||
-			// tx.common?.hardfork === 'london'
 			const maxFeePerGasOverride = getTransactionType(
 				{
 					from: 'ZEB014f8c8B418Db6b45774c326A0E64C78914dC0',
@@ -866,9 +861,6 @@ describe('defaults', () => {
 				zond2,
 			);
 			expect(commonOverride).toBe('0x2');
-
-			// override to 0x1 if:
-			// tx.accessList !== undefined || tx.hardfork === 'berlin' || tx.common?.hardfork === 'berlin'
 
 			const accessListOverride = getTransactionType(
 				{
