@@ -252,9 +252,9 @@ export class Iban {
 	}
 
 	/**
-	 * This method should be used to create iban object from an Zond address.
+	 * This method should be used to create iban object from a Zond address.
 	 *
-	 * @param address - an Zond address
+	 * @param address - a Zond address
 	 * @returns an Iban class instance that holds the equivalent IBAN
 	 *
 	 * @example
@@ -275,7 +275,7 @@ export class Iban {
 	}
 
 	/**
-	 * This method should be used to create an zond address from a Direct IBAN address.
+	 * This method should be used to create a zond address from a Direct IBAN address.
 	 * If the provided string was not a direct IBAN (has the length of 34 or 35), an Error will be thrown:
 	 * ('Iban is indirect and cannot be converted. Must be length of 34 or 35').
 	 * Note: this is also available as a method at an Iban instance.
@@ -321,9 +321,9 @@ export class Iban {
 	};
 
 	/**
-	 * This method should be used to create IBAN address from an Zond address
+	 * This method should be used to create IBAN address from a Zond address
 	 *
-	 * @param address - an Zond address
+	 * @param address - a Zond address
 	 * @return the equivalent IBAN address
 	 *
 	 * @example

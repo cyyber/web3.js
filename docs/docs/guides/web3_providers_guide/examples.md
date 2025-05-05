@@ -242,7 +242,7 @@ Unsubscribed from new block headers.
 
 ### IPC Provider (for Node.js)
 
-The IPC Provider allows you to connect to an Zond node using Inter-Process Communication (IPC) in a Node.js environment. This provider is useful when you have a local Zond node running on your machine and want to interact with it using Node.js.
+The IPC Provider allows you to connect to a Zond node using Inter-Process Communication (IPC) in a Node.js environment. This provider is useful when you have a local Zond node running on your machine and want to interact with it using Node.js.
 
 In the following steps you will run `gzond` in development mode and you will run a piece of code that reads the Zond accounts and sends a transaction:
 
@@ -418,7 +418,7 @@ The sample above connected you to the Zond network using truffle HD Wallet-enabl
 
 ### Browser Injected Zond Provider
 
-It is easy to connect to the Zond network using an Zond browser extension such as MetaMask, or an Zond-enabled browser like the browser inside TrustWallet. Because they inject their provider object into the browser's JavaScript context, enabling direct interaction with the Zond network from your web application. Moreover, the wallet management is conveniently handled by these extensions or browsers, making it the standard approach for DApp developers to facilitate user interactions with the Zond network.
+It is easy to connect to the Zond network using a Zond browser extension such as MetaMask, or a Zond-enabled browser like the browser inside TrustWallet. Because they inject their provider object into the browser's JavaScript context, enabling direct interaction with the Zond network from your web application. Moreover, the wallet management is conveniently handled by these extensions or browsers, making it the standard approach for DApp developers to facilitate user interactions with the Zond network.
 
 Technically, you use `window.zond` when it is injected by the Zond browser extension or the Zond-enabled browser. However, before using this provider, you need to check if it is available and then call `enable()` to request access to the user's MetaMask account.
 

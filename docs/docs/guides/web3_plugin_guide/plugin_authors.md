@@ -89,7 +89,7 @@ await web3Context.customRpcMethods.someMethod();
 
 ### Using the Inherited `Web3Context`
 
-Below is an example of `CustomRpcMethodsPlugin` making use of `this.requestManager` which will have access to an Zond provider if one was configured by the user. In the event that no `provider` was set by the user, the below code will throw a [ProviderError](/api/web3-errors/class/ProviderError) if `customRpcMethod` was to be called:
+Below is an example of `CustomRpcMethodsPlugin` making use of `this.requestManager` which will have access to a Zond provider if one was configured by the user. In the event that no `provider` was set by the user, the below code will throw a [ProviderError](/api/web3-errors/class/ProviderError) if `customRpcMethod` was to be called:
 
 ```typescript
 import { Web3PluginBase } from 'web3';
@@ -106,7 +106,7 @@ export class CustomRpcMethodsPlugin extends Web3PluginBase {
 }
 ```
 
-Below depicts a plugin user's code that does not configure an Zond provider, resulting in a thrown [ProviderError](/api/web3-errors/class/ProviderError) when calling `customRpcMethod`:
+Below depicts a plugin user's code that does not configure a Zond provider, resulting in a thrown [ProviderError](/api/web3-errors/class/ProviderError) when calling `customRpcMethod`:
 
 ```typescript
 // registering_a_plugin.ts

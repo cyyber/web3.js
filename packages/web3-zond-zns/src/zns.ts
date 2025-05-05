@@ -105,7 +105,7 @@ export class ZNS extends Web3Context<ZondExecutionAPI & Web3NetAPI> {
 	}
 
 	/**
-	 * Returns the caching TTL (time-to-live) of an ZNS name.
+	 * Returns the caching TTL (time-to-live) of a ZNS name.
 	 * @param name - The ZNS name
 	 * @returns - Returns the caching TTL (time-to-live) of a name.
 	 * @example
@@ -131,7 +131,7 @@ export class ZNS extends Web3Context<ZondExecutionAPI & Web3NetAPI> {
 	}
 
 	/**
-	 * Resolves an ZNS name to an Zond address.
+	 * Resolves a ZNS name to a Zond address.
 	 * @param ZNSName - The ZNS name to resolve
 	 * @param coinType - (Optional) The coin type, defaults to 60 (ZND)
 	 * @returns - The Zond address of the given name
@@ -166,9 +166,9 @@ export class ZNS extends Web3Context<ZondExecutionAPI & Web3NetAPI> {
 	}
 
 	/**
-	 * Returns the content hash object associated with an ZNS node.
+	 * Returns the content hash object associated with a ZNS node.
 	 * @param ZNSName - The ZNS name
-	 * @returns - The content hash object associated with an ZNS node
+	 * @returns - The content hash object associated with a ZNS node
 	 * @example
 	 * ```ts
 	 * const hash = await web3.zond.zns.getContenthash('zond.zns');

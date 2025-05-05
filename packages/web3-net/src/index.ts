@@ -16,7 +16,7 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 /**
- * The web3-net package allows you to interact with an Zond node’s network properties.
+ * The web3-net package allows you to interact with a Zond node’s network properties.
  *
  * ```ts
  * import Net from '@theqrl/web3-net';

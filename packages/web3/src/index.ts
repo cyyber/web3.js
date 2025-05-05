@@ -65,7 +65,7 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
  * ```ts
  * import Web3 from '@theqrl/web3';
  *
- * // "Web3.givenProvider" will be set if in an Zond supported browser.
+ * // "Web3.givenProvider" will be set if in a Zond supported browser.
  * const web3 = new Web3(Web3.givenProvider || 'ws://some.local-or-remote.node:8546');
  *
  * > web3.zond
@@ -249,7 +249,7 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
  * web3.zond.givenProvider
  * ...
  * ```
- * When using web3.js in an Zond compatible browser, it will set with the current native provider by that browser.
+ * When using web3.js in a Zond compatible browser, it will set with the current native provider by that browser.
  * Will return the given provider by the (browser) environment, otherwise `undefined`.
  *
  * #### Returns
