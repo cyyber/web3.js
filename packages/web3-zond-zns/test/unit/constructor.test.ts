@@ -21,7 +21,7 @@ import { Resolver } from '../../src/resolver';
 import { ZNS } from '../../src/zns';
 import { registryAddresses } from '../../src/config';
 
-describe('ens', () => {
+describe('zns', () => {
 	let object: Web3ContextObject;
 
 	beforeAll(() => {

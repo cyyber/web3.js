@@ -18,7 +18,7 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 import { namehash, normalize } from '../../src/utils';
 import { namehashValidData, normalizeValidData } from '../fixtures/utils';
 
-describe('ens utils', () => {
+describe('zns utils', () => {
 	describe('namehash', () => {
 		describe('valid cases', () => {
 			it.each(namehashValidData)('%s', (input, output) => {

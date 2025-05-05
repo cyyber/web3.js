@@ -51,7 +51,7 @@ describe('zns', () => {
 	type ResolverContract = Contract<typeof PublicResolverAbi>;
 
 	let Resolver: ResolverContract;
-	let getEnsResolver: Contract<typeof PublicResolver>;
+	let getZnsResolver: Contract<typeof PublicResolver>;
 
 	let sendOptions: PayableTxOptions;
 
@@ -136,8 +136,8 @@ describe('zns', () => {
 		if (isSocket) {
 			await closeOpenConnection(zns);
 			// @ts-expect-error @typescript-eslint/ban-ts-comment
-			await closeOpenConnection(ens?._registry?.contract);
-			await closeOpenConnection(getEnsResolver);
+			await closeOpenConnection(zns?._registry?.contract);
+			await closeOpenConnection(getZnsResolver);
 			await closeOpenConnection(registry);
 			await closeOpenConnection(resolver);
 			await closeOpenConnection(nameWrapper);
@@ -158,9 +158,9 @@ describe('zns', () => {
 	});
 
 	it('should return the registered resolver for the subnode "resolver"', async () => {
-		getEnsResolver = await zns.getResolver('resolver');
+		getZnsResolver = await zns.getResolver('resolver');
 
-		expect(getEnsResolver.options.address).toEqual(resolver.options.address);
+		expect(getZnsResolver.options.address).toEqual(resolver.options.address);
 	});
 
 	it('should get the owner record for a name', async () => {

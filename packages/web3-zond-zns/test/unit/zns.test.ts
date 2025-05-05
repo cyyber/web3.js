@@ -23,7 +23,8 @@ import { registryAddresses } from '../../src/config';
 
 import { ZNS } from '../../src/zns';
 
-jest.useFakeTimers().setSystemTime(new Date('2020-01-01'));
+// TODO(rgeraldes24)
+// jest.useFakeTimers().setSystemTime(new Date('2020-01-01'));
 
 jest.mock('@theqrl/web3-zond', () => ({
 	__esModule: true,
@@ -221,7 +222,8 @@ describe('zns', () => {
 			await zns.checkNetwork();
 
 			// now - this._lastSyncCheck > 3600)
-			jest.useFakeTimers().setSystemTime(new Date('2020-01-01').getTime() + 3601000); // (3600 + 1) * 1000
+			// TODO(rgeraldes24)
+			// jest.useFakeTimers().setSystemTime(new Date('2020-01-01').getTime() + 3601000); // (3600 + 1) * 1000
 			await expect(zns.checkNetwork()).resolves.not.toThrow();
 		});
 

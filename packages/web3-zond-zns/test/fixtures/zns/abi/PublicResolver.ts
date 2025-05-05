@@ -21,7 +21,7 @@ export const PublicResolverAbi = [
 		inputs: [
 			{
 				internalType: 'contract ZNS',
-				name: '_ens',
+				name: '_zns',
 				type: 'address',
 			},
 			{

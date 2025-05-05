@@ -19,7 +19,7 @@ import { Web3Context, Web3ContextObject } from '@theqrl/web3-core';
 import { ResolverMethodMissingError } from '@theqrl/web3-errors';
 import { Contract, NonPayableMethodObject } from '@theqrl/web3-zond-contract';
 import { sha3 } from '@theqrl/web3-utils';
-import { PublicResolverAbi } from '../../src/abi/ens/PublicResolver';
+import { PublicResolverAbi } from '../../src/abi/zns/PublicResolver';
 import { interfaceIds, methodsInInterface } from '../../src/config';
 import { Registry } from '../../src/registry';
 import { Resolver } from '../../src/resolver';
