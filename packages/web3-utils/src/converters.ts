@@ -498,9 +498,6 @@ export const toBigInt = (value: unknown): bigint => {
  * ```ts
  * console.log(web3.utils.fromPlanck("1", "zond"));
  * > 0.000000000000000001
- *
- * console.log(web3.utils.fromPlanck("1", "shannon")); // TODO(rgeraldes24)
- * > 0.000000001
  * ```
  */
 export const fromPlanck = (number: Numbers, unit: ZondUnits): string => {

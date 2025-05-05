@@ -384,7 +384,7 @@ Here is a step-by-step example and a code snippet to connect your web applicatio
     const web3 = new Web3(provider);
 
     // Get the current block number from the network
-    web3.eth
+    web3.zond
     	.getBlockNumber()
     	.then(function (blockNumber) {
     		console.log('Current block number:', blockNumber);

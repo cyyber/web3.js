@@ -3,7 +3,7 @@
 pragma hyperion >=0.1.0;
 
 import '@theqrl/zond-contracts/token/ZRC721/extensions/ZRC721URIStorage.hyp';
-import '@theqrl/zond-contracts/utils/Counters.sol';
+import '@theqrl/zond-contracts/utils/Counters.hyp';
 
 contract ZRC721Token is ZRC721URIStorage {
 	using Counters for Counters.Counter;

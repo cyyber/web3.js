@@ -17,15 +17,15 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 
 export const namehashValidData: [string, string][] = [
 	['', '0x0000000000000000000000000000000000000000000000000000000000000000'],
-	['eth', '0x93cdeb708b7545dc668eb9280176169d1c33cfd8ed6f04690a0bcc88a93fc4ae'],
-	['foo.eth', '0xde9b09fd7c5f901e23a3f19fecc54828e9c848539801e86591bd9801b019f84f'],
-	['FOO.eth', '0xde9b09fd7c5f901e23a3f19fecc54828e9c848539801e86591bd9801b019f84f'],
+	['znd', '0x5ca200831516f7386952dbee215dfe7e4920ece6d31d89501d03e9239082ae7a'],
+	['foo.znd', '0xa5bb084f89105bd16dff5eef797279b0c91d93529934875c65e3f2948b8b5be9'],
+	['FOO.znd', '0xa5bb084f89105bd16dff5eef797279b0c91d93529934875c65e3f2948b8b5be9'],
 ];
 
 export const normalizeValidData: [string, string][] = [
 	['Öbb.at', 'öbb.at'],
 	['Ⓜ', 'm'],
-	['foo.eth', 'foo.eth'],
-	['Foo.eth', 'foo.eth'],
-	['🦚.eth', '🦚.eth'],
+	['foo.znd', 'foo.znd'],
+	['Foo.znd', 'foo.znd'],
+	['🦚.znd', '🦚.znd'],
 ];
