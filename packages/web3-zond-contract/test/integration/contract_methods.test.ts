@@ -108,7 +108,7 @@ describe('contract', () => {
 			it('should returns a receipt (EIP-1559, maxFeePerGas and maxPriorityFeePerGas specified)', async () => {
 				const tempAcc = await createTempAccount();
 
-				const sendOptionsLocal = { from: tempAcc.address, /*gas: '1000000'*/ };
+				const sendOptionsLocal = { from: tempAcc.address /*gas: '1000000'*/ };
 
 				const contractLocal = await contract.deploy(deployOptions).send(sendOptionsLocal);
 				const receipt = await contractLocal.methods
@@ -160,7 +160,9 @@ describe('contract', () => {
 						logsBloom:
 							'0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000',
 						status: BigInt(0),
-						to: isNullish(contractDeployed.options.address) ? contractDeployed.options.address : `Z${contractDeployed.options.address.slice(1).toLowerCase()}`,
+						to: isNullish(contractDeployed.options.address)
+							? contractDeployed.options.address
+							: `Z${contractDeployed.options.address.slice(1).toLowerCase()}`,
 						transactionIndex: BigInt(0),
 						type: BigInt(2),
 					},

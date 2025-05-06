@@ -321,23 +321,22 @@ describe('Web3Zond.sendTransaction', () => {
 	});
 
 	it('should send type 0x2 transaction with maxPriorityFeePerGas got from await web3Zond.getMaxPriorityFeePerGas()', async () => {
-			const transaction: Transaction = {
-				from: tempAcc.address,
-				to: 'Z0000000000000000000000000000000000000000',
-				value: BigInt(1),
-				maxPriorityFeePerGas: await web3Zond.getMaxPriorityFeePerGas(),
-			};
-			const response = await web3Zond.sendTransaction(transaction);
+		const transaction: Transaction = {
+			from: tempAcc.address,
+			to: 'Z0000000000000000000000000000000000000000',
+			value: BigInt(1),
+			maxPriorityFeePerGas: await web3Zond.getMaxPriorityFeePerGas(),
+		};
+		const response = await web3Zond.sendTransaction(transaction);
 
-			// eslint-disable-next-line jest/no-standalone-expect
-			expect(response.type).toBe(BigInt(2));
-			// eslint-disable-next-line jest/no-standalone-expect
-			expect(response.status).toBe(BigInt(1));
-			const minedTransactionData = await web3Zond.getTransaction(response.transactionHash);
-			// eslint-disable-next-line jest/no-standalone-expect
-			expect(minedTransactionData).toMatchObject(transaction);
-		},
-	);
+		// eslint-disable-next-line jest/no-standalone-expect
+		expect(response.type).toBe(BigInt(2));
+		// eslint-disable-next-line jest/no-standalone-expect
+		expect(response.status).toBe(BigInt(1));
+		const minedTransactionData = await web3Zond.getTransaction(response.transactionHash);
+		// eslint-disable-next-line jest/no-standalone-expect
+		expect(minedTransactionData).toMatchObject(transaction);
+	});
 
 	describe('Transaction PromiEvents', () => {
 		let transaction: Transaction;
@@ -477,7 +476,7 @@ describe('Web3Zond.sendTransaction', () => {
 					.on('error', error => expect(error).toMatchObject(expectedThrownError)),
 			).rejects.toMatchObject(expectedThrownError);
 		});
-		
+
 		it('Should throw TransactionRevertInstructionError because insufficient funds', async () => {
 			const transaction: Transaction = {
 				from: tempAcc.address,

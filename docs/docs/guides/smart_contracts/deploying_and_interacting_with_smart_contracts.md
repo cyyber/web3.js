@@ -54,8 +54,7 @@ Create a new file called `MyContract.hyp` in your project directory and add the 
 
 ```hyperion
 // SPDX-License-Identifier: MIT
-// TODO(now.youtrack.cloud/issue/web3js-11)
-pragma hyperion ^0.8.0;
+pragma hyperion >=0.0;
 
 contract MyContract {
 	uint256 public myNumber;

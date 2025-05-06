@@ -20,9 +20,7 @@ import { Chain, Common, ConsensusAlgorithm, ConsensusType, Hardfork } from '../.
 
 describe('[Common]: Hardfork logic', () => {
 	it('Hardfork access', () => {
-		const supportedHardforks = [
-			Hardfork.Shanghai,
-		];
+		const supportedHardforks = [Hardfork.Shanghai];
 		let c;
 
 		for (const hardfork of supportedHardforks) {

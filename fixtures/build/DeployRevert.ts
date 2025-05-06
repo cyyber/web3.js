@@ -1,21 +1,5 @@
-/*
-This file is part of web3.js.
-
-web3.js is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-web3.js is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
-*/
 export const DeployRevertAbi = [
 	{ inputs: [], stateMutability: 'nonpayable', type: 'constructor' },
 ] as const;
 export const DeployRevertBytecode =
-	'0x6080604052348015600f57600080fd5b506000601a57600080fd5b603f8060276000396000f3fe6080604052600080fdfea264697066735822122097fd7c0cdcb3a8015df4cce061a4d7f8c2919787475e0b07d1b0ec13223097ac64736f6c63430008100033';
+	'0x6080604052348015600e575f80fd5b505f6017575f80fd5b603e8060225f395ff3fe60806040525f80fdfea2646970667358221220fa38571b8dfcaa315c964f584d24c12693f06ac4f4fba5012d72845a2b29eaa06468797063430000020033';

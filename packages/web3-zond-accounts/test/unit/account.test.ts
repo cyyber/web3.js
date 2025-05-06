@@ -78,9 +78,9 @@ describe('accounts', () => {
 	describe('seedToAccount', () => {
 		describe('valid cases', () => {
 			it.each(validSeedtoAccountData)('%s', (input, output) => {
-				expect(
-					JSON.stringify(seedToAccount(input.address, input.ignoreLength)),
-				).toEqual(JSON.stringify(output));
+				expect(JSON.stringify(seedToAccount(input.address, input.ignoreLength))).toEqual(
+					JSON.stringify(output),
+				);
 			});
 		});
 
@@ -113,7 +113,7 @@ describe('accounts', () => {
 			const signedResult = await signTransaction(
 				// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 				TransactionFactory.fromTxData(txObj),
-				account.seed
+				account.seed,
 			);
 			expect(signedResult).toBeDefined();
 

@@ -204,7 +204,7 @@ export class Contract<Abi extends ContractAbi>
 	 *     jsonInterface: [...],
 	 *     from: 'Zde0B295669a9FD93d5F28D9Ec85E40f4cb697BAe',
 	 *     maxFeePerGas: '10000000000000',
-	 * 	   maxPriorityFeePerGas: '0',	
+	 * 	   maxPriorityFeePerGas: '0',
 	 *     gas: 1000000
 	 * }
 	 *

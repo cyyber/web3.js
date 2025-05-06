@@ -15,7 +15,12 @@ You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { ZondExecutionAPI, Bytes, Transaction, /*KeyStore,*/ ZOND_DATA_FORMAT } from '@theqrl/web3-types';
+import {
+	ZondExecutionAPI,
+	Bytes,
+	Transaction,
+	/*KeyStore,*/ ZOND_DATA_FORMAT,
+} from '@theqrl/web3-types';
 import { format } from '@theqrl/web3-utils';
 import { Web3Context } from '@theqrl/web3-core';
 import { prepareTransactionForSigning } from '@theqrl/web3-zond';

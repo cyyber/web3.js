@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GNU
-pragma hyperion >=0.1.0;
+pragma hyperion >=0.0;
 
 import '@theqrl/zond-contracts/token/ZRC20/ZRC20.hyp';
 

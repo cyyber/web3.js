@@ -127,7 +127,7 @@ describe('[Common]: Merge/POS specific logic', () => {
 
 		expect(c.getHardforkByBlockNumber(5, 0)).toBe('shanghai');
 	});
-	
+
 	it('Should fail setting invalid hardfork', () => {
 		const customChains = [testnetPOS];
 		expect(() => {

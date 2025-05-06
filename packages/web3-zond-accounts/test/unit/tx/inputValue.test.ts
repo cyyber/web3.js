@@ -19,14 +19,9 @@ import { hexToBytes } from '@theqrl/web3-utils';
 // import { Chain, Common, Hardfork, toUint8Array } from '../../../src/common';
 // import { Address } from '../../../src/tx/address';
 
-import {
-	FeeMarketEIP1559Transaction,
-	TransactionFactory,
-} from '../../../src';
+import { FeeMarketEIP1559Transaction, TransactionFactory } from '../../../src';
 
-import type {
-	FeeMarketEIP1559ValuesArray,
-} from '../../../src';
+import type { FeeMarketEIP1559ValuesArray } from '../../../src';
 // import type { BigIntLike } from '../../../src/common/types';
 
 // NOTE(rgeraldes24): test 'Transaction Input Values' not valid atm

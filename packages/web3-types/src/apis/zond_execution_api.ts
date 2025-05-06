@@ -74,12 +74,10 @@ export interface Transaction1559SignedAPI extends Transaction1559UnsignedAPI {
 }
 
 // https://github.com/ethereum/execution-apis/blob/main/src/schemas/transaction.yaml#L144
-export type TransactionUnsignedAPI =
-	| Transaction1559UnsignedAPI;
+export type TransactionUnsignedAPI = Transaction1559UnsignedAPI;
 
 // https://github.com/ethereum/execution-apis/blob/main/src/schemas/transaction.yaml#L211
-export type TransactionSignedAPI =
-	| Transaction1559SignedAPI;
+export type TransactionSignedAPI = Transaction1559SignedAPI;
 
 // https://github.com/ethereum/execution-apis/blob/main/src/schemas/transaction.yaml#L216
 export type TransactionInfoAPI = TransactionSignedAPI & {
@@ -156,7 +154,9 @@ export type ZondExecutionAPI = {
 	zond_getBlockTransactionCountByNumber: (blockNumber: BlockNumberOrTag) => Uint;
 
 	// https://github.com/ethereum/execution-apis/blob/main/src/eth/transaction.yaml
-	zond_getTransactionByHash: (transactionHash: HexString32Bytes) => TransactionInfoAPI | undefined;
+	zond_getTransactionByHash: (
+		transactionHash: HexString32Bytes,
+	) => TransactionInfoAPI | undefined;
 	zond_getTransactionByBlockHashAndIndex: (
 		blockHash: HexString32Bytes,
 		transactionIndex: Uint,

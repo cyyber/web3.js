@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: GNU
-// TODO(now.youtrack.cloud/issue/web3js-11)
-pragma hyperion >=0.1.0;
+pragma hyperion >=0.0;
 
 import '@theqrl/zond-contracts/token/ZRC721/extensions/ZRC721URIStorage.hyp';
 import '@theqrl/zond-contracts/utils/Counters.hyp';

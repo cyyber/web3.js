@@ -36,7 +36,9 @@ describe('Web3Zond.calculateFeeData', () => {
 			'latest',
 			false,
 		);
-		expect(zondRpcMethods.getMaxPriorityFeePerGas).toHaveBeenCalledWith(web3Zond.requestManager);
+		expect(zondRpcMethods.getMaxPriorityFeePerGas).toHaveBeenCalledWith(
+			web3Zond.requestManager,
+		);
 	});
 
 	it('should calculate fee data', async () => {
@@ -44,11 +46,13 @@ describe('Web3Zond.calculateFeeData', () => {
 		const maxPriorityFeePerGas = BigInt(100);
 		const baseFeePerGasFactor = BigInt(3);
 
-		jest.spyOn(zondRpcMethods, 'getBlockByNumber').mockReturnValueOnce({ baseFeePerGas } as any);
+		jest.spyOn(zondRpcMethods, 'getBlockByNumber').mockReturnValueOnce({
+			baseFeePerGas,
+		} as any);
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-call
-		jest
-			.spyOn(zondRpcMethods, 'getMaxPriorityFeePerGas')
-			.mockReturnValueOnce(maxPriorityFeePerGas as any);
+		jest.spyOn(zondRpcMethods, 'getMaxPriorityFeePerGas').mockReturnValueOnce(
+			maxPriorityFeePerGas as any,
+		);
 
 		const feeData = await web3Zond.calculateFeeData(baseFeePerGasFactor, maxPriorityFeePerGas);
 		expect(feeData).toMatchObject({
@@ -63,7 +67,9 @@ describe('Web3Zond.calculateFeeData', () => {
 		const alternativeMaxPriorityFeePerGas = BigInt(700);
 		const baseFeePerGasFactor = BigInt(3);
 
-		jest.spyOn(zondRpcMethods, 'getBlockByNumber').mockReturnValueOnce({ baseFeePerGas } as any);
+		jest.spyOn(zondRpcMethods, 'getBlockByNumber').mockReturnValueOnce({
+			baseFeePerGas,
+		} as any);
 		const feeData = await web3Zond.calculateFeeData(
 			baseFeePerGasFactor,
 			alternativeMaxPriorityFeePerGas,

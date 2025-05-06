@@ -61,7 +61,7 @@ describe('[Common/Chains]: Initialization / Chain params', () => {
 		};
 		expect(f).toThrow('not supported'); // eslint-disable-line no-new
 	});
-	
+
 	it('Should provide correct access to chain parameters', () => {
 		let c = new Common({ chain: 'mainnet', hardfork: 'shanghai' });
 		// expect(c.hardforks()[3]['block']).toBe(2463000);

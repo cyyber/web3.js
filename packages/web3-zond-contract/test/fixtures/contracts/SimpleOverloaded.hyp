@@ -1,5 +1,4 @@
-// TODO(now.youtrack.cloud/issue/web3js-11)
-pragma hyperion 0.8.19;
+pragma hyperion >=0.0;
 
 contract SimpleOverload {
 	uint256 public secret;

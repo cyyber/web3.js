@@ -20,13 +20,7 @@ import { bytesToHex, toHex } from '@theqrl/web3-utils';
 import { cryptoSignVerify } from '@theqrl/dilithium5';
 import { Dilithium } from '@theqrl/wallet.js';
 import { MAX_INTEGER, MAX_UINT64, SEED_BYTES } from './constants.js';
-import {
-	Chain,
-	Common,
-	Hardfork,
-	toUint8Array,
-	uint8ArrayToBigInt,
-} from '../common/index.js';
+import { Chain, Common, Hardfork, toUint8Array, uint8ArrayToBigInt } from '../common/index.js';
 import type {
 	FeeMarketEIP1559TxData,
 	FeeMarketEIP1559ValuesArray,
@@ -91,21 +85,18 @@ export abstract class BaseTransaction<TransactionObject> {
 	 */
 	protected DEFAULT_HARDFORK: string | Hardfork = Hardfork.Shanghai;
 
-	public constructor(
-		txData: FeeMarketEIP1559TxData,
-		opts: TxOptions,
-	) {
+	public constructor(txData: FeeMarketEIP1559TxData, opts: TxOptions) {
 		const { nonce, gasLimit, to, value, data, signature, publicKey, type } = txData;
 		this._type = Number(uint8ArrayToBigInt(toUint8Array(type)));
 
 		this.txOptions = opts;
 
-		var toB: Uint8Array
+		var toB: Uint8Array;
 		if (typeof to === 'string') {
 			if (to === '') {
-				toB = toUint8Array('0x')
+				toB = toUint8Array('0x');
 			} else if (isAddressString(to)) {
-				toB = toUint8Array(toHex(to))
+				toB = toUint8Array(toHex(to));
 			} else {
 				throw new Error(
 					`Cannot convert string to Uint8Array. only supports address strings and this string was given: ${to}`,
@@ -201,7 +192,7 @@ export abstract class BaseTransaction<TransactionObject> {
 			this.data[i] === 0 ? (cost += txDataZero) : (cost += txDataNonZero);
 		}
 		// eslint-disable-next-line no-null/no-null
-		if ((this.to === undefined || this.to === null)) {
+		if (this.to === undefined || this.to === null) {
 			const dataLength = BigInt(Math.ceil(this.data.length / 32));
 			const initCodeCost = this.common.param('gasPrices', 'initCodeWordCost') * dataLength;
 			cost += initCodeCost;
@@ -232,8 +223,7 @@ export abstract class BaseTransaction<TransactionObject> {
 	 * signature parameters `publicKey` and `signature` for encoding. For an EIP-155 compliant
 	 * representation for external signing use {@link BaseTransaction.getMessageToSign}.
 	 */
-	public abstract raw():
-		| FeeMarketEIP1559ValuesArray;
+	public abstract raw(): FeeMarketEIP1559ValuesArray;
 
 	/**
 	 * Returns the encoding of the transaction.
@@ -270,7 +260,7 @@ export abstract class BaseTransaction<TransactionObject> {
 		const msgHashBuf = Buffer.from(msgHash);
 
 		try {
-			return cryptoSignVerify(sigBuf, msgHashBuf, pubKeyBuf);;
+			return cryptoSignVerify(sigBuf, msgHashBuf, pubKeyBuf);
 		} catch (e: any) {
 			return false;
 		}
@@ -307,7 +297,7 @@ export abstract class BaseTransaction<TransactionObject> {
 		const msgHash = this.getMessageToSign(true);
 		const buf = Buffer.from(seed);
 		const acc = new Dilithium(buf);
-		const signature = acc.sign(msgHash)
+		const signature = acc.sign(msgHash);
 		const tx = this._processSignatureAndPublicKey(signature, acc.getPK());
 
 		return tx;

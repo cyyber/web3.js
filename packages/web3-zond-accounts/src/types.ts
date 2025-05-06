@@ -30,9 +30,7 @@ export type SignTransactionResult = SignatureObject & {
 };
 
 export type SignTransactionFunction = (
-	transaction:
-		| FeeMarketEIP1559TxData
-		| Record<string, unknown>,
+	transaction: FeeMarketEIP1559TxData | Record<string, unknown>,
 ) => SignTransactionResult;
 
 export type SignResult = SignatureObject & {
@@ -83,5 +81,4 @@ export interface WebStorage {
 	[name: string]: any;
 }
 
-export type TypedTransaction =
-	FeeMarketEIP1559Transaction;
+export type TypedTransaction = FeeMarketEIP1559Transaction;

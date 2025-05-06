@@ -84,7 +84,7 @@ describe('signTransaction', () => {
 
 						case 'zond_sendRawTransaction':
 							expect(payload.params[0]).toBe(txObj.signedLondon); // validate transaction for London HF
-							
+
 							// if (txObj.transaction.maxPriorityFeePerGas !== undefined) {
 							// 	// eslint-disable-next-line jest/no-conditional-expect
 							// 	expect(payload.params[0]).toBe(txObj.signedLondon); // validate transaction for London HF

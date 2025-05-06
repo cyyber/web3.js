@@ -15,7 +15,14 @@ You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Address, Bytes, HexString, Numbers, ValueTypes, ZPrefixedHexString } from '@theqrl/web3-types';
+import {
+	Address,
+	Bytes,
+	HexString,
+	Numbers,
+	ValueTypes,
+	ZPrefixedHexString,
+} from '@theqrl/web3-types';
 import { ZondUnits, hexToBytes } from '../../src/converters';
 
 export const bytesToHexValidData: [Bytes, HexString][] = [
@@ -297,7 +304,10 @@ export const fromPlanckInvalidData: [[any, any], string][] = [
 	// Using "null" value intentionally for validation
 	// eslint-disable-next-line no-null/no-null
 	[[null, 'kplanck'], 'Invalid value given "undefined". Error: can not parse as number data.'],
-	[[undefined, 'kplanck'], 'Invalid value given "undefined". Error: can not parse as number data.'],
+	[
+		[undefined, 'kplanck'],
+		'Invalid value given "undefined". Error: can not parse as number data.',
+	],
 	[[{}, 'kplanck'], 'Invalid value given "{}". Error: can not parse as number data'],
 	[['data', 'kplanck'], 'Invalid value given "data". Error: can not parse as number data.'],
 	[['1234', 'uplanck'], 'Invalid value given "uplanck". Error: invalid unit.'],
@@ -348,9 +358,25 @@ export const toBigIntInvalidData: [any, string][] = [
 ];
 
 export const addressToBytesValidData: [ZPrefixedHexString, Uint8Array][] = [
-	['Z4848484848484848484848484848484848484848', new Uint8Array([72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72])],
-	['Z3772377237723772377237723772377237723772', new Uint8Array([55, 114, 55, 114, 55, 114, 55, 114, 55, 114, 55, 114, 55, 114, 55, 114, 55, 114, 55, 114])],
-	['Z480c480c480c480c480c480c480c480c480c480c', new Uint8Array([72, 12, 72, 12, 72, 12, 72, 12, 72, 12, 72, 12, 72, 12, 72, 12, 72, 12, 72, 12])],
+	[
+		'Z4848484848484848484848484848484848484848',
+		new Uint8Array([
+			72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72,
+		]),
+	],
+	[
+		'Z3772377237723772377237723772377237723772',
+		new Uint8Array([
+			55, 114, 55, 114, 55, 114, 55, 114, 55, 114, 55, 114, 55, 114, 55, 114, 55, 114, 55,
+			114,
+		]),
+	],
+	[
+		'Z480c480c480c480c480c480c480c480c480c480c',
+		new Uint8Array([
+			72, 12, 72, 12, 72, 12, 72, 12, 72, 12, 72, 12, 72, 12, 72, 12, 72, 12, 72, 12,
+		]),
+	],
 ];
 
 export const addressToHexValidData: [ZPrefixedHexString, HexString][] = [
@@ -363,8 +389,14 @@ export const addressToHexValidData: [ZPrefixedHexString, HexString][] = [
 
 export const invalidAddressData: [any, string][] = [
 	['Z1', 'value "Z1" at "/0" must pass "address" validation'],
-	['ZE247a45c287191d435A8a5D72A7C8dc030451E9F', 'value "ZE247a45c287191d435A8a5D72A7C8dc030451E9F" at "/0" must pass "address" validation'], // Invalid checksum
-	['-Z407d73d8a49eeb85d32cf465507dd71d507100c1', 'value "-Z407d73d8a49eeb85d32cf465507dd71d507100c1" at "/0" must pass "address" validation'],
+	[
+		'ZE247a45c287191d435A8a5D72A7C8dc030451E9F',
+		'value "ZE247a45c287191d435A8a5D72A7C8dc030451E9F" at "/0" must pass "address" validation',
+	], // Invalid checksum
+	[
+		'-Z407d73d8a49eeb85d32cf465507dd71d507100c1',
+		'value "-Z407d73d8a49eeb85d32cf465507dd71d507100c1" at "/0" must pass "address" validation',
+	],
 ];
 
 export const hexToAddressValidData: [HexString, ZPrefixedHexString][] = [

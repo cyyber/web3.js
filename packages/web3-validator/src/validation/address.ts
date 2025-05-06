@@ -54,10 +54,7 @@ export const isAddressString = (value: string, checkChecksum = true) => {
 		return false;
 	}
 	// If it's ALL lowercase or ALL upppercase
-	if (
-		/^Z[0-9a-f]{40}$/.test(value) ||
-		/^Z[0-9A-F]{40}$/.test(value)
-	) {
+	if (/^Z[0-9a-f]{40}$/.test(value) || /^Z[0-9A-F]{40}$/.test(value)) {
 		return true;
 		// Otherwise check each case
 	}

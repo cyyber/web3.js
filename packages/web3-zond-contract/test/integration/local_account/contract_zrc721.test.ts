@@ -130,36 +130,33 @@ describe('contract', () => {
 			).toBe(toUpperCaseHex(toAccount.address));
 		});
 
-		it.each(['0x2'])(
-			'should set approve for all item with local wallet %p',
-			async type => {
-				const tempAccount = await createLocalAccount(web3);
-				const toAccount = await createLocalAccount(web3);
+		it.each(['0x2'])('should set approve for all item with local wallet %p', async type => {
+			const tempAccount = await createLocalAccount(web3);
+			const toAccount = await createLocalAccount(web3);
 
-				await contractDeployed.methods.setApprovalForAll(toAccount.address, true).send({
-					...sendOptions,
-					type,
-					from: tempAccount.address,
-				});
+			await contractDeployed.methods.setApprovalForAll(toAccount.address, true).send({
+				...sendOptions,
+				type,
+				from: tempAccount.address,
+			});
 
-				expect(
-					await contractDeployed.methods
-						.isApprovedForAll(tempAccount.address, toAccount.address)
-						.call(),
-				).toBe(true);
+			expect(
+				await contractDeployed.methods
+					.isApprovedForAll(tempAccount.address, toAccount.address)
+					.call(),
+			).toBe(true);
 
-				await contractDeployed.methods.setApprovalForAll(toAccount.address, false).send({
-					...sendOptions,
-					type,
-					from: tempAccount.address,
-				});
+			await contractDeployed.methods.setApprovalForAll(toAccount.address, false).send({
+				...sendOptions,
+				type,
+				from: tempAccount.address,
+			});
 
-				expect(
-					await contractDeployed.methods
-						.isApprovedForAll(tempAccount.address, toAccount.address)
-						.call(),
-				).toBe(false);
-			},
-		);
+			expect(
+				await contractDeployed.methods
+					.isApprovedForAll(tempAccount.address, toAccount.address)
+					.call(),
+			).toBe(false);
+		});
 	});
 });

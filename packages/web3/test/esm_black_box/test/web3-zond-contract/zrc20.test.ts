@@ -28,43 +28,40 @@ import {
 } from '../../../shared_fixtures/system_tests_utils';
 import { ZRC20TokenAbi, ZRC20TokenBytecode } from '../../../shared_fixtures/contracts/ZRC20Token';
 
-describeIf(getSystemTestBackend() === 'gzond')(
-	'Black Box Unit Tests - web3.zond.Contract',
-	() => {
-		describe('Gzond - ZRC20', () => {
-			let account;
-			let web3: Web3;
-			let deployedContract: Contract<typeof ZRC20TokenAbi>;
+describeIf(getSystemTestBackend() === 'gzond')('Black Box Unit Tests - web3.zond.Contract', () => {
+	describe('Gzond - ZRC20', () => {
+		let account;
+		let web3: Web3;
+		let deployedContract: Contract<typeof ZRC20TokenAbi>;
 
-			beforeAll(async () => {
-				account = await createNewAccount({
-					refill: true,
-				});
-
-				web3 = new Web3(getSystemTestProvider());
-				deployedContract = await new web3.zond.Contract(ZRC20TokenAbi)
-					.deploy({
-						data: ZRC20TokenBytecode,
-						arguments: ['420'],
-					})
-					.send({ from: account.address, gas: '10000000' });
+		beforeAll(async () => {
+			account = await createNewAccount({
+				refill: true,
 			});
 
-			afterAll(async () => {
-				if (isWs) await closeOpenConnection(web3);
-			});
-
-			it('should get deployed contract info', async () => {
-				const contract = new web3.zond.Contract(
-					ZRC20TokenAbi,
-					deployedContract.options.address,
-				);
-
-				expect(await contract.methods.name().call()).toBe('Gold');
-				expect(await contract.methods.symbol().call()).toBe('GLD');
-				expect(await contract.methods.decimals().call()).toBe(BigInt(18));
-				expect(await contract.methods.totalSupply().call()).toBe(BigInt(420));
-			});
+			web3 = new Web3(getSystemTestProvider());
+			deployedContract = await new web3.zond.Contract(ZRC20TokenAbi)
+				.deploy({
+					data: ZRC20TokenBytecode,
+					arguments: ['420'],
+				})
+				.send({ from: account.address, gas: '10000000' });
 		});
-	},
-);
+
+		afterAll(async () => {
+			if (isWs) await closeOpenConnection(web3);
+		});
+
+		it('should get deployed contract info', async () => {
+			const contract = new web3.zond.Contract(
+				ZRC20TokenAbi,
+				deployedContract.options.address,
+			);
+
+			expect(await contract.methods.name().call()).toBe('Gold');
+			expect(await contract.methods.symbol().call()).toBe('GLD');
+			expect(await contract.methods.decimals().call()).toBe(BigInt(18));
+			expect(await contract.methods.totalSupply().call()).toBe(BigInt(420));
+		});
+	});
+});

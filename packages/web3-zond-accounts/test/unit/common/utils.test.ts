@@ -67,9 +67,7 @@ describe('[Utils/Parse]', () => {
 				'51c7fe41be669f69c45c33a56982cbde405313342d9e2b00d7c91a7b284dd4f8',
 			),
 		});
-		expect(common.hardforks().map(hf => hf.name)).toEqual([
-			'shanghai',
-		]);
+		expect(common.hardforks().map(hf => hf.name)).toEqual(['shanghai']);
 		for (const hf of common.hardforks()) {
 			/* eslint-disable @typescript-eslint/no-use-before-define */
 			expect(hf.forkHash).toEqual(kilnForkHashes[hf.name]);
@@ -86,9 +84,7 @@ describe('[Utils/Parse]', () => {
 		});
 		// merge hardfork is now scheduled just after shanghai even if mergeForkIdTransition is not confirmed
 		// to be post merge
-		expect(common1.hardforks().map(hf => hf.name)).toEqual([
-			'shanghai',
-		]);
+		expect(common1.hardforks().map(hf => hf.name)).toEqual(['shanghai']);
 
 		expect(common1.hardfork()).toEqual(Hardfork.Shanghai);
 	});
@@ -97,18 +93,16 @@ describe('[Utils/Parse]', () => {
 		const common = Common.fromGzondGenesis(posExecGenesis, {
 			chain: 'customChain',
 		});
-		expect(common.hardforks().map(hf => hf.name)).toEqual([
-			'shanghai',
-		]);
+		expect(common.hardforks().map(hf => hf.name)).toEqual(['shanghai']);
 
 		expect(common.getHardforkByBlockNumber(0)).toEqual(Hardfork.Shanghai);
 		expect(common.getHardforkByBlockNumber(1, BigInt(2))).toEqual(Hardfork.Shanghai);
 		// shanghai is at timestamp 8
 		expect(common.getHardforkByBlockNumber(8)).toEqual(Hardfork.Shanghai);
 		expect(common.getHardforkByBlockNumber(8, BigInt(2))).toEqual(Hardfork.Shanghai);
-		expect(common.getHardforkByBlockNumber(8,  8)).toEqual(Hardfork.Shanghai);
+		expect(common.getHardforkByBlockNumber(8, 8)).toEqual(Hardfork.Shanghai);
 		// should be post merge at shanghai
-		expect(common.getHardforkByBlockNumber(8,  8)).toEqual(Hardfork.Shanghai);
+		expect(common.getHardforkByBlockNumber(8, 8)).toEqual(Hardfork.Shanghai);
 		expect(common.hardfork()).toEqual(Hardfork.Shanghai);
 	});
 });

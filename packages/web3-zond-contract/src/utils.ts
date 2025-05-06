@@ -149,7 +149,7 @@ export const getEstimateGasParams = ({
 			to: contractOptions.address,
 			gas: contractOptions.gas,
 			maxFeePerGas: contractOptions.maxFeePerGas,
-			maxPriorityFeePerGas: contractOptions.maxPriorityFeePerGas, 
+			maxPriorityFeePerGas: contractOptions.maxPriorityFeePerGas,
 			from: contractOptions.from,
 			input: contractOptions.input,
 			data: contractOptions.data,

@@ -102,7 +102,7 @@ export class Common extends EventEmitter {
 				...opts,
 			});
 		}
-		
+
 		// eslint-disable-next-line @typescript-eslint/restrict-template-expressions
 		throw new Error(`Custom chain ${chainParamsOrName} not supported`);
 	}
@@ -243,10 +243,7 @@ export class Common extends EventEmitter {
 	 * @param timestamp: timestamp in seconds at which block was/is to be minted
 	 * @returns The name of the HF
 	 */
-	public getHardforkByBlockNumber(
-		_blockNumber: Numbers,
-		_timestamp?: Numbers,
-	): string {
+	public getHardforkByBlockNumber(_blockNumber: Numbers, _timestamp?: Numbers): string {
 		const blockNumber = toType(_blockNumber, TypeOutput.BigInt);
 		const timestamp = toType(_timestamp, TypeOutput.Number);
 
@@ -254,10 +251,9 @@ export class Common extends EventEmitter {
 		const hfs = this.hardforks().filter(
 			hf =>
 				// eslint-disable-next-line no-null/no-null
-				hf.block !== null ||
-				hf.timestamp !== undefined,
+				hf.block !== null || hf.timestamp !== undefined,
 		);
-		
+
 		// Find the first hardfork that has a block number greater than `blockNumber`
 		// (skips the merge hardfork since it cannot have a block number specified).
 		// If timestamp is not provided, it also skips timestamps hardforks to continue
@@ -311,9 +307,7 @@ export class Common extends EventEmitter {
 					0,
 				);
 			if (minTimeStamp > timestamp) {
-				throw Error(
-					`Maximum HF determined by timestamp is lower than the block number HF`,
-				);
+				throw Error(`Maximum HF determined by timestamp is lower than the block number HF`);
 			}
 
 			const maxTimeStamp = hfs
@@ -338,10 +332,7 @@ export class Common extends EventEmitter {
 	 * @param timestamp
 	 * @returns The name of the HF set
 	 */
-	public setHardforkByBlockNumber(
-		blockNumber: Numbers,
-		timestamp?: Numbers,
-	): string {
+	public setHardforkByBlockNumber(blockNumber: Numbers, timestamp?: Numbers): string {
 		const hardfork = this.getHardforkByBlockNumber(blockNumber, timestamp);
 		this.setHardfork(hardfork);
 		return hardfork;
@@ -486,7 +477,7 @@ export class Common extends EventEmitter {
 
 	/**
 	 * Returns a parameter for the hardfork active on block number provided.
-	 * 
+	 *
 	 * @param topic Parameter topic
 	 * @param name Parameter name
 	 * @param blockNumber Block number
@@ -724,7 +715,7 @@ export class Common extends EventEmitter {
 			if (
 				typeof blockOrTime === 'number' &&
 				blockOrTime !== 0 &&
-				blockOrTime !== prevBlockOrTime 
+				blockOrTime !== prevBlockOrTime
 			) {
 				const hfBlockUint8Array = hexToBytes(blockOrTime.toString(16).padStart(16, '0'));
 				hfUint8Array = uint8ArrayConcat(hfUint8Array, hfBlockUint8Array);
@@ -791,7 +782,8 @@ export class Common extends EventEmitter {
 				// eslint-disable-next-line no-null/no-null
 				(hf.forkHash === null || hf.forkHash === undefined) &&
 				// eslint-disable-next-line no-null/no-null
-				(blockOrTime !== null && blockOrTime !== undefined)
+				blockOrTime !== null &&
+				blockOrTime !== undefined
 			) {
 				hf.forkHash = this.forkHash(hf.name, genesisHash);
 			}
