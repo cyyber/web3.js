@@ -15,10 +15,10 @@ You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 import { ContractExecutionError } from '@theqrl/web3-errors';
+import { isNullish } from '@theqrl/web3-utils';
 import { Contract } from '../../src';
 import { BasicAbi, BasicBytecode } from '../shared_fixtures/build/Basic';
 import { getSystemTestProvider, createTempAccount } from '../fixtures/system_test_utils';
-import { isNullish } from '@theqrl/web3-utils';
 
 describe('contract', () => {
 	let contract: Contract<typeof BasicAbi>;
@@ -108,7 +108,7 @@ describe('contract', () => {
 			it('should returns a receipt (EIP-1559, maxFeePerGas and maxPriorityFeePerGas specified)', async () => {
 				const tempAcc = await createTempAccount();
 
-				const sendOptionsLocal = { from: tempAcc.address /*gas: '1000000'*/ };
+				const sendOptionsLocal = { from: tempAcc.address /* gas: '1000000' */ };
 
 				const contractLocal = await contract.deploy(deployOptions).send(sendOptionsLocal);
 				const receipt = await contractLocal.methods

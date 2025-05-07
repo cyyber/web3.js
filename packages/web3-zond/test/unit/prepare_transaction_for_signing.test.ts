@@ -85,10 +85,10 @@ describe('prepareTransactionForSigning', () => {
 
 				// should have expected public key and signature
 				const publicKey = !isNullish(signedTransaction.publicKey)
-					? bytesToHex(signedTransaction.publicKey!)
+					? bytesToHex(signedTransaction.publicKey)
 					: '';
 				const signature = !isNullish(signedTransaction.signature)
-					? bytesToHex(signedTransaction.signature!)
+					? bytesToHex(signedTransaction.signature)
 					: '';
 				expect(publicKey).toBe(expectedPublicKey);
 				expect(signature).toBe(expectedSignature);

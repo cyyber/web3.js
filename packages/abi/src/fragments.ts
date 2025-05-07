@@ -1,10 +1,28 @@
-'use strict';
+/*
+This file is part of web3.js.
+
+web3.js is free software: you can redistribute it and/or modify
+it under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+web3.js is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License
+along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+
 
 import { BigNumber } from '@ethersproject/bignumber';
 import { defineReadOnly } from '@ethersproject/properties';
 
 import { Logger } from '@ethersproject/logger';
-import { version } from './_version';
+import { version } from './_version.js';
+
 const logger = new Logger(version);
 
 export interface JsonFragmentType {
@@ -52,8 +70,8 @@ type ParseNode = {
 	components?: Array<ParseNode>;
 };
 
-let ModifiersBytes: { [name: string]: boolean } = { calldata: true, memory: true, storage: true };
-let ModifiersNest: { [name: string]: boolean } = { calldata: true, memory: true };
+const ModifiersBytes: { [name: string]: boolean } = { calldata: true, memory: true, storage: true };
+const ModifiersNest: { [name: string]: boolean } = { calldata: true, memory: true };
 function checkModifier(type: string, name: string): boolean {
 	if (type === 'bytes' || type === 'string') {
 		if (ModifiersBytes[name]) {
@@ -63,7 +81,7 @@ function checkModifier(type: string, name: string): boolean {
 		if (name === 'payable') {
 			return true;
 		}
-	} else if (type.indexOf('[') >= 0 || type === 'tuple') {
+	} else if (type.includes('[') || type === 'tuple') {
 		if (ModifiersNest[name]) {
 			return true;
 		}
@@ -76,25 +94,25 @@ function checkModifier(type: string, name: string): boolean {
 
 // @TODO: Make sure that children of an indexed tuple are marked with a null indexed
 function parseParamType(param: string, allowIndexed: boolean): ParseNode {
-	let originalParam = param;
+	const originalParam = param;
 	function throwError(i: number) {
 		logger.throwArgumentError(`unexpected character at position ${i}`, 'param', param);
 	}
 	param = param.replace(/\s/g, ' ');
 
 	function newNode(parent: ParseNode): ParseNode {
-		let node: ParseNode = { type: '', name: '', parent: parent, state: { allowType: true } };
+		const node: ParseNode = { type: '', name: '', parent, state: { allowType: true } };
 		if (allowIndexed) {
 			node.indexed = false;
 		}
 		return node;
 	}
 
-	let parent: ParseNode = { type: '', name: '', state: { allowType: true } };
+	const parent: ParseNode = { type: '', name: '', state: { allowType: true } };
 	let node = parent;
 
 	for (let i = 0; i < param.length; i++) {
-		let c = param[i];
+		const c = param[i];
 		switch (c) {
 			case '(':
 				if (node.state.allowType && node.type === '') {
@@ -125,7 +143,7 @@ function parseParamType(param: string, allowIndexed: boolean): ParseNode {
 
 				node.type = verifyType(node.type);
 
-				let child = node;
+				const child = node;
 				node = node.parent;
 				if (!node) {
 					throwError(i);
@@ -153,8 +171,8 @@ function parseParamType(param: string, allowIndexed: boolean): ParseNode {
 
 				node.type = verifyType(node.type);
 
-				let sibling: ParseNode = newNode(node.parent);
-				//{ type: "", name: "", parent: node.parent, state: { allowType: true } };
+				const sibling: ParseNode = newNode(node.parent);
+				// { type: "", name: "", parent: node.parent, state: { allowType: true } };
 				node.parent.components.push(sibling);
 				delete node.parent;
 				node = sibling;
@@ -259,7 +277,7 @@ function parseParamType(param: string, allowIndexed: boolean): ParseNode {
 }
 
 function populate(object: any, params: any) {
-	for (let key in params) {
+	for (const key in params) {
 		defineReadOnly(object, key, params[key]);
 	}
 }
@@ -313,7 +331,7 @@ export class ParamType {
 		}
 		populate(this, params);
 
-		let match = this.type.match(paramTypeArray);
+		const match = this.type.match(paramTypeArray);
 		if (match) {
 			populate(this, {
 				arrayLength: parseInt(match[2] || '-1'),
@@ -349,7 +367,7 @@ export class ParamType {
 		}
 
 		if (format === FormatTypes.json) {
-			let result: any = {
+			const result: any = {
 				type: this.baseType === 'tuple' ? 'tuple' : this.type,
 				name: this.name || undefined,
 			};
@@ -367,29 +385,27 @@ export class ParamType {
 		// Array
 		if (this.baseType === 'array') {
 			result += this.arrayChildren.format(format);
-			result += '[' + (this.arrayLength < 0 ? '' : String(this.arrayLength)) + ']';
-		} else {
-			if (this.baseType === 'tuple') {
+			result += `[${  this.arrayLength < 0 ? '' : String(this.arrayLength)  }]`;
+		} else if (this.baseType === 'tuple') {
 				if (format !== FormatTypes.sighash) {
 					result += this.type;
 				}
 				result +=
-					'(' +
+					`(${ 
 					this.components
 						.map(comp => comp.format(format))
-						.join(format === FormatTypes.full ? ', ' : ',') +
-					')';
+						.join(format === FormatTypes.full ? ', ' : ',') 
+					})`;
 			} else {
 				result += this.type;
 			}
-		}
 
 		if (format !== FormatTypes.sighash) {
-			if (this.indexed === true) {
+			if (this.indexed) {
 				result += ' indexed';
 			}
 			if (format === FormatTypes.full && this.name) {
-				result += ' ' + this.name;
+				result += ` ${  this.name}`;
 			}
 		}
 
@@ -511,11 +527,11 @@ export abstract class Fragment {
 
 		if (value.split(' ')[0] === 'event') {
 			return EventFragment.fromString(value.substring(5).trim());
-		} else if (value.split(' ')[0] === 'function') {
+		} if (value.split(' ')[0] === 'function') {
 			return FunctionFragment.fromString(value.substring(8).trim());
-		} else if (value.split('(')[0].trim() === 'constructor') {
+		} if (value.split('(')[0].trim() === 'constructor') {
 			return ConstructorFragment.fromString(value.trim());
-		} else if (value.split(' ')[0] === 'error') {
+		} if (value.split(' ')[0] === 'error') {
 			return ErrorFragment.fromString(value.substring(5).trim());
 		}
 
@@ -558,12 +574,12 @@ export class EventFragment extends Fragment {
 		}
 
 		result +=
-			this.name +
-			'(' +
+			`${this.name 
+			}(${ 
 			this.inputs
 				.map(input => input.format(format))
-				.join(format === FormatTypes.full ? ', ' : ',') +
-			') ';
+				.join(format === FormatTypes.full ? ', ' : ',') 
+			}) `;
 
 		if (format !== FormatTypes.sighash) {
 			if (this.anonymous) {
@@ -601,7 +617,7 @@ export class EventFragment extends Fragment {
 	}
 
 	static fromString(value: string): EventFragment {
-		let match = value.match(regexParen);
+		const match = value.match(regexParen);
 		if (!match) {
 			logger.throwArgumentError('invalid event string', 'value', value);
 		}
@@ -615,13 +631,13 @@ export class EventFragment extends Fragment {
 				case '':
 					break;
 				default:
-					logger.warn('unknown modifier: ' + modifier);
+					logger.warn(`unknown modifier: ${  modifier}`);
 			}
 		});
 
 		return EventFragment.fromObject({
 			name: match[1].trim(),
-			anonymous: anonymous,
+			anonymous,
 			inputs: parseParams(match[2], true),
 			type: 'event',
 		});
@@ -635,7 +651,7 @@ export class EventFragment extends Fragment {
 function parseGas(value: string, params: any): string {
 	params.gas = null;
 
-	let comps = value.split('@');
+	const comps = value.split('@');
 	if (comps.length !== 1) {
 		if (comps.length > 2) {
 			logger.throwArgumentError('invalid human-readable ABI signature', 'value', value);
@@ -681,7 +697,7 @@ function parseModifiers(value: string, params: any): void {
 			case '':
 				break;
 			default:
-				console.log('unknown modifier: ' + modifier);
+				console.log(`unknown modifier: ${  modifier}`);
 		}
 	});
 }
@@ -700,7 +716,7 @@ type StateOutputValue = {
 };
 
 function verifyState(value: StateInputValue): StateOutputValue {
-	let result: any = {
+	const result: any = {
 		constant: false,
 		payable: true,
 		stateMutability: 'payable',
@@ -714,7 +730,7 @@ function verifyState(value: StateInputValue): StateOutputValue {
 		if (value.constant != null) {
 			if (!!value.constant !== result.constant) {
 				logger.throwArgumentError(
-					'cannot have constant function with mutability ' + result.stateMutability,
+					`cannot have constant function with mutability ${  result.stateMutability}`,
 					'value',
 					value,
 				);
@@ -726,7 +742,7 @@ function verifyState(value: StateInputValue): StateOutputValue {
 		if (value.payable != null) {
 			if (!!value.payable !== result.payable) {
 				logger.throwArgumentError(
-					'cannot have payable function with mutability ' + result.stateMutability,
+					`cannot have payable function with mutability ${  result.stateMutability}`,
 					'value',
 					value,
 				);
@@ -803,14 +819,14 @@ export class ConstructorFragment extends Fragment {
 		}
 
 		let result =
-			'constructor(' +
+			`constructor(${ 
 			this.inputs
 				.map(input => input.format(format))
-				.join(format === FormatTypes.full ? ', ' : ',') +
-			') ';
+				.join(format === FormatTypes.full ? ', ' : ',') 
+			}) `;
 
 		if (this.stateMutability && this.stateMutability !== 'nonpayable') {
-			result += this.stateMutability + ' ';
+			result += `${this.stateMutability  } `;
 		}
 
 		return result.trim();
@@ -832,7 +848,7 @@ export class ConstructorFragment extends Fragment {
 			logger.throwArgumentError('invalid constructor object', 'value', value);
 		}
 
-		let state = verifyState(value);
+		const state = verifyState(value);
 		if (state.constant) {
 			logger.throwArgumentError('constructor cannot be constant', 'value', value);
 		}
@@ -850,11 +866,11 @@ export class ConstructorFragment extends Fragment {
 	}
 
 	static fromString(value: string): ConstructorFragment {
-		let params: any = { type: 'constructor' };
+		const params: any = { type: 'constructor' };
 
 		value = parseGas(value, params);
 
-		let parens = value.match(regexParen);
+		const parens = value.match(regexParen);
 		if (!parens || parens[1].trim() !== 'constructor') {
 			logger.throwArgumentError('invalid constructor string', 'value', value);
 		}
@@ -909,17 +925,17 @@ export class FunctionFragment extends ConstructorFragment {
 		}
 
 		result +=
-			this.name +
-			'(' +
+			`${this.name 
+			}(${ 
 			this.inputs
 				.map(input => input.format(format))
-				.join(format === FormatTypes.full ? ', ' : ',') +
-			') ';
+				.join(format === FormatTypes.full ? ', ' : ',') 
+			}) `;
 
 		if (format !== FormatTypes.sighash) {
 			if (this.stateMutability) {
 				if (this.stateMutability !== 'nonpayable') {
-					result += this.stateMutability + ' ';
+					result += `${this.stateMutability  } `;
 				}
 			} else if (this.constant) {
 				result += 'view ';
@@ -927,13 +943,13 @@ export class FunctionFragment extends ConstructorFragment {
 
 			if (this.outputs && this.outputs.length) {
 				result +=
-					'returns (' +
-					this.outputs.map(output => output.format(format)).join(', ') +
-					') ';
+					`returns (${ 
+					this.outputs.map(output => output.format(format)).join(', ') 
+					}) `;
 			}
 
 			if (this.gas != null) {
-				result += '@' + this.gas.toString() + ' ';
+				result += `@${  this.gas.toString()  } `;
 			}
 		}
 
@@ -956,7 +972,7 @@ export class FunctionFragment extends ConstructorFragment {
 			logger.throwArgumentError('invalid function object', 'value', value);
 		}
 
-		let state = verifyState(value);
+		const state = verifyState(value);
 
 		const params: TypeCheck<_FunctionFragment> = {
 			type: value.type,
@@ -973,15 +989,15 @@ export class FunctionFragment extends ConstructorFragment {
 	}
 
 	static fromString(value: string): FunctionFragment {
-		let params: any = { type: 'function' };
+		const params: any = { type: 'function' };
 		value = parseGas(value, params);
 
-		let comps = value.split(' returns ');
+		const comps = value.split(' returns ');
 		if (comps.length > 2) {
 			logger.throwArgumentError('invalid function string', 'value', value);
 		}
 
-		let parens = comps[0].match(regexParen);
+		const parens = comps[0].match(regexParen);
 		if (!parens) {
 			logger.throwArgumentError('invalid function signature', 'value', value);
 		}
@@ -997,7 +1013,7 @@ export class FunctionFragment extends ConstructorFragment {
 
 		// We have outputs
 		if (comps.length > 1) {
-			let returns = comps[1].match(regexParen);
+			const returns = comps[1].match(regexParen);
 			if (returns[1].trim() != '' || returns[3].trim() != '') {
 				logger.throwArgumentError('unexpected tokens', 'value', value);
 			}
@@ -1014,8 +1030,8 @@ export class FunctionFragment extends ConstructorFragment {
 	}
 }
 
-//export class StructFragment extends Fragment {
-//}
+// export class StructFragment extends Fragment {
+// }
 
 function checkForbidden(fragment: ErrorFragment): ErrorFragment {
 	const sig = fragment.format();
@@ -1049,12 +1065,12 @@ export class ErrorFragment extends Fragment {
 		}
 
 		result +=
-			this.name +
-			'(' +
+			`${this.name 
+			}(${ 
 			this.inputs
 				.map(input => input.format(format))
-				.join(format === FormatTypes.full ? ', ' : ',') +
-			') ';
+				.join(format === FormatTypes.full ? ', ' : ',') 
+			}) `;
 
 		return result.trim();
 	}
@@ -1085,9 +1101,9 @@ export class ErrorFragment extends Fragment {
 	}
 
 	static fromString(value: string): ErrorFragment {
-		let params: any = { type: 'error' };
+		const params: any = { type: 'error' };
 
-		let parens = value.match(regexParen);
+		const parens = value.match(regexParen);
 		if (!parens) {
 			logger.throwArgumentError('invalid error signature', 'value', value);
 		}
@@ -1110,9 +1126,9 @@ export class ErrorFragment extends Fragment {
 function verifyType(type: string): string {
 	// These need to be transformed to their full description
 	if (type.match(/^uint($|[^1-9])/)) {
-		type = 'uint256' + type.substring(4);
+		type = `uint256${  type.substring(4)}`;
 	} else if (type.match(/^int($|[^1-9])/)) {
-		type = 'int256' + type.substring(3);
+		type = `int256${  type.substring(3)}`;
 	}
 
 	// @TODO: more verification
@@ -1134,11 +1150,11 @@ const regexParen = new RegExp('^([^)(]*)\\((.*)\\)([^)(]*)$');
 function splitNesting(value: string): Array<any> {
 	value = value.trim();
 
-	let result = [];
+	const result = [];
 	let accum = '';
 	let depth = 0;
 	for (let offset = 0; offset < value.length; offset++) {
-		let c = value[offset];
+		const c = value[offset];
 		if (c === ',' && depth === 0) {
 			result.push(accum);
 			accum = '';

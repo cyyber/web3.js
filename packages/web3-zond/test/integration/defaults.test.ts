@@ -76,7 +76,7 @@ describe('defaults', () => {
 			data: BasicBytecode,
 			arguments: [10, 'string init value'],
 		};
-		sendOptions = { from: tempAcc.address /*gas: '1000000'*/ };
+		sendOptions = { from: tempAcc.address /* gas: '1000000' */ };
 	});
 
 	afterEach(async () => {
@@ -96,7 +96,7 @@ describe('defaults', () => {
 					data: MsgSenderBytecode,
 					arguments: ['test'],
 				})
-				.send({ from: tempAcc2.address /*gas: '2700000',*/ });
+				.send({ from: tempAcc2.address /* gas: '2700000', */ });
 			// default
 			expect(web3Zond.defaultAccount).toBeUndefined();
 
@@ -123,7 +123,7 @@ describe('defaults', () => {
 			});
 
 			const tx = await contractMsgFrom.methods.setTestString('test2').send();
-			//.send({ gas: '1000000' });
+			// .send({ gas: '1000000' });
 			const txSend = await web3Zond.sendTransaction({
 				to: tempAcc2.address,
 				value: '0x1',

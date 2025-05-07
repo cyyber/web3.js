@@ -20,7 +20,7 @@ import { format, SocketProvider } from '@theqrl/web3-utils';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {
 	create as _createAccount,
-	//decrypt,
+	// decrypt,
 	seedToAccount,
 	signTransaction,
 } from '@theqrl/web3-zond-accounts';
@@ -36,7 +36,7 @@ import {
 	Bytes,
 	Web3BaseProvider,
 	Transaction,
-	//KeyStore,
+	// KeyStore,
 	ProviderConnectInfo,
 	Web3ProviderEventCallback,
 	ProviderRpcError,
@@ -220,7 +220,7 @@ export const createAccountProvider = (context: Web3Context<ZondExecutionAPI>) =>
 	return {
 		create: createWithContext,
 		seedToAccount: seedToAccountWithContext,
-		//decrypt: decryptWithContext,
+		// decrypt: decryptWithContext,
 	};
 };
 
@@ -251,7 +251,7 @@ export const createNewAccount = async (config?: {
 		await refillAccount(mainAcc, acc.address, '10000000000000000000');
 	}
 
-	return { address: `Z${acc.address.slice(1).toLowerCase()}`, seed: acc.seed! };
+	return { address: `Z${acc.address.slice(1).toLowerCase()}`, seed: acc.seed };
 };
 let tempAccountList: { address: string; seed: string }[] = [];
 const walletsOnWorker = 20;

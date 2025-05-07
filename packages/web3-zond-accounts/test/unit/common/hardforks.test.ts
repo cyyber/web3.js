@@ -30,7 +30,7 @@ describe('[Common]: Hardfork logic', () => {
 	});
 
 	it('getHardforkByBlockNumber() / setHardforkByBlockNumber()', () => {
-		let c = new Common({ chain: Chain.Mainnet });
+		const c = new Common({ chain: Chain.Mainnet });
 
 		expect(c.getHardforkByBlockNumber(0)).toEqual(Hardfork.Shanghai);
 		expect(c.getHardforkByBlockNumber(1149999)).toEqual(Hardfork.Shanghai);

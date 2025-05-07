@@ -50,7 +50,7 @@ const errors = validator.validate(['uint8', 'string'], [val1, val2], { silent: t
 
 To see more examples of schema you can use to validate check [following file](./test/fixtures/abi_to_json_schema.ts).
 
-Following eth types are supported to validate.
+Following zond types are supported to validate.
 
 | Type  | Input As                        | Description                                                                                                                                           |
 | ----- | ------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |

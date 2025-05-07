@@ -15,6 +15,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { isNullish } from '@theqrl/web3-utils';
 import { Contract } from '../../src';
 import { GreeterBytecode, GreeterAbi } from '../shared_fixtures/build/Greeter';
 import {
@@ -23,7 +24,6 @@ import {
 	describeIf,
 	getSystemTestBackend,
 } from '../fixtures/system_test_utils';
-import { isNullish } from '@theqrl/web3-utils';
 
 describe('contract', () => {
 	describeIf(getSystemTestBackend() === 'gzond')('createAccessList', () => {
@@ -43,7 +43,7 @@ describe('contract', () => {
 				arguments: ['My Greeting'],
 			};
 
-			sendOptions = { from: acc.address /*gas: '1000000'*/ };
+			sendOptions = { from: acc.address /* gas: '1000000' */ };
 		});
 
 		it('create access list for setter', async () => {

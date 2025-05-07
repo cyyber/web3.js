@@ -1,11 +1,29 @@
-'use strict';
+/*
+This file is part of web3.js.
+
+web3.js is free software: you can redistribute it and/or modify
+it under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+web3.js is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License
+along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+
 
 import { arrayify, BytesLike, concat, hexConcat, hexlify } from '@ethersproject/bytes';
 import { BigNumber, BigNumberish } from '@ethersproject/bignumber';
 import { defineReadOnly } from '@ethersproject/properties';
 
 import { Logger } from '@ethersproject/logger';
-import { version } from '../_version';
+import { version } from '../_version.js';
+
 const logger = new Logger(version);
 
 export interface Result extends ReadonlyArray<any> {
@@ -22,14 +40,14 @@ export function checkResultErrors(
 		if (!Array.isArray(object)) {
 			return;
 		}
-		for (let key in object) {
+		for (const key in object) {
 			const childPath = path.slice();
 			childPath.push(key);
 
 			try {
 				checkErrors(childPath, object[key]);
 			} catch (error: any) {
-				errors.push({ path: childPath, error: error });
+				errors.push({ path: childPath, error });
 			}
 		}
 	};
@@ -173,7 +191,7 @@ export class Reader {
 
 	// The default Coerce function
 	static coerce(name: string, value: any): any {
-		let match = name.match('^u?int([0-9]+)$');
+		const match = name.match('^u?int([0-9]+)$');
 		if (match && parseInt(match[1]) <= 48) {
 			value = value.toNumber();
 		}
@@ -212,7 +230,7 @@ export class Reader {
 	}
 
 	readBytes(length: number, loose?: boolean): Uint8Array {
-		let bytes = this._peekBytes(0, length, !!loose);
+		const bytes = this._peekBytes(0, length, !!loose);
 		this._offset += bytes.length;
 		// @TODO: Make sure the length..end bytes are all 0?
 		return bytes.slice(0, length);

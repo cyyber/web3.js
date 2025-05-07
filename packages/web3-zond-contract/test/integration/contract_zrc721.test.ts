@@ -47,7 +47,7 @@ describe('contract', () => {
 				data: ZRC721TokenBytecode,
 				arguments: [],
 			};
-			sendOptions = { from: acc.address /*gas: '10000000'*/ };
+			sendOptions = { from: acc.address /* gas: '10000000' */ };
 		});
 
 		it('should deploy the contract', async () => {
@@ -65,7 +65,7 @@ describe('contract', () => {
 			});
 			beforeEach(async () => {
 				acc2 = await createTempAccount();
-				sendOptions = { from: acc.address /*gas: '10000000'*/ };
+				sendOptions = { from: acc.address /* gas: '10000000' */ };
 				contractDeployed = await contract.deploy(deployOptions).send(sendOptions);
 			});
 

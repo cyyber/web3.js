@@ -19,15 +19,15 @@ import {
 	ZondExecutionAPI,
 	Bytes,
 	Transaction,
-	/*KeyStore,*/ ZOND_DATA_FORMAT,
+	/* KeyStore, */ ZOND_DATA_FORMAT,
 } from '@theqrl/web3-types';
 import { format } from '@theqrl/web3-utils';
 import { Web3Context } from '@theqrl/web3-core';
 import { prepareTransactionForSigning } from '@theqrl/web3-zond';
 import {
 	create,
-	//decrypt,
-	//encrypt,
+	// decrypt,
+	// encrypt,
 	hashMessage,
 	recoverTransaction,
 	signTransaction,
@@ -90,7 +90,7 @@ export const initAccountsForContext = (context: Web3Context<ZondExecutionAPI>) =
 		create: createWithContext,
 		seedToAccount: seedToAccountWithContext,
 		// TODO(youtrack/theqrl/web3.js/3)
-		//decrypt: decryptWithContext,
+		// decrypt: decryptWithContext,
 	});
 
 	return {
@@ -98,12 +98,12 @@ export const initAccountsForContext = (context: Web3Context<ZondExecutionAPI>) =
 		create: createWithContext,
 		seedToAccount: seedToAccountWithContext,
 		// TODO(youtrack/theqrl/web3.js/3)
-		//decrypt: decryptWithContext,
+		// decrypt: decryptWithContext,
 		recoverTransaction,
 		hashMessage,
 		sign,
 		// TODO(youtrack/theqrl/web3.js/3)
-		//encrypt,
+		// encrypt,
 		wallet,
 	};
 };

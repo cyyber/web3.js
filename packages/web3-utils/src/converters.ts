@@ -143,9 +143,7 @@ export const hexToBytes = (bytes: HexString): Uint8Array => {
  * > Uint8Array(20) [ 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116 ]
  * ```
  */
-export const addressToBytes = (value: Address): Uint8Array => {
-	return bytesToUint8Array(addressToHex(value));
-};
+export const addressToBytes = (value: Address): Uint8Array => bytesToUint8Array(addressToHex(value));
 
 /**
  * Convert a hex string to an address string

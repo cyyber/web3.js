@@ -78,7 +78,7 @@ describe('[TransactionFactory]: Basic functions', () => {
 
 	it('fromBlockBodyData() -> success cases', () => {
 		for (const txType of txTypes) {
-			let rawTx = txType.signed.serialize();
+			const rawTx = txType.signed.serialize();
 			const tx = TransactionFactory.fromBlockBodyData(rawTx, { common });
 			expect(tx.constructor.name).toEqual(txType.name);
 			expect(tx.serialize()).toEqual(rawTx);

@@ -15,7 +15,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Web3BaseWallet, Web3BaseWalletAccount /*KeyStore*/ } from '@theqrl/web3-types';
+import { Web3BaseWallet, Web3BaseWalletAccount /* KeyStore */ } from '@theqrl/web3-types';
 import { isNullish } from '@theqrl/web3-validator';
 import { WebStorage } from './types.js';
 
@@ -47,7 +47,7 @@ export class Wallet<
 	T extends Web3BaseWalletAccount = Web3BaseWalletAccount,
 > extends Web3BaseWallet<T> {
 	private readonly _addressMap = new Map<string, number>();
-	//private readonly _defaultKeyName = 'web3js_wallet';
+	// private readonly _defaultKeyName = 'web3js_wallet';
 
 	/**
 	 * Get the storage object of the browser

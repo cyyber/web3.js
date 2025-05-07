@@ -19,6 +19,7 @@ import { Numbers } from '@theqrl/web3-types';
 import { bytesToHex, toHex } from '@theqrl/web3-utils';
 import { cryptoSignVerify } from '@theqrl/dilithium5';
 import { Dilithium } from '@theqrl/wallet.js';
+import { isAddressString } from '@theqrl/web3-validator';
 import { MAX_INTEGER, MAX_UINT64, SEED_BYTES } from './constants.js';
 import { Chain, Common, Hardfork, toUint8Array, uint8ArrayToBigInt } from '../common/index.js';
 import type {
@@ -29,7 +30,6 @@ import type {
 } from './types.js';
 import { Address } from './address.js';
 import { checkMaxInitCodeSize } from './utils.js';
-import { isAddressString } from '@theqrl/web3-validator';
 
 interface TransactionCache {
 	hash: Uint8Array | undefined;
@@ -91,7 +91,7 @@ export abstract class BaseTransaction<TransactionObject> {
 
 		this.txOptions = opts;
 
-		var toB: Uint8Array;
+		let toB: Uint8Array;
 		if (typeof to === 'string') {
 			if (to === '') {
 				toB = toUint8Array('0x');

@@ -1,4 +1,21 @@
-'use strict';
+/*
+This file is part of web3.js.
+
+web3.js is free software: you can redistribute it and/or modify
+it under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+web3.js is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License
+along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+
 
 import { getAddress } from '@ethersproject/address';
 import { BigNumber, BigNumberish } from '@ethersproject/bignumber';
@@ -15,8 +32,9 @@ import { id } from '@ethersproject/hash';
 import { keccak256 } from '@ethersproject/keccak256';
 import { defineReadOnly, Description, getStatic } from '@ethersproject/properties';
 
-import { AbiCoder, defaultAbiCoder } from './abi-coder';
-import { checkResultErrors, Result } from './coders/abstract-coder';
+import { Logger } from '@ethersproject/logger';
+import { AbiCoder, defaultAbiCoder } from './abi-coder.js';
+import { checkResultErrors, Result } from './coders/abstract-coder.js';
 import {
 	ConstructorFragment,
 	ErrorFragment,
@@ -26,10 +44,10 @@ import {
 	FunctionFragment,
 	JsonFragment,
 	ParamType,
-} from './fragments';
+} from './fragments.js';
 
-import { Logger } from '@ethersproject/logger';
-import { version } from './_version';
+import { version } from './_version.js';
+
 const logger = new Logger(version);
 
 export { checkResultErrors, Result };
@@ -121,9 +139,7 @@ export class Interface {
 			this,
 			'fragments',
 			abi
-				.map(fragment => {
-					return Fragment.from(fragment);
-				})
+				.map(fragment => Fragment.from(fragment))
 				.filter(fragment => fragment != null),
 		);
 
@@ -143,16 +159,16 @@ export class Interface {
 						logger.warn('duplicate definition - constructor');
 						return;
 					}
-					//checkNames(fragment, "input", fragment.inputs);
+					// checkNames(fragment, "input", fragment.inputs);
 					defineReadOnly(this, 'deploy', <ConstructorFragment>fragment);
 					return;
 				case 'function':
-					//checkNames(fragment, "input", fragment.inputs);
-					//checkNames(fragment, "output", (<FunctionFragment>fragment).outputs);
+					// checkNames(fragment, "input", fragment.inputs);
+					// checkNames(fragment, "output", (<FunctionFragment>fragment).outputs);
 					bucket = this.functions;
 					break;
 				case 'event':
-					//checkNames(fragment, "input", fragment.inputs);
+					// checkNames(fragment, "input", fragment.inputs);
 					bucket = this.events;
 					break;
 				case 'error':
@@ -162,9 +178,9 @@ export class Interface {
 					return;
 			}
 
-			let signature = fragment.format();
+			const signature = fragment.format();
 			if (bucket[signature]) {
-				logger.warn('duplicate definition - ' + signature);
+				logger.warn(`duplicate definition - ${  signature}`);
 				return;
 			}
 
@@ -237,7 +253,7 @@ export class Interface {
 		}
 
 		// It is a bare name, look up the function (will return null if ambiguous)
-		if (nameOrSignatureOrSighash.indexOf('(') === -1) {
+		if (!nameOrSignatureOrSighash.includes('(')) {
 			const name = nameOrSignatureOrSighash.trim();
 			const matching = Object.keys(this.functions).filter(
 				f => f.split('(' /* fix:) */)[0] === name,
@@ -277,7 +293,7 @@ export class Interface {
 		}
 
 		// It is a bare name, look up the function (will return null if ambiguous)
-		if (nameOrSignatureOrTopic.indexOf('(') === -1) {
+		if (!nameOrSignatureOrTopic.includes('(')) {
 			const name = nameOrSignatureOrTopic.trim();
 			const matching = Object.keys(this.events).filter(
 				f => f.split('(' /* fix:) */)[0] === name,
@@ -316,7 +332,7 @@ export class Interface {
 		}
 
 		// It is a bare name, look up the function (will return null if ambiguous)
-		if (nameOrSignatureOrSighash.indexOf('(') === -1) {
+		if (!nameOrSignatureOrSighash.includes('(')) {
 			const name = nameOrSignatureOrSighash.trim();
 			const matching = Object.keys(this.errors).filter(
 				f => f.split('(' /* fix:) */)[0] === name,
@@ -452,7 +468,7 @@ export class Interface {
 			functionFragment = this.getFunction(functionFragment);
 		}
 
-		let bytes = arrayify(data);
+		const bytes = arrayify(data);
 
 		let reason: string = null;
 		let message = '';
@@ -495,7 +511,7 @@ export class Interface {
 			}
 		}
 
-		return logger.throwError('call revert exception' + message, Logger.errors.CALL_EXCEPTION, {
+		return logger.throwError(`call revert exception${  message}`, Logger.errors.CALL_EXCEPTION, {
 			method: functionFragment.format(),
 			data: hexlify(data),
 			errorArgs,
@@ -528,7 +544,7 @@ export class Interface {
 
 		if (values.length > eventFragment.inputs.length) {
 			logger.throwError(
-				'too many arguments for ' + eventFragment.format(),
+				`too many arguments for ${  eventFragment.format()}`,
 				Logger.errors.UNEXPECTED_ARGUMENT,
 				{
 					argument: 'values',
@@ -537,7 +553,7 @@ export class Interface {
 			);
 		}
 
-		let topics: Array<string | Array<string>> = [];
+		const topics: Array<string | Array<string>> = [];
 		if (!eventFragment.anonymous) {
 			topics.push(this.getEventTopic(eventFragment));
 		}
@@ -545,7 +561,7 @@ export class Interface {
 		const encodeTopic = (param: ParamType, value: any): string => {
 			if (param.type === 'string') {
 				return id(value);
-			} else if (param.type === 'bytes') {
+			} if (param.type === 'bytes') {
 				return keccak256(hexlify(value));
 			}
 
@@ -565,13 +581,13 @@ export class Interface {
 		};
 
 		values.forEach((value, index) => {
-			let param = (<EventFragment>eventFragment).inputs[index];
+			const param = (<EventFragment>eventFragment).inputs[index];
 
 			if (!param.indexed) {
 				if (value != null) {
 					logger.throwArgumentError(
 						'cannot filter non-indexed parameters; must be null',
-						'contract.' + param.name,
+						`contract.${  param.name}`,
 						value,
 					);
 				}
@@ -583,7 +599,7 @@ export class Interface {
 			} else if (param.baseType === 'array' || param.baseType === 'tuple') {
 				logger.throwArgumentError(
 					'filtering with tuples or arrays not supported',
-					'contract.' + param.name,
+					`contract.${  param.name}`,
 					value,
 				);
 			} else if (Array.isArray(value)) {
@@ -643,7 +659,7 @@ export class Interface {
 
 		return {
 			data: this._abiCoder.encode(dataTypes, dataValues),
-			topics: topics,
+			topics,
 		};
 	}
 
@@ -658,7 +674,7 @@ export class Interface {
 		}
 
 		if (topics != null && !eventFragment.anonymous) {
-			let topicHash = this.getEventTopic(eventFragment);
+			const topicHash = this.getEventTopic(eventFragment);
 			if (!isHexString(topics[0], 32) || topics[0].toLowerCase() !== topicHash) {
 				logger.throwError('fragment/topic mismatch', Logger.errors.INVALID_ARGUMENT, {
 					argument: 'topics[0]',
@@ -669,9 +685,9 @@ export class Interface {
 			topics = topics.slice(1);
 		}
 
-		let indexed: Array<ParamType> = [];
-		let nonIndexed: Array<ParamType> = [];
-		let dynamic: Array<boolean> = [];
+		const indexed: Array<ParamType> = [];
+		const nonIndexed: Array<ParamType> = [];
+		const dynamic: Array<boolean> = [];
 
 		eventFragment.inputs.forEach((param, index) => {
 			if (param.indexed) {
@@ -693,12 +709,12 @@ export class Interface {
 			}
 		});
 
-		let resultIndexed = topics != null ? this._abiCoder.decode(indexed, concat(topics)) : null;
-		let resultNonIndexed = this._abiCoder.decode(nonIndexed, data, true);
+		const resultIndexed = topics != null ? this._abiCoder.decode(indexed, concat(topics)) : null;
+		const resultNonIndexed = this._abiCoder.decode(nonIndexed, data, true);
 
-		let result: Array<any> & { [key: string]: any } = [];
-		let nonIndexedIndex = 0,
-			indexedIndex = 0;
+		const result: Array<any> & { [key: string]: any } = [];
+		let nonIndexedIndex = 0;
+			let indexedIndex = 0;
 		eventFragment.inputs.forEach((param, index) => {
 			if (param.indexed) {
 				if (resultIndexed == null) {
@@ -760,14 +776,14 @@ export class Interface {
 	// Given a transaction, find the matching function fragment (if any) and
 	// determine all its properties and call parameters
 	parseTransaction(tx: { data: string; value?: BigNumberish }): TransactionDescription {
-		let fragment = this.getFunction(tx.data.substring(0, 10).toLowerCase());
+		const fragment = this.getFunction(tx.data.substring(0, 10).toLowerCase());
 
 		if (!fragment) {
 			return null;
 		}
 
 		return new TransactionDescription({
-			args: this._abiCoder.decode(fragment.inputs, '0x' + tx.data.substring(10)),
+			args: this._abiCoder.decode(fragment.inputs, `0x${  tx.data.substring(10)}`),
 			functionFragment: fragment,
 			name: fragment.name,
 			signature: fragment.format(),
@@ -777,12 +793,12 @@ export class Interface {
 	}
 
 	// @TODO
-	//parseCallResult(data: BytesLike): ??
+	// parseCallResult(data: BytesLike): ??
 
 	// Given an event log, find the matching event fragment (if any) and
 	// determine all its properties and values
 	parseLog(log: { topics: Array<string>; data: string }): LogDescription {
-		let fragment = this.getEvent(log.topics[0]);
+		const fragment = this.getEvent(log.topics[0]);
 
 		if (!fragment || fragment.anonymous) {
 			return null;
@@ -803,14 +819,14 @@ export class Interface {
 
 	parseError(data: BytesLike): ErrorDescription {
 		const hexData = hexlify(data);
-		let fragment = this.getError(hexData.substring(0, 10).toLowerCase());
+		const fragment = this.getError(hexData.substring(0, 10).toLowerCase());
 
 		if (!fragment) {
 			return null;
 		}
 
 		return new ErrorDescription({
-			args: this._abiCoder.decode(fragment.inputs, '0x' + hexData.substring(10)),
+			args: this._abiCoder.decode(fragment.inputs, `0x${  hexData.substring(10)}`),
 			errorFragment: fragment,
 			name: fragment.name,
 			signature: fragment.format(),

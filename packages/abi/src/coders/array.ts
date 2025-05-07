@@ -1,11 +1,29 @@
-'use strict';
+/*
+This file is part of web3.js.
+
+web3.js is free software: you can redistribute it and/or modify
+it under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+web3.js is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License
+along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+
 
 import { Logger } from '@ethersproject/logger';
-import { version } from '../_version';
-const logger = new Logger(version);
+import { version } from '../_version.js';
 
-import { Coder, Reader, Result, Writer } from './abstract-coder';
-import { AnonymousCoder } from './anonymous';
+import { Coder, Reader, Result, Writer } from './abstract-coder.js';
+import { AnonymousCoder } from './anonymous.js';
+
+const logger = new Logger(version);
 
 export function pack(
 	writer: Writer,
@@ -17,7 +35,7 @@ export function pack(
 	if (Array.isArray(values)) {
 		arrayValues = values;
 	} else if (values && typeof values === 'object') {
-		let unique: { [name: string]: boolean } = {};
+		const unique: { [name: string]: boolean } = {};
 
 		arrayValues = coders.map(coder => {
 			const name = coder.localName;
@@ -27,7 +45,7 @@ export function pack(
 					Logger.errors.INVALID_ARGUMENT,
 					{
 						argument: 'values',
-						coder: coder,
+						coder,
 						value: values,
 					},
 				);
@@ -39,7 +57,7 @@ export function pack(
 					Logger.errors.INVALID_ARGUMENT,
 					{
 						argument: 'values',
-						coder: coder,
+						coder,
 						value: values,
 					},
 				);
@@ -57,22 +75,22 @@ export function pack(
 		logger.throwArgumentError('types/value length mismatch', 'tuple', values);
 	}
 
-	let staticWriter = new Writer(writer.wordSize);
-	let dynamicWriter = new Writer(writer.wordSize);
+	const staticWriter = new Writer(writer.wordSize);
+	const dynamicWriter = new Writer(writer.wordSize);
 
-	let updateFuncs: Array<(baseOffset: number) => void> = [];
+	const updateFuncs: Array<(baseOffset: number) => void> = [];
 	coders.forEach((coder, index) => {
-		let value = arrayValues[index];
+		const value = arrayValues[index];
 
 		if (coder.dynamic) {
 			// Get current dynamic offset (for the future pointer)
-			let dynamicOffset = dynamicWriter.length;
+			const dynamicOffset = dynamicWriter.length;
 
 			// Encode the dynamic value into the dynamicWriter
 			coder.encode(dynamicWriter, value);
 
 			// Prepare to populate the correct offset once we are done
-			let updateFunc = staticWriter.writeUpdatableValue();
+			const updateFunc = staticWriter.writeUpdatableValue();
 			updateFuncs.push((baseOffset: number) => {
 				updateFunc(baseOffset + dynamicOffset);
 			});
@@ -92,17 +110,17 @@ export function pack(
 }
 
 export function unpack(reader: Reader, coders: Array<Coder>): Result {
-	let values: any = [];
+	const values: any = [];
 
 	// A reader anchored to this base
-	let baseReader = reader.subReader(0);
+	const baseReader = reader.subReader(0);
 
 	coders.forEach(coder => {
 		let value: any = null;
 
 		if (coder.dynamic) {
-			let offset = reader.readValue();
-			let offsetReader = baseReader.subReader(offset.toNumber());
+			const offset = reader.readValue();
+			const offsetReader = baseReader.subReader(offset.toNumber());
 			try {
 				value = coder.decode(offsetReader);
 			} catch (error: any) {
@@ -136,7 +154,7 @@ export function unpack(reader: Reader, coders: Array<Coder>): Result {
 	});
 
 	// We only output named properties for uniquely named coders
-	const uniqueNames = coders.reduce((accum, coder) => {
+	const uniqueNames = coders.reduce<{ [name: string]: number }>((accum, coder) => {
 		const name = coder.localName;
 		if (name) {
 			if (!accum[name]) {
@@ -145,7 +163,7 @@ export function unpack(reader: Reader, coders: Array<Coder>): Result {
 			accum[name]++;
 		}
 		return accum;
-	}, <{ [name: string]: number }>{});
+	}, {});
 
 	// Add any named parameters (i.e. tuples)
 	coders.forEach((coder: Coder, index: number) => {
@@ -196,7 +214,7 @@ export class ArrayCoder extends Coder {
 	readonly length: number;
 
 	constructor(coder: Coder, length: number, localName: string) {
-		const type = coder.type + '[' + (length >= 0 ? length : '') + ']';
+		const type = `${coder.type  }[${  length >= 0 ? length : ''  }]`;
 		const dynamic = length === -1 || coder.dynamic;
 		super('array', type, localName, dynamic);
 
@@ -230,10 +248,10 @@ export class ArrayCoder extends Coder {
 		logger.checkArgumentCount(
 			value.length,
 			count,
-			'coder array' + (this.localName ? ' ' + this.localName : ''),
+			`coder array${  this.localName ? ` ${  this.localName}` : ''}`,
 		);
 
-		let coders = [];
+		const coders = [];
 		for (let i = 0; i < value.length; i++) {
 			coders.push(this.coder);
 		}
@@ -254,11 +272,11 @@ export class ArrayCoder extends Coder {
 			if (count * 32 > reader._data.length) {
 				logger.throwError('insufficient data length', Logger.errors.BUFFER_OVERRUN, {
 					length: reader._data.length,
-					count: count,
+					count,
 				});
 			}
 		}
-		let coders = [];
+		const coders = [];
 		for (let i = 0; i < count; i++) {
 			coders.push(new AnonymousCoder(this.coder));
 		}

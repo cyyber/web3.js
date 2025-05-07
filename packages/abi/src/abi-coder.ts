@@ -1,4 +1,21 @@
-'use strict';
+/*
+This file is part of web3.js.
+
+web3.js is free software: you can redistribute it and/or modify
+it under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+web3.js is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License
+along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+
 
 // See: https://github.com/ethereum/wiki/wiki/Ethereum-Contract-ABI
 
@@ -6,21 +23,22 @@ import { arrayify, BytesLike } from '@ethersproject/bytes';
 import { defineReadOnly } from '@ethersproject/properties';
 
 import { Logger } from '@ethersproject/logger';
-import { version } from './_version';
+import { version } from './_version.js';
+
+import { Coder, Reader, Result, Writer } from './coders/abstract-coder.js';
+import { AddressCoder } from './coders/address.js';
+import { ArrayCoder } from './coders/array.js';
+import { BooleanCoder } from './coders/boolean.js';
+import { BytesCoder } from './coders/bytes.js';
+import { FixedBytesCoder } from './coders/fixed-bytes.js';
+import { NullCoder } from './coders/null.js';
+import { NumberCoder } from './coders/number.js';
+import { StringCoder } from './coders/string.js';
+import { TupleCoder } from './coders/tuple.js';
+
+import { ParamType } from './fragments.js';
+
 const logger = new Logger(version);
-
-import { Coder, Reader, Result, Writer } from './coders/abstract-coder';
-import { AddressCoder } from './coders/address';
-import { ArrayCoder } from './coders/array';
-import { BooleanCoder } from './coders/boolean';
-import { BytesCoder } from './coders/bytes';
-import { FixedBytesCoder } from './coders/fixed-bytes';
-import { NullCoder } from './coders/null';
-import { NumberCoder } from './coders/number';
-import { StringCoder } from './coders/string';
-import { TupleCoder } from './coders/tuple';
-
-import { ParamType } from './fragments';
 
 const paramTypeBytes = new RegExp(/^bytes([0-9]*)$/);
 const paramTypeNumber = new RegExp(/^(u?int)([0-9]*)$/);
@@ -52,9 +70,7 @@ export class AbiCoder {
 				);
 			case 'tuple':
 				return new TupleCoder(
-					(param.components || []).map(component => {
-						return this._getCoder(component);
-					}),
+					(param.components || []).map(component => this._getCoder(component)),
 					param.name,
 				);
 			case '':
@@ -64,9 +80,9 @@ export class AbiCoder {
 		// u?int[0-9]*
 		let match = param.type.match(paramTypeNumber);
 		if (match) {
-			let size = parseInt(match[2] || '256');
+			const size = parseInt(match[2] || '256');
 			if (size === 0 || size > 256 || size % 8 !== 0) {
-				logger.throwArgumentError('invalid ' + match[1] + ' bit length', 'param', param);
+				logger.throwArgumentError(`invalid ${  match[1]  } bit length`, 'param', param);
 			}
 			return new NumberCoder(size / 8, match[1] === 'int', param.name);
 		}
@@ -74,7 +90,7 @@ export class AbiCoder {
 		// bytes[0-9]+
 		match = param.type.match(paramTypeBytes);
 		if (match) {
-			let size = parseInt(match[1]);
+			const size = parseInt(match[1]);
 			if (size === 0 || size > 32) {
 				logger.throwArgumentError('invalid bytes length', 'param', param);
 			}
@@ -106,7 +122,7 @@ export class AbiCoder {
 		if (types.length !== values.length) {
 			logger.throwError('types/values length mismatch', Logger.errors.INVALID_ARGUMENT, {
 				count: { types: types.length, values: values.length },
-				value: { types: types, values: values },
+				value: { types, values },
 			});
 		}
 

@@ -1,7 +1,24 @@
-'use strict';
+/*
+This file is part of web3.js.
 
-import { Coder, Reader, Writer } from './abstract-coder';
-import { pack, unpack } from './array';
+web3.js is free software: you can redistribute it and/or modify
+it under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+web3.js is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License
+along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+
+
+import { Coder, Reader, Writer } from './abstract-coder.js';
+import { pack, unpack } from './array.js';
 
 export class TupleCoder extends Coder {
 	readonly coders: Array<Coder>;
@@ -15,7 +32,7 @@ export class TupleCoder extends Coder {
 			}
 			types.push(coder.type);
 		});
-		const type = 'tuple(' + types.join(',') + ')';
+		const type = `tuple(${  types.join(',')  })`;
 
 		super('tuple', type, localName, dynamic);
 		this.coders = coders;
@@ -28,7 +45,7 @@ export class TupleCoder extends Coder {
 		});
 
 		// We only output named properties for uniquely named coders
-		const uniqueNames = this.coders.reduce((accum, coder) => {
+		const uniqueNames = this.coders.reduce<{ [name: string]: number }>((accum, coder) => {
 			const name = coder.localName;
 			if (name) {
 				if (!accum[name]) {
@@ -37,7 +54,7 @@ export class TupleCoder extends Coder {
 				accum[name]++;
 			}
 			return accum;
-		}, <{ [name: string]: number }>{});
+		}, {});
 
 		// Add named values
 		this.coders.forEach((coder: Coder, index: number) => {

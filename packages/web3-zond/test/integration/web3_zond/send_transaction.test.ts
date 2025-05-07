@@ -30,6 +30,7 @@ import {
 import { Wallet } from '@theqrl/web3-zond-accounts';
 import { isHexStrict } from '@theqrl/web3-validator';
 
+import { isNullish } from '@theqrl/web3-utils';
 import Web3Zond from '../../../src';
 import {
 	closeOpenConnection,
@@ -39,7 +40,6 @@ import {
 	getSystemTestProvider,
 } from '../../fixtures/system_test_utils';
 import { SimpleRevertAbi, SimpleRevertDeploymentData } from '../../fixtures/simple_revert';
-import { isNullish } from '@theqrl/web3-utils';
 
 describe('Web3Zond.sendTransaction', () => {
 	let web3Zond: Web3Zond;

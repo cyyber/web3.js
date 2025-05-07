@@ -22,11 +22,11 @@ import { GreeterBytecode, GreeterAbi } from '../shared_fixtures/build/Greeter';
 import { DeployRevertAbi, DeployRevertBytecode } from '../shared_fixtures/build/DeployRevert';
 import {
 	getSystemTestProvider,
-	//isWs,
+	// isWs,
 	createTempAccount,
 	createNewAccount,
 	signTxAndSendEIP1559,
-	//sendFewSampleTxs,
+	// sendFewSampleTxs,
 	closeOpenConnection,
 } from '../fixtures/system_test_utils';
 
@@ -186,13 +186,13 @@ describe('contract', () => {
 
 			// Deploy once again to trigger block mining to trigger confirmation
 			// We can send any other transaction as well
-			//await contract.deploy(deployOptions).send(sendOptions);
+			// await contract.deploy(deployOptions).send(sendOptions);
 
-			//await sendFewSampleTxs(3);
+			// await sendFewSampleTxs(3);
 
 			// Wait for some fraction of time to trigger the handler
 			// On http we use polling to get confirmation, so wait a bit longer
-			//await sleep(isWs ? 500 : 2000);
+			// await sleep(isWs ? 500 : 2000);
 
 			// eslint-disable-next-line jest/no-standalone-expect
 			expect(confirmationHandler).toHaveBeenCalled();

@@ -22,7 +22,7 @@ import {
 	addressToBytes,
 } from '@theqrl/web3-utils';
 import { FeeMarketEIP1559Transaction } from '../../../src';
-import { Chain, Common, Hardfork /*, uint8ArrayToBigInt*/ } from '../../../src/common';
+import { Chain, Common, Hardfork /* , uint8ArrayToBigInt */ } from '../../../src/common';
 
 import type { AccessList } from '../../../src';
 

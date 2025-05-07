@@ -369,8 +369,8 @@ export class FeeMarketEIP1559Transaction extends BaseTransaction<FeeMarketEIP155
 				value: this.value,
 				data: this.data,
 				accessList: this.accessList,
-				publicKey: publicKey,
-				signature: signature,
+				publicKey,
+				signature,
 			},
 			opts,
 		);

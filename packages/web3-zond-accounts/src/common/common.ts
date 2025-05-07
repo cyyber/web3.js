@@ -646,7 +646,7 @@ export class Common extends EventEmitter {
 	public nextHardforkBlockOrTimestamp(_hardfork?: string | Hardfork): bigint | null {
 		const hardfork = _hardfork ?? this._hardfork;
 		const hfs = this.hardforks();
-		let hfIndex = hfs.findIndex(hf => hf.name === hardfork);
+		const hfIndex = hfs.findIndex(hf => hf.name === hardfork);
 
 		// Hardfork not found
 		if (hfIndex < 0) {

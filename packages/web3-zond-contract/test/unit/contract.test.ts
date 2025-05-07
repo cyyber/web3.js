@@ -905,7 +905,7 @@ describe('Contract', () => {
 			const spyGetLogs = jest
 				.spyOn(zond, 'getLogs')
 				.mockImplementation((_objInstance, _params) => {
-					expect(_params.address).toStrictEqual(
+					expect(_params.address).toBe(
 						`Z${deployedAddr.slice(1).toLocaleLowerCase()}`,
 					);
 					expect(_params.fromBlock).toStrictEqual(getLogsData.request.fromBlock);
@@ -948,7 +948,7 @@ describe('Contract', () => {
 			const spyGetLogs = jest
 				.spyOn(zond, 'getLogs')
 				.mockImplementation((_objInstance, _params) => {
-					expect(_params.address).toStrictEqual(
+					expect(_params.address).toBe(
 						`Z${deployedAddr.slice(1).toLocaleLowerCase()}`,
 					);
 					expect(_params.fromBlock).toStrictEqual(getLogsData.request.fromBlock);
@@ -991,7 +991,7 @@ describe('Contract', () => {
 			const spyGetLogs = jest
 				.spyOn(zond, 'getLogs')
 				.mockImplementation((_objInstance, _params) => {
-					expect(_params.address).toStrictEqual(
+					expect(_params.address).toBe(
 						`Z${deployedAddr.slice(1).toLocaleLowerCase()}`,
 					);
 					expect(_params.fromBlock).toBeUndefined();
@@ -1029,7 +1029,7 @@ describe('Contract', () => {
 			const spyGetLogs = jest
 				.spyOn(zond, 'getLogs')
 				.mockImplementation((_objInstance, _params) => {
-					expect(_params.address).toStrictEqual(
+					expect(_params.address).toBe(
 						`Z${deployedAddr.slice(1).toLocaleLowerCase()}`,
 					);
 					expect(_params.fromBlock).toBeUndefined();
@@ -1098,7 +1098,7 @@ describe('Contract', () => {
 			const spyGetLogs = jest
 				.spyOn(zond, 'getLogs')
 				.mockImplementation((_objInstance, _params) => {
-					expect(_params.address).toStrictEqual(
+					expect(_params.address).toBe(
 						`Z${deployedAddr.slice(1).toLocaleLowerCase()}`,
 					);
 					expect(_params.fromBlock).toBeUndefined();

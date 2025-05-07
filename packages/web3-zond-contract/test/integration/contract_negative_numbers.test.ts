@@ -42,7 +42,7 @@ describe('Contract - NegativeNumbers.hyp', () => {
 		sendOptions = {
 			from: account.address,
 			type: '2',
-			//gas: '1000000',
+			// gas: '1000000',
 		};
 
 		contractDeployed = await contract.deploy(deployOptions).send(sendOptions);
