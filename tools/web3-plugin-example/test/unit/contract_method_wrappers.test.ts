@@ -87,7 +87,7 @@ describe('ContractMethodWrappersPlugin', () => {
 				'0xc41b9a4f654c44552e135f770945916f57c069b80326f9a5f843e613491ab6b1';
 
 			// Mocking getBlockByNumber for getEip1559GasPricing
-			requestManagerSendSpy.mockResolvedValueOnce({ baseFeePerGas: '1000000000' });
+			requestManagerSendSpy.mockResolvedValueOnce({"baseFeePerGas": "1000000000"})
 			// Mocking block number for trySendTransaction call
 			requestManagerSendSpy.mockResolvedValueOnce('0x1');
 			requestManagerSendSpy.mockResolvedValueOnce(expectedTransactionHash);
