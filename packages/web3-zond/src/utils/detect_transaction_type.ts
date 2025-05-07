@@ -17,12 +17,7 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 
 import { format, toHex } from '@theqrl/web3-utils';
 import { TransactionTypeParser, Web3Context } from '@theqrl/web3-core';
-import {
-	ZondExecutionAPI,
-	HardforksOrdered,
-	Transaction,
-	ZOND_DATA_FORMAT,
-} from '@theqrl/web3-types';
+import { ZondExecutionAPI, HardforksOrdered, Transaction, ZOND_DATA_FORMAT } from '@theqrl/web3-types';
 import { Web3ValidatorError, isNullish, validator } from '@theqrl/web3-validator';
 import { InvalidPropertiesForTransactionTypeError } from '@theqrl/web3-errors';
 

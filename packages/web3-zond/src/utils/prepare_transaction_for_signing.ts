@@ -44,13 +44,13 @@ const getZondjsTxDataFromTransaction = (
 	type: transaction.type,
 	chainId: transaction.chainId,
 	accessList: (
-		transaction 
+		transaction as FormatType<PopulatedUnsignedEip1559Transaction, typeof ZOND_DATA_FORMAT>
 	).accessList,
 	maxPriorityFeePerGas: (
-		transaction 
+		transaction as FormatType<PopulatedUnsignedEip1559Transaction, typeof ZOND_DATA_FORMAT>
 	).maxPriorityFeePerGas,
 	maxFeePerGas: (
-		transaction 
+		transaction as FormatType<PopulatedUnsignedEip1559Transaction, typeof ZOND_DATA_FORMAT> 
 	).maxFeePerGas,
 });
 

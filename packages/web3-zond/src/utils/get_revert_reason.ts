@@ -16,11 +16,7 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { Web3Context } from '@theqrl/web3-core';
-import {
-	ContractExecutionError,
-	Eip838ExecutionError,
-	InvalidResponseError,
-} from '@theqrl/web3-errors';
+import { ContractExecutionError, Eip838ExecutionError, InvalidResponseError } from '@theqrl/web3-errors';
 import { decodeContractErrorData, isAbiErrorFragment } from '@theqrl/web3-zond-abi';
 import {
 	AbiErrorFragment,

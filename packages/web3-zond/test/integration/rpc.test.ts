@@ -76,7 +76,7 @@ describe('rpc', () => {
 			arguments: [10, 'string init value'],
 		};
 		tempAcc = await createTempAccount();
-		sendOptions = { from: tempAcc.address /* gas: '1000000' */ };
+		sendOptions = { from: tempAcc.address /*gas: '1000000'*/ };
 
 		contractDeployed = await contract.deploy(deployOptions).send(sendOptions);
 	});

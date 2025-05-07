@@ -141,11 +141,10 @@ export async function defaultTransactionBuilder<ReturnType = Transaction>(option
 	if (isNullish(populatedTransaction.from)) {
 		let publicKey;
 		if (!isNullish(options.seed)) {
-			const _seed =
-				typeof options.seed === 'string' ? hexToBytes(options.seed) : options.seed;
-			const buf = Buffer.from(_seed);
-			const d = new Dilithium(buf);
-			publicKey = d.getPK();
+			const _seed = typeof options.seed === 'string' ? hexToBytes(options.seed): options.seed
+			const buf = Buffer.from(_seed)
+ 			const d = new Dilithium(buf)
+			publicKey = d.getPK()
 		}
 
 		populatedTransaction.from = getTransactionFromOrToAttr(

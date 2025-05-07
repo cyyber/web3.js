@@ -76,7 +76,7 @@ describe('defaults', () => {
 			data: BasicBytecode,
 			arguments: [10, 'string init value'],
 		};
-		sendOptions = { from: tempAcc.address /* gas: '1000000' */ };
+		sendOptions = { from: tempAcc.address /*gas: '1000000'*/ };
 	});
 
 	afterEach(async () => {

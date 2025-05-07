@@ -302,7 +302,12 @@ export const validateChainInfoData: [
 
 export const validateGasData: [
 	FormatType<Transaction, { number: FMT_NUMBER.HEX; bytes: FMT_BYTES.HEX }> | any,
-	undefined | MissingGasError | InvalidGas | InvalidMaxPriorityFeePerGasOrMaxFeePerGas,
+	(
+		| undefined
+		| MissingGasError
+		| InvalidGas
+		| InvalidMaxPriorityFeePerGasOrMaxFeePerGas
+	),
 ][] = [
 	[
 		{
