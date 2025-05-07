@@ -28,6 +28,7 @@ import {
 
 describeIf(!isIpc)('compatibility with `truffle` `HDWalletProvider` provider', () => {
 	//let provider: HDWalletProvider;
+	
 	// beforeAll(async () => {
 	// 	const clientUrl = getSystemTestProvider();
 	// 	const account1 = await createNewAccount({ unlock: true, refill: true });
