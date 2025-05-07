@@ -200,7 +200,9 @@ describe('web3.accounts', () => {
 	describe('seedToAccount', () => {
 		it('should create account from seed', async () => {
 			const acc = await createNewAccount();
-			const createdAccount: Web3Account = web3.zond.accounts.seedToAccount(acc.seed);
+			const createdAccount: Web3Account = web3.zond.accounts.seedToAccount(
+				acc.seed,
+			);
 			expect(acc.address.toLowerCase()).toBe(createdAccount.address.toLowerCase());
 		});
 	});
