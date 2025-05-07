@@ -27,7 +27,7 @@ import {
 	getSystemTestProvider,
 } from '../fixtures/system_test_utils';
 
-// const gas = 30000;
+//const gas = 30000;
 
 describe('defaults', () => {
 	let web3Zond: Web3Zond;
@@ -61,7 +61,7 @@ describe('defaults', () => {
 					to,
 					value,
 					from,
-					// gas,
+					//gas,
 					// Give a high nonce so the transaction stuck forever.
 					// However, make this random to be able to run the test many times without receiving an error that indicate submitting the same transaction twice.
 					nonce: Number.MAX_SAFE_INTEGER,

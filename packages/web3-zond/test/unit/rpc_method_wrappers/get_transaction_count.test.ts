@@ -73,9 +73,7 @@ describe('getTransactionCount', () => {
 				mockRpcResponse,
 				expectedReturnFormat,
 			);
-			(zondRpcMethods.getTransactionCount as jest.Mock).mockResolvedValueOnce(
-				mockRpcResponse,
-			);
+			(zondRpcMethods.getTransactionCount as jest.Mock).mockResolvedValueOnce(mockRpcResponse);
 
 			const result = await getTransactionCount(
 				web3Context,

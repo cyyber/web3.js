@@ -96,8 +96,13 @@ export const isTransaction1559UnsignedValidData = (): [Transaction1559UnsignedAP
 		];
 	});
 
+
+
+	
 export const isTransactionWithSenderValidData = (): [TransactionWithSenderAPI, true][] => {
-	const transactions = [...isTransaction1559UnsignedValidData()];
+	const transactions = [
+		...isTransaction1559UnsignedValidData(),
+	];
 	return transactions.map(transaction => {
 		return [
 			{
@@ -113,7 +118,9 @@ export const validateTransactionWithSenderInvalidData = (): [
 	any,
 	InvalidTransactionWithSender,
 ][] => {
-	const transactions = [...isTransaction1559UnsignedValidData()];
+	const transactions = [
+		...isTransaction1559UnsignedValidData(),
+	];
 	return transactions.map(transaction => {
 		return [transaction[0], new InvalidTransactionWithSender(transaction[0])];
 	});

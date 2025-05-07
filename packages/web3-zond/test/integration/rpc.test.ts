@@ -25,12 +25,7 @@ import {
 } from '@theqrl/web3-types';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { Contract, decodeEventABI } from '@theqrl/web3-zond-contract';
-import {
-	hexToNumber,
-	hexToString,
-	numberToHex,
-	getStorageSlotNumForLongString,
-} from '@theqrl/web3-utils';
+import { hexToNumber, hexToString, numberToHex, getStorageSlotNumForLongString } from '@theqrl/web3-utils';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { Web3Zond } from '../../src';
 
@@ -123,7 +118,7 @@ describe('rpc', () => {
 			expect(typeof res).toBe(mapFormatToType[format as string]);
 			expect(parseInt(String(res), 16)).toBeGreaterThan(0);
 		});
-
+		
 		it.each(Object.values(FMT_NUMBER))('getBalance', async format => {
 			const value = '0xa';
 			const newAccount = await createNewAccount();
@@ -242,7 +237,7 @@ describe('rpc', () => {
 			// TODO: after alpha release add tests for matching following (value transferred)
 			// TODO: after alpha release add tests for matching following (specify some random inputData in tx and validate in test with getTransaction)
 
-			validateTransaction(res as TransactionInfo, { type: 2 });
+			validateTransaction(res as TransactionInfo, {type: 2});
 			expect(res?.hash).toBe(receipt.transactionHash);
 		});
 
@@ -282,6 +277,7 @@ describe('rpc', () => {
 			expect(true).toBe(true);
 			// expect(res[0]).toEqual(tempAcc.address);
 		});
+
 
 		it('getPastLogs', async () => {
 			const listOfStrings = ['t1', 't2', 't3'];

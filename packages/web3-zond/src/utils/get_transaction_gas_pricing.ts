@@ -63,7 +63,7 @@ export async function getTransactionGasPricing<ReturnFormat extends DataFormat>(
 	web3Context: Web3Context<ZondExecutionAPI>,
 	returnFormat: ReturnFormat,
 ): Promise<
-	FormatType<{ maxPriorityFeePerGas?: Numbers; maxFeePerGas?: Numbers }, ReturnFormat> | undefined| FormatType<
+	| FormatType<
 			{ maxPriorityFeePerGas?: Numbers; maxFeePerGas?: Numbers },
 			ReturnFormat
 	  >

@@ -50,7 +50,7 @@ const getZondjsTxDataFromTransaction = (
 		transaction as FormatType<PopulatedUnsignedEip1559Transaction, typeof ZOND_DATA_FORMAT>
 	).maxPriorityFeePerGas,
 	maxFeePerGas: (
-		transaction as FormatType<PopulatedUnsignedEip1559Transaction, typeof ZOND_DATA_FORMAT> 
+		transaction as FormatType<PopulatedUnsignedEip1559Transaction, typeof ZOND_DATA_FORMAT>
 	).maxFeePerGas,
 });
 

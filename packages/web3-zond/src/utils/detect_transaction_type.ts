@@ -27,7 +27,11 @@ const transactionType0x2Schema = {
 	type: 'object',
 };
 
-const validateTxTypeAndHandleErrors = (txSchema: object, tx: Transaction, txType: '0x2') => {
+const validateTxTypeAndHandleErrors = (
+	txSchema: object,
+	tx: Transaction,
+	txType: '0x2',
+) => {
 	try {
 		validator.validateJSONSchema(txSchema, tx);
 	} catch (error) {
@@ -85,4 +89,5 @@ export const detectTransactionType = (
 		transaction as unknown as Record<string, unknown>,
 	);
 
-export const detectRawTransactionType = (transaction: Uint8Array) => toHex(transaction[0]);
+	export const detectRawTransactionType = (transaction: Uint8Array) =>
+		toHex(transaction[0]);

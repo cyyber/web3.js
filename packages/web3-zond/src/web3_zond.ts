@@ -163,9 +163,9 @@ export class Web3Zond extends Web3Context<Web3ZondExecutionAPI, RegisteredSubscr
 	 * > "0x4a817c800"
 	 * ```
 	 */
-	public async getMaxPriorityFeePerGas<
-		ReturnFormat extends DataFormat = typeof DEFAULT_RETURN_FORMAT,
-	>(returnFormat: ReturnFormat = DEFAULT_RETURN_FORMAT as ReturnFormat) {
+	public async getMaxPriorityFeePerGas<ReturnFormat extends DataFormat = typeof DEFAULT_RETURN_FORMAT>(
+		returnFormat: ReturnFormat = DEFAULT_RETURN_FORMAT as ReturnFormat,
+	) {
 		return rpcMethodsWrappers.getMaxPriorityFeePerGas(this, returnFormat);
 	}
 
