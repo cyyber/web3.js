@@ -11,7 +11,7 @@
 
 This is a sub-package of [web3.js][repo].
 
-`web3-zond-zns` This package has ZNS functions for interacting with Ethereum Name Service.
+`web3-zond-zns` This package has ZNS functions for interacting with Zond Name Service.
 
 ## Installation
 
