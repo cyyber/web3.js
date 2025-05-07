@@ -1,46 +1,9 @@
 export const ZRC20TokenAbi = [
 	{
 		inputs: [{ internalType: 'uint256', name: 'initialSupply', type: 'uint256' }],
+		signature: "",
 		stateMutability: 'nonpayable',
 		type: 'constructor',
-	},
-	{
-		inputs: [
-			{ internalType: 'address', name: 'spender', type: 'address' },
-			{ internalType: 'uint256', name: 'allowance', type: 'uint256' },
-			{ internalType: 'uint256', name: 'needed', type: 'uint256' },
-		],
-		name: 'ZRC20InsufficientAllowance',
-		type: 'error',
-	},
-	{
-		inputs: [
-			{ internalType: 'address', name: 'sender', type: 'address' },
-			{ internalType: 'uint256', name: 'balance', type: 'uint256' },
-			{ internalType: 'uint256', name: 'needed', type: 'uint256' },
-		],
-		name: 'ZRC20InsufficientBalance',
-		type: 'error',
-	},
-	{
-		inputs: [{ internalType: 'address', name: 'approver', type: 'address' }],
-		name: 'ZRC20InvalidApprover',
-		type: 'error',
-	},
-	{
-		inputs: [{ internalType: 'address', name: 'receiver', type: 'address' }],
-		name: 'ZRC20InvalidReceiver',
-		type: 'error',
-	},
-	{
-		inputs: [{ internalType: 'address', name: 'sender', type: 'address' }],
-		name: 'ZRC20InvalidSender',
-		type: 'error',
-	},
-	{
-		inputs: [{ internalType: 'address', name: 'spender', type: 'address' }],
-		name: 'ZRC20InvalidSpender',
-		type: 'error',
 	},
 	{
 		anonymous: false,
