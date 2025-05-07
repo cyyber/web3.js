@@ -184,13 +184,13 @@ describe('contract', () => {
 								.call(),
 						).toBe(transferFromValue);
 
-						// increaseAllowance
+						// approve
 						await signAndSendContractMethod(
 							contract.provider,
 							contractDeployed.options.address as string,
-							contractDeployed.methods.increaseAllowance(
+							contractDeployed.methods.approve(
 								tempAccount.address,
-								transferFromValue,
+								transferFromValue + transferFromValue,
 							),
 							tempAccount.seed,
 						);

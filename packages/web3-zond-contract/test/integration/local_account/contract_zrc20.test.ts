@@ -97,7 +97,7 @@ describe('contract', () => {
 
 		it.each(['0x2'])('should increase allowance %p', async type => {
 			const value = BigInt(10);
-			const extraAmount = BigInt(4);
+			const newAmount = BigInt(20);
 			const tempAccount = await createLocalAccount(web3);
 
 			// approve
@@ -112,9 +112,9 @@ describe('contract', () => {
 					.call(),
 			).toBe(value);
 
-			// increaseAllowance
+			// approve
 			await contractDeployed.methods
-				.increaseAllowance(tempAccount.address, extraAmount)
+				.approve(tempAccount.address, newAmount)
 				.send({ ...sendOptions, from: localAccount.address, type, gas: '2000000' });
 
 			// check allowance
@@ -122,7 +122,7 @@ describe('contract', () => {
 				await contractDeployed.methods
 					.allowance(localAccount.address, tempAccount.address)
 					.call(),
-			).toBe(value + extraAmount);
+			).toBe(newAmount);
 		});
 	});
 });
