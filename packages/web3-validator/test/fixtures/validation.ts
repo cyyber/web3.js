@@ -782,6 +782,13 @@ export const validNotBaseTypeData: { dataType: string; data: any }[] = [
 ];
 
 export const validAddressDataWithHex: [string, string][] = [
-	['Zdec0518fa672a70027b04c286582e543ab17319f', '0xdec0518fa672a70027b04c286582e543ab17319f'],
-	['Zd115bffabbdd893a6f7cea402e7338643ced44a6', '0xd115bffabbdd893a6f7cea402e7338643ced44a6'],
+	[
+		'Zdec0518fa672a70027b04c286582e543ab17319f',
+		'0xdec0518fa672a70027b04c286582e543ab17319f',
+	],
+	[
+		'Zd115bffabbdd893a6f7cea402e7338643ced44a6',
+		'0xd115bffabbdd893a6f7cea402e7338643ced44a6',
+	],
 ];
+

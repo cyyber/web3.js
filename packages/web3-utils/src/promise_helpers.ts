@@ -112,7 +112,7 @@ export function pollTillDefinedAndReturnIntervalId<T>(
  * Repeatedly calls an async function with a given interval until the result of the function is defined (not undefined or null),
  * or until a timeout is reached.
  * pollTillDefinedAndReturnIntervalId() function should be used instead of pollTillDefined if you need IntervalId in result.
- * This function will be deprecated in next major release so use pollTillDefinedAndReturnIntervalId().
+ * This function will be deprecated in next major release so use pollTillDefinedAndReturnIntervalId(). 
  * @param func - The function to call.
  * @param interval - The interval in milliseconds.
  */

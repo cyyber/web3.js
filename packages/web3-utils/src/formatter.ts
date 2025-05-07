@@ -16,13 +16,7 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 import { FormatterError } from '@theqrl/web3-errors';
 import { Bytes, DataFormat, FMT_BYTES, FMT_NUMBER, FormatType } from '@theqrl/web3-types';
-import {
-	isNullish,
-	isObject,
-	JsonSchema,
-	utils,
-	ValidationSchemaInput,
-} from '@theqrl/web3-validator';
+import { isNullish, isObject, JsonSchema, utils, ValidationSchemaInput } from '@theqrl/web3-validator';
 import { bytesToUint8Array, bytesToHex, numberToHex, toBigInt } from './converters.js';
 import { mergeDeep } from './objects.js';
 import { padLeft } from './string_manipulation.js';

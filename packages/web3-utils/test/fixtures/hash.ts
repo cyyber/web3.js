@@ -263,8 +263,14 @@ export const encodePackedInvalidData: [any, string][] = [
 	[{ type: 'string', value: true }, 'Invalid value given "true". Error: not a valid string.'],
 	[{ type: 'string', value: 1234 }, 'Invalid value given "1234". Error: not a valid string.'],
 	[{ type: 'boolean', value: 1234 }, 'Invalid value given "1234". Error: not a valid boolean.'],
-	[{ type: 'address', value: 1234 }, 'Invalid value given "1234". Error: invalid zond address'],
-	[{ type: 'address', value: '0x2' }, 'Invalid value given "0x2". Error: invalid zond address'],
+	[
+		{ type: 'address', value: 1234 },
+		'Invalid value given "1234". Error: invalid zond address',
+	],
+	[
+		{ type: 'address', value: '0x2' },
+		'Invalid value given "0x2". Error: invalid zond address',
+	],
 	[{ type: 'uint612', value: 13 }, 'Invalid value given "13". Error: invalid size given.'],
 	[
 		{ type: 'uint8', value: 1000 },

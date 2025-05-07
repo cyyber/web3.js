@@ -500,7 +500,10 @@ export class LocalWalletNotAvailableError extends InvalidValueError {
 export class InvalidPropertiesForTransactionTypeError extends BaseWeb3Error {
 	public code = ERR_TX_INVALID_PROPERTIES_FOR_TYPE;
 
-	public constructor(validationError: Web3ValidationErrorObject[], txType: '0x2') {
+	public constructor(
+		validationError: Web3ValidationErrorObject[],
+		txType: '0x2',
+	) {
 		const invalidPropertyNames: string[] = [];
 		validationError.forEach(error => invalidPropertyNames.push(error.keyword));
 		super(
