@@ -64,9 +64,7 @@ describe('web3_zond_methods_no_parameters', () => {
 
 		it('getMaxPriorityFeePerGas', async () => {
 			await web3Zond.getMaxPriorityFeePerGas();
-			expect(zondRpcMethods.getMaxPriorityFeePerGas).toHaveBeenCalledWith(
-				web3Zond.requestManager,
-			);
+			expect(zondRpcMethods.getMaxPriorityFeePerGas).toHaveBeenCalledWith(web3Zond.requestManager);
 		});
 	});
 });

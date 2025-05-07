@@ -16,12 +16,7 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 import { Web3Context } from '@theqrl/web3-core';
 import { format } from '@theqrl/web3-utils';
-import {
-	DEFAULT_RETURN_FORMAT,
-	FMT_BYTES,
-	FMT_NUMBER,
-	Web3ZondExecutionAPI,
-} from '@theqrl/web3-types';
+import { DEFAULT_RETURN_FORMAT, FMT_BYTES, FMT_NUMBER, Web3ZondExecutionAPI } from '@theqrl/web3-types';
 import { zondRpcMethods } from '@theqrl/web3-rpc-methods';
 import { Wallet } from '@theqrl/web3-zond-accounts';
 import { sign } from '../../../src/rpc_method_wrappers';
