@@ -16,10 +16,7 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { InvalidBlockError } from '@theqrl/web3-errors';
-import {
-	isBlockTag,
-	isNullish as isNullishValidator,
-} from '@theqrl/web3-validator';
+import { isBlockTag, isNullish as isNullishValidator } from '@theqrl/web3-validator';
 import { BlockNumberOrTag, BlockTags } from '@theqrl/web3-types';
 
 /**

@@ -45,8 +45,9 @@ describe('Web3Zond.getRevertReason', () => {
 		simpleRevertDeployTransaction.gas = await web3Zond.estimateGas(
 			simpleRevertDeployTransaction,
 		);
-		simpleRevertContractAddress = (await web3Zond.sendTransaction(simpleRevertDeployTransaction))
-			.contractAddress as Address;
+		simpleRevertContractAddress = (
+			await web3Zond.sendTransaction(simpleRevertDeployTransaction)
+		).contractAddress as Address;
 	});
 
 	it('should return reason for a contract call', async () => {

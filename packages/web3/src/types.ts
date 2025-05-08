@@ -27,7 +27,7 @@ import {
 	encodeParameters,
 } from '@theqrl/web3-zond-abi';
 import {
-	//encrypt,
+	// encrypt,
 	hashMessage,
 	recoverTransaction,
 	sign,
@@ -80,7 +80,7 @@ export interface Web3ZondInterface extends Zond {
 		hashMessage: typeof hashMessage;
 		sign: typeof sign;
 		// TODO(youtrack/theqrl/web3.js/3)
-		//encrypt: typeof encrypt;
+		// encrypt: typeof encrypt;
 		// decrypt: (
 		// 	keystore: string,
 		// 	password: string,

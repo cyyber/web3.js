@@ -15,8 +15,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
-
 import { Coder, Reader, Writer } from './abstract-coder.js';
 
 // Clones the functionality of an existing Coder, but without a localName

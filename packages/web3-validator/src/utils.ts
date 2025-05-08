@@ -401,7 +401,6 @@ export const addressToHex = (value: string): string => {
 	return value.replace('Z', '0x');
 };
 
-
 /**
  * Converts value to it's hex representation
  */

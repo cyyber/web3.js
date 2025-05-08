@@ -15,8 +15,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
-
 // See: https://github.com/ethereum/wiki/wiki/Ethereum-Contract-ABI
 
 import { arrayify, BytesLike } from '@ethersproject/bytes';
@@ -82,7 +80,7 @@ export class AbiCoder {
 		if (match) {
 			const size = parseInt(match[2] || '256');
 			if (size === 0 || size > 256 || size % 8 !== 0) {
-				logger.throwArgumentError(`invalid ${  match[1]  } bit length`, 'param', param);
+				logger.throwArgumentError(`invalid ${match[1]} bit length`, 'param', param);
 			}
 			return new NumberCoder(size / 8, match[1] === 'int', param.name);
 		}

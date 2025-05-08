@@ -93,7 +93,7 @@ describe(`${getSystemTestBackend()} tests - getTransactionFromBlock`, () => {
 				publicKey: expect.any(String),
 				signature: expect.any(String),
 				to: null,
-				value: '0x0'
+				value: '0x0',
 			});
 		}
 	});

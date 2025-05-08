@@ -24,7 +24,6 @@ import { MAX_INTEGER, MAX_UINT64 } from '../../../src/tx/constants';
 import type { BaseTransaction } from '../../../src/tx/baseTransaction';
 import eip1559Fixtures from '../../fixtures/json/eip1559txs.json';
 
-
 const seedToPublic = function (seed: HexString): Uint8Array {
 	const _seed = hexToBytes(seed);
 	const buf = Buffer.from(_seed);

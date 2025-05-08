@@ -15,8 +15,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
-
 import { BigNumber } from '@ethersproject/bignumber';
 import { defineReadOnly } from '@ethersproject/properties';
 
@@ -385,27 +383,24 @@ export class ParamType {
 		// Array
 		if (this.baseType === 'array') {
 			result += this.arrayChildren.format(format);
-			result += `[${  this.arrayLength < 0 ? '' : String(this.arrayLength)  }]`;
+			result += `[${this.arrayLength < 0 ? '' : String(this.arrayLength)}]`;
 		} else if (this.baseType === 'tuple') {
-				if (format !== FormatTypes.sighash) {
-					result += this.type;
-				}
-				result +=
-					`(${ 
-					this.components
-						.map(comp => comp.format(format))
-						.join(format === FormatTypes.full ? ', ' : ',') 
-					})`;
-			} else {
+			if (format !== FormatTypes.sighash) {
 				result += this.type;
 			}
+			result += `(${this.components
+				.map(comp => comp.format(format))
+				.join(format === FormatTypes.full ? ', ' : ',')})`;
+		} else {
+			result += this.type;
+		}
 
 		if (format !== FormatTypes.sighash) {
 			if (this.indexed) {
 				result += ' indexed';
 			}
 			if (format === FormatTypes.full && this.name) {
-				result += ` ${  this.name}`;
+				result += ` ${this.name}`;
 			}
 		}
 
@@ -527,11 +522,14 @@ export abstract class Fragment {
 
 		if (value.split(' ')[0] === 'event') {
 			return EventFragment.fromString(value.substring(5).trim());
-		} if (value.split(' ')[0] === 'function') {
+		}
+		if (value.split(' ')[0] === 'function') {
 			return FunctionFragment.fromString(value.substring(8).trim());
-		} if (value.split('(')[0].trim() === 'constructor') {
+		}
+		if (value.split('(')[0].trim() === 'constructor') {
 			return ConstructorFragment.fromString(value.trim());
-		} if (value.split(' ')[0] === 'error') {
+		}
+		if (value.split(' ')[0] === 'error') {
 			return ErrorFragment.fromString(value.substring(5).trim());
 		}
 
@@ -573,13 +571,9 @@ export class EventFragment extends Fragment {
 			result += 'event ';
 		}
 
-		result +=
-			`${this.name 
-			}(${ 
-			this.inputs
-				.map(input => input.format(format))
-				.join(format === FormatTypes.full ? ', ' : ',') 
-			}) `;
+		result += `${this.name}(${this.inputs
+			.map(input => input.format(format))
+			.join(format === FormatTypes.full ? ', ' : ',')}) `;
 
 		if (format !== FormatTypes.sighash) {
 			if (this.anonymous) {
@@ -631,7 +625,7 @@ export class EventFragment extends Fragment {
 				case '':
 					break;
 				default:
-					logger.warn(`unknown modifier: ${  modifier}`);
+					logger.warn(`unknown modifier: ${modifier}`);
 			}
 		});
 
@@ -697,7 +691,7 @@ function parseModifiers(value: string, params: any): void {
 			case '':
 				break;
 			default:
-				console.log(`unknown modifier: ${  modifier}`);
+				console.log(`unknown modifier: ${modifier}`);
 		}
 	});
 }
@@ -730,7 +724,7 @@ function verifyState(value: StateInputValue): StateOutputValue {
 		if (value.constant != null) {
 			if (!!value.constant !== result.constant) {
 				logger.throwArgumentError(
-					`cannot have constant function with mutability ${  result.stateMutability}`,
+					`cannot have constant function with mutability ${result.stateMutability}`,
 					'value',
 					value,
 				);
@@ -742,7 +736,7 @@ function verifyState(value: StateInputValue): StateOutputValue {
 		if (value.payable != null) {
 			if (!!value.payable !== result.payable) {
 				logger.throwArgumentError(
-					`cannot have payable function with mutability ${  result.stateMutability}`,
+					`cannot have payable function with mutability ${result.stateMutability}`,
 					'value',
 					value,
 				);
@@ -818,15 +812,12 @@ export class ConstructorFragment extends Fragment {
 			);
 		}
 
-		let result =
-			`constructor(${ 
-			this.inputs
-				.map(input => input.format(format))
-				.join(format === FormatTypes.full ? ', ' : ',') 
-			}) `;
+		let result = `constructor(${this.inputs
+			.map(input => input.format(format))
+			.join(format === FormatTypes.full ? ', ' : ',')}) `;
 
 		if (this.stateMutability && this.stateMutability !== 'nonpayable') {
-			result += `${this.stateMutability  } `;
+			result += `${this.stateMutability} `;
 		}
 
 		return result.trim();
@@ -924,32 +915,27 @@ export class FunctionFragment extends ConstructorFragment {
 			result += 'function ';
 		}
 
-		result +=
-			`${this.name 
-			}(${ 
-			this.inputs
-				.map(input => input.format(format))
-				.join(format === FormatTypes.full ? ', ' : ',') 
-			}) `;
+		result += `${this.name}(${this.inputs
+			.map(input => input.format(format))
+			.join(format === FormatTypes.full ? ', ' : ',')}) `;
 
 		if (format !== FormatTypes.sighash) {
 			if (this.stateMutability) {
 				if (this.stateMutability !== 'nonpayable') {
-					result += `${this.stateMutability  } `;
+					result += `${this.stateMutability} `;
 				}
 			} else if (this.constant) {
 				result += 'view ';
 			}
 
 			if (this.outputs && this.outputs.length) {
-				result +=
-					`returns (${ 
-					this.outputs.map(output => output.format(format)).join(', ') 
-					}) `;
+				result += `returns (${this.outputs
+					.map(output => output.format(format))
+					.join(', ')}) `;
 			}
 
 			if (this.gas != null) {
-				result += `@${  this.gas.toString()  } `;
+				result += `@${this.gas.toString()} `;
 			}
 		}
 
@@ -1064,13 +1050,9 @@ export class ErrorFragment extends Fragment {
 			result += 'error ';
 		}
 
-		result +=
-			`${this.name 
-			}(${ 
-			this.inputs
-				.map(input => input.format(format))
-				.join(format === FormatTypes.full ? ', ' : ',') 
-			}) `;
+		result += `${this.name}(${this.inputs
+			.map(input => input.format(format))
+			.join(format === FormatTypes.full ? ', ' : ',')}) `;
 
 		return result.trim();
 	}
@@ -1126,9 +1108,9 @@ export class ErrorFragment extends Fragment {
 function verifyType(type: string): string {
 	// These need to be transformed to their full description
 	if (type.match(/^uint($|[^1-9])/)) {
-		type = `uint256${  type.substring(4)}`;
+		type = `uint256${type.substring(4)}`;
 	} else if (type.match(/^int($|[^1-9])/)) {
-		type = `int256${  type.substring(3)}`;
+		type = `int256${type.substring(3)}`;
 	}
 
 	// @TODO: more verification

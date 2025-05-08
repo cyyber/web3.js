@@ -17,7 +17,12 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { Contract } from '@theqrl/web3-zond-contract';
 import { hexToNumber, numberToHex } from '@theqrl/web3-utils';
-import { TransactionBuilder, TransactionTypeParser, Web3Context, Web3PromiEvent } from '@theqrl/web3-core';
+import {
+	TransactionBuilder,
+	TransactionTypeParser,
+	Web3Context,
+	Web3PromiEvent,
+} from '@theqrl/web3-core';
 import {
 	Hardfork,
 	SupportedProviders,
@@ -71,7 +76,7 @@ describe('defaults', () => {
 			data: BasicBytecode,
 			arguments: [10, 'string init value'],
 		};
-		sendOptions = { from: tempAcc.address /*gas: '1000000'*/ };
+		sendOptions = { from: tempAcc.address /* gas: '1000000' */ };
 	});
 
 	afterEach(async () => {

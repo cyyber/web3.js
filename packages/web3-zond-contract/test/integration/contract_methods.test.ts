@@ -108,7 +108,7 @@ describe('contract', () => {
 			it('should returns a receipt (EIP-1559, maxFeePerGas and maxPriorityFeePerGas specified)', async () => {
 				const tempAcc = await createTempAccount();
 
-				const sendOptionsLocal = { from: tempAcc.address /*gas: '1000000'*/ };
+				const sendOptionsLocal = { from: tempAcc.address /* gas: '1000000' */ };
 
 				const contractLocal = await contract.deploy(deployOptions).send(sendOptionsLocal);
 				const receipt = await contractLocal.methods

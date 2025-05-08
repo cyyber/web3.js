@@ -17,7 +17,12 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 
 import { format, toHex } from '@theqrl/web3-utils';
 import { TransactionTypeParser, Web3Context } from '@theqrl/web3-core';
-import { ZondExecutionAPI, HardforksOrdered, Transaction, ZOND_DATA_FORMAT } from '@theqrl/web3-types';
+import {
+	ZondExecutionAPI,
+	HardforksOrdered,
+	Transaction,
+	ZOND_DATA_FORMAT,
+} from '@theqrl/web3-types';
 import { Web3ValidatorError, isNullish, validator } from '@theqrl/web3-validator';
 import { InvalidPropertiesForTransactionTypeError } from '@theqrl/web3-errors';
 
@@ -27,11 +32,7 @@ const transactionType0x2Schema = {
 	type: 'object',
 };
 
-const validateTxTypeAndHandleErrors = (
-	txSchema: object,
-	tx: Transaction,
-	txType: '0x2',
-) => {
+const validateTxTypeAndHandleErrors = (txSchema: object, tx: Transaction, txType: '0x2') => {
 	try {
 		validator.validateJSONSchema(txSchema, tx);
 	} catch (error) {
@@ -89,5 +90,4 @@ export const detectTransactionType = (
 		transaction as unknown as Record<string, unknown>,
 	);
 
-	export const detectRawTransactionType = (transaction: Uint8Array) =>
-		toHex(transaction[0]);
+export const detectRawTransactionType = (transaction: Uint8Array) => toHex(transaction[0]);

@@ -15,8 +15,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
-
 import { Logger } from '@ethersproject/logger';
 import { version } from '../_version.js';
 
@@ -214,7 +212,7 @@ export class ArrayCoder extends Coder {
 	readonly length: number;
 
 	constructor(coder: Coder, length: number, localName: string) {
-		const type = `${coder.type  }[${  length >= 0 ? length : ''  }]`;
+		const type = `${coder.type}[${length >= 0 ? length : ''}]`;
 		const dynamic = length === -1 || coder.dynamic;
 		super('array', type, localName, dynamic);
 
@@ -248,7 +246,7 @@ export class ArrayCoder extends Coder {
 		logger.checkArgumentCount(
 			value.length,
 			count,
-			`coder array${  this.localName ? ` ${  this.localName}` : ''}`,
+			`coder array${this.localName ? ` ${this.localName}` : ''}`,
 		);
 
 		const coders = [];

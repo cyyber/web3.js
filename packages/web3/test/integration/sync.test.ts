@@ -45,7 +45,7 @@ const nodeInfo = async (web3: Web3) => {
 };
 // TODO(youtrack/theqrl/web3.js/5)
 describe.skip('Sync nodes test', () => {
-// describeIf((isIpc || isWs) && isSyncTest)('Sync nodes test', () => {
+	// describeIf((isIpc || isWs) && isSyncTest)('Sync nodes test', () => {
 	let web3Node1: Web3;
 	let web3Node2: Web3;
 	beforeAll(async () => {

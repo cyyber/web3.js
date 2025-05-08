@@ -24,11 +24,10 @@ import {
 	// getSystemTestProvider,
 	isIpc,
 } from '../../shared_fixtures/system_tests_utils';
-//import Web3 from '../../../src';
+// import Web3 from '../../../src';
 
 describeIf(!isIpc)('compatibility with `truffle` `HDWalletProvider` provider', () => {
-	//let provider: HDWalletProvider;
-	
+	// let provider: HDWalletProvider;
 	// beforeAll(async () => {
 	// 	const clientUrl = getSystemTestProvider();
 	// 	const account1 = await createNewAccount({ unlock: true, refill: true });

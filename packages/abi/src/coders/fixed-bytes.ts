@@ -15,8 +15,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
-
 import { arrayify, BytesLike, hexlify } from '@ethersproject/bytes';
 
 import { Coder, Reader, Writer } from './abstract-coder.js';
@@ -26,7 +24,7 @@ export class FixedBytesCoder extends Coder {
 	readonly size: number;
 
 	constructor(size: number, localName: string) {
-		const name = `bytes${  String(size)}`;
+		const name = `bytes${String(size)}`;
 		super(name, name, localName, false);
 		this.size = size;
 	}

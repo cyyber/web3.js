@@ -15,8 +15,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
-
 import { Coder, Reader, Writer } from './abstract-coder.js';
 import { pack, unpack } from './array.js';
 
@@ -32,7 +30,7 @@ export class TupleCoder extends Coder {
 			}
 			types.push(coder.type);
 		});
-		const type = `tuple(${  types.join(',')  })`;
+		const type = `tuple(${types.join(',')})`;
 
 		super('tuple', type, localName, dynamic);
 		this.coders = coders;
