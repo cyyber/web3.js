@@ -18,7 +18,6 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 import {
 	ZondExecutionAPI,
 	HexString,
-	PopulatedUnsignedEip1559Transaction,
 	PopulatedUnsignedTransaction,
 	Transaction,
 	ValidChains,
