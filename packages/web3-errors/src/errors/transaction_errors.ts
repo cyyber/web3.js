@@ -329,9 +329,8 @@ export class MissingGasError extends InvalidValueError {
 	}) {
 		super(
 			`gas: ${value.gas ?? 'undefined'}, maxPriorityFeePerGas: ${
-				value.maxPriorityFeePerGas ?? 'undefined'}, maxFeePerGas: ${
-				value.maxFeePerGas ?? 'undefined'
-			}`,
+				value.maxPriorityFeePerGas ?? 'undefined'
+			}, maxFeePerGas: ${value.maxFeePerGas ?? 'undefined'}`,
 			'"gas" is missing',
 		);
 		this.innerError = new MissingGasInnerError();
@@ -342,10 +341,7 @@ export class InvalidGas extends InvalidValueError {
 	public code = ERR_TX_INVALID_LEGACY_GAS;
 
 	public constructor(value: { gas: Numbers | undefined }) {
-		super(
-			`gas: ${value.gas ?? 'undefined'}`,
-			'Gas is lower than 0',
-		);
+		super(`gas: ${value.gas ?? 'undefined'}`, 'Gas is lower than 0');
 	}
 }
 
@@ -504,10 +500,7 @@ export class LocalWalletNotAvailableError extends InvalidValueError {
 export class InvalidPropertiesForTransactionTypeError extends BaseWeb3Error {
 	public code = ERR_TX_INVALID_PROPERTIES_FOR_TYPE;
 
-	public constructor(
-		validationError: Web3ValidationErrorObject[],
-		txType: '0x2',
-	) {
+	public constructor(validationError: Web3ValidationErrorObject[], txType: '0x2') {
 		const invalidPropertyNames: string[] = [];
 		validationError.forEach(error => invalidPropertyNames.push(error.keyword));
 		super(

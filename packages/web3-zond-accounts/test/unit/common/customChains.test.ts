@@ -14,7 +14,7 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
-import { Chain, Common, ConsensusType, /*CustomChain,*/ Hardfork } from '../../../src/common';
+import { Chain, Common, ConsensusType, /* CustomChain, */ Hardfork } from '../../../src/common';
 
 import * as testnet from '../../fixtures/common/testnet.json';
 import * as testnet2 from '../../fixtures/common/testnet2.json';

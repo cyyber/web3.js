@@ -121,7 +121,7 @@ start() {
 		--accept-terms-of-use \
 		--chain-config-file=$TMP_FOLDER/consensus/config.yml \
 		--config-file=$TMP_FOLDER/consensus/config.yml \
-		--wallet-dir=$TMP_FOLDER/consensus/prysm-wallet-v2 \
+		--wallet-dir=$TMP_FOLDER/consensus/qrysm-wallet-v2 \
 		--wallet-password-file=$TMP_FOLDER/consensus/wallet_password.txt \
 		--rpc >> ${TMP_FOLDER}/logs/validator.log 2>&1 &
 

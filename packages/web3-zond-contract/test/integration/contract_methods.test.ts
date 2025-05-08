@@ -15,10 +15,10 @@ You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 import { ContractExecutionError } from '@theqrl/web3-errors';
+import { isNullish } from '@theqrl/web3-utils';
 import { Contract } from '../../src';
 import { BasicAbi, BasicBytecode } from '../shared_fixtures/build/Basic';
 import { getSystemTestProvider, createTempAccount } from '../fixtures/system_test_utils';
-import { isNullish } from '@theqrl/web3-utils';
 
 describe('contract', () => {
 	let contract: Contract<typeof BasicAbi>;
@@ -108,15 +108,15 @@ describe('contract', () => {
 			it('should returns a receipt (EIP-1559, maxFeePerGas and maxPriorityFeePerGas specified)', async () => {
 				const tempAcc = await createTempAccount();
 
-				const sendOptionsLocal = { from: tempAcc.address, /*gas: '1000000'*/ };
+				const sendOptionsLocal = { from: tempAcc.address /* gas: '1000000' */ };
 
 				const contractLocal = await contract.deploy(deployOptions).send(sendOptionsLocal);
 				const receipt = await contractLocal.methods
 					.setValues(1, 'string value', true)
 					.send({
 						...sendOptionsLocal,
-						maxFeePerGas: '0x59682F00', // 1.5 Gwei
-						maxPriorityFeePerGas: '0x1DCD6500', // .5 Gwei
+						maxFeePerGas: '0x59682F00', // 1.5 Gplanck
+						maxPriorityFeePerGas: '0x1DCD6500', // .5 Gplanck
 						type: '0x2',
 					});
 
@@ -153,14 +153,16 @@ describe('contract', () => {
 				).rejects.toMatchObject({
 					name: 'TransactionRevertedWithoutReasonError',
 					receipt: {
-						cumulativeGasUsed: BigInt(21543),
+						cumulativeGasUsed: BigInt(21537),
 						from: acc.address,
-						gasUsed: BigInt(21543),
+						gasUsed: BigInt(21537),
 						logs: [],
 						logsBloom:
 							'0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000',
 						status: BigInt(0),
-						to: isNullish(contractDeployed.options.address) ? contractDeployed.options.address : `Z${contractDeployed.options.address.slice(1).toLowerCase()}`,
+						to: isNullish(contractDeployed.options.address)
+							? contractDeployed.options.address
+							: `Z${contractDeployed.options.address.slice(1).toLowerCase()}`,
 						transactionIndex: BigInt(0),
 						type: BigInt(2),
 					},

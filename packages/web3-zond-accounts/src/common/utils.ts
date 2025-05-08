@@ -49,7 +49,7 @@ const intToHex = function (i: number) {
 };
 
 /**
- * Converts Gzond genesis parameters to an ZondJS compatible `CommonOpts` object
+ * Converts Gzond genesis parameters to a ZondJS compatible `CommonOpts` object
  * @param json object representing the Gzond genesis file hardfork
  * @returns genesis parameters in a `CommonOpts` compliant object
  */
@@ -71,8 +71,7 @@ function parseGzondParams(json: any) {
 		baseFeePerGas: string;
 	} = json;
 	// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-	let { extraData, timestamp }: { extraData: string; timestamp: string } =
-		json;
+	let { extraData, timestamp }: { extraData: string; timestamp: string } = json;
 	const genesisTimestamp = Number(timestamp);
 	// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 	const { chainId }: { chainId: number } = config;
@@ -108,13 +107,12 @@ function parseGzondParams(json: any) {
 			type: 'pos',
 			algorithm: 'casper',
 			casper: {},
-	  	}	
+		},
 	};
 
-	const forkMap: { [key: string]: { name: string; isTimestamp?: boolean } } =
-		{
-			// [Hardfork.Shanghai]: { name: 'shanghaiTime', isTimestamp: true }, 
-		};
+	const forkMap: { [key: string]: { name: string; isTimestamp?: boolean } } = {
+		// [Hardfork.Shanghai]: { name: 'shanghaiTime', isTimestamp: true },
+	};
 
 	// forkMapRev is the map from config field name to Hardfork
 	const forkMapRev = Object.keys(forkMap).reduce<{ [key: string]: string }>((acc, elem) => {

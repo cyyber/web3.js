@@ -18,7 +18,6 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 import {
 	ZondExecutionAPI,
 	HexString,
-	PopulatedUnsignedEip1559Transaction,
 	PopulatedUnsignedTransaction,
 	Transaction,
 	ValidChains,
@@ -44,13 +43,13 @@ const getZondjsTxDataFromTransaction = (
 	type: transaction.type,
 	chainId: transaction.chainId,
 	accessList: (
-		transaction as FormatType<PopulatedUnsignedEip1559Transaction, typeof ZOND_DATA_FORMAT>
+		transaction 
 	).accessList,
 	maxPriorityFeePerGas: (
-		transaction as FormatType<PopulatedUnsignedEip1559Transaction, typeof ZOND_DATA_FORMAT>
+		transaction 
 	).maxPriorityFeePerGas,
 	maxFeePerGas: (
-		transaction as FormatType<PopulatedUnsignedEip1559Transaction, typeof ZOND_DATA_FORMAT>
+		transaction 
 	).maxFeePerGas,
 });
 

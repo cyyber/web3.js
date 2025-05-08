@@ -77,8 +77,7 @@ export const getE2ETestAccountSeed = (): string => {
 		return process.env.TEST_ACCOUNT_PRIVATE_KEY;
 		// eslint-disable-next-line no-else-return
 	} else if (getSystemTestBackend() === 'testnet' || getSystemTestBackend() === 'mainnet') {
-		return secrets[getSystemTestBackend().toUpperCase() as 'TESTNET' | 'MAINNET'].ACCOUNT
-			.seed;
+		return secrets[getSystemTestBackend().toUpperCase() as 'TESTNET' | 'MAINNET'].ACCOUNT.seed;
 	}
 
 	throw new Error('Unable to get test account private key');

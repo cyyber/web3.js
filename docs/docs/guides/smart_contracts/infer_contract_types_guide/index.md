@@ -12,12 +12,12 @@ Web3.js uses ABI type to dynamically load available methods and events but Types
 
 ```typescript
 import { Contract, Web3 } from 'web3';
-import ERC20 from './node_modules/@openzeppelin/contracts/build/contracts/ERC20.json';
+import ZRC20 from './node_modules/@theqrl/zond-contracts/build/contracts/ZRC20.json';
 
 (async function () {
 	const web3 = new Web3('rpc url');
 
-	const contract = new Contract(ERC20.abi, 'Z7af963cF6D228E564e2A0aA0DdBF06210B38615D', web3);
+	const contract = new Contract(ZRC20.abi, 'Z7af963cF6D228E564e2A0aA0DdBF06210B38615D', web3);
 
 	const holder = 'Za8F6eB216e26C1F7d924A801E46eaE0CE8ed1A0A';
 
@@ -32,7 +32,7 @@ To work around it you need to copy abi into a Typescript file like this:
 import {Contract, Web3} from "web3";
 
 
-const ERC20 = [
+const ZRC20 = [
     ...
     // "as const" is important part, without it typescript would create generic type and remove available methods from type
 ] as const;
@@ -40,7 +40,7 @@ const ERC20 = [
 (async function() {
     const web3 = new Web3("rpc url")
 
-    const contract = new Contract(ERC20, "Z7af963cF6D228E564e2A0aA0DdBF06210B38615D", web3)
+    const contract = new Contract(ZRC20, "Z7af963cF6D228E564e2A0aA0DdBF06210B38615D", web3)
 
     const holder = "Za8F6eB216e26C1F7d924A801E46eaE0CE8ed1A0A"
 
@@ -90,8 +90,8 @@ To use this script, just create an `artifacts.json` file at the root of your pro
 
 ```json title="artifacts.json"
 [
-	"@openzeppelin/contracts/build/contracts/ERC20.json",
-	"@openzeppelin/contracts/build/contracts/ERC1155.json",
+	"@theqrl/zond-contracts/build/contracts/ZRC20.json",
+	"@theqrl/zond-contracts/build/contracts/ZRC1155.json",
 	"./build/contracts/MyContract.json"
 ]
 ```
@@ -101,13 +101,13 @@ use those generated files in your code:
 
 ```typescript
 import { Contract, ContractAbi, Web3 } from 'web3';
-import ERC20 from './artifacts/ERC20';
+import ZRC20 from './artifacts/ZRC20';
 
 (async function () {
 	const web3 = new Web3('https://goerli.infura.io/v3/fd1f29ab70844ef48e644489a411d4b3');
 
 	const contract = new Contract(
-		ERC20.abi as ContractAbi,
+		ZRC20.abi as ContractAbi,
 		'Z7af963cF6D228E564e2A0aA0DdBF06210B38615D',
 		web3,
 	);

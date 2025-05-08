@@ -31,7 +31,7 @@ import {
 import { CipherOptions, KeyStore } from '@theqrl/web3-types';
 import { hexToBytes } from '@theqrl/web3-utils';
 import { FeeMarketEIP1559TxData } from '../../src/tx/types';
-import { sign, signTransaction/*, encrypt */} from '../../src/account';
+import { sign, signTransaction /* , encrypt */ } from '../../src/account';
 
 export const validPublicKeyToAddressData: [string, string][] = [
 	[
@@ -52,18 +52,17 @@ export const validPublicKeyToAddressData: [string, string][] = [
 	],
 ];
 
-export const invalidPublicKeyToAddressData: [
-	any,
-	PublicKeyLengthError | InvalidPublicKeyError,
-][] = [
-	['', new InvalidPublicKeyError()],
-	[new Uint8Array([]), new PublicKeyLengthError()],
-];
+export const invalidPublicKeyToAddressData: [any, PublicKeyLengthError | InvalidPublicKeyError][] =
+	[
+		['', new InvalidPublicKeyError()],
+		[new Uint8Array([]), new PublicKeyLengthError()],
+	];
 
 export const validSeedtoAccountData: [any, any][] = [
 	[
 		{
-			address: '0x034da61fe50c659a3285549dc395571e2bf6891c462c041e3c6b9061fc73eb3687d03f940e5e65d582019ef10ce1327f',
+			address:
+				'0x034da61fe50c659a3285549dc395571e2bf6891c462c041e3c6b9061fc73eb3687d03f940e5e65d582019ef10ce1327f',
 			ignoreLength: false,
 		},
 		{
@@ -72,22 +71,26 @@ export const validSeedtoAccountData: [any, any][] = [
 			sign,
 			signTransaction,
 			// TODO(youtrack/theqrl/web3.js/3)
-			//encrypt,
+			// encrypt,
 		},
 	],
 	[
-		{ address: '0x7fc43a2ccb557f900d4ca924c187b4438a7f8185b8edbfbabdd26b87f125594495268f55ceac9c9eb23efaab76b0d4c5' },
+		{
+			address:
+				'0x7fc43a2ccb557f900d4ca924c187b4438a7f8185b8edbfbabdd26b87f125594495268f55ceac9c9eb23efaab76b0d4c5',
+		},
 		{
 			address: 'Z20618F56c422D34b190B9B49a636a3429B927A91',
 			seed: '0x7fc43a2ccb557f900d4ca924c187b4438a7f8185b8edbfbabdd26b87f125594495268f55ceac9c9eb23efaab76b0d4c5',
 			sign,
 			signTransaction,
-			//encrypt,
+			// encrypt,
 		},
 	],
 	[
 		{
-			address: '0xc902ea9bbf1dd51aaa2ee9bed126aba921f6a6afac9cf09a21f3d915b057bace6787a894a71d1d103992aca0a6a4250c', // ignoreLength parameter set true
+			address:
+				'0xc902ea9bbf1dd51aaa2ee9bed126aba921f6a6afac9cf09a21f3d915b057bace6787a894a71d1d103992aca0a6a4250c', // ignoreLength parameter set true
 			ignoreLength: true,
 		},
 		{
@@ -95,7 +98,7 @@ export const validSeedtoAccountData: [any, any][] = [
 			seed: '0xc902ea9bbf1dd51aaa2ee9bed126aba921f6a6afac9cf09a21f3d915b057bace6787a894a71d1d103992aca0a6a4250c',
 			sign,
 			signTransaction,
-			//encrypt,
+			// encrypt,
 		},
 	],
 ];
@@ -173,10 +176,7 @@ export const transactionsTestData: [FeeMarketEIP1559TxData][] = [
 	],
 ];
 
-export const invalidSeedtoAccountData: [
-	any,
-	SeedLengthError | InvalidSeedError,
-][] = [
+export const invalidSeedtoAccountData: [any, SeedLengthError | InvalidSeedError][] = [
 	['', new InvalidSeedError()],
 	[new Uint8Array([]), new SeedLengthError()],
 ];

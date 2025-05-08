@@ -341,7 +341,7 @@ export class Web3Context<
 	/**
 	 * Will return the givenProvider if available.
 	 *
-	 * When using web3.js in an Zond compatible browser, it will set with the current native provider by that browser. Will return the given provider by the (browser) environment, otherwise `undefined`.
+	 * When using web3.js in a Zond compatible browser, it will set with the current native provider by that browser. Will return the given provider by the (browser) environment, otherwise `undefined`.
 	 */
 	// eslint-disable-next-line class-methods-use-this
 	public get givenProvider() {

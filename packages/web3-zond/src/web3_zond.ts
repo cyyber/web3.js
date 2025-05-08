@@ -153,7 +153,7 @@ export class Web3Zond extends Web3Context<Web3ZondExecutionAPI, RegisteredSubscr
 
 	/**
 	 * @param returnFormat ({@link DataFormat} defaults to {@link DEFAULT_RETURN_FORMAT}) Specifies how the return data should be formatted.
-	 * @returns the current maxPriorityFeePerGas per gas in wei.
+	 * @returns the current maxPriorityFeePerGas per gas in planck.
 	 *
 	 * ```ts
 	 * web3.zond.getMaxPriorityFeePerGas().then(console.log);
@@ -163,9 +163,9 @@ export class Web3Zond extends Web3Context<Web3ZondExecutionAPI, RegisteredSubscr
 	 * > "0x4a817c800"
 	 * ```
 	 */
-	public async getMaxPriorityFeePerGas<ReturnFormat extends DataFormat = typeof DEFAULT_RETURN_FORMAT>(
-		returnFormat: ReturnFormat = DEFAULT_RETURN_FORMAT as ReturnFormat,
-	) {
+	public async getMaxPriorityFeePerGas<
+		ReturnFormat extends DataFormat = typeof DEFAULT_RETURN_FORMAT,
+	>(returnFormat: ReturnFormat = DEFAULT_RETURN_FORMAT as ReturnFormat) {
 		return rpcMethodsWrappers.getMaxPriorityFeePerGas(this, returnFormat);
 	}
 
@@ -174,7 +174,7 @@ export class Web3Zond extends Web3Context<Web3ZondExecutionAPI, RegisteredSubscr
 	 * `maxFeePerGas` and `maxPriorityFeePerGas` will be calculated.
 	 *
 	 * @param baseFeePerGasFactor The factor to multiply the baseFeePerGas with, if the node supports EIP-1559.
-	 * @param alternativeMaxPriorityFeePerGas The alternative maxPriorityFeePerGas to use, if the node supports EIP-1559, but does not support the method `eth_maxPriorityFeePerGas`.
+	 * @param alternativeMaxPriorityFeePerGas The alternative maxPriorityFeePerGas to use, if the node supports EIP-1559, but does not support the method `zond_maxPriorityFeePerGas`.
 	 * @returns The current fee data.
 	 *
 	 * ```ts
@@ -185,7 +185,7 @@ export class Web3Zond extends Web3Context<Web3ZondExecutionAPI, RegisteredSubscr
 	 * 	   baseFeePerGas: 20000000000n
 	 * }
 	 *
-	 * web3.zond.calculateFeeData(zondUnitMap.Gwei, 2n).then(console.log);
+	 * web3.zond.calculateFeeData(zondUnitMap.Gplanck, 2n).then(console.log);
 	 * > {
 	 *     maxFeePerGas: 40000000000n,
 	 *     maxPriorityFeePerGas: 20000000000n,
@@ -195,7 +195,7 @@ export class Web3Zond extends Web3Context<Web3ZondExecutionAPI, RegisteredSubscr
 	 */
 	public async calculateFeeData(
 		baseFeePerGasFactor = BigInt(2),
-		alternativeMaxPriorityFeePerGas = zondUnitMap.Gwei,
+		alternativeMaxPriorityFeePerGas = zondUnitMap.Gplanck,
 	): Promise<FeeData> {
 		const block = await this.getBlock<{ number: FMT_NUMBER.BIGINT; bytes: FMT_BYTES.HEX }>(
 			undefined,
@@ -267,7 +267,7 @@ export class Web3Zond extends Web3Context<Web3ZondExecutionAPI, RegisteredSubscr
 	 * @param address The address to get the balance of.
 	 * @param blockNumber ({@link BlockNumberOrTag} defaults to {@link Web3Zond.defaultBlock}) Specifies what block to use as the current state for the balance query.
 	 * @param returnFormat ({@link DataFormat} defaults to {@link DEFAULT_RETURN_FORMAT}) Specifies how the return data should be formatted.
-	 * @returns The current balance for the given address in `wei`.
+	 * @returns The current balance for the given address in `planck`.
 	 *
 	 * ```ts
 	 * web3.zond.getBalance("Z407d73d8a49eeb85d32cf465507dd71d507100c1").then(console.log);

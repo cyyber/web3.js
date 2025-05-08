@@ -19,15 +19,12 @@ import { ZondExecutionAPI } from '@theqrl/web3-types';
 import { Web3Context } from '@theqrl/web3-core';
 import HttpProvider from '@theqrl/web3-providers-http';
 import { isNullish } from '@theqrl/web3-validator';
-import {
-	FeeMarketEIP1559Transaction,
-} from '@theqrl/web3-zond-accounts';
+import { FeeMarketEIP1559Transaction } from '@theqrl/web3-zond-accounts';
 import { zondRpcMethods } from '@theqrl/web3-rpc-methods';
 
 import { bytesToHex, hexToBytes } from '@theqrl/web3-utils';
 import { prepareTransactionForSigning } from '../../src/utils/prepare_transaction_for_signing';
 import { validTransactions } from '../fixtures/prepare_transaction_for_signing';
-
 
 describe('prepareTransactionForSigning', () => {
 	const web3Context = new Web3Context<ZondExecutionAPI>({
@@ -65,15 +62,11 @@ describe('prepareTransactionForSigning', () => {
 				);
 
 				// should produce an web3-utils/tx instance
-				expect(
-					zondjsTx instanceof FeeMarketEIP1559Transaction,
-				).toBeTruthy();
+				expect(zondjsTx instanceof FeeMarketEIP1559Transaction).toBeTruthy();
 				expect(zondjsTx.sign).toBeDefined();
 
 				// should sign transaction
-				const signedTransaction = zondjsTx.sign(
-					hexToBytes(expectedSeed.substring(2)),
-				);
+				const signedTransaction = zondjsTx.sign(hexToBytes(expectedSeed.substring(2)));
 
 				const senderAddress = signedTransaction.getSenderAddress().toString();
 				expect(senderAddress).toBe(`Z${expectedAddress.slice(1).toLowerCase()}`);
@@ -89,13 +82,13 @@ describe('prepareTransactionForSigning', () => {
 				// should be able to obtain expectedMessageToSign
 				const messageToSign = bytesToHex(signedTransaction.getMessageToSign());
 				expect(messageToSign).toBe(expectedMessageToSign);
-				
+
 				// should have expected public key and signature
 				const publicKey = !isNullish(signedTransaction.publicKey)
-					? bytesToHex(signedTransaction.publicKey!)
+					? bytesToHex(signedTransaction.publicKey)
 					: '';
 				const signature = !isNullish(signedTransaction.signature)
-					? bytesToHex(signedTransaction.signature!)
+					? bytesToHex(signedTransaction.signature)
 					: '';
 				expect(publicKey).toBe(expectedPublicKey);
 				expect(signature).toBe(expectedSignature);

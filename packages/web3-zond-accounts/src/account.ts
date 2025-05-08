@@ -23,12 +23,7 @@ import {
 	TransactionSigningError,
 	UndefinedRawTransactionError,
 } from '@theqrl/web3-errors';
-import {
-	Address,
-	Bytes,
-	HexString,
-	Transaction,
-} from '@theqrl/web3-types';
+import { Address, Bytes, HexString, Transaction } from '@theqrl/web3-types';
 import {
 	bytesToUint8Array,
 	bytesToHex,
@@ -44,14 +39,9 @@ import {
 
 import { isHexStrict, isNullish } from '@theqrl/web3-validator';
 import { CryptoPublicKeyBytes } from '@theqrl/dilithium5';
-import { Dilithium, getDilithiumAddressFromPK } from '@theqrl/wallet.js'
+import { Dilithium, getDilithiumAddressFromPK } from '@theqrl/wallet.js';
 import { TransactionFactory } from './tx/transactionFactory.js';
-import type {
-	SignTransactionResult,
-	TypedTransaction,
-	Web3Account,
-	SignResult,
-} from './types.js';
+import type { SignTransactionResult, TypedTransaction, Web3Account, SignResult } from './types.js';
 
 /**
  * Get the public key Uint8Array after the validation
@@ -96,9 +86,7 @@ export const hashMessage = (message: string): string => {
 
 	const messageBytes = hexToBytes(messageHex);
 
-	const preamble = hexToBytes(
-		fromUtf8(`\x19Zond Signed Message:\n${messageBytes.byteLength}`),
-	);
+	const preamble = hexToBytes(fromUtf8(`\x19Zond Signed Message:\n${messageBytes.byteLength}`));
 
 	const zondMessage = uint8ArrayConcat(preamble, messageBytes);
 
@@ -228,12 +216,11 @@ export const recoverTransaction = (rawTransaction: HexString): Address => {
  * ```
  */
 export const publicKeyToAddress = (publicKey: Bytes): string => {
-	const publicKeyUint8Array = parseAndValidatePublicKey(publicKey);	
+	const publicKeyUint8Array = parseAndValidatePublicKey(publicKey);
 	const address = getDilithiumAddressFromPK(publicKeyUint8Array);
 
 	return toChecksumAddress(hexToAddress(bytesToHex(address)));
 };
-
 
 // TODO(youtrack/theqrl/web3.js/3)
 /**
@@ -406,11 +393,10 @@ export const publicKeyToAddress = (publicKey: Bytes): string => {
 // 	};
 // };
 
-
 /**
  * Get the seed Uint8Array after the validation
  */
-export const parseAndValidateSeed = (data: Bytes , ignoreLength?: boolean): Uint8Array => {
+export const parseAndValidateSeed = (data: Bytes, ignoreLength?: boolean): Uint8Array => {
 	let seedUint8Array: Uint8Array;
 
 	// To avoid the case of 1 character less in a hex string which is prefixed with '0' by using 'bytesToUint8Array'
@@ -430,7 +416,6 @@ export const parseAndValidateSeed = (data: Bytes , ignoreLength?: boolean): Uint
 
 	return seedUint8Array;
 };
-
 
 /**
  * Get an Account object from the seed

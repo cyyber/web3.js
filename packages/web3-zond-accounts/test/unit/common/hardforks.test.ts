@@ -20,9 +20,7 @@ import { Chain, Common, ConsensusAlgorithm, ConsensusType, Hardfork } from '../.
 
 describe('[Common]: Hardfork logic', () => {
 	it('Hardfork access', () => {
-		const supportedHardforks = [
-			Hardfork.Shanghai,
-		];
+		const supportedHardforks = [Hardfork.Shanghai];
 		let c;
 
 		for (const hardfork of supportedHardforks) {
@@ -32,7 +30,7 @@ describe('[Common]: Hardfork logic', () => {
 	});
 
 	it('getHardforkByBlockNumber() / setHardforkByBlockNumber()', () => {
-		let c = new Common({ chain: Chain.Mainnet });
+		const c = new Common({ chain: Chain.Mainnet });
 
 		expect(c.getHardforkByBlockNumber(0)).toEqual(Hardfork.Shanghai);
 		expect(c.getHardforkByBlockNumber(1149999)).toEqual(Hardfork.Shanghai);

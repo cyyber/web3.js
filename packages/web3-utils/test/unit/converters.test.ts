@@ -21,7 +21,7 @@ import {
 	fromAscii,
 	fromDecimal,
 	fromUtf8,
-	fromWei,
+	fromPlanck,
 	hexToAscii,
 	hexToBytes,
 	hexToNumber,
@@ -35,7 +35,7 @@ import {
 	toHex,
 	toNumber,
 	toUtf8,
-	toWei,
+	toPlanck,
 	utf8ToHex,
 	toChecksumAddress,
 	bytesToUint8Array,
@@ -49,8 +49,8 @@ import {
 	asciiToHexValidData,
 	bytesToHexInvalidData,
 	bytesToHexValidData,
-	fromWeiInvalidData,
-	fromWeiValidData,
+	fromPlanckInvalidData,
+	fromPlanckValidData,
 	hexToAsciiValidData,
 	hexToBytesInvalidData,
 	hexToBytesValidData,
@@ -63,8 +63,8 @@ import {
 	numberToHexValidData,
 	toHexValidData,
 	toHexInvalidData,
-	toWeiInvalidData,
-	toWeiValidData,
+	toPlanckInvalidData,
+	toPlanckValidData,
 	utf8ToHexInvalidData,
 	utf8ToHexValidData,
 	toCheckSumValidData,
@@ -386,30 +386,30 @@ describe('converters', () => {
 		});
 	});
 
-	describe('fromWei', () => {
+	describe('fromPlanck', () => {
 		describe('valid cases', () => {
-			it.each(fromWeiValidData)('%s', (input, output) => {
-				expect(fromWei(input[0], input[1])).toEqual(output);
+			it.each(fromPlanckValidData)('%s', (input, output) => {
+				expect(fromPlanck(input[0], input[1])).toEqual(output);
 			});
 		});
 
 		describe('invalid cases', () => {
-			it.each(fromWeiInvalidData)('%s', (input, output) => {
-				expect(() => fromWei(input[0], input[1])).toThrow(output);
+			it.each(fromPlanckInvalidData)('%s', (input, output) => {
+				expect(() => fromPlanck(input[0], input[1])).toThrow(output);
 			});
 		});
 	});
 
-	describe('toWei', () => {
+	describe('toPlanck', () => {
 		describe('valid cases', () => {
-			it.each(toWeiValidData)('%s', (input, output) => {
-				expect(toWei(output, input[1])).toEqual(input[0].toString());
+			it.each(toPlanckValidData)('%s', (input, output) => {
+				expect(toPlanck(output, input[1])).toEqual(input[0].toString());
 			});
 		});
 
 		describe('invalid cases', () => {
-			it.each(toWeiInvalidData)('%s', (input, output) => {
-				expect(() => toWei(input[0], input[1])).toThrow(output);
+			it.each(toPlanckInvalidData)('%s', (input, output) => {
+				expect(() => toPlanck(input[0], input[1])).toThrow(output);
 			});
 		});
 	});

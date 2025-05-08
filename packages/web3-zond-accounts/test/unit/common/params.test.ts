@@ -48,9 +48,7 @@ describe('[Common]: Parameter access for param(), paramByHardfork()', () => {
 	it('Parameter updates', () => {
 		const c = new Common({ chain: Chain.Mainnet });
 
-		expect(c.paramByHardfork('gasPrices', 'ecAdd', 'shanghai')).toEqual(
-			BigInt(150),
-		);
+		expect(c.paramByHardfork('gasPrices', 'ecAdd', 'shanghai')).toEqual(BigInt(150));
 
 		// expect(c.paramByHardfork('pow', 'minerReward', 'byzantium')).toEqual(
 		// 	BigInt(3000000000000000000),

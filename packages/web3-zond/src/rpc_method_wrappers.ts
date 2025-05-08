@@ -321,7 +321,11 @@ export async function getTransactionFromBlock<ReturnFormat extends DataFormat>(
 	transactionIndex: Numbers,
 	returnFormat: ReturnFormat,
 ) {
-	const transactionIndexFormatted = format({ format: 'uint' }, transactionIndex, ZOND_DATA_FORMAT);
+	const transactionIndexFormatted = format(
+		{ format: 'uint' },
+		transactionIndex,
+		ZOND_DATA_FORMAT,
+	);
 
 	let response;
 	if (isBytes(block)) {

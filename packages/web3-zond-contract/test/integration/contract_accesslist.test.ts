@@ -15,6 +15,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { isNullish } from '@theqrl/web3-utils';
 import { Contract } from '../../src';
 import { GreeterBytecode, GreeterAbi } from '../shared_fixtures/build/Greeter';
 import {
@@ -23,7 +24,6 @@ import {
 	describeIf,
 	getSystemTestBackend,
 } from '../fixtures/system_test_utils';
-import { isNullish } from '@theqrl/web3-utils';
 
 describe('contract', () => {
 	describeIf(getSystemTestBackend() === 'gzond')('createAccessList', () => {
@@ -43,7 +43,7 @@ describe('contract', () => {
 				arguments: ['My Greeting'],
 			};
 
-			sendOptions = { from: acc.address, /*gas: '1000000'*/ };
+			sendOptions = { from: acc.address /* gas: '1000000' */ };
 		});
 
 		it('create access list for setter', async () => {
@@ -62,13 +62,15 @@ describe('contract', () => {
 			const accessListResult = {
 				accessList: [
 					{
-						address: isNullish(deployedContract.options.address) ? deployedContract.options.address : `Z${deployedContract.options.address.slice(1).toLowerCase()}`,
+						address: isNullish(deployedContract.options.address)
+							? deployedContract.options.address
+							: `Z${deployedContract.options.address.slice(1).toLowerCase()}`,
 						storageKeys: [
 							'0x0000000000000000000000000000000000000000000000000000000000000001',
 						],
 					},
 				],
-				gasUsed: '0x866b',
+				gasUsed: '0x863a',
 			};
 
 			expect(accessList).toStrictEqual(accessListResult);
@@ -88,13 +90,15 @@ describe('contract', () => {
 			const accessListResult = {
 				accessList: [
 					{
-						address: isNullish(deployedContract.options.address) ? deployedContract.options.address : `Z${deployedContract.options.address.slice(1).toLowerCase()}`,
+						address: isNullish(deployedContract.options.address)
+							? deployedContract.options.address
+							: `Z${deployedContract.options.address.slice(1).toLowerCase()}`,
 						storageKeys: [
 							'0x0000000000000000000000000000000000000000000000000000000000000001',
 						],
 					},
 				],
-				gasUsed: '0x68ab',
+				gasUsed: '0x68a0',
 			};
 
 			expect(accessList).toStrictEqual(accessListResult);

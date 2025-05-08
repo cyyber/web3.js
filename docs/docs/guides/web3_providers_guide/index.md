@@ -7,7 +7,7 @@ sidebar_label: 'Providers'
 
 ## Introduction
 
-web3.js providers are objects responsible for enabling connectivity with the Zond network in various ways. Connecting your web application to an Zond node is necessary for sending transactions, querying data, and interacting with smart contracts on the network. In this guide, we will explore the different types of providers available in web3.js, how to set them up, and how to use them in your code.
+web3.js providers are objects responsible for enabling connectivity with the Zond network in various ways. Connecting your web application to a Zond node is necessary for sending transactions, querying data, and interacting with smart contracts on the network. In this guide, we will explore the different types of providers available in web3.js, how to set them up, and how to use them in your code.
 
 Connecting to a chain happens through a provider. You can pass the provider to the constructor as in the following example:
 

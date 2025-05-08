@@ -4,10 +4,7 @@
 		"outDir": "./lib/esm",
 		"strictNullChecks": false,
 		"target": "es2022",
-		"lib": [
-			"es2020",
-			"es5"
-		],
+		"lib": ["es2020", "es5"],
 		"noUnusedParameters": false,
 		// "moduleResolution": "node16",
 		"importHelpers": true,

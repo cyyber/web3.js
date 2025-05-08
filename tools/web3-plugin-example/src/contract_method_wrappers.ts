@@ -16,10 +16,16 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 import { Web3PluginBase } from '@theqrl/web3-core';
 import Contract from '@theqrl/web3-zond-contract';
-import { Address, ContractAbi, DataFormat, DEFAULT_RETURN_FORMAT, Numbers } from '@theqrl/web3-types';
+import {
+	Address,
+	ContractAbi,
+	DataFormat,
+	DEFAULT_RETURN_FORMAT,
+	Numbers,
+} from '@theqrl/web3-types';
 import { format, numberToHex } from '@theqrl/web3-utils';
 // eslint-disable-next-line require-extensions/require-extensions
-import { ERC20TokenAbi } from './ERC20Token';
+import { ZRC20TokenAbi } from './ZRC20Token';
 // eslint-disable-next-line require-extensions/require-extensions
 import { Web3Context } from './reexported_web3_context';
 
@@ -28,7 +34,7 @@ export class ContractMethodWrappersPlugin extends Web3PluginBase {
 
 	// This should be private, but it's public so _contract.requestManager.send can
 	// be mocked in contract_method_wrappers.test.ts
-	public readonly _contract: Contract<typeof ERC20TokenAbi>;
+	public readonly _contract: Contract<typeof ZRC20TokenAbi>;
 
 	public constructor(abi: ContractAbi, address: Address) {
 		super();

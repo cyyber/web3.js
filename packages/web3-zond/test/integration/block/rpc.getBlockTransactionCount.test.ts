@@ -19,7 +19,7 @@ import { SupportedProviders, TransactionReceipt } from '@theqrl/web3-types';
 import { Contract } from '@theqrl/web3-zond-contract';
 import { Web3Zond } from '../../../src';
 import {
-	//getSystemTestBackend,
+	// getSystemTestBackend,
 	getSystemTestProvider,
 	createTempAccount,
 	closeOpenConnection,
@@ -67,7 +67,7 @@ describe('rpc with block', () => {
 	});
 	beforeAll(async () => {
 		tempAcc = await createTempAccount();
-		sendOptions = { from: tempAcc.address, /*gas: '1000000'*/ };
+		sendOptions = { from: tempAcc.address /* gas: '1000000' */ };
 
 		await contract.deploy(deployOptions).send(sendOptions);
 		const [receipt]: TransactionReceipt[] = await sendFewTxes({

@@ -81,7 +81,7 @@ To connect to the Zond network using the HTTP provider, follow these steps:
     		const transactionReceipt = await web3.zond.sendTransaction({
     			from: accounts[0],
     			to: accounts[1],
-    			value: web3.utils.toWei('0.001', 'ether'),
+    			value: web3.utils.toPlanck('0.001', 'zond'),
     		});
     		console.log('Transaction Receipt:', transactionReceipt);
 
@@ -185,7 +185,7 @@ async function main() {
 		const transactionReceipt = await web3.zond.sendTransaction({
 			from: accounts[0],
 			to: accounts[1],
-			value: web3.utils.toWei('0.001', 'ether'),
+			value: web3.utils.toPlanck('0.001', 'zond'),
 		});
 		console.log('Transaction Receipt:', transactionReceipt);
 	} catch (error) {
@@ -242,7 +242,7 @@ Unsubscribed from new block headers.
 
 ### IPC Provider (for Node.js)
 
-The IPC Provider allows you to connect to an Zond node using Inter-Process Communication (IPC) in a Node.js environment. This provider is useful when you have a local Zond node running on your machine and want to interact with it using Node.js.
+The IPC Provider allows you to connect to a Zond node using Inter-Process Communication (IPC) in a Node.js environment. This provider is useful when you have a local Zond node running on your machine and want to interact with it using Node.js.
 
 In the following steps you will run `gzond` in development mode and you will run a piece of code that reads the Zond accounts and sends a transaction:
 
@@ -312,7 +312,7 @@ INFO [12-10|15:10:37.127] Mapped network port		  	proto=udp extport=0 intport=30
     		const transactionReceipt = await web3.zond.sendTransaction({
     			from: accounts[0],
     			to: accounts[0], // sending a self-transaction
-    			value: web3.utils.toWei('0.001', 'ether'),
+    			value: web3.utils.toPlanck('0.001', 'zond'),
     		});
     		console.log('Transaction Receipt:', transactionReceipt);
     	} catch (error) {
@@ -384,7 +384,7 @@ Here is a step-by-step example and a code snippet to connect your web applicatio
     const web3 = new Web3(provider);
 
     // Get the current block number from the network
-    web3.eth
+    web3.zond
     	.getBlockNumber()
     	.then(function (blockNumber) {
     		console.log('Current block number:', blockNumber);
@@ -418,7 +418,7 @@ The sample above connected you to the Zond network using truffle HD Wallet-enabl
 
 ### Browser Injected Zond Provider
 
-It is easy to connect to the Zond network using an Zond browser extension such as MetaMask, or an Zond-enabled browser like the browser inside TrustWallet. Because they inject their provider object into the browser's JavaScript context, enabling direct interaction with the Zond network from your web application. Moreover, the wallet management is conveniently handled by these extensions or browsers, making it the standard approach for DApp developers to facilitate user interactions with the Zond network.
+It is easy to connect to the Zond network using a Zond browser extension such as MetaMask, or a Zond-enabled browser like the browser inside TrustWallet. Because they inject their provider object into the browser's JavaScript context, enabling direct interaction with the Zond network from your web application. Moreover, the wallet management is conveniently handled by these extensions or browsers, making it the standard approach for DApp developers to facilitate user interactions with the Zond network.
 
 Technically, you use `window.zond` when it is injected by the Zond browser extension or the Zond-enabled browser. However, before using this provider, you need to check if it is available and then call `enable()` to request access to the user's MetaMask account.
 
@@ -491,7 +491,7 @@ Follow these steps to connect to the Zond network with MetaMask and web3.js, inc
 						const transactionReceipt = await web3.zond.sendTransaction({
 							from: accounts[0],
 							to: accounts[0], // sending a self-transaction
-							value: web3.utils.toWei('0.001', 'ether'),
+							value: web3.utils.toPlanck('0.001', 'zond'),
 						});
 
 						document.getElementById('log').textContent =
@@ -501,7 +501,7 @@ Follow these steps to connect to the Zond network with MetaMask and web3.js, inc
 						).textContent += `\n  Transaction hash: ${transactionReceipt.transactionHash}`;
 						document.getElementById(
 							'log',
-						).textContent += `\n  Gas Used: ${transactionReceipt.gasUsed} gwei`;
+						).textContent += `\n  Gas Used: ${transactionReceipt.gasUsed} gplanck`;
 					} catch (error) {
 						console.log('error', error);
 						document.getElementById('log').textContent =

@@ -17,7 +17,7 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 
-import { Web3AccountProvider, Web3BaseWalletAccount /*, KeyStore */ } from '@theqrl/web3-types';
+import { Web3AccountProvider, Web3BaseWalletAccount /* , KeyStore */ } from '@theqrl/web3-types';
 import { Wallet } from '../../src/wallet';
 
 describe('Wallet', () => {
@@ -40,7 +40,7 @@ describe('Wallet', () => {
 				totalSeedCreate += 1;
 				return { address: `seed_create_${totalSeedCreate}` };
 			}),
-			//decrypt: jest.fn(),
+			// decrypt: jest.fn(),
 			create: jest.fn().mockImplementation(() => {
 				totalAccountsCreate += 1;
 				return { address: `account_create_${totalAccountsCreate}` };

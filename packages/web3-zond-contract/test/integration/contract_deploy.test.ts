@@ -17,16 +17,16 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 import { Web3Zond } from '@theqrl/web3-zond';
 import { Contract } from '../../src';
 import { sleep } from '../shared_fixtures/utils';
-import { ERC721TokenAbi, ERC721TokenBytecode } from '../shared_fixtures/build/ERC721Token';
+import { ZRC721TokenAbi, ZRC721TokenBytecode } from '../shared_fixtures/build/ZRC721Token';
 import { GreeterBytecode, GreeterAbi } from '../shared_fixtures/build/Greeter';
 import { DeployRevertAbi, DeployRevertBytecode } from '../shared_fixtures/build/DeployRevert';
 import {
 	getSystemTestProvider,
-	//isWs,
+	// isWs,
 	createTempAccount,
 	createNewAccount,
 	signTxAndSendEIP1559,
-	//sendFewSampleTxs,
+	// sendFewSampleTxs,
 	closeOpenConnection,
 } from '../fixtures/system_test_utils';
 
@@ -108,11 +108,11 @@ describe('contract', () => {
 				expect(Number(estimatedGas)).toBeGreaterThan(0);
 			});
 			it('should return estimated gas of contract constructor without arguments', async () => {
-				const estimatedGas = await new Contract(ERC721TokenAbi, undefined, {
+				const estimatedGas = await new Contract(ZRC721TokenAbi, undefined, {
 					provider: getSystemTestProvider(),
 				})
 					.deploy({
-						data: ERC721TokenBytecode,
+						data: ZRC721TokenBytecode,
 						arguments: [],
 					})
 					.estimateGas({
@@ -186,13 +186,13 @@ describe('contract', () => {
 
 			// Deploy once again to trigger block mining to trigger confirmation
 			// We can send any other transaction as well
-			//await contract.deploy(deployOptions).send(sendOptions);
+			// await contract.deploy(deployOptions).send(sendOptions);
 
-			//await sendFewSampleTxs(3);
+			// await sendFewSampleTxs(3);
 
 			// Wait for some fraction of time to trigger the handler
 			// On http we use polling to get confirmation, so wait a bit longer
-			//await sleep(isWs ? 500 : 2000);
+			// await sleep(isWs ? 500 : 2000);
 
 			// eslint-disable-next-line jest/no-standalone-expect
 			expect(confirmationHandler).toHaveBeenCalled();

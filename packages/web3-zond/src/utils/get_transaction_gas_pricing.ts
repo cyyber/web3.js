@@ -63,19 +63,14 @@ export async function getTransactionGasPricing<ReturnFormat extends DataFormat>(
 	web3Context: Web3Context<ZondExecutionAPI>,
 	returnFormat: ReturnFormat,
 ): Promise<
-	| FormatType<
-			{ maxPriorityFeePerGas?: Numbers; maxFeePerGas?: Numbers },
-			ReturnFormat
-	  >
-	| undefined
+	FormatType<{ maxPriorityFeePerGas?: Numbers; maxFeePerGas?: Numbers }, ReturnFormat> | undefined
 > {
 	const transactionType = getTransactionType(transaction, web3Context);
 	if (!isNullish(transactionType)) {
 		if (transactionType.startsWith('-'))
 			throw new UnsupportedTransactionTypeError(transactionType);
 
-		if (transactionType !== '0x2')
-			throw new UnsupportedTransactionTypeError(transactionType);
+		if (transactionType !== '0x2') throw new UnsupportedTransactionTypeError(transactionType);
 
 		return {
 			...(await getEip1559GasPricing(transaction, web3Context, returnFormat)),

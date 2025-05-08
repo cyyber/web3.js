@@ -138,4 +138,5 @@ export const transactionTypeUndefined: FormatType<Transaction, typeof ZOND_DATA_
 	},
 ];
 
-export const transactionTypeValidationError: FormatType<Transaction, typeof ZOND_DATA_FORMAT>[] = [];
+export const transactionTypeValidationError: FormatType<Transaction, typeof ZOND_DATA_FORMAT>[] =
+	[];

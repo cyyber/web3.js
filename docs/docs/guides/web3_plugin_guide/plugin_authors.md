@@ -89,7 +89,7 @@ await web3Context.customRpcMethods.someMethod();
 
 ### Using the Inherited `Web3Context`
 
-Below is an example of `CustomRpcMethodsPlugin` making use of `this.requestManager` which will have access to an Zond provider if one was configured by the user. In the event that no `provider` was set by the user, the below code will throw a [ProviderError](/api/web3-errors/class/ProviderError) if `customRpcMethod` was to be called:
+Below is an example of `CustomRpcMethodsPlugin` making use of `this.requestManager` which will have access to a Zond provider if one was configured by the user. In the event that no `provider` was set by the user, the below code will throw a [ProviderError](/api/web3-errors/class/ProviderError) if `customRpcMethod` was to be called:
 
 ```typescript
 import { Web3PluginBase } from 'web3';
@@ -106,7 +106,7 @@ export class CustomRpcMethodsPlugin extends Web3PluginBase {
 }
 ```
 
-Below depicts a plugin user's code that does not configure an Zond provider, resulting in a thrown [ProviderError](/api/web3-errors/class/ProviderError) when calling `customRpcMethod`:
+Below depicts a plugin user's code that does not configure a Zond provider, resulting in a thrown [ProviderError](/api/web3-errors/class/ProviderError) when calling `customRpcMethod`:
 
 ```typescript
 // registering_a_plugin.ts
@@ -162,12 +162,12 @@ A workaround for this issue is available, below is an example of it:
 ```typescript
 import { Contract, ContractAbi, Web3Context, Web3PluginBase, types, utils } from 'web3';
 
-import { ERC20TokenAbi } from './ERC20Token';
+import { ZRC20TokenAbi } from './ZRC20Token';
 
 export class ContractMethodWrappersPlugin extends Web3PluginBase {
 	public pluginNamespace = 'contractMethodWrappersPlugin';
 
-	private readonly _contract: Contract<typeof ERC20TokenAbi>;
+	private readonly _contract: Contract<typeof ZRC20TokenAbi>;
 
 	public constructor(abi: ContractAbi, address: types.Address) {
 		super();
@@ -193,7 +193,7 @@ export class ContractMethodWrappersPlugin extends Web3PluginBase {
 		returnFormat?: ReturnFormat,
 	) {
 		return utils.format(
-			{ eth: 'unit' },
+			{ format: 'unit' },
 			await this._contract.methods.balanceOf(address).call(),
 			returnFormat ?? types.DEFAULT_RETURN_FORMAT,
 		);

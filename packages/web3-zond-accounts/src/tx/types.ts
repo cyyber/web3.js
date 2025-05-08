@@ -109,7 +109,7 @@ export type TxData = {
 	to?: Address | Uint8Array | ZPrefixedHexString;
 
 	/**
-	 * The amount of Ether sent.
+	 * The amount of Zond sent.
 	 */
 	value?: Numbers | Uint8Array;
 

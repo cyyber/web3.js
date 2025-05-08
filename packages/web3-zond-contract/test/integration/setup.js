@@ -20,6 +20,6 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 require('../config/setup');
 
 const jestTimeout = String(process.env.WEB3_SYSTEM_TEST_PROVIDER).includes('ipc') ? 150000 : 150000;
-//const jestTimeout = String(process.env.WEB3_SYSTEM_TEST_PROVIDER).includes('ipc') ? 35000 : 15000;
+// const jestTimeout = String(process.env.WEB3_SYSTEM_TEST_PROVIDER).includes('ipc') ? 35000 : 15000;
 
 jest.setTimeout(jestTimeout);

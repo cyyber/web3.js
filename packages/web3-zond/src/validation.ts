@@ -25,7 +25,13 @@ import {
 	TransactionWithSenderAPI,
 	ZOND_DATA_FORMAT,
 } from '@theqrl/web3-types';
-import { isAddressString, isHexStrict, isHexString32Bytes, isNullish, isUInt } from '@theqrl/web3-validator';
+import {
+	isAddressString,
+	isHexStrict,
+	isHexString32Bytes,
+	isNullish,
+	isUInt,
+} from '@theqrl/web3-validator';
 import {
 	ChainMismatchError,
 	HardforkMismatchError,
@@ -90,10 +96,7 @@ export function isTransaction1559Unsigned(value: Transaction1559UnsignedAPI): bo
 export function isTransactionWithSender(value: TransactionWithSenderAPI): boolean {
 	if (!isAddressString(value.from)) return false;
 	if (!isBaseTransaction(value)) return false;
-	if (
-		!isTransaction1559Unsigned(value as Transaction1559UnsignedAPI)
-	)
-		return false;
+	if (!isTransaction1559Unsigned(value as Transaction1559UnsignedAPI)) return false;
 
 	return true;
 }
@@ -180,14 +183,11 @@ export const validateHardfork = (transaction: InternalTransaction) => {
 
 export const validateFeeMarketGas = (transaction: InternalTransaction) => {
 	// This check is verifying gas isn't less than 0.
-	if (
-	isNullish(transaction.gas) ||
-		!isUInt(transaction.gas) 
-	)
+	if (isNullish(transaction.gas) || !isUInt(transaction.gas))
 		throw new InvalidGas({
 			gas: transaction.gas,
 		});
-	
+
 	if (
 		isNullish(transaction.maxFeePerGas) ||
 		!isUInt(transaction.maxFeePerGas) ||
@@ -217,7 +217,6 @@ export const validateGas = (transaction: InternalTransaction) => {
 			maxPriorityFeePerGas: transaction.maxPriorityFeePerGas,
 			maxFeePerGas: transaction.maxFeePerGas,
 		});
-
 
 	validateFeeMarketGas(transaction);
 };

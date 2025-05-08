@@ -18,11 +18,7 @@ import { toUint8Array, uint8ArrayToBigInt } from '../common/utils.js';
 import { FeeMarketEIP1559Transaction } from './eip1559Transaction.js';
 import type { TypedTransaction } from '../types.js';
 
-import type {
-	FeeMarketEIP1559TxData,
-	TxData,
-	TxOptions,
-} from './types.js';
+import type { FeeMarketEIP1559TxData, TxData, TxOptions } from './types.js';
 
 // eslint-disable-next-line @typescript-eslint/no-extraneous-class
 export class TransactionFactory {

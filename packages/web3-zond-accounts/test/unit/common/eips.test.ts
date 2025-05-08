@@ -19,18 +19,15 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 
 // NOTE(rgeraldes24): unused for now
 describe.skip('[Common/EIPs]: Initialization / Chain params', () => {
-	
 	it.skip('Correct initialization', () => {
 		// let eips = [2537, 2929];
 		// const c = new Common({ chain: Chain.Mainnet, eips });
 		// expect(c.eips()).toEqual(eips);
-
 		// eips = [2718, 2929, 2930];
 		// expect(() => {
 		// 	// eslint-disable-next-line no-new
 		// 	new Common({ chain: Chain.Mainnet, eips, hardfork: Hardfork.Istanbul });
 		// }).not.toThrow();
-
 		// eips = [2930];
 		// expect(() => {
 		// 	// eslint-disable-next-line no-new

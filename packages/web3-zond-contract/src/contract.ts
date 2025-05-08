@@ -204,13 +204,13 @@ export class Contract<Abi extends ContractAbi>
 	 *     jsonInterface: [...],
 	 *     from: 'Zde0B295669a9FD93d5F28D9Ec85E40f4cb697BAe',
 	 *     maxFeePerGas: '10000000000000',
-	 * 	   maxPriorityFeePerGas: '0',	
+	 * 	   maxPriorityFeePerGas: '0',
 	 *     gas: 1000000
 	 * }
 	 *
 	 * myContract.options.from = 'Z1234567890123456789012345678901234567891'; // default from address
-	 * myContract.options.maxFeePerGas = '20000000000000'; // default max fee per gas in wei
-	 * myContract.options.maxPriorityFeePerGas = '0'; // default max priority fee per gas in wei
+	 * myContract.options.maxFeePerGas = '20000000000000'; // default max fee per gas in planck
+	 * myContract.options.maxPriorityFeePerGas = '0'; // default max priority fee per gas in planck
 	 * myContract.options.gas = 5000000; // provide as fallback always 5M gas
 	 * ```
 	 */
@@ -260,7 +260,7 @@ export class Contract<Abi extends ContractAbi>
 	 * ```ts title="Example"
 	 * var myContract = new web3.zond.Contract([...], 'Zde0B295669a9FD93d5F28D9Ec85E40f4cb697BAe', {
 	 *   from: 'Z1234567890123456789012345678901234567891', // default from address
-	 *   maxFeePerGas: '20000000000' // default max fee per gas in wei, 20 gwei in this case
+	 *   maxFeePerGas: '20000000000' // default max fee per gas in planck, 20 gplanck in this case
 	 * });
 	 * ```
 	 *

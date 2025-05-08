@@ -88,7 +88,7 @@ export type TransactionOutput = {
 	readonly transactionIndex?: Numbers;
 	maxPriorityFeePerGas: Numbers;
 	maxFeePerGas: Numbers;
-}
+};
 
 export interface LogsInput {
 	readonly blockHash?: HexString;
@@ -360,8 +360,7 @@ export interface PopulatedUnsignedEip1559Transaction {
 	maxPriorityFeePerGas: Numbers;
 }
 
-export type PopulatedUnsignedTransaction =
-	PopulatedUnsignedEip1559Transaction;
+export type PopulatedUnsignedTransaction = PopulatedUnsignedEip1559Transaction;
 
 export interface BlockBase<
 	ByteType,
@@ -438,26 +437,26 @@ export interface Eip712TypedData {
 
 /**
  * To contain the gas Fee Data to be used with transactions.
- *  
+ *
  * Typically you will only need `maxFeePerGas` and `maxPriorityFeePerGas` for a transaction following EIP-1559.
  * However, if you want to get informed about the fees of last block, you can use `baseFeePerGas` too.
- * 
- * 
+ *
+ *
  * 	@see https://eips.ethereum.org/EIPS/eip-1559
- * 
+ *
  */
 export interface FeeData {
 	/**
 	 * The baseFeePerGas returned from the last available block.
-	 * 
-	 * However, the user will only pay (the future baseFeePerGas + the maxPriorityFeePerGas). 
+	 *
+	 * However, the user will only pay (the future baseFeePerGas + the maxPriorityFeePerGas).
 	 * And this value is just for getting informed about the fees of last block.
 	 */
 	readonly baseFeePerGas?: Numbers;
 
 	/**
 	 * The maximum fee that the user would be willing to pay per-gas.
-	 * 
+	 *
 	 * However, the user will only pay (the future baseFeePerGas + the maxPriorityFeePerGas).
 	 * And the `maxFeePerGas` could be used to prevent paying more than it, if `baseFeePerGas` went too high.
 	 */

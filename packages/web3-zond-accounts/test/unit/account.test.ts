@@ -16,11 +16,11 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { Address } from '@theqrl/web3-types';
-import { /*Web3ValidatorError,*/ isAddressString } from '@theqrl/web3-validator';
+import { /* Web3ValidatorError, */ isAddressString } from '@theqrl/web3-validator';
 import {
 	create,
-	//decrypt,
-	//encrypt,
+	// decrypt,
+	// encrypt,
 	hashMessage,
 	seedToAccount,
 	publicKeyToAddress,
@@ -29,15 +29,15 @@ import {
 	signTransaction,
 } from '../../src/account';
 import {
-	//invalidDecryptData,
-	//invalidEncryptData,
-	//invalidKeyStore,
+	// invalidDecryptData,
+	// invalidEncryptData,
+	// invalidKeyStore,
 	invalidSeedtoAccountData,
 	invalidPublicKeyToAddressData,
 	signatureRecoverData,
 	transactionsTestData,
-	//validDecryptData,
-	//validEncryptData,
+	// validDecryptData,
+	// validEncryptData,
 	validHashMessageData,
 	validSeedtoAccountData,
 	validPublicKeyToAddressData,
@@ -54,7 +54,7 @@ describe('accounts', () => {
 				expect(typeof account.address).toBe('string');
 				expect(isAddressString(account.address)).toBe(true);
 				// TODO(youtrack/theqrl/web3.js/3)
-				//expect(typeof account.encrypt).toBe('function');
+				// expect(typeof account.encrypt).toBe('function');
 				expect(typeof account.sign).toBe('function');
 				expect(typeof account.signTransaction).toBe('function');
 			});
@@ -78,9 +78,9 @@ describe('accounts', () => {
 	describe('seedToAccount', () => {
 		describe('valid cases', () => {
 			it.each(validSeedtoAccountData)('%s', (input, output) => {
-				expect(
-					JSON.stringify(seedToAccount(input.address, input.ignoreLength)),
-				).toEqual(JSON.stringify(output));
+				expect(JSON.stringify(seedToAccount(input.address, input.ignoreLength))).toEqual(
+					JSON.stringify(output),
+				);
 			});
 		});
 
@@ -113,7 +113,7 @@ describe('accounts', () => {
 			const signedResult = await signTransaction(
 				// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 				TransactionFactory.fromTxData(txObj),
-				account.seed
+				account.seed,
 			);
 			expect(signedResult).toBeDefined();
 

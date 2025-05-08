@@ -17,7 +17,12 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { Contract } from '@theqrl/web3-zond-contract';
 import { hexToNumber, numberToHex } from '@theqrl/web3-utils';
-import { TransactionBuilder, TransactionTypeParser, Web3Context, Web3PromiEvent } from '@theqrl/web3-core';
+import {
+	TransactionBuilder,
+	TransactionTypeParser,
+	Web3Context,
+	Web3PromiEvent,
+} from '@theqrl/web3-core';
 import {
 	Hardfork,
 	SupportedProviders,
@@ -71,7 +76,7 @@ describe('defaults', () => {
 			data: BasicBytecode,
 			arguments: [10, 'string init value'],
 		};
-		sendOptions = { from: tempAcc.address, /*gas: '1000000'*/ };
+		sendOptions = { from: tempAcc.address /* gas: '1000000' */ };
 	});
 
 	afterEach(async () => {
@@ -91,7 +96,7 @@ describe('defaults', () => {
 					data: MsgSenderBytecode,
 					arguments: ['test'],
 				})
-				.send({ from: tempAcc2.address, /*gas: '2700000',*/ });
+				.send({ from: tempAcc2.address /* gas: '2700000', */ });
 			// default
 			expect(web3Zond.defaultAccount).toBeUndefined();
 
@@ -117,10 +122,8 @@ describe('defaults', () => {
 				defaultAccount: tempAcc.address,
 			});
 
-			const tx = await contractMsgFrom.methods
-				.setTestString('test2')
-				.send();
-				//.send({ gas: '1000000' });
+			const tx = await contractMsgFrom.methods.setTestString('test2').send();
+			// .send({ gas: '1000000' });
 			const txSend = await web3Zond.sendTransaction({
 				to: tempAcc2.address,
 				value: '0x1',
@@ -485,9 +488,9 @@ describe('defaults', () => {
 
 		it('enableExperimentalFeatures useSubscriptionWhenCheckingBlockTimeout', () => {
 			// default
-			expect(web3Zond.enableExperimentalFeatures.useSubscriptionWhenCheckingBlockTimeout).toBe(
-				false,
-			);
+			expect(
+				web3Zond.enableExperimentalFeatures.useSubscriptionWhenCheckingBlockTimeout,
+			).toBe(false);
 
 			// after set
 			web3Zond.setConfig({
@@ -496,9 +499,9 @@ describe('defaults', () => {
 					useRpcCallSpecification: false,
 				},
 			});
-			expect(web3Zond.enableExperimentalFeatures.useSubscriptionWhenCheckingBlockTimeout).toBe(
-				true,
-			);
+			expect(
+				web3Zond.enableExperimentalFeatures.useSubscriptionWhenCheckingBlockTimeout,
+			).toBe(true);
 
 			// set by create new instance
 			zond2 = new Web3Zond({
@@ -798,11 +801,6 @@ describe('defaults', () => {
 			);
 			expect(res).toBe('0x4444');
 
-			// test override to 0x2 if:
-			// tx.maxFeePerGas !== undefined ||
-			// tx.maxPriorityFeePerGas !== undefined ||
-			// tx.hardfork === 'london' ||
-			// tx.common?.hardfork === 'london'
 			const maxFeePerGasOverride = getTransactionType(
 				{
 					from: 'ZEB014f8c8B418Db6b45774c326A0E64C78914dC0',
@@ -866,9 +864,6 @@ describe('defaults', () => {
 				zond2,
 			);
 			expect(commonOverride).toBe('0x2');
-
-			// override to 0x1 if:
-			// tx.accessList !== undefined || tx.hardfork === 'berlin' || tx.common?.hardfork === 'berlin'
 
 			const accessListOverride = getTransactionType(
 				{
