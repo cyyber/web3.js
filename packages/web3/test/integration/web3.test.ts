@@ -325,7 +325,7 @@ describe('Web3 instance', () => {
 		});
 
 		it('should update defaults on contract instance', () => {
-			const hardfork = 'hardfork2';
+			const hardfork = 'berlin';
 
 			contract = new web3.zond.Contract(GreeterAbi, undefined, {
 				provider: getSystemTestProvider(),
@@ -338,7 +338,7 @@ describe('Web3 instance', () => {
 		});
 
 		it('should update defaults on deployed contract instance', async () => {
-			const hardfork = 'hardfork2';
+			const hardfork = 'berlin';
 
 			contract = new web3.zond.Contract(GreeterAbi, undefined, {
 				provider: getSystemTestProvider(),

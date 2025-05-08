@@ -64,7 +64,7 @@ describe('contract defaults (extra)', () => {
 	});
 
 	it('should use "defaultHardfork" on "instance" level', async () => {
-		const hardfork = 'hardfork2';
+		const hardfork = 'berlin';
 
 		contract = new Contract(GreeterAbi, undefined, {
 			provider: getSystemTestProvider(),
