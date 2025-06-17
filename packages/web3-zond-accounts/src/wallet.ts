@@ -259,7 +259,6 @@ export class Wallet<
 		return this;
 	}
 
-	// TODO(youtrack/theqrl/web3.js/3)
 	/**
 	 * Encrypts all wallet accounts to an array of encrypted keystore v3 objects.
 	 *
@@ -280,14 +279,13 @@ export class Wallet<
 	 * ]
 	 * ```
 	 */
-	// public async encrypt(
-	// 	password: string,
-	// 	options?: Record<string, unknown> | undefined,
-	// ): Promise<KeyStore[]> {
-	// 	return Promise.all(this.map(async (account: T) => account.encrypt(password, options)));
-	// }
+	public async encrypt(
+		password: string,
+		options?: Record<string, unknown> | undefined,
+	): Promise<KeyStore[]> {
+		return Promise.all(this.map(async (account: T) => account.encrypt(password, options)));
+	}
 
-	// TODO(youtrack/theqrl/web3.js/3)
 	/**
 	 * Decrypts keystore v3 objects.
 	 *
@@ -362,21 +360,21 @@ export class Wallet<
 	 * }
 	 * ```
 	 */
-	// public async decrypt(
-	// 	encryptedWallets: KeyStore[],
-	// 	password: string,
-	// 	options?: Record<string, unknown> | undefined,
-	// ) {
-	// 	const results = await Promise.all(
-	// 		encryptedWallets.map(async (wallet: KeyStore) =>
-	// 			this._accountProvider.decrypt(wallet, password, options),
-	// 		),
-	// 	);
-	// 	for (const res of results) {
-	// 		this.add(res);
-	// 	}
-	// 	return this;
-	// }
+	public async decrypt(
+		encryptedWallets: KeyStore[],
+		password: string,
+		options?: Record<string, unknown> | undefined,
+	) {
+		const results = await Promise.all(
+			encryptedWallets.map(async (wallet: KeyStore) =>
+				this._accountProvider.decrypt(wallet, password, options),
+			),
+		);
+		for (const res of results) {
+			this.add(res);
+		}
+		return this;
+	}
 
 	/**
 	 * Stores the wallet encrypted and as string in local storage.
@@ -390,20 +388,20 @@ export class Wallet<
 	 * >true
 	 * ```
 	 */
-	// public async save(password: string, keyName?: string) {
-	// 	const storage = Wallet.getStorage();
+	public async save(password: string, keyName?: string) {
+		const storage = Wallet.getStorage();
 
-	// 	if (!storage) {
-	// 		throw new Error('Local storage not available.');
-	// 	}
+		if (!storage) {
+			throw new Error('Local storage not available.');
+		}
 
-	// 	storage.setItem(
-	// 		keyName ?? this._defaultKeyName,
-	// 		JSON.stringify(await this.encrypt(password)),
-	// 	);
+		storage.setItem(
+			keyName ?? this._defaultKeyName,
+			JSON.stringify(await this.encrypt(password)),
+		);
 
-	// 	return true;
-	// }
+		return true;
+	}
 
 	/**
 	 * Loads a wallet from local storage and decrypts it.
@@ -424,19 +422,19 @@ export class Wallet<
 	 * }
 	 * ```
 	 */
-	// public async load(password: string, keyName?: string) {
-	// 	const storage = Wallet.getStorage();
+	public async load(password: string, keyName?: string) {
+		const storage = Wallet.getStorage();
 
-	// 	if (!storage) {
-	// 		throw new Error('Local storage not available.');
-	// 	}
+		if (!storage) {
+			throw new Error('Local storage not available.');
+		}
 
-	// 	const keystore = storage.getItem(keyName ?? this._defaultKeyName);
+		const keystore = storage.getItem(keyName ?? this._defaultKeyName);
 
-	// 	if (keystore) {
-	// 		await this.decrypt((JSON.parse(keystore) as KeyStore[]) || [], password);
-	// 	}
+		if (keystore) {
+			await this.decrypt((JSON.parse(keystore) as KeyStore[]) || [], password);
+		}
 
-	// 	return this;
-	// }
+		return this;
+	}
 }

@@ -63,22 +63,22 @@ describe('test new Web3().zond.accounts', () => {
 		expect(zondAccounts.signTransaction).toHaveBeenCalledTimes(1);
 	});
 
-	// it('`decrypt` should call the original `decrypt` and add `signTransaction`', async () => {
-	// 	jest.spyOn(zondAccounts, 'decrypt').mockReturnValue({
-	// 		privateKey: '',
-	// 	} as unknown as Promise<Web3Account>);
+	it('`decrypt` should call the original `decrypt` and add `signTransaction`', async () => {
+		jest.spyOn(zondAccounts, 'decrypt').mockReturnValue({
+			privateKey: '',
+		} as unknown as Promise<Web3Account>);
 
-	// 	await accounts.decrypt('', '', { nonStrict: false });
-	// 	expect(zondAccounts.decrypt).toHaveBeenCalledWith('', '', false);
+		await accounts.decrypt('', '', { nonStrict: false });
+		expect(zondAccounts.decrypt).toHaveBeenCalledWith('', '', false);
 
-	// 	const account = await accounts.decrypt('', '');
-	// 	expect(zondAccounts.decrypt).toHaveBeenCalledWith('', '', true);
+		const account = await accounts.decrypt('', '');
+		expect(zondAccounts.decrypt).toHaveBeenCalledWith('', '', true);
 
-	// 	await account.signTransaction({});
+		await account.signTransaction({});
 
-	// 	expect(zond.prepareTransactionForSigning).toHaveBeenCalledTimes(1);
-	// 	expect(zondAccounts.signTransaction).toHaveBeenCalledTimes(1);
-	// });
+		expect(zond.prepareTransactionForSigning).toHaveBeenCalledTimes(1);
+		expect(zondAccounts.signTransaction).toHaveBeenCalledTimes(1);
+	});
 
 	it('`create` should call the original `create` and add `signTransaction`', async () => {
 		jest.spyOn(zondAccounts, 'create').mockReturnValue({

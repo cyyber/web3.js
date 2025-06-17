@@ -222,7 +222,6 @@ export const publicKeyToAddress = (publicKey: Bytes): string => {
 	return toChecksumAddress(hexToAddress(bytesToHex(address)));
 };
 
-// TODO(youtrack/theqrl/web3.js/3)
 /**
  * encrypt a private key with a password, returns a V3 JSON Keystore
  *
@@ -295,103 +294,103 @@ export const publicKeyToAddress = (publicKey: Bytes): string => {
  * }
  *```
  */
-// export const encrypt = async (
-// 	privateKey: Bytes,
-// 	password: string | Uint8Array,
-// 	options?: CipherOptions,
-// ): Promise<KeyStore> => {
-// 	const privateKeyUint8Array = parseAndValidatePrivateKey(privateKey);
+export const encrypt = async (
+	privateKey: Bytes,
+	password: string | Uint8Array,
+	options?: CipherOptions,
+): Promise<KeyStore> => {
+	const privateKeyUint8Array = parseAndValidatePrivateKey(privateKey);
 
-// 	// if given salt or iv is a string, convert it to a Uint8Array
-// 	let salt;
-// 	if (options?.salt) {
-// 		salt = typeof options.salt === 'string' ? hexToBytes(options.salt) : options.salt;
-// 	} else {
-// 		salt = randomBytes(32);
-// 	}
+	// if given salt or iv is a string, convert it to a Uint8Array
+	let salt;
+	if (options?.salt) {
+		salt = typeof options.salt === 'string' ? hexToBytes(options.salt) : options.salt;
+	} else {
+		salt = randomBytes(32);
+	}
 
-// 	if (!(isString(password) || password instanceof Uint8Array)) {
-// 		throw new InvalidPasswordError();
-// 	}
+	if (!(isString(password) || password instanceof Uint8Array)) {
+		throw new InvalidPasswordError();
+	}
 
-// 	const uint8ArrayPassword =
-// 		typeof password === 'string' ? hexToBytes(utf8ToHex(password)) : password;
+	const uint8ArrayPassword =
+		typeof password === 'string' ? hexToBytes(utf8ToHex(password)) : password;
 
-// 	let initializationVector;
-// 	if (options?.iv) {
-// 		initializationVector = typeof options.iv === 'string' ? hexToBytes(options.iv) : options.iv;
-// 		if (initializationVector.length !== 16) {
-// 			throw new IVLengthError();
-// 		}
-// 	} else {
-// 		initializationVector = randomBytes(16);
-// 	}
+	let initializationVector;
+	if (options?.iv) {
+		initializationVector = typeof options.iv === 'string' ? hexToBytes(options.iv) : options.iv;
+		if (initializationVector.length !== 16) {
+			throw new IVLengthError();
+		}
+	} else {
+		initializationVector = randomBytes(16);
+	}
 
-// 	const kdf = options?.kdf ?? 'scrypt';
+	const kdf = options?.kdf ?? 'scrypt';
 
-// 	let derivedKey;
-// 	let kdfparams: ScryptParams | PBKDF2SHA256Params;
+	let derivedKey;
+	let kdfparams: ScryptParams | PBKDF2SHA256Params;
 
-// 	// derive key from key derivation function
-// 	if (kdf === 'pbkdf2') {
-// 		kdfparams = {
-// 			dklen: options?.dklen ?? 32,
-// 			salt: bytesToHex(salt).replace('0x', ''),
-// 			c: options?.c ?? 262144,
-// 			prf: 'hmac-sha256',
-// 		};
+	// derive key from key derivation function
+	if (kdf === 'pbkdf2') {
+		kdfparams = {
+			dklen: options?.dklen ?? 32,
+			salt: bytesToHex(salt).replace('0x', ''),
+			c: options?.c ?? 262144,
+			prf: 'hmac-sha256',
+		};
 
-// 		if (kdfparams.c < 1000) {
-// 			// error when c < 1000, pbkdf2 is less secure with less iterations
-// 			throw new PBKDF2IterationsError();
-// 		}
-// 		derivedKey = pbkdf2Sync(uint8ArrayPassword, salt, kdfparams.c, kdfparams.dklen, 'sha256');
-// 	} else if (kdf === 'scrypt') {
-// 		kdfparams = {
-// 			n: options?.n ?? 8192,
-// 			r: options?.r ?? 8,
-// 			p: options?.p ?? 1,
-// 			dklen: options?.dklen ?? 32,
-// 			salt: bytesToHex(salt).replace('0x', ''),
-// 		};
-// 		derivedKey = scryptSync(
-// 			uint8ArrayPassword,
-// 			salt,
-// 			kdfparams.n,
-// 			kdfparams.p,
-// 			kdfparams.r,
-// 			kdfparams.dklen,
-// 		);
-// 	} else {
-// 		throw new InvalidKdfError();
-// 	}
+		if (kdfparams.c < 1000) {
+			// error when c < 1000, pbkdf2 is less secure with less iterations
+			throw new PBKDF2IterationsError();
+		}
+		derivedKey = pbkdf2Sync(uint8ArrayPassword, salt, kdfparams.c, kdfparams.dklen, 'sha256');
+	} else if (kdf === 'scrypt') {
+		kdfparams = {
+			n: options?.n ?? 8192,
+			r: options?.r ?? 8,
+			p: options?.p ?? 1,
+			dklen: options?.dklen ?? 32,
+			salt: bytesToHex(salt).replace('0x', ''),
+		};
+		derivedKey = scryptSync(
+			uint8ArrayPassword,
+			salt,
+			kdfparams.n,
+			kdfparams.p,
+			kdfparams.r,
+			kdfparams.dklen,
+		);
+	} else {
+		throw new InvalidKdfError();
+	}
 
-// 	const cipher = await createCipheriv(
-// 		privateKeyUint8Array,
-// 		derivedKey.slice(0, 16),
-// 		initializationVector,
-// 		'aes-128-ctr',
-// 	);
+	const cipher = await createCipheriv(
+		privateKeyUint8Array,
+		derivedKey.slice(0, 16),
+		initializationVector,
+		'aes-128-ctr',
+	);
 
-// 	const ciphertext = bytesToHex(cipher).slice(2);
+	const ciphertext = bytesToHex(cipher).slice(2);
 
-// 	const mac = sha3Raw(uint8ArrayConcat(derivedKey.slice(16, 32), cipher)).replace('0x', '');
-// 	return {
-// 		version: 3,
-// 		id: uuidV4(),
-// 		address: privateKeyToAddress(privateKeyUint8Array).toLowerCase().replace('0x', ''),
-// 		crypto: {
-// 			ciphertext,
-// 			cipherparams: {
-// 				iv: bytesToHex(initializationVector).replace('0x', ''),
-// 			},
-// 			cipher: 'aes-128-ctr',
-// 			kdf,
-// 			kdfparams,
-// 			mac,
-// 		},
-// 	};
-// };
+	const mac = sha3Raw(uint8ArrayConcat(derivedKey.slice(16, 32), cipher)).replace('0x', '');
+	return {
+		version: 3,
+		id: uuidV4(),
+		address: privateKeyToAddress(privateKeyUint8Array).toLowerCase().replace('0x', ''),
+		crypto: {
+			ciphertext,
+			cipherparams: {
+				iv: bytesToHex(initializationVector).replace('0x', ''),
+			},
+			cipher: 'aes-128-ctr',
+			kdf,
+			kdfparams,
+			mac,
+		},
+	};
+};
 
 /**
  * Get the seed Uint8Array after the validation
@@ -452,133 +451,132 @@ export const seedToAccount = (seed: Bytes, ignoreLength?: boolean): Web3Account 
 		},
 		sign: (data: Record<string, unknown> | string) =>
 			sign(typeof data === 'string' ? data : JSON.stringify(data), seed),
-		// encrypt: async (password: string, options?: Record<string, unknown>) =>
-		//  	encrypt(privateKeyUint8Array, password, options),
+		encrypt: async (password: string, options?: Record<string, unknown>) =>
+		 	encrypt(privateKeyUint8Array, password, options),
 	};
 };
 
-// TODO(youtrack/theqrl/web3.js/3)
-// /**
-//  *
-//  * Generates and returns a Web3Account object that includes the private and public key
-//  * and a seed if it's not provided.
-//  *
-//  * @returns A Web3Account object
-//  * ```ts
-//  * web3.zond.accounts.create();
-//  * {
-//  * address: 'ZbD504f977021b5E5DdccD8741A368b147B3B38bB',
-//  * seed: '0x964ced1c69ad27a311c432fdc0d8211e987595f7eb34ab405a5f16bdc9563ec5',
-//  * signTransaction: [Function: signTransaction],
-//  * sign: [Function: sign],
-//  * encrypt: [AsyncFunction: encrypt]
-//  * }
-//  * ```
-//  */
+/**
+ *
+ * Generates and returns a Web3Account object that includes the private and public key
+ * and a seed if it's not provided.
+ *
+ * @returns A Web3Account object
+ * ```ts
+ * web3.zond.accounts.create();
+ * {
+ * address: 'ZbD504f977021b5E5DdccD8741A368b147B3B38bB',
+ * seed: '0x964ced1c69ad27a311c432fdc0d8211e987595f7eb34ab405a5f16bdc9563ec5',
+ * signTransaction: [Function: signTransaction],
+ * sign: [Function: sign],
+ * encrypt: [AsyncFunction: encrypt]
+ * }
+ * ```
+ */
 export const create = (): Web3Account => {
 	const seed = randomBytes(48);
 	return seedToAccount(seed);
 };
 
-// /**
-//  * Decrypts a v3 keystore JSON, and creates the account.
-//  *
-//  * @param keystore - the encrypted Keystore object or string to decrypt
-//  * @param password - The password that was used for encryption
-//  * @param nonStrict - if true and given a json string, the keystore will be parsed as lowercase.
-//  * @returns Returns the decrypted Web3Account object
-//  * Decrypting scrypt
-//  *
-//  * ```ts
-//  * decrypt({
-//  *   version: 3,
-//  *   id: 'c0cb0a94-4702-4492-b6e6-eb2ac404344a',
-//  *   address: 'cda9a91875fc35c8ac1320e098e584495d66e47c',
-//  *   crypto: {
-//  *   ciphertext: 'cb3e13e3281ff3861a3f0257fad4c9a51b0eb046f9c7821825c46b210f040b8f',
-//  *      cipherparams: { iv: 'bfb43120ae00e9de110f8325143a2709' },
-//  *      cipher: 'aes-128-ctr',
-//  *      kdf: 'scrypt',
-//  *      kdfparams: {
-//  *        n: 8192,
-//  *        r: 8,
-//  *        p: 1,
-//  *        dklen: 32,
-//  *        salt: '210d0ec956787d865358ac45716e6dd42e68d48e346d795746509523aeb477dd'
-//  *      },
-//  *      mac: 'efbf6d3409f37c0084a79d5fdf9a6f5d97d11447517ef1ea8374f51e581b7efd'
-//  *    }
-//  *   }, '123').then(console.log)
-//  * > {
-//  * address: 'ZcdA9A91875fc35c8Ac1320E098e584495d66e47c',
-//  * privateKey: '67f476289210e3bef3c1c75e4de993ff0a00663df00def84e73aa7411eac18a6',
-//  * signTransaction: [Function: signTransaction],
-//  * sign: [Function: sign],
-//  * encrypt: [AsyncFunction: encrypt]
-//  * }
-//  * ```
-//  */
-// export const decrypt = async (
-// 	keystore: KeyStore | string,
-// 	password: string | Uint8Array,
-// 	nonStrict?: boolean,
-// ): Promise<Web3Account> => {
-// 	const json =
-// 		typeof keystore === 'object'
-// 			? keystore
-// 			: (JSON.parse(nonStrict ? keystore.toLowerCase() : keystore) as KeyStore);
+/**
+ * Decrypts a v3 keystore JSON, and creates the account.
+ *
+ * @param keystore - the encrypted Keystore object or string to decrypt
+ * @param password - The password that was used for encryption
+ * @param nonStrict - if true and given a json string, the keystore will be parsed as lowercase.
+ * @returns Returns the decrypted Web3Account object
+ * Decrypting scrypt
+ *
+ * ```ts
+ * decrypt({
+ *   version: 3,
+ *   id: 'c0cb0a94-4702-4492-b6e6-eb2ac404344a',
+ *   address: 'cda9a91875fc35c8ac1320e098e584495d66e47c',
+ *   crypto: {
+ *   ciphertext: 'cb3e13e3281ff3861a3f0257fad4c9a51b0eb046f9c7821825c46b210f040b8f',
+ *      cipherparams: { iv: 'bfb43120ae00e9de110f8325143a2709' },
+ *      cipher: 'aes-128-ctr',
+ *      kdf: 'scrypt',
+ *      kdfparams: {
+ *        n: 8192,
+ *        r: 8,
+ *        p: 1,
+ *        dklen: 32,
+ *        salt: '210d0ec956787d865358ac45716e6dd42e68d48e346d795746509523aeb477dd'
+ *      },
+ *      mac: 'efbf6d3409f37c0084a79d5fdf9a6f5d97d11447517ef1ea8374f51e581b7efd'
+ *    }
+ *   }, '123').then(console.log)
+ * > {
+ * address: 'ZcdA9A91875fc35c8Ac1320E098e584495d66e47c',
+ * privateKey: '67f476289210e3bef3c1c75e4de993ff0a00663df00def84e73aa7411eac18a6',
+ * signTransaction: [Function: signTransaction],
+ * sign: [Function: sign],
+ * encrypt: [AsyncFunction: encrypt]
+ * }
+ * ```
+ */
+export const decrypt = async (
+	keystore: KeyStore | string,
+	password: string | Uint8Array,
+	nonStrict?: boolean,
+): Promise<Web3Account> => {
+	const json =
+		typeof keystore === 'object'
+			? keystore
+			: (JSON.parse(nonStrict ? keystore.toLowerCase() : keystore) as KeyStore);
 
-// 	validator.validateJSONSchema(keyStoreSchema, json);
+	validator.validateJSONSchema(keyStoreSchema, json);
 
-// 	if (json.version !== 3) throw new KeyStoreVersionError();
+	if (json.version !== 3) throw new KeyStoreVersionError();
 
-// 	const uint8ArrayPassword =
-// 		typeof password === 'string' ? hexToBytes(utf8ToHex(password)) : password;
+	const uint8ArrayPassword =
+		typeof password === 'string' ? hexToBytes(utf8ToHex(password)) : password;
 
-// 	validator.validate(['bytes'], [uint8ArrayPassword]);
+	validator.validate(['bytes'], [uint8ArrayPassword]);
 
-// 	let derivedKey;
-// 	if (json.crypto.kdf === 'scrypt') {
-// 		const kdfparams = json.crypto.kdfparams as ScryptParams;
-// 		const uint8ArraySalt =
-// 			typeof kdfparams.salt === 'string' ? hexToBytes(kdfparams.salt) : kdfparams.salt;
-// 		derivedKey = scryptSync(
-// 			uint8ArrayPassword,
-// 			uint8ArraySalt,
-// 			kdfparams.n,
-// 			kdfparams.p,
-// 			kdfparams.r,
-// 			kdfparams.dklen,
-// 		);
-// 	} else if (json.crypto.kdf === 'pbkdf2') {
-// 		const kdfparams: PBKDF2SHA256Params = json.crypto.kdfparams as PBKDF2SHA256Params;
+	let derivedKey;
+	if (json.crypto.kdf === 'scrypt') {
+		const kdfparams = json.crypto.kdfparams as ScryptParams;
+		const uint8ArraySalt =
+			typeof kdfparams.salt === 'string' ? hexToBytes(kdfparams.salt) : kdfparams.salt;
+		derivedKey = scryptSync(
+			uint8ArrayPassword,
+			uint8ArraySalt,
+			kdfparams.n,
+			kdfparams.p,
+			kdfparams.r,
+			kdfparams.dklen,
+		);
+	} else if (json.crypto.kdf === 'pbkdf2') {
+		const kdfparams: PBKDF2SHA256Params = json.crypto.kdfparams as PBKDF2SHA256Params;
 
-// 		const uint8ArraySalt =
-// 			typeof kdfparams.salt === 'string' ? hexToBytes(kdfparams.salt) : kdfparams.salt;
+		const uint8ArraySalt =
+			typeof kdfparams.salt === 'string' ? hexToBytes(kdfparams.salt) : kdfparams.salt;
 
-// 		derivedKey = pbkdf2Sync(
-// 			uint8ArrayPassword,
-// 			uint8ArraySalt,
-// 			kdfparams.c,
-// 			kdfparams.dklen,
-// 			'sha256',
-// 		);
-// 	} else {
-// 		throw new InvalidKdfError();
-// 	}
+		derivedKey = pbkdf2Sync(
+			uint8ArrayPassword,
+			uint8ArraySalt,
+			kdfparams.c,
+			kdfparams.dklen,
+			'sha256',
+		);
+	} else {
+		throw new InvalidKdfError();
+	}
 
-// 	const ciphertext = hexToBytes(json.crypto.ciphertext);
-// 	const mac = sha3Raw(uint8ArrayConcat(derivedKey.slice(16, 32), ciphertext)).replace('0x', '');
+	const ciphertext = hexToBytes(json.crypto.ciphertext);
+	const mac = sha3Raw(uint8ArrayConcat(derivedKey.slice(16, 32), ciphertext)).replace('0x', '');
 
-// 	if (mac !== json.crypto.mac) {
-// 		throw new KeyDerivationError();
-// 	}
+	if (mac !== json.crypto.mac) {
+		throw new KeyDerivationError();
+	}
 
-// 	const seed = await createDecipheriv(
-// 		hexToBytes(json.crypto.ciphertext),
-// 		derivedKey.slice(0, 16),
-// 		hexToBytes(json.crypto.cipherparams.iv),
-// 	);
+	const seed = await createDecipheriv(
+		hexToBytes(json.crypto.ciphertext),
+		derivedKey.slice(0, 16),
+		hexToBytes(json.crypto.cipherparams.iv),
+	);
 
-// 	return privateKeyToAccount(seed);
-// };
+	return privateKeyToAccount(seed);
+};

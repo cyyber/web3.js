@@ -19,15 +19,16 @@ import {
 	ZondExecutionAPI,
 	Bytes,
 	Transaction,
-	/* KeyStore, */ ZOND_DATA_FORMAT,
+	KeyStore,
+	ZOND_DATA_FORMAT,
 } from '@theqrl/web3-types';
 import { format } from '@theqrl/web3-utils';
 import { Web3Context } from '@theqrl/web3-core';
 import { prepareTransactionForSigning } from '@theqrl/web3-zond';
 import {
 	create,
-	// decrypt,
-	// encrypt,
+	decrypt,
+	encrypt,
 	hashMessage,
 	recoverTransaction,
 	signTransaction,
@@ -62,19 +63,19 @@ export const initAccountsForContext = (context: Web3Context<ZondExecutionAPI>) =
 		};
 	};
 
-	// const decryptWithContext = async (
-	// 	keystore: KeyStore | string,
-	// 	password: string,
-	// 	options?: Record<string, unknown>,
-	// ) => {
-	// 	const account = await decrypt(keystore, password, (options?.nonStrict as boolean) ?? true);
+	const decryptWithContext = async (
+		keystore: KeyStore | string,
+		password: string,
+		options?: Record<string, unknown>,
+	) => {
+		const account = await decrypt(keystore, password, (options?.nonStrict as boolean) ?? true);
 
-	// 	return {
-	// 		...account,
-	// 		signTransaction: async (transaction: Transaction) =>
-	// 			signTransactionWithContext(transaction, account.seed),
-	// 	};
-	// };
+		return {
+			...account,
+			signTransaction: async (transaction: Transaction) =>
+				signTransactionWithContext(transaction, account.seed),
+		};
+	};
 
 	const createWithContext = () => {
 		const account = create();
@@ -89,21 +90,18 @@ export const initAccountsForContext = (context: Web3Context<ZondExecutionAPI>) =
 	const wallet = new Wallet({
 		create: createWithContext,
 		seedToAccount: seedToAccountWithContext,
-		// TODO(youtrack/theqrl/web3.js/3)
-		// decrypt: decryptWithContext,
+		decrypt: decryptWithContext,
 	});
 
 	return {
 		signTransaction: signTransactionWithContext,
 		create: createWithContext,
 		seedToAccount: seedToAccountWithContext,
-		// TODO(youtrack/theqrl/web3.js/3)
-		// decrypt: decryptWithContext,
+		decrypt: decryptWithContext,
 		recoverTransaction,
 		hashMessage,
 		sign,
-		// TODO(youtrack/theqrl/web3.js/3)
-		// encrypt,
+		encrypt,
 		wallet,
 	};
 };

@@ -16,11 +16,11 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { Address } from '@theqrl/web3-types';
-import { /* Web3ValidatorError, */ isAddressString } from '@theqrl/web3-validator';
+import { Web3ValidatorError, isAddressString } from '@theqrl/web3-validator';
 import {
 	create,
-	// decrypt,
-	// encrypt,
+	decrypt,
+	encrypt,
 	hashMessage,
 	seedToAccount,
 	publicKeyToAddress,
@@ -29,15 +29,15 @@ import {
 	signTransaction,
 } from '../../src/account';
 import {
-	// invalidDecryptData,
-	// invalidEncryptData,
-	// invalidKeyStore,
+	invalidDecryptData,
+	invalidEncryptData,
+	invalidKeyStore,
 	invalidSeedtoAccountData,
 	invalidPublicKeyToAddressData,
 	signatureRecoverData,
 	transactionsTestData,
-	// validDecryptData,
-	// validEncryptData,
+	validDecryptData,
+	validEncryptData,
 	validHashMessageData,
 	validSeedtoAccountData,
 	validPublicKeyToAddressData,
@@ -53,8 +53,7 @@ describe('accounts', () => {
 				expect(typeof account.seed).toBe('string');
 				expect(typeof account.address).toBe('string');
 				expect(isAddressString(account.address)).toBe(true);
-				// TODO(youtrack/theqrl/web3.js/3)
-				// expect(typeof account.encrypt).toBe('function');
+				expect(typeof account.encrypt).toBe('function');
 				expect(typeof account.sign).toBe('function');
 				expect(typeof account.signTransaction).toBe('function');
 			});
@@ -138,72 +137,71 @@ describe('accounts', () => {
 		});
 	});
 
-	// TODO(youtrack/theqrl/web3.js/3)
-	// describe('encrypt', () => {
-	// 	describe('valid cases', () => {
-	// 		it.each(validEncryptData)('%s', async (input, output) => {
-	// 			const result = await encrypt(input[0], input[1], input[2]).catch(err => {
-	// 				throw err;
-	// 			});
-	// 			expect(result.version).toBe(output.version);
-	// 			expect(result.address).toBe(output.address);
-	// 			expect(result.crypto.ciphertext).toBe(output.crypto.ciphertext);
-	// 			expect(result.crypto.cipherparams).toEqual(output.crypto.cipherparams);
-	// 			expect(result.crypto.cipher).toEqual(output.crypto.cipher);
-	// 			expect(result.crypto.kdf).toBe(output.crypto.kdf);
-	// 			expect(result.crypto.kdfparams).toEqual(output.crypto.kdfparams);
-	// 			expect(typeof result.version).toBe('number');
-	// 			expect(typeof result.id).toBe('string');
-	// 			expect(typeof result.crypto.mac).toBe('string');
-	// 		});
-	// 	});
+	describe('encrypt', () => {
+		describe('valid cases', () => {
+			it.each(validEncryptData)('%s', async (input, output) => {
+				const result = await encrypt(input[0], input[1], input[2]).catch(err => {
+					throw err;
+				});
+				expect(result.version).toBe(output.version);
+				expect(result.address).toBe(output.address);
+				expect(result.crypto.ciphertext).toBe(output.crypto.ciphertext);
+				expect(result.crypto.cipherparams).toEqual(output.crypto.cipherparams);
+				expect(result.crypto.cipher).toEqual(output.crypto.cipher);
+				expect(result.crypto.kdf).toBe(output.crypto.kdf);
+				expect(result.crypto.kdfparams).toEqual(output.crypto.kdfparams);
+				expect(typeof result.version).toBe('number');
+				expect(typeof result.id).toBe('string');
+				expect(typeof result.crypto.mac).toBe('string');
+			});
+		});
 
-	// 	describe('invalid cases', () => {
-	// 		it.each(invalidEncryptData)('%s', async (input, output) => {
-	// 			const result = encrypt(input[0], input[1], input[2]);
-	// 			await expect(result).rejects.toThrow(output);
-	// 		});
-	// 	});
-	// });
+		describe('invalid cases', () => {
+			it.each(invalidEncryptData)('%s', async (input, output) => {
+				const result = encrypt(input[0], input[1], input[2]);
+				await expect(result).rejects.toThrow(output);
+			});
+		});
+	});
 
-	// describe('decrypt', () => {
-	// 	describe('valid cases', () => {
-	// 		it.each(validDecryptData)('%s', async input => {
-	// 			const keystore = await encrypt(input[0], input[1], input[2]).catch(err => {
-	// 				throw err;
-	// 			});
+	describe('decrypt', () => {
+		describe('valid cases', () => {
+			it.each(validDecryptData)('%s', async input => {
+				const keystore = await encrypt(input[0], input[1], input[2]).catch(err => {
+					throw err;
+				});
 
-	// 			// make sure decrypt does not throw invalid password error
-	// 			const result = await decrypt(keystore, input[1]);
+				// make sure decrypt does not throw invalid password error
+				const result = await decrypt(keystore, input[1]);
 
-	// 			expect(JSON.stringify(result)).toEqual(
-	// 				JSON.stringify(privateKeyToAccount(input[3])),
-	// 			);
+				expect(JSON.stringify(result)).toEqual(
+					JSON.stringify(privateKeyToAccount(input[3])),
+				);
 
-	// 			const keystoreString = JSON.stringify(keystore);
+				const keystoreString = JSON.stringify(keystore);
 
-	// 			const stringResult = await decrypt(keystoreString, input[1], true);
+				const stringResult = await decrypt(keystoreString, input[1], true);
 
-	// 			expect(JSON.stringify(stringResult)).toEqual(
-	// 				JSON.stringify(privateKeyToAccount(input[3])),
-	// 			);
-	// 		});
-	// 	});
+				expect(JSON.stringify(stringResult)).toEqual(
+					JSON.stringify(privateKeyToAccount(input[3])),
+				);
+			});
+		});
 
-	// 	describe('invalid cases', () => {
-	// 		it.each(invalidDecryptData)('%s', async (input, output) => {
-	// 			const result = decrypt(input[0], input[1]);
+		describe('invalid cases', () => {
+			it.each(invalidDecryptData)('%s', async (input, output) => {
+				const result = decrypt(input[0], input[1]);
 
-	// 			await expect(result).rejects.toThrow(output);
-	// 		});
-	// 	});
+				await expect(result).rejects.toThrow(output);
+			});
+		});
 
-	// 	describe('invalid keystore, fails validation', () => {
-	// 		it.each(invalidKeyStore)('%s', async input => {
-	// 			const result = decrypt(input[0], input[1]);
+		describe('invalid keystore, fails validation', () => {
+			it.each(invalidKeyStore)('%s', async input => {
+				const result = decrypt(input[0], input[1]);
 
-	// 			await expect(result).rejects.toThrow(Web3ValidatorError);
-	// 		});
-	// 	});
-	// });
+				await expect(result).rejects.toThrow(Web3ValidatorError);
+			});
+		});
+	});
 });

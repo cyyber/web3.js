@@ -31,7 +31,7 @@ import {
 import { CipherOptions, KeyStore } from '@theqrl/web3-types';
 import { hexToBytes } from '@theqrl/web3-utils';
 import { FeeMarketEIP1559TxData } from '../../src/tx/types';
-import { sign, signTransaction /* , encrypt */ } from '../../src/account';
+import { sign, signTransaction, encrypt} from '../../src/account';
 
 export const validPublicKeyToAddressData: [string, string][] = [
 	[
@@ -70,8 +70,7 @@ export const validSeedtoAccountData: [any, any][] = [
 			seed: '0x034da61fe50c659a3285549dc395571e2bf6891c462c041e3c6b9061fc73eb3687d03f940e5e65d582019ef10ce1327f',
 			sign,
 			signTransaction,
-			// TODO(youtrack/theqrl/web3.js/3)
-			// encrypt,
+			encrypt,
 		},
 	],
 	[
@@ -84,7 +83,7 @@ export const validSeedtoAccountData: [any, any][] = [
 			seed: '0x7fc43a2ccb557f900d4ca924c187b4438a7f8185b8edbfbabdd26b87f125594495268f55ceac9c9eb23efaab76b0d4c5',
 			sign,
 			signTransaction,
-			// encrypt,
+			encrypt,
 		},
 	],
 	[
@@ -98,7 +97,7 @@ export const validSeedtoAccountData: [any, any][] = [
 			seed: '0xc902ea9bbf1dd51aaa2ee9bed126aba921f6a6afac9cf09a21f3d915b057bace6787a894a71d1d103992aca0a6a4250c',
 			sign,
 			signTransaction,
-			// encrypt,
+			encrypt,
 		},
 	],
 ];
