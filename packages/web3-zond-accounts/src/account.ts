@@ -16,14 +16,35 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 import {
+	decrypt as createDecipheriv,
+	encrypt as createCipheriv,
+} from 'ethereum-cryptography/aes.js';
+import { pbkdf2Sync } from 'ethereum-cryptography/pbkdf2.js';
+import { scryptSync } from 'ethereum-cryptography/scrypt.js';
+import {
+	InvalidKdfError,
+	InvalidPasswordError,
 	InvalidPublicKeyError,
 	InvalidSeedError,
+	IVLengthError,
+	KeyDerivationError,
+	KeyStoreVersionError,
+	PBKDF2IterationsError,
 	PublicKeyLengthError,
 	SeedLengthError,
 	TransactionSigningError,
 	UndefinedRawTransactionError,
 } from '@theqrl/web3-errors';
-import { Address, Bytes, HexString, Transaction } from '@theqrl/web3-types';
+import {
+	Address,
+	Bytes,
+	CipherOptions,
+	HexString,
+	KeyStore,
+	PBKDF2SHA256Params,
+	ScryptParams,
+	Transaction,
+} from '@theqrl/web3-types';
 import {
 	bytesToUint8Array,
 	bytesToHex,
@@ -35,9 +56,11 @@ import {
 	uint8ArrayConcat,
 	utf8ToHex,
 	hexToAddress,
+	uuidV4,
 } from '@theqrl/web3-utils';
 
-import { isHexStrict, isNullish } from '@theqrl/web3-validator';
+import { isHexStrict, isNullish, isString, validator } from '@theqrl/web3-validator';
+import { keyStoreSchema } from './schemas.js';
 import { CryptoPublicKeyBytes } from '@theqrl/dilithium5';
 import { Dilithium, getDilithiumAddressFromPK } from '@theqrl/wallet.js';
 import { TransactionFactory } from './tx/transactionFactory.js';
