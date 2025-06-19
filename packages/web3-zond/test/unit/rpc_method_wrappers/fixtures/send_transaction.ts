@@ -25,7 +25,7 @@ export const expectedTransactionReceipt: TransactionReceipt = {
 	transactionIndex: '0x41',
 	blockHash: '0x1d59ff54b1eb26b013ce3cb5fc9dab3705b415a67127a003c3e61eb445bb8df2',
 	blockNumber: '0x5daf3b',
-	from: 'Z2099d76D9a34cDd2694c4DC703930A6fBbc1d402',
+	from: 'Z2094988078BF4E22ff0e275B558459E498284B46',
 	to: 'Zf02c1c8e6114b1dbe8937a39260b5b0a374432bb',
 	cumulativeGasUsed: '0x33bc', // 13244
 	effectiveGasPrice: '0x13a21bc946', // 84324108614
@@ -39,7 +39,7 @@ export const expectedTransactionReceipt: TransactionReceipt = {
 };
 
 const inputTransaction = {
-	from: 'Z2099d76D9a34cDd2694c4DC703930A6fBbc1d402',
+	from: 'Z2094988078BF4E22ff0e275B558459E498284B46',
 	gas: '0xc350',
 	input: '0x68656c6c6f21',
 	nonce: '0x15',

@@ -152,7 +152,6 @@ describe('accounts', () => {
 				expect(result.crypto.kdfparams).toEqual(output.crypto.kdfparams);
 				expect(typeof result.version).toBe('number');
 				expect(typeof result.id).toBe('string');
-				expect(typeof result.crypto.mac).toBe('string');
 			});
 		});
 

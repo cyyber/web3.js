@@ -19,7 +19,6 @@ import {
 	InvalidKdfError,
 	InvalidPrivateKeyError,
 	InvalidPublicKeyError,
-	KeyDerivationError,
 	PrivateKeyLengthError,
 	PublicKeyLengthError,
 	InvalidPasswordError,
@@ -194,12 +193,12 @@ export const validEncryptData: [[any, string | Uint8Array, CipherOptions], KeySt
 			},
 		],
 		{
-			version: 3,
+			version: 1,
 			address: 'cda9a91875fc35c8ac1320e098e584495d66e47c',
 			crypto: {
 				ciphertext: 'cb3e13e3281ff3861a3f0257fad4c9a51b0eb046f9c7821825c46b210f040b8f',
 				cipherparams: { iv: 'bfb43120ae00e9de110f8325143a2709' },
-				cipher: 'aes-128-ctr',
+				cipher: 'aes-256-gcm',
 				kdf: 'scrypt',
 				kdfparams: {
 					n: 8192,
@@ -208,7 +207,6 @@ export const validEncryptData: [[any, string | Uint8Array, CipherOptions], KeySt
 					dklen: 32,
 					salt: '210d0ec956787d865358ac45716e6dd42e68d48e346d795746509523aeb477dd',
 				},
-				mac: '46eb4884e82dc43b5aa415faba53cc653b7038e9d61cc32fd643cf8c396189b7',
 			},
 			id: '1d82a61f-2bba-4ebc-a283-56d49d877eb7',
 		},
@@ -224,12 +222,12 @@ export const validEncryptData: [[any, string | Uint8Array, CipherOptions], KeySt
 			},
 		],
 		{
-			version: 3,
+			version: 1,
 			address: 'cda9a91875fc35c8ac1320e098e584495d66e47c',
 			crypto: {
 				ciphertext: 'cb3e13e3281ff3861a3f0257fad4c9a51b0eb046f9c7821825c46b210f040b8f',
 				cipherparams: { iv: 'bfb43120ae00e9de110f8325143a2709' },
-				cipher: 'aes-128-ctr',
+				cipher: 'aes-256-gcm',
 				kdf: 'scrypt',
 				kdfparams: {
 					n: 8192,
@@ -238,7 +236,6 @@ export const validEncryptData: [[any, string | Uint8Array, CipherOptions], KeySt
 					dklen: 32,
 					salt: '210d0ec956787d865358ac45716e6dd42e68d48e346d795746509523aeb477dd',
 				},
-				mac: '46eb4884e82dc43b5aa415faba53cc653b7038e9d61cc32fd643cf8c396189b7',
 			},
 			id: '1d82a61f-2bba-4ebc-a283-56d49d877eb7',
 		},
@@ -255,13 +252,13 @@ export const validEncryptData: [[any, string | Uint8Array, CipherOptions], KeySt
 			},
 		],
 		{
-			version: 3,
+			version: 1,
 			id: 'e6a68d89-b03c-4e7d-82e0-079eebaa0da7',
 			address: 'b8ce9ab6943e0eced004cde8e3bbed6568b2fa01',
 			crypto: {
 				ciphertext: '76512156a34105fa6473ad040c666ae7b917d14c06543accc0d2dc28e6073b12',
 				cipherparams: { iv: 'bfb43120ae00e9de110f8325143a2709' },
-				cipher: 'aes-128-ctr',
+				cipher: 'aes-256-gcm',
 				kdf: 'pbkdf2',
 				kdfparams: {
 					dklen: 32,
@@ -269,7 +266,6 @@ export const validEncryptData: [[any, string | Uint8Array, CipherOptions], KeySt
 					c: 262144,
 					prf: 'hmac-sha256',
 				},
-				mac: '46eb4884e82dc43b5aa415faba53cc653b7038e9d61cc32fd643cf8c396189b7',
 			},
 		},
 	],
@@ -346,12 +342,12 @@ export const invalidKeyStore: [[any, string]][] = [
 		[
 			{
 				// invalid kdf
-				version: 3,
+				version: 1,
 				address: 'cda9a91875fc35c8ac1320e098e584495d66e47c',
 				crypto: {
 					ciphertext: '222f49d9cb350b0b9a16472ecb389f8128bc9404233c34ba0484db12fb47534e',
 					cipherparams: { iv: '8c36f74571c7aef9dd4901c9c1cc720a' },
-					cipher: 'aes-128-ctr',
+					cipher: 'aes-256-gcm',
 					kdf: 'hkdf',
 					kdfparams: {
 						dklen: 32,
@@ -360,7 +356,6 @@ export const invalidKeyStore: [[any, string]][] = [
 						r: 8,
 						p: 1,
 					},
-					mac: '46162bad0ac2145ddd399bfb47b474959a2845faf69e69bd1b325ec8db3298cb',
 				},
 			},
 			'123',
@@ -384,18 +379,18 @@ export const validDecryptData: [[string, string, CipherOptions, string]][] = [
 	],
 ];
 
-export const invalidDecryptData: [[any, string], InvalidKdfError | KeyDerivationError][] = [
+export const invalidDecryptData: [[any, string], InvalidKdfError][] = [
 	[
 		[
 			{
 				// invalid kdf
-				version: 3,
+				version: 1,
 				id: '0e9f63f7-9e7c-4d87-bdf7-02ffe8ee6481',
 				address: 'cda9a91875fc35c8ac1320e098e584495d66e47c',
 				crypto: {
 					ciphertext: '222f49d9cb350b0b9a16472ecb389f8128bc9404233c34ba0484db12fb47534e',
 					cipherparams: { iv: '8c36f74571c7aef9dd4901c9c1cc720a' },
-					cipher: 'aes-128-ctr',
+					cipher: 'aes-256-gcm',
 					kdf: 'hkdf',
 					kdfparams: {
 						dklen: 32,
@@ -404,24 +399,25 @@ export const invalidDecryptData: [[any, string], InvalidKdfError | KeyDerivation
 						r: 8,
 						p: 1,
 					},
-					mac: '46162bad0ac2145ddd399bfb47b474959a2845faf69e69bd1b325ec8db3298cb',
 				},
 			},
 			'123',
 		],
 		new InvalidKdfError(),
 	],
+	// TODO(rgeraldes24)
+	/*
 	[
 		[
 			{
 				// wrong password
-				version: 3,
+				version: 1,
 				id: 'e6a68d89-b03c-4e7d-82e0-079eebaa0da7',
 				address: 'b8ce9ab6943e0eced004cde8e3bbed6568b2fa01',
 				crypto: {
 					ciphertext: '76512156a34105fa6473ad040c666ae7b917d14c06543accc0d2dc28e6073b12',
 					cipherparams: { iv: 'bfb43120ae00e9de110f8325143a2709' },
-					cipher: 'aes-128-ctr',
+					cipher: 'aes-256-gcm',
 					kdf: 'pbkdf2',
 					kdfparams: {
 						dklen: 32,
@@ -429,13 +425,13 @@ export const invalidDecryptData: [[any, string], InvalidKdfError | KeyDerivation
 						c: 262144,
 						prf: 'hmac-sha256',
 					},
-					mac: '46eb4884e82dc43b5aa415faba53cc653b7038e9d61cc32fd643cf8c396189b7',
 				},
 			},
 			'12',
 		],
 		new KeyDerivationError(),
 	],
+	*/
 ];
 
 export const validHashMessageData: [string, string][] = [

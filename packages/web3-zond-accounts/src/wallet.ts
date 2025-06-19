@@ -273,9 +273,8 @@ export class Wallet<
 	 * '{"version":3,"id":"fa46e213-a7c3-4844-b903-dd14d39cc7db",
 	 * "address":"fa3e41a401609103c241431cbdee8623ae2a321a","crypto":
 	 * {"ciphertext":"8d179a911d6146ad2924e86bf493ed89b8ff3596ffec0816e761c542016ab13c",
-	 * "cipherparams":{"iv":"acc888c6cf4a19b86846cef0185a7164"},"cipher":"aes-128-ctr",
-	 * "kdf":"scrypt","kdfparams":{"n":8192,"r":8,"p":1,"dklen":32,"salt":"6a743c9b367d15f4758e4f3f3378ff0fd443708d1c64854e07588ea5331823ae"},
-	 * "mac":"410544c8307e3691fda305eb3722d82c3431f212a87daa119a21587d96698b57"}}'
+	 * "cipherparams":{"iv":"acc888c6cf4a19b86846cef0185a7164"},"cipher":"aes-256-gcm",
+	 * "kdf":"scrypt","kdfparams":{"n":8192,"r":8,"p":1,"dklen":32,"salt":"6a743c9b367d15f4758e4f3f3378ff0fd443708d1c64854e07588ea5331823ae"}}}'
 	 * ]
 	 * ```
 	 */
@@ -296,36 +295,34 @@ export class Wallet<
 	 *
 	 * ```ts
 	 * web3.zond.accounts.wallet.decrypt([
-	 * { version: 3,
+	 * { version: 1,
 	 * id: '83191a81-aaca-451f-b63d-0c5f3b849289',
 	 * address: '06f702337909c06c82b09b7a22f0a2f0855d1f68',
 	 * crypto:
 	 * { ciphertext: '7d34deae112841fba86e3e6cf08f5398dda323a8e4d29332621534e2c4069e8d',
 	 *   cipherparams: { iv: '497f4d26997a84d570778eae874b2333' },
-	 *   cipher: 'aes-128-ctr',
+	 *   cipher: 'aes-256-gcm',
 	 *   kdf: 'scrypt',
 	 *   kdfparams:
 	 *    { dklen: 32,
 	 *      salt: '208dd732a27aa4803bb760228dff18515d5313fd085bbce60594a3919ae2d88d',
 	 *      n: 262144,
 	 *      r: 8,
-	 *      p: 1 },
-	 *   mac: '0062a853de302513c57bfe3108ab493733034bf3cb313326f42cf26ea2619cf9' } },
-	 * { version: 3,
+	 *      p: 1 } } },
+	 * { version: 1,
 	 * id: '7d6b91fa-3611-407b-b16b-396efb28f97e',
 	 * address: 'b5d89661b59a9af0b34f58d19138baa2de48baaf',
 	 * crypto:
 	 * { ciphertext: 'cb9712d1982ff89f571fa5dbef447f14b7e5f142232bd2a913aac833730eeb43',
 	 *   cipherparams: { iv: '8cccb91cb84e435437f7282ec2ffd2db' },
-	 *   cipher: 'aes-128-ctr',
+	 *   cipher: 'aes-256-gcm',
 	 *   kdf: 'scrypt',
 	 *   kdfparams:
 	 *    { dklen: 32,
 	 *      salt: '08ba6736363c5586434cd5b895e6fe41ea7db4785bd9b901dedce77a1514e8b8',
 	 *      n: 262144,
 	 *      r: 8,
-	 *      p: 1 },
-	 *   mac: 'd2eb068b37e2df55f56fa97a2bf4f55e072bef0dd703bfd917717d9dc54510f0' } }
+	 *      p: 1 } } }
 	 * ], 'test').then(console.log)
 	 * > Wallet {
 	 *   _accountProvider: {

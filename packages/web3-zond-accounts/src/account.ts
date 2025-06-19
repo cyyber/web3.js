@@ -27,7 +27,6 @@ import {
 	InvalidPublicKeyError,
 	InvalidSeedError,
 	IVLengthError,
-	KeyDerivationError,
 	KeyStoreVersionError,
 	PBKDF2IterationsError,
 	PublicKeyLengthError,
@@ -267,13 +266,13 @@ export const publicKeyToAddress = (publicKey: Bytes): string => {
  *	),
  * }).then(console.log)
  * > {
- * version: 3,
+ * version: 1,
  * id: 'c0cb0a94-4702-4492-b6e6-eb2ac404344a',
  * address: 'cda9a91875fc35c8ac1320e098e584495d66e47c',
  * crypto: {
  *   ciphertext: 'cb3e13e3281ff3861a3f0257fad4c9a51b0eb046f9c7821825c46b210f040b8f',
  *   cipherparams: { iv: 'bfb43120ae00e9de110f8325143a2709' },
- *   cipher: 'aes-128-ctr',
+ *   cipher: 'aes-256-gcm',
  *   kdf: 'scrypt',
  *   kdfparams: {
  *     n: 8192,
@@ -281,8 +280,7 @@ export const publicKeyToAddress = (publicKey: Bytes): string => {
  *     p: 1,
  *     dklen: 32,
  *     salt: '210d0ec956787d865358ac45716e6dd42e68d48e346d795746509523aeb477dd'
- *   },
- *   mac: 'efbf6d3409f37c0084a79d5fdf9a6f5d97d11447517ef1ea8374f51e581b7efd'
+ *   }
  * }
  *}
  *```
@@ -298,31 +296,30 @@ export const publicKeyToAddress = (publicKey: Bytes): string => {
  *}).then(console.log)
  * >
  * {
- *   version: 3,
+ *   version: 1,
  *   id: '77381417-0973-4e4b-b590-8eb3ace0fe2d',
  *   address: 'b8ce9ab6943e0eced004cde8e3bbed6568b2fa01',
  *   crypto: {
  *     ciphertext: '76512156a34105fa6473ad040c666ae7b917d14c06543accc0d2dc28e6073b12',
  *     cipherparams: { iv: 'bfb43120ae00e9de110f8325143a2709' },
- *     cipher: 'aes-128-ctr',
+ *     cipher: 'aes-256-gcm',
  *     kdf: 'pbkdf2',
  *     kdfparams: {
  *       dklen: 32,
  *       salt: '210d0ec956787d865358ac45716e6dd42e68d48e346d795746509523aeb477dd',
  *       c: 262144,
  *       prf: 'hmac-sha256'
- *     },
- *   mac: '46eb4884e82dc43b5aa415faba53cc653b7038e9d61cc32fd643cf8c396189b7'
+ *     }
  *   }
  * }
  *```
  */
 export const encrypt = async (
-	privateKey: Bytes,
+	seed: Bytes,
 	password: string | Uint8Array,
 	options?: CipherOptions,
 ): Promise<KeyStore> => {
-	const privateKeyUint8Array = parseAndValidatePrivateKey(privateKey);
+	const seedUint8Array = parseAndValidateSeed(seed);
 
 	// if given salt or iv is a string, convert it to a Uint8Array
 	let salt;
@@ -389,28 +386,27 @@ export const encrypt = async (
 	}
 
 	const cipher = await createCipheriv(
-		privateKeyUint8Array,
-		derivedKey.slice(0, 16),
+		seedUint8Array,
+		derivedKey,
 		initializationVector,
-		'aes-128-ctr',
+		'aes-256-gcm',
 	);
 
 	const ciphertext = bytesToHex(cipher).slice(2);
+	const acc = seedToAccount(seedUint8Array);
 
-	const mac = sha3Raw(uint8ArrayConcat(derivedKey.slice(16, 32), cipher)).replace('0x', '');
 	return {
-		version: 3,
+		version: 1,
 		id: uuidV4(),
-		address: privateKeyToAddress(privateKeyUint8Array).toLowerCase().replace('0x', ''),
+		address: `Z${acc.address.slice(1).toLowerCase()}`,
 		crypto: {
 			ciphertext,
 			cipherparams: {
 				iv: bytesToHex(initializationVector).replace('0x', ''),
 			},
-			cipher: 'aes-128-ctr',
+			cipher: 'aes-256-gcm',
 			kdf,
 			kdfparams,
-			mac,
 		},
 	};
 };
@@ -475,7 +471,7 @@ export const seedToAccount = (seed: Bytes, ignoreLength?: boolean): Web3Account 
 		sign: (data: Record<string, unknown> | string) =>
 			sign(typeof data === 'string' ? data : JSON.stringify(data), seed),
 		encrypt: async (password: string, options?: Record<string, unknown>) =>
-		 	encrypt(privateKeyUint8Array, password, options),
+		 	encrypt(seedUint8Array, password, options),
 	};
 };
 
@@ -512,13 +508,13 @@ export const create = (): Web3Account => {
  *
  * ```ts
  * decrypt({
- *   version: 3,
+ *   version: 1,
  *   id: 'c0cb0a94-4702-4492-b6e6-eb2ac404344a',
  *   address: 'cda9a91875fc35c8ac1320e098e584495d66e47c',
  *   crypto: {
  *   ciphertext: 'cb3e13e3281ff3861a3f0257fad4c9a51b0eb046f9c7821825c46b210f040b8f',
  *      cipherparams: { iv: 'bfb43120ae00e9de110f8325143a2709' },
- *      cipher: 'aes-128-ctr',
+ *      cipher: 'aes-256-gcm',
  *      kdf: 'scrypt',
  *      kdfparams: {
  *        n: 8192,
@@ -526,8 +522,7 @@ export const create = (): Web3Account => {
  *        p: 1,
  *        dklen: 32,
  *        salt: '210d0ec956787d865358ac45716e6dd42e68d48e346d795746509523aeb477dd'
- *      },
- *      mac: 'efbf6d3409f37c0084a79d5fdf9a6f5d97d11447517ef1ea8374f51e581b7efd'
+ *      }
  *    }
  *   }, '123').then(console.log)
  * > {
@@ -551,7 +546,7 @@ export const decrypt = async (
 
 	validator.validateJSONSchema(keyStoreSchema, json);
 
-	if (json.version !== 3) throw new KeyStoreVersionError();
+	if (json.version !== 1) throw new KeyStoreVersionError();
 
 	const uint8ArrayPassword =
 		typeof password === 'string' ? hexToBytes(utf8ToHex(password)) : password;
@@ -588,18 +583,11 @@ export const decrypt = async (
 		throw new InvalidKdfError();
 	}
 
-	const ciphertext = hexToBytes(json.crypto.ciphertext);
-	const mac = sha3Raw(uint8ArrayConcat(derivedKey.slice(16, 32), ciphertext)).replace('0x', '');
-
-	if (mac !== json.crypto.mac) {
-		throw new KeyDerivationError();
-	}
-
 	const seed = await createDecipheriv(
 		hexToBytes(json.crypto.ciphertext),
-		derivedKey.slice(0, 16),
+		derivedKey,
 		hexToBytes(json.crypto.cipherparams.iv),
 	);
 
-	return privateKeyToAccount(seed);
+	return seedToAccount(seed);
 };

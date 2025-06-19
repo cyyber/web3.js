@@ -24,7 +24,6 @@ import {
 	ERR_INVALID_SIGNATURE,
 	ERR_INVALID_PUBLIC_KEY,
 	ERR_UNSUPPORTED_KDF,
-	ERR_KEY_DERIVATION_FAIL,
 	ERR_KEY_VERSION_UNSUPPORTED,
 	ERR_INVALID_PASSWORD,
 	ERR_IV_LENGTH,
@@ -80,13 +79,6 @@ export class InvalidKdfError extends BaseWeb3Error {
 	public code = ERR_UNSUPPORTED_KDF;
 	public constructor() {
 		super(`Invalid key derivation function`);
-	}
-}
-
-export class KeyDerivationError extends BaseWeb3Error {
-	public code = ERR_KEY_DERIVATION_FAIL;
-	public constructor() {
-		super(`Key derivation failed - possibly wrong password`);
 	}
 }
 

@@ -21,7 +21,7 @@ export const keyStoreSchema = {
 	properties: {
 		crypto: {
 			type: 'object',
-			required: ['cipher', 'ciphertext', 'cipherparams', 'kdf', 'kdfparams', 'mac'],
+			required: ['cipher', 'ciphertext', 'cipherparams', 'kdf', 'kdfparams'],
 			properties: {
 				cipher: { type: 'string' },
 				ciphertext: { type: 'string' },
@@ -29,7 +29,6 @@ export const keyStoreSchema = {
 				kdf: { type: 'string' },
 				kdfparams: { type: 'object' },
 				salt: { type: 'string' },
-				mac: { type: 'string' },
 			},
 		},
 		id: { type: 'string' },
