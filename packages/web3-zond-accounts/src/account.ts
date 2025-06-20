@@ -257,7 +257,7 @@ export const publicKeyToAddress = (publicKey: Bytes): string => {
  *
  * Encrypt using scrypt options
  * ```ts
- * encrypt('0x67f476289210e3bef3c1c75e4de993ff0a00663df00def84e73aa7411eac18a6',
+ * encrypt('0xf29f58aff0b00de2844f7e20bd9eeaacc379150043beeb328335817512b29fbb7184da84a092f842b2a06d72a24a5d28',
  * '123',
  * {
  *   n: 8192,

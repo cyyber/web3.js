@@ -174,7 +174,7 @@ describe('accounts', () => {
 				const result = await decrypt(keystore, input[1]);
 
 				expect(JSON.stringify(result)).toEqual(
-					JSON.stringify(privateKeyToAccount(input[3])),
+					JSON.stringify(seedToAccount(input[3])),
 				);
 
 				const keystoreString = JSON.stringify(keystore);
@@ -182,7 +182,7 @@ describe('accounts', () => {
 				const stringResult = await decrypt(keystoreString, input[1], true);
 
 				expect(JSON.stringify(stringResult)).toEqual(
-					JSON.stringify(privateKeyToAccount(input[3])),
+					JSON.stringify(seedToAccount(input[3])),
 				);
 			});
 		});

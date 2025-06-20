@@ -182,7 +182,7 @@ export const invalidSeedtoAccountData: [any, SeedLengthError | InvalidSeedError]
 export const validEncryptData: [[any, string | Uint8Array, CipherOptions], KeyStore][] = [
 	[
 		[
-			'0x67f476289210e3bef3c1c75e4de993ff0a00663df00def84e73aa7411eac18a6',
+			'0xf29f58aff0b00de2844f7e20bd9eeaacc379150043beeb328335817512b29fbb7184da84a092f842b2a06d72a24a5d28',
 			'123',
 			{
 				n: 8192,
@@ -213,7 +213,7 @@ export const validEncryptData: [[any, string | Uint8Array, CipherOptions], KeySt
 	],
 	[
 		[
-			'0x67f476289210e3bef3c1c75e4de993ff0a00663df00def84e73aa7411eac18a6',
+			'0xf29f58aff0b00de2844f7e20bd9eeaacc379150043beeb328335817512b29fbb7184da84a092f842b2a06d72a24a5d28',
 			'123',
 			{
 				n: 8192,
@@ -310,7 +310,7 @@ export const invalidEncryptData: [
 	[
 		// iv length is not 16 bytes
 		[
-			'0x67f476289210e3bef3c1c75e4de993ff0a00663df00def84e73aa7411eac18a6',
+			'0xf29f58aff0b00de2844f7e20bd9eeaacc379150043beeb328335817512b29fbb7184da84a092f842b2a06d72a24a5d28',
 			'123',
 			{
 				n: 8192,
@@ -366,7 +366,7 @@ export const invalidKeyStore: [[any, string]][] = [
 export const validDecryptData: [[string, string, CipherOptions, string]][] = [
 	[
 		[
-			'0x67f476289210e3bef3c1c75e4de993ff0a00663df00def84e73aa7411eac18a6',
+			'0xf29f58aff0b00de2844f7e20bd9eeaacc379150043beeb328335817512b29fbb7184da84a092f842b2a06d72a24a5d28',
 			'123',
 			{
 				iv: hexToBytes('0xbfb43120ae00e9de110f8325143a2709'),
@@ -374,7 +374,7 @@ export const validDecryptData: [[string, string, CipherOptions, string]][] = [
 					'210d0ec956787d865358ac45716e6dd42e68d48e346d795746509523aeb477dd',
 				),
 			},
-			'0x67f476289210e3bef3c1c75e4de993ff0a00663df00def84e73aa7411eac18a6',
+			'0xf29f58aff0b00de2844f7e20bd9eeaacc379150043beeb328335817512b29fbb7184da84a092f842b2a06d72a24a5d28',
 		],
 	],
 ];
