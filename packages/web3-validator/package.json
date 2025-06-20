@@ -50,7 +50,7 @@
 	"dependencies": {
 		"@theqrl/web3-errors": "^0.3.0",
 		"@theqrl/web3-types": "^0.3.0",
-		"ethereum-cryptography": "^2.0.0",
+		"zond-cryptography": "file:../../../js-zond-cryptography",
 		"util": "^0.12.5",
 		"zod": "^3.21.4"
 	},

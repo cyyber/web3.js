@@ -18,9 +18,9 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 import {
 	decrypt as createDecipheriv,
 	encrypt as createCipheriv,
-} from 'ethereum-cryptography/aes.js';
-import { pbkdf2Sync } from 'ethereum-cryptography/pbkdf2.js';
-import { scryptSync } from 'ethereum-cryptography/scrypt.js';
+} from 'zond-cryptography/aes.js';
+import { pbkdf2Sync } from 'zond-cryptography/pbkdf2.js';
+import { scryptSync } from 'zond-cryptography/scrypt.js';
 import {
 	InvalidKdfError,
 	InvalidPasswordError,
