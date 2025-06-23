@@ -244,24 +244,25 @@ export const publicKeyToAddress = (publicKey: Bytes): string => {
 	return toChecksumAddress(hexToAddress(bytesToHex(address)));
 };
 
+// TODO(rgeraldes24): example
 /**
- * encrypt a private key with a password, returns a V3 JSON Keystore
+ * encrypt a private key with a password, returns a V1 JSON Keystore
  *
  * Read more: https://github.com/ethereum/wiki/wiki/Web3-Secret-Storage-Definition
  *
  * @param privateKey - The private key to encrypt, 32 bytes.
  * @param password - The password used for encryption.
  * @param options - Options to configure to encrypt the keystore either scrypt or pbkdf2
- * @returns Returns a V3 JSON Keystore
+ * @returns Returns a V1 JSON Keystore
  *
  *
  * Encrypt using scrypt options
  * ```ts
- * encrypt('0xf29f58aff0b00de2844f7e20bd9eeaacc379150043beeb328335817512b29fbb7184da84a092f842b2a06d72a24a5d28',
+ * encrypt('0x234389e6f77a26f8b1f4969f964b51b154cd295602fbdb6b0c2a717317da3aa783ca961e4726036849f0c8efe28c48db',
  * '123',
  * {
  *   n: 8192,
- *	 iv: web3.utils.hexToBytes('0xbfb43120ae00e9de110f8325143a2709'),
+ *	 iv: web3.utils.hexToBytes('0xbfb43120ae00e9de110f8325'),
  *	 salt: web3.utils.hexToBytes('0x210d0ec956787d865358ac45716e6dd42e68d48e346d795746509523aeb477dd'),
  *	),
  * }).then(console.log)
@@ -270,8 +271,8 @@ export const publicKeyToAddress = (publicKey: Bytes): string => {
  * id: 'c0cb0a94-4702-4492-b6e6-eb2ac404344a',
  * address: 'cda9a91875fc35c8ac1320e098e584495d66e47c',
  * crypto: {
- *   ciphertext: 'cb3e13e3281ff3861a3f0257fad4c9a51b0eb046f9c7821825c46b210f040b8f',
- *   cipherparams: { iv: 'bfb43120ae00e9de110f8325143a2709' },
+ *   ciphertext: '0de2787855b53188e0e13ebdf430e0a4f61d040df04656c73c1c026a90eb6c91163256700d4851edf2b710a4cb85da4478c792573f6508f370511af2ae2a1d79',
+ *   cipherparams: { iv: 'bfb43120ae00e9de110f8325' },
  *   cipher: 'aes-256-gcm',
  *   kdf: 'scrypt',
  *   kdfparams: {
@@ -286,10 +287,10 @@ export const publicKeyToAddress = (publicKey: Bytes): string => {
  *```
  * Encrypting using pbkdf2 options
  * ```ts
- * encrypt('0x348ce564d427a3311b6536bbcff9390d69395b06ed6c486954e971d960fe8709',
+ * encrypt('0x30c8510cda2ff485ce1d12744135c60a87c1847b1d4dfa31a111ba5ab007c0c0305d2ab92c92fe04ea93bc69f6280534',
  *'123',
  *{
- *	iv: 'bfb43120ae00e9de110f8325143a2709',
+ *	iv: 'bfb43120ae00e9de110f8325',
  *	salt: '210d0ec956787d865358ac45716e6dd42e68d48e346d795746509523aeb477dd',
  *	c: 262144,
  *	kdf: 'pbkdf2',
@@ -301,7 +302,7 @@ export const publicKeyToAddress = (publicKey: Bytes): string => {
  *   address: 'b8ce9ab6943e0eced004cde8e3bbed6568b2fa01',
  *   crypto: {
  *     ciphertext: '76512156a34105fa6473ad040c666ae7b917d14c06543accc0d2dc28e6073b12',
- *     cipherparams: { iv: 'bfb43120ae00e9de110f8325143a2709' },
+ *     cipherparams: { iv: 'bfb43120ae00e9de110f8325' },
  *     cipher: 'aes-256-gcm',
  *     kdf: 'pbkdf2',
  *     kdfparams: {
@@ -339,11 +340,11 @@ export const encrypt = async (
 	let initializationVector;
 	if (options?.iv) {
 		initializationVector = typeof options.iv === 'string' ? hexToBytes(options.iv) : options.iv;
-		if (initializationVector.length !== 16) {
+		if (initializationVector.length !== 12) {
 			throw new IVLengthError();
 		}
 	} else {
-		initializationVector = randomBytes(16);
+		initializationVector = randomBytes(12);
 	}
 
 	const kdf = options?.kdf ?? 'scrypt';
@@ -435,6 +436,7 @@ export const parseAndValidateSeed = (data: Bytes, ignoreLength?: boolean): Uint8
 	return seedUint8Array;
 };
 
+// TODO(rgeraldes24): example
 /**
  * Get an Account object from the seed
  *
@@ -446,10 +448,10 @@ export const parseAndValidateSeed = (data: Bytes, ignoreLength?: boolean): Uint8
  * Use {@link Web3.zond.accounts.signTransaction} instead.
  *
  * ```ts
- * seedToAccount("0x348ce564d427a3311b6536bbcff9390d69395b06ed6c486954e971d960fe8709");
+ * seedToAccount("0x30c8510cda2ff485ce1d12744135c60a87c1847b1d4dfa31a111ba5ab007c0c0305d2ab92c92fe04ea93bc69f6280534");
  * >    {
  * 			address: 'Zb8CE9ab6943e0eCED004cDe8e3bBed6568B2Fa01',
- * 			seed: '0x348ce564d427a3311b6536bbcff9390d69395b06ed6c486954e971d960fe8709',
+ * 			seed: '0x30c8510cda2ff485ce1d12744135c60a87c1847b1d4dfa31a111ba5ab007c0c0305d2ab92c92fe04ea93bc69f6280534',
  * 			sign,
  * 			signTransaction,
  * 			encrypt,
@@ -497,8 +499,9 @@ export const create = (): Web3Account => {
 	return seedToAccount(seed);
 };
 
+// TODO(rgeraldes24): example
 /**
- * Decrypts a v3 keystore JSON, and creates the account.
+ * Decrypts a v1 keystore JSON, and creates the account.
  *
  * @param keystore - the encrypted Keystore object or string to decrypt
  * @param password - The password that was used for encryption
@@ -512,8 +515,8 @@ export const create = (): Web3Account => {
  *   id: 'c0cb0a94-4702-4492-b6e6-eb2ac404344a',
  *   address: 'cda9a91875fc35c8ac1320e098e584495d66e47c',
  *   crypto: {
- *   ciphertext: 'cb3e13e3281ff3861a3f0257fad4c9a51b0eb046f9c7821825c46b210f040b8f',
- *      cipherparams: { iv: 'bfb43120ae00e9de110f8325143a2709' },
+ *   ciphertext: '0de2787855b53188e0e13ebdf430e0a4f61d040df04656c73c1c026a90eb6c91163256700d4851edf2b710a4cb85da4478c792573f6508f370511af2ae2a1d79',
+ *      cipherparams: { iv: 'bfb43120ae00e9de110f8325' },
  *      cipher: 'aes-256-gcm',
  *      kdf: 'scrypt',
  *      kdfparams: {

@@ -120,7 +120,7 @@ describe('defaultTransactionBuilder', () => {
 			transaction: input,
 			web3Context,
 			// VALID_ZOND_BASE_TYPES.HexString,
-			// '0x348ce564d427a3311b6536bbcff9390d69395b06ed6c486954e971d960fe8709',
+			// '0x30c8510cda2ff485ce1d12744135c60a87c1847b1d4dfa31a111ba5ab007c0c0305d2ab92c92fe04ea93bc69f6280534',
 			// overrideFunction,
 			fillGasPrice: true,
 		});

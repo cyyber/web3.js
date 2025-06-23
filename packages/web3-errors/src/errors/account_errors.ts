@@ -99,7 +99,7 @@ export class InvalidPasswordError extends BaseWeb3Error {
 export class IVLengthError extends BaseWeb3Error {
 	public code = ERR_IV_LENGTH;
 	public constructor() {
-		super('Initialization vector must be 16 bytes');
+		super('Initialization vector must be 12 bytes');
 	}
 }
 

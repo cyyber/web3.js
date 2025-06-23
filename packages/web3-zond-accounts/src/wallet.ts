@@ -260,11 +260,11 @@ export class Wallet<
 	}
 
 	/**
-	 * Encrypts all wallet accounts to an array of encrypted keystore v3 objects.
+	 * Encrypts all wallet accounts to an array of encrypted keystore v1 objects.
 	 *
 	 * @param password - The password which will be used for encryption
 	 * @param options - encryption options
-	 * @returns An array of the encrypted keystore v3.
+	 * @returns An array of the encrypted keystore v1.
 	 *
 	 * ```ts
 	 * web3.zond.accounts.wallet.create(1)
@@ -286,9 +286,9 @@ export class Wallet<
 	}
 
 	/**
-	 * Decrypts keystore v3 objects.
+	 * Decrypts keystore v1 objects.
 	 *
-	 * @param encryptedWallets - An array of encrypted keystore v3 objects to decrypt
+	 * @param encryptedWallets - An array of encrypted keystore v1 objects to decrypt
 	 * @param password - The password to encrypt with
 	 * @param options - decrypt options for the wallets
 	 * @returns The decrypted wallet object
