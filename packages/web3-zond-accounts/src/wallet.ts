@@ -259,6 +259,7 @@ export class Wallet<
 		return this;
 	}
 
+	// TODO(rgeraldes24)
 	/**
 	 * Encrypts all wallet accounts to an array of encrypted keystore v1 objects.
 	 *
@@ -285,6 +286,7 @@ export class Wallet<
 		return Promise.all(this.map(async (account: T) => account.encrypt(password, options)));
 	}
 
+	// TODO(rgeraldes24): desc
 	/**
 	 * Decrypts keystore v1 objects.
 	 *

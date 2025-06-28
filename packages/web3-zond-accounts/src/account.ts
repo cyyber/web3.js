@@ -266,9 +266,9 @@ export const publicKeyToAddress = (publicKey: Bytes): string => {
  * > {
  * version: 1,
  * id: 'c0cb0a94-4702-4492-b6e6-eb2ac404344a',
- * address: 'cda9a91875fc35c8ac1320e098e584495d66e47c',
+ * address: 'Z2094988078bf4e22ff0e275b558459e498284b46',
  * crypto: {
- *   ciphertext: '0de2787855b53188e0e13ebdf430e0a4f61d040df04656c73c1c026a90eb6c91163256700d4851edf2b710a4cb85da4478c792573f6508f370511af2ae2a1d79',
+ *   ciphertext: 'fa3bcc472f2dead19b01b8f58e35474b5ebd51a6468a5852b7af55f84f67c727d45f44102a50d2567edde21d5170d50544fcf24e44e36512f2f26c659d75f0b6',
  *   cipherparams: { iv: 'bfb43120ae00e9de110f8325' },
  *   cipher: 'aes-256-gcm',
  *   kdf: 'argon2id',
@@ -332,9 +332,9 @@ export const encrypt = async (
 		derivedKey = argon2idSync(
 			uint8ArrayPassword,
 			salt,
+			kdfparams.t,
 			kdfparams.m,
 			kdfparams.p,
-			kdfparams.t,
 			kdfparams.dklen,
 		);
 	} else {
@@ -468,9 +468,9 @@ export const create = (): Web3Account => {
  * decrypt({
  *   version: 1,
  *   id: 'c0cb0a94-4702-4492-b6e6-eb2ac404344a',
- *   address: 'cda9a91875fc35c8ac1320e098e584495d66e47c',
+ *   address: 'Z2094988078bf4e22ff0e275b558459e498284b46',
  *   crypto: {
- *   ciphertext: '0de2787855b53188e0e13ebdf430e0a4f61d040df04656c73c1c026a90eb6c91163256700d4851edf2b710a4cb85da4478c792573f6508f370511af2ae2a1d79',
+ *   ciphertext: 'fa3bcc472f2dead19b01b8f58e35474b5ebd51a6468a5852b7af55f84f67c727d45f44102a50d2567edde21d5170d50544fcf24e44e36512f2f26c659d75f0b6',
  *      cipherparams: { iv: 'bfb43120ae00e9de110f8325' },
  *      cipher: 'aes-256-gcm',
  *      kdf: 'argon2id',
@@ -519,9 +519,9 @@ export const decrypt = async (
 		derivedKey = argon2idSync(
 			uint8ArrayPassword,
 			uint8ArraySalt,
+			kdfparams.t,
 			kdfparams.m,
 			kdfparams.p,
-			kdfparams.t,
 			kdfparams.dklen,
 		);
 	} else {

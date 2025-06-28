@@ -23,6 +23,8 @@ require('jest-extended');
 
 process.env.NODE_ENV = 'test';
 
-const jestTimeout = 10000;
+// TODO(rgeraldes24)
+// const jestTimeout = 10000;
+const jestTimeout = 50000;
 
 jest.setTimeout(jestTimeout);

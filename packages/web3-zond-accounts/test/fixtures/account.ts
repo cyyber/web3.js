@@ -184,7 +184,7 @@ export const validEncryptData: [[any, string | Uint8Array, CipherOptions], KeySt
 			'0x234389e6f77a26f8b1f4969f964b51b154cd295602fbdb6b0c2a717317da3aa783ca961e4726036849f0c8efe28c48db',
 			'123',
 			{
-				n: 8192,
+				m: 8192,
 				iv: hexToBytes('0xbfb43120ae00e9de110f8325'),
 				salt: hexToBytes(
 					'210d0ec956787d865358ac45716e6dd42e68d48e346d795746509523aeb477dd',
@@ -195,13 +195,13 @@ export const validEncryptData: [[any, string | Uint8Array, CipherOptions], KeySt
 			version: 1,
 			address: 'Z2094988078bf4e22ff0e275b558459e498284b46',
 			crypto: {
-				ciphertext: '0de2787855b53188e0e13ebdf430e0a4f61d040df04656c73c1c026a90eb6c91163256700d4851edf2b710a4cb85da4478c792573f6508f370511af2ae2a1d79',
+				ciphertext: 'fa3bcc472f2dead19b01b8f58e35474b5ebd51a6468a5852b7af55f84f67c727d45f44102a50d2567edde21d5170d50544fcf24e44e36512f2f26c659d75f0b6',
 				cipherparams: { iv: 'bfb43120ae00e9de110f8325' },
 				cipher: 'aes-256-gcm',
 				kdf: 'argon2id',
 				kdfparams: {
-					n: 8192,
-					r: 8,
+					m: 8192,
+					t: 8,
 					p: 1,
 					dklen: 32,
 					salt: '210d0ec956787d865358ac45716e6dd42e68d48e346d795746509523aeb477dd',
@@ -215,7 +215,7 @@ export const validEncryptData: [[any, string | Uint8Array, CipherOptions], KeySt
 			'0x234389e6f77a26f8b1f4969f964b51b154cd295602fbdb6b0c2a717317da3aa783ca961e4726036849f0c8efe28c48db',
 			'123',
 			{
-				n: 8192,
+				m: 8192,
 				iv: 'bfb43120ae00e9de110f8325',
 				salt: '210d0ec956787d865358ac45716e6dd42e68d48e346d795746509523aeb477dd',
 			},
@@ -224,13 +224,13 @@ export const validEncryptData: [[any, string | Uint8Array, CipherOptions], KeySt
 			version: 1,
 			address: 'Z2094988078bf4e22ff0e275b558459e498284b46',
 			crypto: {
-				ciphertext: '0de2787855b53188e0e13ebdf430e0a4f61d040df04656c73c1c026a90eb6c91163256700d4851edf2b710a4cb85da4478c792573f6508f370511af2ae2a1d79',
+				ciphertext: 'fa3bcc472f2dead19b01b8f58e35474b5ebd51a6468a5852b7af55f84f67c727d45f44102a50d2567edde21d5170d50544fcf24e44e36512f2f26c659d75f0b6',
 				cipherparams: { iv: 'bfb43120ae00e9de110f8325' },
 				cipher: 'aes-256-gcm',
 				kdf: 'argon2id',
 				kdfparams: {
-					n: 8192,
-					r: 8,
+					m: 8192,
+					t: 8,
 					p: 1,
 					dklen: 32,
 					salt: '210d0ec956787d865358ac45716e6dd42e68d48e346d795746509523aeb477dd',
