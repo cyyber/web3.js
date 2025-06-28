@@ -19,8 +19,7 @@ import {
 	decrypt as createDecipheriv,
 	encrypt as createCipheriv,
 } from 'zond-cryptography/aes.js';
-import { pbkdf2Sync } from 'zond-cryptography/pbkdf2.js';
-import { scryptSync } from 'zond-cryptography/scrypt.js';
+import { argon2idSync } from 'zond-cryptography/argon2id.js';
 import {
 	InvalidKdfError,
 	InvalidPasswordError,
@@ -28,7 +27,6 @@ import {
 	InvalidSeedError,
 	IVLengthError,
 	KeyStoreVersionError,
-	PBKDF2IterationsError,
 	PublicKeyLengthError,
 	SeedLengthError,
 	TransactionSigningError,
@@ -40,8 +38,7 @@ import {
 	CipherOptions,
 	HexString,
 	KeyStore,
-	PBKDF2SHA256Params,
-	ScryptParams,
+	Argon2idParams,
 	Transaction,
 } from '@theqrl/web3-types';
 import {
@@ -252,11 +249,11 @@ export const publicKeyToAddress = (publicKey: Bytes): string => {
  *
  * @param privateKey - The private key to encrypt, 32 bytes.
  * @param password - The password used for encryption.
- * @param options - Options to configure to encrypt the keystore either scrypt or pbkdf2
+ * @param options - Options to configure to encrypt the keystore either with argon2id
  * @returns Returns a V1 JSON Keystore
  *
  *
- * Encrypt using scrypt options
+ * Encrypt using argon2id options
  * ```ts
  * encrypt('0x234389e6f77a26f8b1f4969f964b51b154cd295602fbdb6b0c2a717317da3aa783ca961e4726036849f0c8efe28c48db',
  * '123',
@@ -274,45 +271,16 @@ export const publicKeyToAddress = (publicKey: Bytes): string => {
  *   ciphertext: '0de2787855b53188e0e13ebdf430e0a4f61d040df04656c73c1c026a90eb6c91163256700d4851edf2b710a4cb85da4478c792573f6508f370511af2ae2a1d79',
  *   cipherparams: { iv: 'bfb43120ae00e9de110f8325' },
  *   cipher: 'aes-256-gcm',
- *   kdf: 'scrypt',
+ *   kdf: 'argon2id',
  *   kdfparams: {
- *     n: 8192,
- *     r: 8,
+ *     m: 8192,
+ *     t: 8,
  *     p: 1,
  *     dklen: 32,
  *     salt: '210d0ec956787d865358ac45716e6dd42e68d48e346d795746509523aeb477dd'
  *   }
  * }
  *}
- *```
- * Encrypting using pbkdf2 options
- * ```ts
- * encrypt('0x30c8510cda2ff485ce1d12744135c60a87c1847b1d4dfa31a111ba5ab007c0c0305d2ab92c92fe04ea93bc69f6280534',
- *'123',
- *{
- *	iv: 'bfb43120ae00e9de110f8325',
- *	salt: '210d0ec956787d865358ac45716e6dd42e68d48e346d795746509523aeb477dd',
- *	c: 262144,
- *	kdf: 'pbkdf2',
- *}).then(console.log)
- * >
- * {
- *   version: 1,
- *   id: '77381417-0973-4e4b-b590-8eb3ace0fe2d',
- *   address: 'b8ce9ab6943e0eced004cde8e3bbed6568b2fa01',
- *   crypto: {
- *     ciphertext: '76512156a34105fa6473ad040c666ae7b917d14c06543accc0d2dc28e6073b12',
- *     cipherparams: { iv: 'bfb43120ae00e9de110f8325' },
- *     cipher: 'aes-256-gcm',
- *     kdf: 'pbkdf2',
- *     kdfparams: {
- *       dklen: 32,
- *       salt: '210d0ec956787d865358ac45716e6dd42e68d48e346d795746509523aeb477dd',
- *       c: 262144,
- *       prf: 'hmac-sha256'
- *     }
- *   }
- * }
  *```
  */
 export const encrypt = async (
@@ -347,39 +315,26 @@ export const encrypt = async (
 		initializationVector = randomBytes(12);
 	}
 
-	const kdf = options?.kdf ?? 'scrypt';
+	const kdf = options?.kdf ?? 'argon2id';
 
 	let derivedKey;
-	let kdfparams: ScryptParams | PBKDF2SHA256Params;
+	let kdfparams: Argon2idParams;
 
 	// derive key from key derivation function
-	if (kdf === 'pbkdf2') {
+	if (kdf === 'argon2id') {
 		kdfparams = {
-			dklen: options?.dklen ?? 32,
-			salt: bytesToHex(salt).replace('0x', ''),
-			c: options?.c ?? 262144,
-			prf: 'hmac-sha256',
-		};
-
-		if (kdfparams.c < 1000) {
-			// error when c < 1000, pbkdf2 is less secure with less iterations
-			throw new PBKDF2IterationsError();
-		}
-		derivedKey = pbkdf2Sync(uint8ArrayPassword, salt, kdfparams.c, kdfparams.dklen, 'sha256');
-	} else if (kdf === 'scrypt') {
-		kdfparams = {
-			n: options?.n ?? 8192,
-			r: options?.r ?? 8,
+			m: options?.m ?? 8192,
+			t: options?.t ?? 8,
 			p: options?.p ?? 1,
 			dklen: options?.dklen ?? 32,
 			salt: bytesToHex(salt).replace('0x', ''),
 		};
-		derivedKey = scryptSync(
+		derivedKey = argon2idSync(
 			uint8ArrayPassword,
 			salt,
-			kdfparams.n,
+			kdfparams.m,
 			kdfparams.p,
-			kdfparams.r,
+			kdfparams.t,
 			kdfparams.dklen,
 		);
 	} else {
@@ -507,7 +462,7 @@ export const create = (): Web3Account => {
  * @param password - The password that was used for encryption
  * @param nonStrict - if true and given a json string, the keystore will be parsed as lowercase.
  * @returns Returns the decrypted Web3Account object
- * Decrypting scrypt
+ * Decrypting argon2id
  *
  * ```ts
  * decrypt({
@@ -518,10 +473,10 @@ export const create = (): Web3Account => {
  *   ciphertext: '0de2787855b53188e0e13ebdf430e0a4f61d040df04656c73c1c026a90eb6c91163256700d4851edf2b710a4cb85da4478c792573f6508f370511af2ae2a1d79',
  *      cipherparams: { iv: 'bfb43120ae00e9de110f8325' },
  *      cipher: 'aes-256-gcm',
- *      kdf: 'scrypt',
+ *      kdf: 'argon2id',
  *      kdfparams: {
- *        n: 8192,
- *        r: 8,
+ *        m: 8192,
+ *        t: 8,
  *        p: 1,
  *        dklen: 32,
  *        salt: '210d0ec956787d865358ac45716e6dd42e68d48e346d795746509523aeb477dd'
@@ -557,30 +512,17 @@ export const decrypt = async (
 	validator.validate(['bytes'], [uint8ArrayPassword]);
 
 	let derivedKey;
-	if (json.crypto.kdf === 'scrypt') {
-		const kdfparams = json.crypto.kdfparams as ScryptParams;
+	if (json.crypto.kdf === 'argon2id') {
+		const kdfparams = json.crypto.kdfparams as Argon2idParams;
 		const uint8ArraySalt =
 			typeof kdfparams.salt === 'string' ? hexToBytes(kdfparams.salt) : kdfparams.salt;
-		derivedKey = scryptSync(
+		derivedKey = argon2idSync(
 			uint8ArrayPassword,
 			uint8ArraySalt,
-			kdfparams.n,
+			kdfparams.m,
 			kdfparams.p,
-			kdfparams.r,
+			kdfparams.t,
 			kdfparams.dklen,
-		);
-	} else if (json.crypto.kdf === 'pbkdf2') {
-		const kdfparams: PBKDF2SHA256Params = json.crypto.kdfparams as PBKDF2SHA256Params;
-
-		const uint8ArraySalt =
-			typeof kdfparams.salt === 'string' ? hexToBytes(kdfparams.salt) : kdfparams.salt;
-
-		derivedKey = pbkdf2Sync(
-			uint8ArrayPassword,
-			uint8ArraySalt,
-			kdfparams.c,
-			kdfparams.dklen,
-			'sha256',
 		);
 	} else {
 		throw new InvalidKdfError();

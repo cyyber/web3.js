@@ -31,12 +31,14 @@ download(){
 
     if [ ! -e "$TMP_FOLDER/go-zond" ]
     then
-        git clone https://github.com/cyyber/go-zond ${TMP_FOLDER}/go-zond
+        # git clone https://github.com/cyyber/go-zond ${TMP_FOLDER}/go-zond
+		git clone -b feature/keystore https://github.com/rgeraldes24/go-zond ${TMP_FOLDER}/go-zond
     fi
 
 	if [ ! -e "$TMP_FOLDER/qrysm" ]
     then
-        git clone https://github.com/cyyber/qrysm ${TMP_FOLDER}/qrysm
+        # git clone https://github.com/cyyber/qrysm ${TMP_FOLDER}/qrysm
+		git clone -b feature/keystore https://github.com/rgeraldes24/qrysm ${TMP_FOLDER}/qrysm
     fi
 }
 
@@ -67,7 +69,7 @@ start() {
 		--gzond-genesis-json-in=$TMP_FOLDER/execution/genesis.json \
 		--output-ssz=$TMP_FOLDER/consensus/genesis.ssz \
 		--chain-config-file=$TMP_FOLDER/consensus/config.yml \
-		--deposit-json-file=$TMP_FOLDER/consensus/validator_keys/deposit_data-1702900864.json  \
+		--deposit-json-file=$TMP_FOLDER/consensus/validator_keys/deposit_data-1750753301.json  \
 		--genesis-time="${GENESIS_TIME}"
 
 	buildGzond

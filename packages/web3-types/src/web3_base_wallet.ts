@@ -22,25 +22,18 @@ export type Cipher = 'aes-256-gcm';
 export type CipherOptions = {
 	salt?: Uint8Array | string;
 	iv?: Uint8Array | string;
-	kdf?: 'scrypt' | 'pbkdf2';
+	kdf?: 'argon2id';
 	dklen?: number;
-	c?: number; // iterrations
-	n?: number; // cpu/memory cost
-	r?: number; // block size
+	t?: number; // time
+	m?: number; // memory cost
 	p?: number; // parallelization cost
 };
 
-export type ScryptParams = {
+export type Argon2idParams = {
 	dklen: number;
-	n: number;
+	t: number;
+	m: number;
 	p: number;
-	r: number;
-	salt: Uint8Array | string;
-};
-export type PBKDF2SHA256Params = {
-	c: number; // iterations
-	dklen: number;
-	prf: 'hmac-sha256';
 	salt: Uint8Array | string;
 };
 
@@ -51,8 +44,8 @@ export type KeyStore = {
 		cipherparams: {
 			iv: string;
 		};
-		kdf: 'pbkdf2' | 'scrypt';
-		kdfparams: ScryptParams | PBKDF2SHA256Params;
+		kdf: 'argon2id';
+		kdfparams: Argon2idParams;
 	};
 	id: string;
 	version: 1;

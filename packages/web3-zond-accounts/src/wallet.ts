@@ -274,7 +274,7 @@ export class Wallet<
 	 * "address":"fa3e41a401609103c241431cbdee8623ae2a321a","crypto":
 	 * {"ciphertext":"8d179a911d6146ad2924e86bf493ed89b8ff3596ffec0816e761c542016ab13c",
 	 * "cipherparams":{"iv":"acc888c6cf4a19b86846cef0185a7164"},"cipher":"aes-256-gcm",
-	 * "kdf":"scrypt","kdfparams":{"n":8192,"r":8,"p":1,"dklen":32,"salt":"6a743c9b367d15f4758e4f3f3378ff0fd443708d1c64854e07588ea5331823ae"}}}'
+	 * "kdf":"argon2id","kdfparams":{"m":8192,"t":8,"p":1,"dklen":32,"salt":"6a743c9b367d15f4758e4f3f3378ff0fd443708d1c64854e07588ea5331823ae"}}}'
 	 * ]
 	 * ```
 	 */
@@ -302,12 +302,12 @@ export class Wallet<
 	 * { ciphertext: '7d34deae112841fba86e3e6cf08f5398dda323a8e4d29332621534e2c4069e8d',
 	 *   cipherparams: { iv: '497f4d26997a84d570778eae874b2333' },
 	 *   cipher: 'aes-256-gcm',
-	 *   kdf: 'scrypt',
+	 *   kdf: 'argon2id',
 	 *   kdfparams:
 	 *    { dklen: 32,
 	 *      salt: '208dd732a27aa4803bb760228dff18515d5313fd085bbce60594a3919ae2d88d',
-	 *      n: 262144,
-	 *      r: 8,
+	 *      m: 262144,
+	 *      t: 8,
 	 *      p: 1 } } },
 	 * { version: 1,
 	 * id: '7d6b91fa-3611-407b-b16b-396efb28f97e',
@@ -316,12 +316,12 @@ export class Wallet<
 	 * { ciphertext: 'cb9712d1982ff89f571fa5dbef447f14b7e5f142232bd2a913aac833730eeb43',
 	 *   cipherparams: { iv: '8cccb91cb84e435437f7282ec2ffd2db' },
 	 *   cipher: 'aes-256-gcm',
-	 *   kdf: 'scrypt',
+	 *   kdf: 'argon2id',
 	 *   kdfparams:
 	 *    { dklen: 32,
 	 *      salt: '08ba6736363c5586434cd5b895e6fe41ea7db4785bd9b901dedce77a1514e8b8',
-	 *      n: 262144,
-	 *      r: 8,
+	 *      m: 262144,
+	 *      t: 8,
 	 *      p: 1 } } }
 	 * ], 'test').then(console.log)
 	 * > Wallet {

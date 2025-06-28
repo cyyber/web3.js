@@ -17,7 +17,7 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 
-import { Web3AccountProvider /* , KeyStore */ } from '@theqrl/web3-types';
+import { Web3AccountProvider, KeyStore } from '@theqrl/web3-types';
 import { isBrowser, isElectron, itIf } from '../fixtures/system_test_utils';
 import { Wallet } from '../../src';
 import * as accountProvider from '../../src/account';
@@ -223,8 +223,8 @@ describe('Wallet', () => {
 
 			const result: KeyStore[] = await wallet.encrypt('password', options);
 			expect(result).toHaveLength(2);
-			expect(`0x${result[0]?.address.toLowerCase()}`).toBe(account1.address.toLowerCase());
-			expect(`0x${result[1]?.address.toLowerCase()}`).toBe(account2.address.toLowerCase());
+			expect(`${result[0]?.address.toLowerCase()}`).toBe(account1.address.toLowerCase());
+			expect(`${result[1]?.address.toLowerCase()}`).toBe(account2.address.toLowerCase());
 		});
 	});
 

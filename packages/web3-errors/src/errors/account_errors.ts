@@ -27,7 +27,6 @@ import {
 	ERR_KEY_VERSION_UNSUPPORTED,
 	ERR_INVALID_PASSWORD,
 	ERR_IV_LENGTH,
-	ERR_PBKDF2_ITERATIONS,
 	ERR_INVALID_SEED,
 	ERR_SEED_LENGTH,
 } from '../error_codes.js';
@@ -100,13 +99,6 @@ export class IVLengthError extends BaseWeb3Error {
 	public code = ERR_IV_LENGTH;
 	public constructor() {
 		super('Initialization vector must be 12 bytes');
-	}
-}
-
-export class PBKDF2IterationsError extends BaseWeb3Error {
-	public code = ERR_PBKDF2_ITERATIONS;
-	public constructor() {
-		super('c > 1000, pbkdf2 is less secure with less iterations');
 	}
 }
 

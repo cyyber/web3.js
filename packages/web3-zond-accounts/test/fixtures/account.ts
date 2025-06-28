@@ -23,7 +23,6 @@ import {
 	PublicKeyLengthError,
 	InvalidPasswordError,
 	IVLengthError,
-	PBKDF2IterationsError,
 	InvalidSeedError,
 	SeedLengthError,
 } from '@theqrl/web3-errors';
@@ -199,7 +198,7 @@ export const validEncryptData: [[any, string | Uint8Array, CipherOptions], KeySt
 				ciphertext: '0de2787855b53188e0e13ebdf430e0a4f61d040df04656c73c1c026a90eb6c91163256700d4851edf2b710a4cb85da4478c792573f6508f370511af2ae2a1d79',
 				cipherparams: { iv: 'bfb43120ae00e9de110f8325' },
 				cipher: 'aes-256-gcm',
-				kdf: 'scrypt',
+				kdf: 'argon2id',
 				kdfparams: {
 					n: 8192,
 					r: 8,
@@ -228,7 +227,7 @@ export const validEncryptData: [[any, string | Uint8Array, CipherOptions], KeySt
 				ciphertext: '0de2787855b53188e0e13ebdf430e0a4f61d040df04656c73c1c026a90eb6c91163256700d4851edf2b710a4cb85da4478c792573f6508f370511af2ae2a1d79',
 				cipherparams: { iv: 'bfb43120ae00e9de110f8325' },
 				cipher: 'aes-256-gcm',
-				kdf: 'scrypt',
+				kdf: 'argon2id',
 				kdfparams: {
 					n: 8192,
 					r: 8,
@@ -238,35 +237,6 @@ export const validEncryptData: [[any, string | Uint8Array, CipherOptions], KeySt
 				},
 			},
 			id: '1d82a61f-2bba-4ebc-a283-56d49d877eb7',
-		},
-	],
-	[
-		[
-			'0x30c8510cda2ff485ce1d12744135c60a87c1847b1d4dfa31a111ba5ab007c0c0305d2ab92c92fe04ea93bc69f6280534',
-			'123',
-			{
-				iv: 'bfb43120ae00e9de110f8325',
-				salt: '210d0ec956787d865358ac45716e6dd42e68d48e346d795746509523aeb477dd',
-				c: 262144,
-				kdf: 'pbkdf2',
-			},
-		],
-		{
-			version: 1,
-			id: 'e6a68d89-b03c-4e7d-82e0-079eebaa0da7',
-			address: 'Z208e1a6c6f0d40a53a8c3d5ac831a578651f58e7',
-			crypto: {
-				ciphertext: '3a2101894eb27b599726d867b24f719db8b42de2380e870f3c4edf8f6d0fff38f180fe3c15a86170c44244a664d6c18f6eeedd0359228231b268d1bd1cd01b3c',
-				cipherparams: { iv: 'bfb43120ae00e9de110f8325' },
-				cipher: 'aes-256-gcm',
-				kdf: 'pbkdf2',
-				kdfparams: {
-					dklen: 32,
-					salt: '210d0ec956787d865358ac45716e6dd42e68d48e346d795746509523aeb477dd',
-					c: 262144,
-					prf: 'hmac-sha256',
-				},
-			},
 		},
 	],
 ];
@@ -279,7 +249,6 @@ export const invalidEncryptData: [
 		| InvalidPrivateKeyError
 		| InvalidPasswordError
 		| IVLengthError
-		| PBKDF2IterationsError
 	),
 ][] = [
 	[
@@ -319,20 +288,6 @@ export const invalidEncryptData: [
 			},
 		],
 		new IVLengthError(),
-	],
-	[
-		[
-			// iterations is less than 1000, should error
-			'0x30c8510cda2ff485ce1d12744135c60a87c1847b1d4dfa31a111ba5ab007c0c0305d2ab92c92fe04ea93bc69f6280534',
-			'123',
-			{
-				iv: 'bfb43120ae00e9de110f8325',
-				salt: '210d0ec956787d865358ac45716e6dd42e68d48e346d795746509523aeb477dd',
-				c: 100,
-				kdf: 'pbkdf2',
-			},
-		],
-		new PBKDF2IterationsError(),
 	],
 ];
 
