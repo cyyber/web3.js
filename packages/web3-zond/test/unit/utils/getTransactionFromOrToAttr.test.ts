@@ -50,7 +50,7 @@ describe('getTransactionFromOrToAttr', () => {
 		it.each(invalidGetTransactionFromOrToAttrDataForWallet)(
 			'$title with wallet',
 			({ input, output }) => {
-				const seed = '0x30c8510cda2ff485ce1d12744135c60a87c1847b1d4dfa31a111ba5ab007c0c0305d2ab92c92fe04ea93bc69f6280534';
+				const seed = '0xe6768fa565489b1a11a8541782f7ece4cd791ac92dd6dee0c8c897bafae7dc0e5e43769916b6e2d285ad4919fb1dc7aa';
 
 				// setup wallet
 				const web3Zond = new Web3Zond('http://localhost:8545');

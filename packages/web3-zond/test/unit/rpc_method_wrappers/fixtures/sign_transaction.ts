@@ -25,7 +25,7 @@ import {
 import { decodeSignedTransaction } from '../../../../src/utils/decode_signed_transaction';
 
 const rawType0x2Transaction: Transaction = {
-	from: 'Z2094988078BF4E22ff0e275B558459E498284B46',
+	from: 'Z2086EA3853Acf31bDEaa7D46F34360e8996D95C5',
 	type: '0x2',
 	nonce: '0x0',
 	maxFeePerGas: '0x3b9aca01',

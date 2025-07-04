@@ -181,7 +181,7 @@ export const invalidSeedtoAccountData: [any, SeedLengthError | InvalidSeedError]
 export const validEncryptData: [[any, string | Uint8Array, CipherOptions], KeyStore][] = [
 	[
 		[
-			'0x234389e6f77a26f8b1f4969f964b51b154cd295602fbdb6b0c2a717317da3aa783ca961e4726036849f0c8efe28c48db',
+			'0xdb4078ef7b6631dc329034cc20a969ccd470579b68c2c34897ac733dd72f8fb4fe5dad790336672c108189940eb7ed88',
 			'123',
 			{
 				m: 8192,
@@ -193,7 +193,7 @@ export const validEncryptData: [[any, string | Uint8Array, CipherOptions], KeySt
 		],
 		{
 			version: 1,
-			address: 'Z2094988078bf4e22ff0e275b558459e498284b46',
+			address: 'Z2086ea3853acf31bdeaa7d46f34360e8996d95c5',
 			crypto: {
 				ciphertext: 'fa3bcc472f2dead19b01b8f58e35474b5ebd51a6468a5852b7af55f84f67c727d45f44102a50d2567edde21d5170d50544fcf24e44e36512f2f26c659d75f0b6',
 				cipherparams: { iv: 'bfb43120ae00e9de110f8325' },
@@ -212,7 +212,7 @@ export const validEncryptData: [[any, string | Uint8Array, CipherOptions], KeySt
 	],
 	[
 		[
-			'0x234389e6f77a26f8b1f4969f964b51b154cd295602fbdb6b0c2a717317da3aa783ca961e4726036849f0c8efe28c48db',
+			'0xdb4078ef7b6631dc329034cc20a969ccd470579b68c2c34897ac733dd72f8fb4fe5dad790336672c108189940eb7ed88',
 			'123',
 			{
 				m: 8192,
@@ -222,7 +222,7 @@ export const validEncryptData: [[any, string | Uint8Array, CipherOptions], KeySt
 		],
 		{
 			version: 1,
-			address: 'Z2094988078bf4e22ff0e275b558459e498284b46',
+			address: 'Z2086ea3853acf31bdeaa7d46f34360e8996d95c5',
 			crypto: {
 				ciphertext: 'fa3bcc472f2dead19b01b8f58e35474b5ebd51a6468a5852b7af55f84f67c727d45f44102a50d2567edde21d5170d50544fcf24e44e36512f2f26c659d75f0b6',
 				cipherparams: { iv: 'bfb43120ae00e9de110f8325' },
@@ -257,7 +257,7 @@ export const invalidEncryptData: [
 	],
 	[
 		[
-			'0x30c8510cda2ff485ce1d12744135c60a87c1847b1d4dfa31a111ba5ab007c0c0305d2ab92c92fe04ea93bc69f6280534',
+			'0xe6768fa565489b1a11a8541782f7ece4cd791ac92dd6dee0c8c897bafae7dc0e5e43769916b6e2d285ad4919fb1dc7aa',
 			'123',
 			{
 				iv: 'bfb43120ae00e9de110f8325',
@@ -273,13 +273,13 @@ export const invalidEncryptData: [
 	],
 	[
 		// no password provided
-		['0x30c8510cda2ff485ce1d12744135c60a87c1847b1d4dfa31a111ba5ab007c0c0305d2ab92c92fe04ea93bc69f6280534', undefined, {}],
+		['0xe6768fa565489b1a11a8541782f7ece4cd791ac92dd6dee0c8c897bafae7dc0e5e43769916b6e2d285ad4919fb1dc7aa', undefined, {}],
 		new InvalidPasswordError(),
 	],
 	[
 		// iv length is not 12 bytes
 		[
-			'0x234389e6f77a26f8b1f4969f964b51b154cd295602fbdb6b0c2a717317da3aa783ca961e4726036849f0c8efe28c48db',
+			'0xdb4078ef7b6631dc329034cc20a969ccd470579b68c2c34897ac733dd72f8fb4fe5dad790336672c108189940eb7ed88',
 			'123',
 			{
 				n: 8192,
@@ -298,7 +298,7 @@ export const invalidKeyStore: [[any, string]][] = [
 			{
 				// invalid kdf
 				version: 1,
-				address: 'Z2094988078bf4e22ff0e275b558459e498284b46',
+				address: 'Z2086ea3853acf31bdeaa7d46f34360e8996d95c5',
 				crypto: {
 					ciphertext: '222f49d9cb350b0b9a16472ecb389f8128bc9404233c34ba0484db12fb47534e',
 					cipherparams: { iv: '8c36f74571c7aef9dd4901c9c1cc720a' },
@@ -321,7 +321,7 @@ export const invalidKeyStore: [[any, string]][] = [
 export const validDecryptData: [[string, string, CipherOptions, string]][] = [
 	[
 		[
-			'0x234389e6f77a26f8b1f4969f964b51b154cd295602fbdb6b0c2a717317da3aa783ca961e4726036849f0c8efe28c48db',
+			'0xdb4078ef7b6631dc329034cc20a969ccd470579b68c2c34897ac733dd72f8fb4fe5dad790336672c108189940eb7ed88',
 			'123',
 			{
 				iv: hexToBytes('0xbfb43120ae00e9de110f8325'),
@@ -329,7 +329,7 @@ export const validDecryptData: [[string, string, CipherOptions, string]][] = [
 					'210d0ec956787d865358ac45716e6dd42e68d48e346d795746509523aeb477dd',
 				),
 			},
-			'0x234389e6f77a26f8b1f4969f964b51b154cd295602fbdb6b0c2a717317da3aa783ca961e4726036849f0c8efe28c48db',
+			'0xdb4078ef7b6631dc329034cc20a969ccd470579b68c2c34897ac733dd72f8fb4fe5dad790336672c108189940eb7ed88',
 		],
 	],
 ];
@@ -341,7 +341,7 @@ export const invalidDecryptData: [[any, string], InvalidKdfError][] = [
 				// invalid kdf
 				version: 1,
 				id: '0e9f63f7-9e7c-4d87-bdf7-02ffe8ee6481',
-				address: 'Z2094988078bf4e22ff0e275b558459e498284b46',
+				address: 'Z2086ea3853acf31bdeaa7d46f34360e8996d95c5',
 				crypto: {
 					ciphertext: '222f49d9cb350b0b9a16472ecb389f8128bc9404233c34ba0484db12fb47534e',
 					cipherparams: { iv: '8c36f74571c7aef9dd4901c9c1cc720a' },
@@ -368,7 +368,7 @@ export const invalidDecryptData: [[any, string], InvalidKdfError][] = [
 				// wrong password
 				version: 1,
 				id: 'e6a68d89-b03c-4e7d-82e0-079eebaa0da7',
-				address: 'Z208e1a6c6f0d40a53a8c3d5ac831a578651f58e7',
+				address: 'Z20080fecf20684e664724db93e5d525b8d38c2ce',
 				crypto: {
 					ciphertext: '3a2101894eb27b599726d867b24f719db8b42de2380e870f3c4edf8f6d0fff38f180fe3c15a86170c44244a664d6c18f6eeedd0359228231b268d1bd1cd01b3c',
 					cipherparams: { iv: 'bfb43120ae00e9de110f8325' },

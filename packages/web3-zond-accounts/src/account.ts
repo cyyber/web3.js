@@ -255,7 +255,7 @@ export const publicKeyToAddress = (publicKey: Bytes): string => {
  *
  * Encrypt using argon2id options
  * ```ts
- * encrypt('0x234389e6f77a26f8b1f4969f964b51b154cd295602fbdb6b0c2a717317da3aa783ca961e4726036849f0c8efe28c48db',
+ * encrypt('0xdb4078ef7b6631dc329034cc20a969ccd470579b68c2c34897ac733dd72f8fb4fe5dad790336672c108189940eb7ed88',
  * '123',
  * {
  *   n: 8192,
@@ -266,7 +266,7 @@ export const publicKeyToAddress = (publicKey: Bytes): string => {
  * > {
  * version: 1,
  * id: 'c0cb0a94-4702-4492-b6e6-eb2ac404344a',
- * address: 'Z2094988078bf4e22ff0e275b558459e498284b46',
+ * address: 'Z2086ea3853acf31bdeaa7d46f34360e8996d95c5',
  * crypto: {
  *   ciphertext: 'fa3bcc472f2dead19b01b8f58e35474b5ebd51a6468a5852b7af55f84f67c727d45f44102a50d2567edde21d5170d50544fcf24e44e36512f2f26c659d75f0b6',
  *   cipherparams: { iv: 'bfb43120ae00e9de110f8325' },
@@ -403,10 +403,10 @@ export const parseAndValidateSeed = (data: Bytes, ignoreLength?: boolean): Uint8
  * Use {@link Web3.zond.accounts.signTransaction} instead.
  *
  * ```ts
- * seedToAccount("0x30c8510cda2ff485ce1d12744135c60a87c1847b1d4dfa31a111ba5ab007c0c0305d2ab92c92fe04ea93bc69f6280534");
+ * seedToAccount("0xe6768fa565489b1a11a8541782f7ece4cd791ac92dd6dee0c8c897bafae7dc0e5e43769916b6e2d285ad4919fb1dc7aa");
  * >    {
  * 			address: 'Zb8CE9ab6943e0eCED004cDe8e3bBed6568B2Fa01',
- * 			seed: '0x30c8510cda2ff485ce1d12744135c60a87c1847b1d4dfa31a111ba5ab007c0c0305d2ab92c92fe04ea93bc69f6280534',
+ * 			seed: '0xe6768fa565489b1a11a8541782f7ece4cd791ac92dd6dee0c8c897bafae7dc0e5e43769916b6e2d285ad4919fb1dc7aa',
  * 			sign,
  * 			signTransaction,
  * 			encrypt,
@@ -468,7 +468,7 @@ export const create = (): Web3Account => {
  * decrypt({
  *   version: 1,
  *   id: 'c0cb0a94-4702-4492-b6e6-eb2ac404344a',
- *   address: 'Z2094988078bf4e22ff0e275b558459e498284b46',
+ *   address: 'Z2086ea3853acf31bdeaa7d46f34360e8996d95c5',
  *   crypto: {
  *   ciphertext: 'fa3bcc472f2dead19b01b8f58e35474b5ebd51a6468a5852b7af55f84f67c727d45f44102a50d2567edde21d5170d50544fcf24e44e36512f2f26c659d75f0b6',
  *      cipherparams: { iv: 'bfb43120ae00e9de110f8325' },
