@@ -243,7 +243,7 @@ export const publicKeyToAddress = (publicKey: Bytes): string => {
 
 // TODO(rgeraldes24): example
 /**
- * encrypt a private key with a password, returns a V1 JSON Keystore
+ * encrypt a private key seed with a password, returns a V1 JSON Keystore
  *
  * Read more: https://github.com/ethereum/wiki/wiki/Web3-Secret-Storage-Definition
  *

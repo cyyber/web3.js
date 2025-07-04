@@ -69,7 +69,7 @@ start() {
 		--gzond-genesis-json-in=$TMP_FOLDER/execution/genesis.json \
 		--output-ssz=$TMP_FOLDER/consensus/genesis.ssz \
 		--chain-config-file=$TMP_FOLDER/consensus/config.yml \
-		--deposit-json-file=$TMP_FOLDER/consensus/validator_keys/deposit_data-1750753301.json  \
+		--deposit-json-file=$TMP_FOLDER/consensus/validator_keys/deposit_data-1751540683.json  \
 		--genesis-time="${GENESIS_TIME}"
 
 	buildGzond
