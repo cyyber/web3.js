@@ -323,7 +323,7 @@ export const encrypt = async (
 	// derive key from key derivation function
 	if (kdf === 'argon2id') {
 		kdfparams = {
-			m: options?.m ?? 8192,
+			m: options?.m ?? 262144,
 			t: options?.t ?? 8,
 			p: options?.p ?? 1,
 			dklen: options?.dklen ?? 32,
@@ -347,7 +347,6 @@ export const encrypt = async (
 		initializationVector,
 		'aes-256-gcm',
 	);
-
 	const ciphertext = bytesToHex(cipher).slice(2);
 	const acc = seedToAccount(seedUint8Array);
 
@@ -527,7 +526,7 @@ export const decrypt = async (
 	} else {
 		throw new InvalidKdfError();
 	}
-
+	
 	const seed = await createDecipheriv(
 		hexToBytes(json.crypto.ciphertext),
 		derivedKey,

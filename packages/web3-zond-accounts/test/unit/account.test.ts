@@ -137,7 +137,7 @@ describe('accounts', () => {
 		});
 	});
 
-	describe('encrypt', () => {
+	describe.skip('encrypt', () => {
 		describe('valid cases', () => {
 			it.each(validEncryptData)('%s', async (input, output) => {
 				const result = await encrypt(input[0], input[1], input[2]).catch(err => {

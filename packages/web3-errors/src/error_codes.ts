@@ -105,8 +105,6 @@ export const ERR_SUBSCRIPTION = 603;
 export const ERR_WS_PROVIDER = 604;
 
 // Account error codes
-export const ERR_PRIVATE_KEY_LENGTH = 701;
-export const ERR_INVALID_PRIVATE_KEY = 702;
 export const ERR_UNSUPPORTED_KDF = 703;
 export const ERR_KEY_VERSION_UNSUPPORTED = 705;
 export const ERR_INVALID_PASSWORD = 706;
