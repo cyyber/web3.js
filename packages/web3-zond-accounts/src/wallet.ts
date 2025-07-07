@@ -259,7 +259,6 @@ export class Wallet<
 		return this;
 	}
 
-	// TODO(rgeraldes24)
 	/**
 	 * Encrypts all wallet accounts to an array of encrypted keystore v1 objects.
 	 *
@@ -269,13 +268,27 @@ export class Wallet<
 	 *
 	 * ```ts
 	 * web3.zond.accounts.wallet.create(1)
-	 * web3.zond.accounts.wallet.encrypt("abc").then(console.log);
-	 * > [
-	 * '{"version":3,"id":"fa46e213-a7c3-4844-b903-dd14d39cc7db",
-	 * "address":"fa3e41a401609103c241431cbdee8623ae2a321a","crypto":
-	 * {"ciphertext":"8d179a911d6146ad2924e86bf493ed89b8ff3596ffec0816e761c542016ab13c",
-	 * "cipherparams":{"iv":"acc888c6cf4a19b86846cef0185a7164"},"cipher":"aes-256-gcm",
-	 * "kdf":"argon2id","kdfparams":{"m":8192,"t":8,"p":1,"dklen":32,"salt":"6a743c9b367d15f4758e4f3f3378ff0fd443708d1c64854e07588ea5331823ae"}}}'
+	 * web3.zond.accounts.wallet.encrypt("abc").then((res) => console.log(util.inspect(res, { depth: null })));
+	 * > 
+	 * [
+	 *   {
+	 *     version: 1,
+	 *     id: 'ccb92c3f-94c3-4ca0-86a9-1becdb1855b4',
+	 *     address: 'Z20fd3c13848a14e2ec61a53492140c26034e3fd6',
+	 *     crypto: {
+	 *       ciphertext: '9171df3615b852a8c899c0a86885fa2d932db27c17b212ee346cdad1be896736c32e48f6d8d9d2b6ff210d2454d2cc9c736147293dd47d4be0e104105599b11c',
+	 *       cipherparams: { iv: '259d7d6b79c11d3f2e4b88da' },
+	 *       cipher: 'aes-256-gcm',
+	 *       kdf: 'argon2id',
+	 *       kdfparams: {
+	 *         m: 262144,
+	 *         t: 8,
+	 *         p: 1,
+	 *         dklen: 32,
+	 *         salt: '5741148953f0489db3035cb1a4981763e17a0446f684054a5ad3e06d53ca0fe3'
+	 *       }
+	 *     }
+	 *   }
 	 * ]
 	 * ```
 	 */
@@ -286,7 +299,6 @@ export class Wallet<
 		return Promise.all(this.map(async (account: T) => account.encrypt(password, options)));
 	}
 
-	// TODO(rgeraldes24): desc
 	/**
 	 * Decrypts keystore v1 objects.
 	 *
@@ -297,66 +309,42 @@ export class Wallet<
 	 *
 	 * ```ts
 	 * web3.zond.accounts.wallet.decrypt([
-	 * { version: 1,
-	 * id: '83191a81-aaca-451f-b63d-0c5f3b849289',
-	 * address: '06f702337909c06c82b09b7a22f0a2f0855d1f68',
-	 * crypto:
-	 * { ciphertext: '7d34deae112841fba86e3e6cf08f5398dda323a8e4d29332621534e2c4069e8d',
-	 *   cipherparams: { iv: '497f4d26997a84d570778eae874b2333' },
-	 *   cipher: 'aes-256-gcm',
-	 *   kdf: 'argon2id',
-	 *   kdfparams:
-	 *    { dklen: 32,
-	 *      salt: '208dd732a27aa4803bb760228dff18515d5313fd085bbce60594a3919ae2d88d',
-	 *      m: 262144,
-	 *      t: 8,
-	 *      p: 1 } } },
-	 * { version: 1,
-	 * id: '7d6b91fa-3611-407b-b16b-396efb28f97e',
-	 * address: 'b5d89661b59a9af0b34f58d19138baa2de48baaf',
-	 * crypto:
-	 * { ciphertext: 'cb9712d1982ff89f571fa5dbef447f14b7e5f142232bd2a913aac833730eeb43',
-	 *   cipherparams: { iv: '8cccb91cb84e435437f7282ec2ffd2db' },
-	 *   cipher: 'aes-256-gcm',
-	 *   kdf: 'argon2id',
-	 *   kdfparams:
-	 *    { dklen: 32,
-	 *      salt: '08ba6736363c5586434cd5b895e6fe41ea7db4785bd9b901dedce77a1514e8b8',
-	 *      m: 262144,
-	 *      t: 8,
-	 *      p: 1 } } }
-	 * ], 'test').then(console.log)
-	 * > Wallet {
-	 *   _accountProvider: {
-	 *     create: [Function: create],
-	 *     publicKeyToAccount: [Function: publicKeyToAccount],
-	 *     decrypt: [Function: decrypt]
-	 *   },
-	 *   _defaultKeyName: 'web3js_wallet',
-	 *   _accounts: {
-	 *     'Z85d70633b90e03e0276b98880286d0d055685ed7': {
-	 *       address: 'Z85D70633b90e03e0276B98880286D0D055685ed7',
-	 *       seed: '0xbce9b59981303e76c4878b1a6d7b088ec6b9dd5c966b7d5f54d7a749ff683387',
-	 *       signTransaction: [Function: signTransaction],
-	 *       sign: [Function: sign],
-	 *       encrypt: [Function: encrypt]
-	 *     },
-	 *     'Z06f702337909c06c82b09b7a22f0a2f0855d1f68': {
-	 *       address: 'Z06F702337909C06C82B09B7A22F0a2f0855d1F68',
-	 *       seed: '87a51da18900da7398b3bab03996833138f269f8f66dd1237b98df6b9ce14573',
-	 *       signTransaction: [Function: signTransaction],
-	 *       sign: [Function: sign],
-	 *       encrypt: [Function: encrypt]
-	 *     },
-	 *     'Zb5d89661b59a9af0b34f58d19138baa2de48baaf': {
-	 *       address: 'ZB5d89661B59a9aF0b34f58D19138bAa2de48BAaf',
-	 *       seed: '7ee61c5282979aae9dd795bb6a54e8bdc2bfe009acb64eb9a67322eec3b3da6e',
-	 *       signTransaction: [Function: signTransaction],
-	 *       sign: [Function: sign],
-	 *       encrypt: [Function: encrypt]
+	 *   {
+	 *     version: 1,
+	 *     id: 'ccb92c3f-94c3-4ca0-86a9-1becdb1855b4',
+	 *     address: 'Z20fd3c13848a14e2ec61a53492140c26034e3fd6',
+	 *     crypto: {
+	 *       ciphertext: '9171df3615b852a8c899c0a86885fa2d932db27c17b212ee346cdad1be896736c32e48f6d8d9d2b6ff210d2454d2cc9c736147293dd47d4be0e104105599b11c',
+	 *       cipherparams: { iv: '259d7d6b79c11d3f2e4b88da' },
+	 *       cipher: 'aes-256-gcm',
+	 *       kdf: 'argon2id',
+	 *       kdfparams: {
+	 *         m: 262144,
+	 *         t: 8,
+	 *         p: 1,
+	 *         dklen: 32,
+	 *         salt: '5741148953f0489db3035cb1a4981763e17a0446f684054a5ad3e06d53ca0fe3'
+	 *       }
 	 *     }
 	 *   }
-	 * }
+	 * ], "abc").then((res) => console.log(util.inspect(res, { depth: null })));
+	 * >
+	 * Wallet(1) [
+	 *   {
+	 *     address: 'Z20FD3c13848A14e2EC61A53492140c26034E3FD6',
+	 *     seed: '0x1a3bbb0aa289420ef915059a093cfed7e92990043b01ba8b5407a56aafae5507576781603015f6db7d33920a4947a261',
+	 *     signTransaction: [Function: signTransaction],
+	 *     sign: [Function: sign],
+	 *     encrypt: [Function: encrypt]
+	 *   },
+	 *   _accountProvider: {
+	 *     create: [Function: createWithContext],
+	 *     seedToAccount: [Function: seedToAccountWithContext],
+	 *     decrypt: [Function: decryptWithContext]
+	 *   },
+	 *   _addressMap: Map(1) { 'z20fd3c13848a14e2ec61a53492140c26034e3fd6' => 0 },
+	 *   _defaultKeyName: 'web3js_wallet'
+	 * ]
 	 * ```
 	 */
 	public async decrypt(
