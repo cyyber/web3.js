@@ -241,7 +241,6 @@ export const publicKeyToAddress = (publicKey: Bytes): string => {
 	return toChecksumAddress(hexToAddress(bytesToHex(address)));
 };
 
-// TODO(rgeraldes24): example
 /**
  * encrypt a private key seed with a password, returns a V1 JSON Keystore
  *
@@ -255,32 +254,34 @@ export const publicKeyToAddress = (publicKey: Bytes): string => {
  *
  * Encrypt using argon2id options
  * ```ts
- * encrypt('0xdb4078ef7b6631dc329034cc20a969ccd470579b68c2c34897ac733dd72f8fb4fe5dad790336672c108189940eb7ed88',
- * '123',
+ * encrypt(
+ *   '0xdb4078ef7b6631dc329034cc20a969ccd470579b68c2c34897ac733dd72f8fb4fe5dad790336672c108189940eb7ed88', 
+ *    '123',
+ *    {
+ *      m: 8192,
+ *      iv: web3.utils.hexToBytes('0xbfb43120ae00e9de110f8325'),
+ *      salt: web3.utils.hexToBytes('0x210d0ec956787d865358ac45716e6dd42e68d48e346d795746509523aeb477dd'),
+ *    }
+ * ).then((res) => console.log(util.inspect(res, { depth: null })));
+ * >
  * {
- *   n: 8192,
- *	 iv: web3.utils.hexToBytes('0xbfb43120ae00e9de110f8325'),
- *	 salt: web3.utils.hexToBytes('0x210d0ec956787d865358ac45716e6dd42e68d48e346d795746509523aeb477dd'),
- *	),
- * }).then(console.log)
- * > {
- * version: 1,
- * id: 'c0cb0a94-4702-4492-b6e6-eb2ac404344a',
- * address: 'Z2086ea3853acf31bdeaa7d46f34360e8996d95c5',
- * crypto: {
- *   ciphertext: 'fa3bcc472f2dead19b01b8f58e35474b5ebd51a6468a5852b7af55f84f67c727d45f44102a50d2567edde21d5170d50544fcf24e44e36512f2f26c659d75f0b6',
- *   cipherparams: { iv: 'bfb43120ae00e9de110f8325' },
- *   cipher: 'aes-256-gcm',
- *   kdf: 'argon2id',
- *   kdfparams: {
- *     m: 8192,
- *     t: 8,
- *     p: 1,
- *     dklen: 32,
- *     salt: '210d0ec956787d865358ac45716e6dd42e68d48e346d795746509523aeb477dd'
+ *   version: 1,
+ *   id: '1b1dd3e2-ee6f-49c6-8a9b-a4722046582e',
+ *   address: 'Z2086ea3853acf31bdeaa7d46f34360e8996d95c5',
+ *   crypto: {
+ *     ciphertext: '02383d4ea331fdf518651aa638d77f36de002f6b2cb340712c2957b68f927234a9c87f776e40b61227aca366bd4b7056046dfdddee29df22290939a1e96f5be5',
+ *     cipherparams: { iv: 'bfb43120ae00e9de110f8325' },
+ *     cipher: 'aes-256-gcm',
+ *     kdf: 'argon2id',
+ *     kdfparams: {
+ *       m: 8192,
+ *       t: 8,
+ *       p: 1,
+ *       dklen: 32,
+ *       salt: '210d0ec956787d865358ac45716e6dd42e68d48e346d795746509523aeb477dd'
+ *     }
  *   }
  * }
- *}
  *```
  */
 export const encrypt = async (
@@ -390,7 +391,6 @@ export const parseAndValidateSeed = (data: Bytes, ignoreLength?: boolean): Uint8
 	return seedUint8Array;
 };
 
-// TODO(rgeraldes24): example
 /**
  * Get an Account object from the seed
  *
@@ -402,14 +402,15 @@ export const parseAndValidateSeed = (data: Bytes, ignoreLength?: boolean): Uint8
  * Use {@link Web3.zond.accounts.signTransaction} instead.
  *
  * ```ts
- * seedToAccount("0xe6768fa565489b1a11a8541782f7ece4cd791ac92dd6dee0c8c897bafae7dc0e5e43769916b6e2d285ad4919fb1dc7aa");
- * >    {
- * 			address: 'Zb8CE9ab6943e0eCED004cDe8e3bBed6568B2Fa01',
- * 			seed: '0xe6768fa565489b1a11a8541782f7ece4cd791ac92dd6dee0c8c897bafae7dc0e5e43769916b6e2d285ad4919fb1dc7aa',
- * 			sign,
- * 			signTransaction,
- * 			encrypt,
- * 	}
+ * seedToAccount("0xdb4078ef7b6631dc329034cc20a969ccd470579b68c2c34897ac733dd72f8fb4fe5dad790336672c108189940eb7ed88");
+ * >
+ * {
+ *   address: 'Z2086EA3853Acf31bDEaa7D46F34360e8996D95C5',
+ *   seed: '0xdb4078ef7b6631dc329034cc20a969ccd470579b68c2c34897ac733dd72f8fb4fe5dad790336672c108189940eb7ed88',
+ *   signTransaction: [Function: signTransaction],
+ *   sign: [Function: sign],
+ *   encrypt: [Function: encrypt]
+ * }
  * ```
  */
 export const seedToAccount = (seed: Bytes, ignoreLength?: boolean): Web3Account => {
@@ -453,7 +454,6 @@ export const create = (): Web3Account => {
 	return seedToAccount(seed);
 };
 
-// TODO(rgeraldes24): example
 /**
  * Decrypts a v1 keystore JSON, and creates the account.
  *
@@ -466,28 +466,29 @@ export const create = (): Web3Account => {
  * ```ts
  * decrypt({
  *   version: 1,
- *   id: 'c0cb0a94-4702-4492-b6e6-eb2ac404344a',
+ *   id: '1b1dd3e2-ee6f-49c6-8a9b-a4722046582e',
  *   address: 'Z2086ea3853acf31bdeaa7d46f34360e8996d95c5',
  *   crypto: {
- *   ciphertext: 'fa3bcc472f2dead19b01b8f58e35474b5ebd51a6468a5852b7af55f84f67c727d45f44102a50d2567edde21d5170d50544fcf24e44e36512f2f26c659d75f0b6',
- *      cipherparams: { iv: 'bfb43120ae00e9de110f8325' },
- *      cipher: 'aes-256-gcm',
- *      kdf: 'argon2id',
- *      kdfparams: {
- *        m: 8192,
- *        t: 8,
- *        p: 1,
- *        dklen: 32,
- *        salt: '210d0ec956787d865358ac45716e6dd42e68d48e346d795746509523aeb477dd'
- *      }
- *    }
- *   }, '123').then(console.log)
- * > {
- * address: 'ZcdA9A91875fc35c8Ac1320E098e584495d66e47c',
- * privateKey: '67f476289210e3bef3c1c75e4de993ff0a00663df00def84e73aa7411eac18a6',
- * signTransaction: [Function: signTransaction],
- * sign: [Function: sign],
- * encrypt: [AsyncFunction: encrypt]
+ *     ciphertext: '02383d4ea331fdf518651aa638d77f36de002f6b2cb340712c2957b68f927234a9c87f776e40b61227aca366bd4b7056046dfdddee29df22290939a1e96f5be5',
+ *     cipherparams: { iv: 'bfb43120ae00e9de110f8325' },
+ *     cipher: 'aes-256-gcm',
+ *     kdf: 'argon2id',
+ *     kdfparams: {
+ *       m: 8192,
+ *       t: 8,
+ *       p: 1,
+ *       dklen: 32,
+ *       salt: '210d0ec956787d865358ac45716e6dd42e68d48e346d795746509523aeb477dd'
+ *     }
+ *   }
+ * }, '123').then((res) => console.log(util.inspect(res, { depth: null })));
+ * >
+ * {
+ *   address: 'Z2086EA3853Acf31bDEaa7D46F34360e8996D95C5',
+ *   seed: '0xdb4078ef7b6631dc329034cc20a969ccd470579b68c2c34897ac733dd72f8fb4fe5dad790336672c108189940eb7ed88',
+ *   signTransaction: [Function: signTransaction],
+ *   sign: [Function: sign],
+ *   encrypt: [Function: encrypt]
  * }
  * ```
  */
