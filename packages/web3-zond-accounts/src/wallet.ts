@@ -381,13 +381,18 @@ export class Wallet<
 	 *
 	 * @param password - The password to encrypt the wallet
 	 * @param keyName - (optional) The key used for the local storage position, defaults to `"web3js_wallet"`.
+	 * @param options - (optional) encryption options
 	 * @returns Will return boolean value true if saved properly
 	 * ```ts
 	 * web3.zond.accounts.wallet.save('test#!$');
 	 * >true
 	 * ```
 	 */
-	public async save(password: string, keyName?: string) {
+	public async save(
+		password: string, 
+		keyName?: string,
+		options?: Record<string, unknown> | undefined,
+	) {
 		const storage = Wallet.getStorage();
 
 		if (!storage) {
@@ -396,7 +401,7 @@ export class Wallet<
 
 		storage.setItem(
 			keyName ?? this._defaultKeyName,
-			JSON.stringify(await this.encrypt(password)),
+			JSON.stringify(await this.encrypt(password, options)),
 		);
 
 		return true;

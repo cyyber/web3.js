@@ -102,6 +102,10 @@ export abstract class Web3BaseWallet<T extends Web3BaseWalletAccount> extends Ar
 		password: string,
 		options?: Record<string, unknown>,
 	): Promise<this>;
-	public abstract save(password: string, keyName?: string): Promise<boolean | never>;
+	public abstract save(
+		password: string, 
+		keyName?: string,
+		options?: Record<string, unknown>,
+	): Promise<boolean | never>;
 	public abstract load(password: string, keyName?: string): Promise<this | never>;
 }
