@@ -24,9 +24,9 @@ export type CipherOptions = {
 	iv?: Uint8Array | string;
 	kdf?: 'argon2id';
 	dklen?: number;
-	t?: number; // time
-	m?: number; // memory cost
-	p?: number; // parallelization cost
+	t?: number; // iterations
+	m?: number; // amount of memory (in kibibytes) to use
+	p?: number; // number of iterations to perform
 };
 
 export type Argon2idParams = {
