@@ -164,13 +164,15 @@ export const invalidSeedtoAccountData: [any, SeedLengthError | InvalidSeedError]
 ];
 
 export const validEncryptData: [[any, string | Uint8Array, CipherOptions], KeyStore][] = [
-	// Test taken from https://github.com/theQRL/go-zond/tree/main/accounts/keystore
+	// Test taken from https://github.com/theQRL/go-zond/tree/main/accounts/keystore/testdata/v1_test_vector.json
 	[
 		[
 			'0x5dfdcad4f721fe41d1bdf632de24ba60ba7cfab9c9a79287fa007b6a0dec8200b1fa35d2575bb15bd44d59b8d878828b',
 			'1234567890',
 			{
-				m: 262144,
+				t: 1,
+				m: 65536,
+				p: 1,
 				iv: hexToBytes('0x4c2275c4a14a5e984bfaec2b'),
 				salt: hexToBytes(
 					'2c2f566f38f5b79634d17267d95a0914ed47a44fe91f9cbb0b8765ebaa0b7ddd',
@@ -181,13 +183,13 @@ export const validEncryptData: [[any, string | Uint8Array, CipherOptions], KeySt
 			version: 1,
 			address: 'Z2068da65aa0167e1d55fd692786cf87117fcf3fc',
 			crypto: {
-				ciphertext: 'f833f12f6cb57f6961fb34bbf4ff5019c9fd70e1ab98bf0f1ba164f1b4bc773e853f973b708a4ec1b5e1148de96437ac5fc75da87c6b7293628e9d45b4bc2ab7',
+				ciphertext: 'bde2b4e9fd51a73917bab6ec31b25f1cdd9c908eeb0d81bd6cf70217175abcb583734fd9524ec12b5491df8f7cbd9425e4a8bfde730a42b56074a2dd4b5b05f9',
 				cipherparams: { iv: '4c2275c4a14a5e984bfaec2b' },
 				cipher: 'aes-256-gcm',
 				kdf: 'argon2id',
 				kdfparams: {
-					m: 262144,
-					t: 8,
+					m: 65536,
+					t: 1,
 					p: 1,
 					dklen: 32,
 					salt: '2c2f566f38f5b79634d17267d95a0914ed47a44fe91f9cbb0b8765ebaa0b7ddd',
@@ -281,6 +283,9 @@ export const validDecryptData: [[string, string, CipherOptions, string]][] = [
 			'0x5dfdcad4f721fe41d1bdf632de24ba60ba7cfab9c9a79287fa007b6a0dec8200b1fa35d2575bb15bd44d59b8d878828b',
 			'1234567890',
 			{
+				t: 1,
+				m: 65536,
+				p: 1,
 				iv: hexToBytes('0x4c2275c4a14a5e984bfaec2b'),
 				salt: hexToBytes(
 					'2c2f566f38f5b79634d17267d95a0914ed47a44fe91f9cbb0b8765ebaa0b7ddd',
@@ -299,13 +304,13 @@ export const invalidDecryptData: [[any, string], InvalidKdfError][] = [
 				version: 1,
 				address: 'Z2068da65aa0167e1d55fd692786cf87117fcf3fc',
 				crypto: {
-					ciphertext: 'f833f12f6cb57f6961fb34bbf4ff5019c9fd70e1ab98bf0f1ba164f1b4bc773e853f973b708a4ec1b5e1148de96437ac5fc75da87c6b7293628e9d45b4bc2ab7',
+					ciphertext: 'bde2b4e9fd51a73917bab6ec31b25f1cdd9c908eeb0d81bd6cf70217175abcb583734fd9524ec12b5491df8f7cbd9425e4a8bfde730a42b56074a2dd4b5b05f9',
 					cipherparams: { iv: '4c2275c4a14a5e984bfaec2b' },
 					cipher: 'aes-256-gcm',
 					kdf: 'hkdf',
 					kdfparams: {
-						m: 262144,
-						t: 8,
+						m: 65536,
+						t: 1,
 						p: 1,
 						dklen: 32,
 						salt: '2c2f566f38f5b79634d17267d95a0914ed47a44fe91f9cbb0b8765ebaa0b7ddd',
@@ -324,13 +329,13 @@ export const invalidDecryptData: [[any, string], InvalidKdfError][] = [
 				version: 1,
 				address: 'Z2068da65aa0167e1d55fd692786cf87117fcf3fc',
 				crypto: {
-					ciphertext: 'f833f12f6cb57f6961fb34bbf4ff5019c9fd70e1ab98bf0f1ba164f1b4bc773e853f973b708a4ec1b5e1148de96437ac5fc75da87c6b7293628e9d45b4bc2ab7',
+					ciphertext: 'bde2b4e9fd51a73917bab6ec31b25f1cdd9c908eeb0d81bd6cf70217175abcb583734fd9524ec12b5491df8f7cbd9425e4a8bfde730a42b56074a2dd4b5b05f9',
 					cipherparams: { iv: '4c2275c4a14a5e984bfaec2b' },
 					cipher: 'aes-256-gcm',
 					kdf: 'hkdf',
 					kdfparams: {
-						m: 262144,
-						t: 8,
+						m: 65536,
+						t: 1,
 						p: 1,
 						dklen: 32,
 						salt: '2c2f566f38f5b79634d17267d95a0914ed47a44fe91f9cbb0b8765ebaa0b7ddd',
