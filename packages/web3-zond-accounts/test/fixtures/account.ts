@@ -296,7 +296,7 @@ export const validDecryptData: [[string, string, CipherOptions, string]][] = [
 	],
 ];
 
-export const invalidDecryptData: [[any, string], InvalidKdfError][] = [
+export const invalidDecryptData: [[any, string], InvalidKdfError | string][] = [
 	[
 		[
 			{
@@ -332,7 +332,7 @@ export const invalidDecryptData: [[any, string], InvalidKdfError][] = [
 					ciphertext: 'bde2b4e9fd51a73917bab6ec31b25f1cdd9c908eeb0d81bd6cf70217175abcb583734fd9524ec12b5491df8f7cbd9425e4a8bfde730a42b56074a2dd4b5b05f9',
 					cipherparams: { iv: '4c2275c4a14a5e984bfaec2b' },
 					cipher: 'aes-256-gcm',
-					kdf: 'hkdf',
+					kdf: 'argon2id',
 					kdfparams: {
 						m: 65536,
 						t: 1,
@@ -345,7 +345,7 @@ export const invalidDecryptData: [[any, string], InvalidKdfError][] = [
 			},
 			'12',
 		],
-		new InvalidKdfError(),
+		"The operation failed for an operation-specific reason",
 	],
 ];
 
