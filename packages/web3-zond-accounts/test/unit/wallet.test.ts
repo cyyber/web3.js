@@ -310,7 +310,7 @@ describe('Wallet', () => {
 			await wallet.save('password', 'myKey');
 
 			expect(wallet.encrypt).toHaveBeenCalledTimes(1);
-			expect(wallet.encrypt).toHaveBeenCalledWith('password');
+			expect(wallet.encrypt).toHaveBeenCalledWith('password', undefined);
 			expect(localStorageSpy.setItem).toHaveBeenCalledTimes(1);
 			expect(localStorageSpy.setItem).toHaveBeenCalledWith(
 				'myKey',
@@ -325,7 +325,7 @@ describe('Wallet', () => {
 			await wallet.save('password');
 
 			expect(wallet.encrypt).toHaveBeenCalledTimes(1);
-			expect(wallet.encrypt).toHaveBeenCalledWith('password');
+			expect(wallet.encrypt).toHaveBeenCalledWith('password', undefined);
 			expect(localStorageSpy.setItem).toHaveBeenCalledTimes(1);
 			expect(localStorageSpy.setItem).toHaveBeenCalledWith(
 				'web3js_wallet',

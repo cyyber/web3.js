@@ -246,7 +246,7 @@ describe('Wallet', () => {
 		});
 	});
 
-	describe.skip('save', () => {
+	describe('save', () => {
 		itIf(!(isBrowser || isElectron))(
 			'should throw error if local storage not present',
 			async () => {
@@ -287,7 +287,7 @@ describe('Wallet', () => {
 		);
 	});
 
-	describe.skip('load', () => {
+	describe('load', () => {
 		itIf(!(isBrowser || isElectron))(
 			'should throw error if local storage not present',
 			async () => {
