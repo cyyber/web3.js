@@ -31,15 +31,12 @@ download(){
 
     if [ ! -e "$TMP_FOLDER/go-zond" ]
     then
-		# TODO(rgeraldes24)
-        # git clone https://github.com/cyyber/go-zond ${TMP_FOLDER}/go-zond
-	    git clone -b feature/keystore https://github.com/rgeraldes24/go-zond ${TMP_FOLDER}/go-zond
+        git clone https://github.com/cyyber/go-zond ${TMP_FOLDER}/go-zond
     fi
 
 	if [ ! -e "$TMP_FOLDER/qrysm" ]
     then
-        # git clone https://github.com/cyyber/qrysm ${TMP_FOLDER}/qrysm
-	    git clone -b feature/keystore https://github.com/rgeraldes24/qrysm ${TMP_FOLDER}/qrysm
+        git clone https://github.com/cyyber/qrysm ${TMP_FOLDER}/qrysm
     fi
 }
 
