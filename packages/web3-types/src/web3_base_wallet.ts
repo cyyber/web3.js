@@ -26,7 +26,7 @@ export type CipherOptions = {
 	dklen?: number;
 	t?: number; // iterations
 	m?: number; // amount of memory to use
-	p?: number; // number of iterations to perform
+	p?: number; // degree of parallelism (i.e. number of threads)
 };
 
 export type Argon2idParams = {
