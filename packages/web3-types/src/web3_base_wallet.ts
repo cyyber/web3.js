@@ -25,7 +25,7 @@ export type CipherOptions = {
 	kdf?: 'argon2id';
 	dklen?: number;
 	t?: number; // iterations
-	m?: number; // amount of memory (in kibibytes) to use
+	m?: number; // amount of memory to use
 	p?: number; // number of iterations to perform
 };
 
