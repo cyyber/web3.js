@@ -67,7 +67,7 @@ start() {
 		--gzond-genesis-json-in=$TMP_FOLDER/execution/genesis.json \
 		--output-ssz=$TMP_FOLDER/consensus/genesis.ssz \
 		--chain-config-file=$TMP_FOLDER/consensus/config.yml \
-		--deposit-json-file=$TMP_FOLDER/consensus/validator_keys/deposit_data-1702900864.json  \
+		--deposit-json-file=$TMP_FOLDER/consensus/validator_keys/deposit_data-1751540683.json  \
 		--genesis-time="${GENESIS_TIME}"
 
 	buildGzond
@@ -87,7 +87,7 @@ start() {
 		--http --http.addr 0.0.0.0 --http.port $WEB3_SYSTEM_TEST_PORT \
 		--allow-insecure-unlock \
 		--keystore $TMP_FOLDER/execution/keystore \
-		--unlock "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19" \
+		--unlock "0,1,2,3,4,5,6,7,8,9" \
 		--password $TMP_FOLDER/execution/password.txt \
 		--http.api web3,zond,admin,debug,txpool,net \
 		--ws.api web3,zond,admin,debug,miner,txpool,net \

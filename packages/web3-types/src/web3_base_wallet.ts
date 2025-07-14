@@ -17,30 +17,23 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 import { Transaction } from './zond_types.js';
 import { HexString } from './primitives_types.js';
 
-export type Cipher = 'aes-128-ctr' | 'aes-128-cbc' | 'aes-256-cbc';
+export type Cipher = 'aes-256-gcm';
 
 export type CipherOptions = {
 	salt?: Uint8Array | string;
 	iv?: Uint8Array | string;
-	kdf?: 'scrypt' | 'pbkdf2';
+	kdf?: 'argon2id';
 	dklen?: number;
-	c?: number; // iterrations
-	n?: number; // cpu/memory cost
-	r?: number; // block size
-	p?: number; // parallelization cost
+	t?: number; // iterations
+	m?: number; // amount of memory to use
+	p?: number; // degree of parallelism (i.e. number of threads)
 };
 
-export type ScryptParams = {
+export type Argon2idParams = {
 	dklen: number;
-	n: number;
+	t: number;
+	m: number;
 	p: number;
-	r: number;
-	salt: Uint8Array | string;
-};
-export type PBKDF2SHA256Params = {
-	c: number; // iterations
-	dklen: number;
-	prf: 'hmac-sha256';
 	salt: Uint8Array | string;
 };
 
@@ -51,12 +44,11 @@ export type KeyStore = {
 		cipherparams: {
 			iv: string;
 		};
-		kdf: 'pbkdf2' | 'scrypt';
-		kdfparams: ScryptParams | PBKDF2SHA256Params;
-		mac: HexString;
+		kdf: 'argon2id';
+		kdfparams: Argon2idParams;
 	};
 	id: string;
-	version: 3;
+	version: 1;
 	address: string;
 };
 
@@ -75,19 +67,17 @@ export interface Web3BaseWalletAccount {
 		readonly message?: string;
 		readonly signature: HexString;
 	};
-	// TODO(youtrack/theqrl/web3.js/3)
-	// readonly encrypt: (password: string, options?: Record<string, unknown>) => Promise<KeyStore>;
+	readonly encrypt: (password: string, options?: Record<string, unknown>) => Promise<KeyStore>;
 }
 
 export interface Web3AccountProvider<T> {
 	seedToAccount: (seed: string) => T;
 	create: () => T;
-	// TODO(youtrack/theqrl/web3.js/3)
-	// decrypt: (
-	// 	keystore: KeyStore | string,
-	// 	password: string,
-	// 	options?: Record<string, unknown>,
-	// ) => Promise<T>;
+	decrypt: (
+		keystore: KeyStore | string,
+		password: string,
+		options?: Record<string, unknown>,
+	) => Promise<T>;
 }
 
 export abstract class Web3BaseWallet<T extends Web3BaseWalletAccount> extends Array<T> {
@@ -103,16 +93,19 @@ export abstract class Web3BaseWallet<T extends Web3BaseWalletAccount> extends Ar
 	public abstract get(addressOrIndex: string | number): T | undefined;
 	public abstract remove(addressOrIndex: string | number): boolean;
 	public abstract clear(): this;
-	// TODO(youtrack/theqrl/web3.js/3)
-	// public abstract encrypt(
-	// 	password: string,
-	// 	options?: Record<string, unknown>,
-	// ): Promise<KeyStore[]>;
-	// public abstract decrypt(
-	// 	encryptedWallet: KeyStore[],
-	// 	password: string,
-	// 	options?: Record<string, unknown>,
-	// ): Promise<this>;
-	// public abstract save(password: string, keyName?: string): Promise<boolean | never>;
-	// public abstract load(password: string, keyName?: string): Promise<this | never>;
+	public abstract encrypt(
+		password: string,
+		options?: Record<string, unknown>,
+	): Promise<KeyStore[]>;
+	public abstract decrypt(
+		encryptedWallet: KeyStore[],
+		password: string,
+		options?: Record<string, unknown>,
+	): Promise<this>;
+	public abstract save(
+		password: string, 
+		keyName?: string,
+		options?: Record<string, unknown>,
+	): Promise<boolean | never>;
+	public abstract load(password: string, keyName?: string): Promise<this | never>;
 }

@@ -105,15 +105,11 @@ export const ERR_SUBSCRIPTION = 603;
 export const ERR_WS_PROVIDER = 604;
 
 // Account error codes
-export const ERR_PRIVATE_KEY_LENGTH = 701;
-export const ERR_INVALID_PRIVATE_KEY = 702;
 export const ERR_UNSUPPORTED_KDF = 703;
-export const ERR_KEY_DERIVATION_FAIL = 704;
 export const ERR_KEY_VERSION_UNSUPPORTED = 705;
 export const ERR_INVALID_PASSWORD = 706;
 export const ERR_IV_LENGTH = 707;
 export const ERR_INVALID_KEYSTORE = 708;
-export const ERR_PBKDF2_ITERATIONS = 709;
 export const ERR_INVALID_SEED = 710;
 export const ERR_PUBLIC_KEY_LENGTH = 711;
 export const ERR_INVALID_PUBLIC_KEY = 712;
