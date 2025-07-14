@@ -11,7 +11,7 @@ module.exports = {
 		[
 			'json',
 			{
-				file: 'web3-zond-zns-unit-coverage.json',
+				file: 'web3-zond-ens-unit-coverage.json',
 			},
 		],
 	],

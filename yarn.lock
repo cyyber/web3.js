@@ -1813,6 +1813,22 @@
   dependencies:
     "@sinonjs/commons" "^1.7.0"
 
+"@theqrl/abi@^0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@theqrl/abi/-/abi-0.1.0.tgz#de509b468df8f1c8822be8eb74c0f0a1d0f634cb"
+  integrity sha512-QIJd8UreY+rjS3s2Tjrc6WaTpJV/Ro2k8OEh2OvhPckIiqS4nVPQVhVTahmI6jDi+Qq9b8jtrO+sFD5Snl0+cg==
+  dependencies:
+    "@ethersproject/address" "^5.7.0"
+    "@ethersproject/bignumber" "^5.7.0"
+    "@ethersproject/bytes" "^5.7.0"
+    "@ethersproject/constants" "^5.7.0"
+    "@ethersproject/hash" "^5.7.0"
+    "@ethersproject/keccak256" "^5.7.0"
+    "@ethersproject/logger" "^5.7.0"
+    "@ethersproject/properties" "^5.7.0"
+    "@ethersproject/strings" "^5.7.0"
+    "@theqrl/web3-utils" "^0.3.0"
+
 "@theqrl/dilithium5@^0.0.9":
   version "0.0.9"
   resolved "https://registry.yarnpkg.com/@theqrl/dilithium5/-/dilithium5-0.0.9.tgz#f4b80654faf0f345fabc6420991c40063673baa9"
@@ -11790,7 +11806,7 @@ zod@^3.21.4:
   integrity sha512-m46AKbrzKVzOzs/DZgVnG5H55N1sv1M8qZU3A8RIKbs3mrACDNeIOeilDymVb2HdmP8uwshOCF4uJ8uM9rCqJw==
 
 "zond-cryptography@file:../js-zond-cryptography":
-  version "2.0.0"
+  version "0.1.0"
   dependencies:
     "@noble/curves" "1.0.0"
     "@noble/hashes" "1.6.1"

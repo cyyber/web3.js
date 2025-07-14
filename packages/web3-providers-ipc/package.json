@@ -1,6 +1,6 @@
 {
 	"name": "@theqrl/web3-providers-ipc",
-	"version": "0.3.0",
+	"version": "0.3.3",
 	"publishConfig": {
 		"access": "public"
 	},
@@ -14,8 +14,8 @@
 			"require": "./lib/commonjs/index.js"
 		}
 	},
-	"repository": "https://github.com/ChainSafe/web3.js",
-	"author": "ChainSafe Systems",
+	"repository": "https://github.com/theqrl/web3.js",
+	"author": "The QRL Contributors",
 	"license": "LGPL-3.0",
 	"engines": {
 		"node": ">=14",
@@ -59,9 +59,9 @@
 		"typescript": "^4.7.4"
 	},
 	"dependencies": {
-		"@theqrl/web3-errors": "^0.3.0",
-		"@theqrl/web3-types": "^0.3.0",
-		"@theqrl/web3-utils": "^0.3.0"
+		"@theqrl/web3-errors": "^0.3.3",
+		"@theqrl/web3-types": "^0.3.3",
+		"@theqrl/web3-utils": "^0.3.3"
 	},
 	"gitHead": "d4f3246946fec86d908a215b27568aa8faea88d7"
 }

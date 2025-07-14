@@ -1,28 +1,28 @@
-# @theqrl/web3.js - Web3-Errors
+# @theqrl/web3.js - ENS
 
 ![ES Version](https://img.shields.io/badge/ES-2020-yellow)
 ![Node Version](https://img.shields.io/badge/node-18.x-green)
-[![NPM Package](https://img.shields.io/npm/v/@theqrl/web3-errors)](https://www.npmjs.com/package/@theqrl/web3-errors)
-[![Downloads](https://img.shields.io/npm/dy/@theqrl/web3-errors)](https://www.npmjs.com/package/@theqrl/web3-errors)
+[![NPM Package](https://img.shields.io/npm/v/@theqrl/web3-zond-ens)](https://www.npmjs.com/package/@theqrl/web3-zond-ens)
+[![Downloads](https://img.shields.io/npm/dm/@theqrl/web3-zond-ens)](https://www.npmjs.com/package/@theqrl/web3-zond-ens)
 
 This is a sub-package of [@theqrl/web3.js](https://github.com/theqrl/web3.js).
 
-`@theqrl/web3-errors` This package has @theqrl/web3 error classes.
+`@theqrl/web3-zond-ens` This package has ENS functions for interacting with the Zond derivative of the Ethereum Name Service.
 
 ## Installation
 
-You can install the package either using [NPM](https://www.npmjs.com/package/@theqrl/web3-errors) or using [Yarn](https://yarnpkg.com/package/@theqrl/web3-errors)
+You can install the package either using [NPM](https://www.npmjs.com/package/@theqrl/web3-zond-ens) or using [Yarn](https://yarnpkg.com/package/@theqrl/web3-zond-ens)
 
 ### Using NPM
 
 ```bash
-npm install @theqrl/web3-errors
+npm install @theqrl/web3-zond-ens
 ```
 
 ### Using Yarn
 
 ```bash
-yarn add @theqrl/web3-errors
+yarn add @theqrl/web3-zond-ens
 ```
 
 ## Getting Started
@@ -49,7 +49,7 @@ yarn add @theqrl/web3-errors
 | test:unit        | Uses `jest` to run tests under `/test/unit`        |
 
 [docs]: https://docs.theqrl.org/
-[repo]: https://github.com/web3/web3.js/tree/main/packages/web3-errors
-[npm-image]: https://img.shields.io/github/package-json/v/web3/web3.js/main?filename=packages%2Fweb3-errors%2Fpackage.json
-[npm-url]: https://npmjs.org/package/web3-errors
-[downloads-image]: https://img.shields.io/npm/dm/web3-errors?label=npm%20downloads
+[repo]: https://github.com/theqrl/web3.js/tree/main/packages/web3-zond-ens
+[npm-image]: https://img.shields.io/github/package-json/v/theqrl/web3.js/main?filename=packages%2Fweb3-zond-ens%2Fpackage.json
+[npm-url]: https://npmjs.org/package/@theqrl/web3-zond-ens
+[downloads-image]: https://img.shields.io/npm/dm/@theqrl/web3-zond-ens?label=npm%20downloads

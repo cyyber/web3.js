@@ -1,6 +1,6 @@
 {
 	"name": "@theqrl/web3-zond-contract",
-	"version": "0.3.0",
+	"version": "0.3.3",
 	"publishConfig": {
 		"access": "public"
 	},
@@ -14,8 +14,8 @@
 			"require": "./lib/commonjs/index.js"
 		}
 	},
-	"repository": "https://github.com/theQRL/web3.js/tree/main/packages/web3-zond-contract",
-	"author": "ChainSafe Systems",
+	"repository": "https://github.com/theqrl/web3.js/tree/main/packages/web3-zond-contract",
+	"author": "The QRL Contributors",
 	"license": "LGPL-3.0",
 	"engines": {
 		"node": ">=14",
@@ -48,18 +48,18 @@
 		"test:e2e:firefox": "npx cypress run --headless --browser firefox --env grep='ignore',invert=true"
 	},
 	"dependencies": {
-		"@theqrl/web3-core": "^0.3.0",
-		"@theqrl/web3-errors": "^0.3.0",
-		"@theqrl/web3-types": "^0.3.0",
-		"@theqrl/web3-utils": "^0.3.0",
-		"@theqrl/web3-validator": "^0.3.0",
-		"@theqrl/web3-zond": "^0.3.0",
-		"@theqrl/web3-zond-abi": "^0.3.0"
+		"@theqrl/web3-core": "^0.3.3",
+		"@theqrl/web3-errors": "^0.3.3",
+		"@theqrl/web3-types": "^0.3.3",
+		"@theqrl/web3-utils": "^0.3.3",
+		"@theqrl/web3-validator": "^0.3.3",
+		"@theqrl/web3-zond": "^0.3.3",
+		"@theqrl/web3-zond-abi": "^0.3.3"
 	},
 	"devDependencies": {
 		"@humeris/espresso-shot": "^4.0.0",
 		"@theqrl/eslint-config-base-web3": "^0.3.0",
-		"@theqrl/web3-zond-accounts": "^0.3.0",
+		"@theqrl/web3-zond-accounts": "^0.3.3",
 		"@types/jest": "^28.1.6",
 		"@typescript-eslint/eslint-plugin": "^5.30.7",
 		"@typescript-eslint/parser": "^5.30.7",
