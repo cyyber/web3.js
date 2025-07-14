@@ -24,7 +24,7 @@ import {
 } from '@theqrl/web3-core';
 import { Web3Zond, RegisteredSubscription, registeredSubscriptions } from '@theqrl/web3-zond';
 import Contract from '@theqrl/web3-zond-contract';
-import { ZNS, registryAddresses } from '@theqrl/web3-zond-zns';
+import { ZNS, registryAddresses } from '@theqrl/web3-zond-ens';
 import { Iban } from '@theqrl/web3-zond-iban';
 import { Net } from '@theqrl/web3-net';
 import * as utils from '@theqrl/web3-utils';

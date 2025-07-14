@@ -36,7 +36,7 @@ import {
 	Web3Account,
 } from '@theqrl/web3-zond-accounts';
 import { Contract } from '@theqrl/web3-zond-contract';
-import { ZNS } from '@theqrl/web3-zond-zns';
+import { ZNS } from '@theqrl/web3-zond-ens';
 import { Net } from '@theqrl/web3-net';
 import { Iban } from '@theqrl/web3-zond-iban';
 
