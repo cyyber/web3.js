@@ -31,7 +31,7 @@ const packages = [
 	'@theqrl/web3-net',
 	'@theqrl/web3-zond-abi',
 	'@theqrl/web3-zond-accounts',
-	'@theqrl/web3-zond-zns',
+	'@theqrl/web3-zond-ens',
 	'@theqrl/web3-zond-iban',
 	'@theqrl/web3-providers-http',
 	'@theqrl/web3-providers-ws',
@@ -95,7 +95,7 @@ const config = {
 					routeBasePath: '/', // Serve the docs at the site's root
 					// Please change this to your repo.
 					// Remove this to remove the "edit this page" links.
-					editUrl: 'https://github.com/theQRL/web3.js/tree/main/docs',
+					editUrl: 'https://github.com/theqrl/web3.js/tree/main/docs',
 				},
 				theme: {
 					customCss: require.resolve('./src/css/custom.css'),
@@ -131,7 +131,7 @@ const config = {
 						position: 'left',
 					},
 					{
-						href: 'https://github.com/theQRL/web3.js/tree/main/',
+						href: 'https://github.com/theqrl/web3.js/tree/main/',
 						label: 'GitHub',
 						position: 'right',
 					},

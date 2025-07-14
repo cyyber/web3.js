@@ -1,6 +1,6 @@
 {
-	"name": "@theqrl/web3-zond-zns",
-	"version": "0.3.0",
+	"name": "@theqrl/web3-zond-ens",
+	"version": "0.3.3",
 	"publishConfig": {
 		"access": "public"
 	},
@@ -14,8 +14,8 @@
 			"require": "./lib/commonjs/index.js"
 		}
 	},
-	"repository": "https://github.com/ChainSafe/web3.js",
-	"author": "ChainSafe Systems",
+	"repository": "https://github.com/theqrl/web3.js",
+	"author": "The QRL Contributors",
 	"license": "LGPL-3.0",
 	"engines": {
 		"node": ">=14",
@@ -60,14 +60,14 @@
 	},
 	"dependencies": {
 		"@adraffy/ens-normalize": "^1.8.8",
-		"@theqrl/web3-core": "^0.3.0",
-		"@theqrl/web3-errors": "^0.3.0",
-		"@theqrl/web3-net": "^0.3.0",
-		"@theqrl/web3-types": "^0.3.0",
-		"@theqrl/web3-utils": "^0.3.0",
-		"@theqrl/web3-validator": "^0.3.0",
-		"@theqrl/web3-zond": "^0.3.0",
-		"@theqrl/web3-zond-contract": "^0.3.0"
+		"@theqrl/web3-core": "^0.3.3",
+		"@theqrl/web3-errors": "^0.3.3",
+		"@theqrl/web3-net": "^0.3.3",
+		"@theqrl/web3-types": "^0.3.3",
+		"@theqrl/web3-utils": "^0.3.3",
+		"@theqrl/web3-validator": "^0.3.3",
+		"@theqrl/web3-zond": "^0.3.3",
+		"@theqrl/web3-zond-contract": "^0.3.3"
 	},
 	"gitHead": "d4f3246946fec86d908a215b27568aa8faea88d7"
 }

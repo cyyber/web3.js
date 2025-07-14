@@ -20,7 +20,7 @@ import { Web3Zond } from '@theqrl/web3-zond';
 import * as abi from '@theqrl/web3-zond-abi';
 import * as accounts from '@theqrl/web3-zond-accounts';
 import * as contract from '@theqrl/web3-zond-contract';
-import * as zns from '@theqrl/web3-zond-zns';
+import * as zns from '@theqrl/web3-zond-ens';
 import * as iban from '@theqrl/web3-zond-iban';
 
 import * as http from '@theqrl/web3-providers-http';

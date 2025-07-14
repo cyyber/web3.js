@@ -31,7 +31,7 @@ import {
 } from '../../../shared_fixtures/contracts/ZRC20Token';
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 // eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires
-const Web3 = require('web3').default;
+const Web3 = require('@theqrl/web3').default;
 
 describeIf(getSystemTestBackend() === 'gzond')('Black Box Unit Tests - web3.zond.Contract', () => {
 	describe('Gzond - ZRC20', () => {
