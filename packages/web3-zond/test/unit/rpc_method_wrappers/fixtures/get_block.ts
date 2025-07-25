@@ -19,7 +19,7 @@ import { hexToBytes } from '@theqrl/web3-utils';
 
 export const mockRpcResponse: Block = {
 	parentHash: '0xe99e022112df268087ea7eafaf4790497fd21dbeeb6bd7a1721df161a6657a54',
-	miner: 'Zbb7b8287f3f0a933474a79eae42cbca977791171',
+	miner: 'Qbb7b8287f3f0a933474a79eae42cbca977791171',
 	stateRoot: '0xddc8b0234c2e0cad087c8b389aa7ef01f7d79b2570bccb77ce48648aa61c904d',
 	transactionsRoot: '0x56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421',
 	receiptsRoot: '0x56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421',
@@ -43,14 +43,14 @@ export const mockRpcResponse: Block = {
 const hydratedTransaction: TransactionInfo = {
 	blockHash: '0x1d59ff54b1eb26b013ce3cb5fc9dab3705b415a67127a003c3e61eb445bb8df2',
 	blockNumber: '0x5daf3b',
-	from: 'Za7d9ddbe1f17865597fbd27ec712455208b6b76d',
+	from: 'Qa7d9ddbe1f17865597fbd27ec712455208b6b76d',
 	gas: '0xc350',
 	maxFeePerGas: '0x4a817c800',
 	maxPriorityFeePerGas: '0x0',
 	hash: '0x88df016429689c079f3b2f6ad39fa052532c56795b733da78a91ebe6a713944b',
 	input: '0x68656c6c6f21',
 	nonce: '0x15',
-	to: 'Zf02c1c8e6114b1dbe8937a39260b5b0a374432bb',
+	to: 'Qf02c1c8e6114b1dbe8937a39260b5b0a374432bb',
 	transactionIndex: '0x41',
 	value: '0xf3dbb76162000',
 	publicKey:

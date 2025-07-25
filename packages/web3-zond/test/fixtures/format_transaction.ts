@@ -28,8 +28,8 @@ export const bytesAsHexStringTransaction: FormatType<
 	Transaction,
 	{ number: typeof DEFAULT_RETURN_FORMAT.number; bytes: FMT_BYTES.HEX }
 > = {
-	from: 'ZEB014f8c8B418Db6b45774c326A0E64C78914dC0',
-	to: 'Z3535353535353535353535353535353535353535',
+	from: 'QEB014f8c8B418Db6b45774c326A0E64C78914dC0',
+	to: 'Q3535353535353535353535353535353535353535',
 	value: BigInt('100000000000'),
 	gas: BigInt('21000'),
 	type: BigInt(2),
@@ -60,8 +60,8 @@ export const bytesAsUint8ArrayTransaction: FormatType<
 	Transaction,
 	{ number: typeof DEFAULT_RETURN_FORMAT.number; bytes: FMT_BYTES.UINT8ARRAY }
 > = {
-	from: 'ZEB014f8c8B418Db6b45774c326A0E64C78914dC0',
-	to: 'Z3535353535353535353535353535353535353535',
+	from: 'QEB014f8c8B418Db6b45774c326A0E64C78914dC0',
+	to: 'Q3535353535353535353535353535353535353535',
 	value: BigInt('100000000000'),
 	gas: BigInt('21000'),
 	type: BigInt('2'),
@@ -94,8 +94,8 @@ export const numbersAsHexStringTransaction: FormatType<
 	Transaction,
 	{ number: FMT_NUMBER.HEX; bytes: typeof DEFAULT_RETURN_FORMAT.bytes }
 > = {
-	from: 'ZEB014f8c8B418Db6b45774c326A0E64C78914dC0',
-	to: 'Z3535353535353535353535353535353535353535',
+	from: 'QEB014f8c8B418Db6b45774c326A0E64C78914dC0',
+	to: 'Q3535353535353535353535353535353535353535',
 	value: '0x174876e800',
 	gas: '0x5208',
 	type: '0x2',
@@ -126,8 +126,8 @@ export const numbersAsNumberTransaction: FormatType<
 	Transaction,
 	{ number: FMT_NUMBER.NUMBER; bytes: typeof DEFAULT_RETURN_FORMAT.bytes }
 > = {
-	from: 'ZEB014f8c8B418Db6b45774c326A0E64C78914dC0',
-	to: 'Z3535353535353535353535353535353535353535',
+	from: 'QEB014f8c8B418Db6b45774c326A0E64C78914dC0',
+	to: 'Q3535353535353535353535353535353535353535',
 	value: 100000000000,
 	gas: 21000,
 	type: 2,
@@ -158,8 +158,8 @@ export const numbersAsStringTransaction: FormatType<
 	Transaction,
 	{ number: FMT_NUMBER.STR; bytes: typeof DEFAULT_RETURN_FORMAT.bytes }
 > = {
-	from: 'ZEB014f8c8B418Db6b45774c326A0E64C78914dC0',
-	to: 'Z3535353535353535353535353535353535353535',
+	from: 'QEB014f8c8B418Db6b45774c326A0E64C78914dC0',
+	to: 'Q3535353535353535353535353535353535353535',
 	value: '100000000000',
 	gas: '21000',
 	type: '2',
@@ -190,8 +190,8 @@ export const numbersAsBigIntTransaction: FormatType<
 	Transaction,
 	{ number: FMT_NUMBER.BIGINT; bytes: typeof DEFAULT_RETURN_FORMAT.bytes }
 > = {
-	from: 'ZEB014f8c8B418Db6b45774c326A0E64C78914dC0',
-	to: 'Z3535353535353535353535353535353535353535',
+	from: 'QEB014f8c8B418Db6b45774c326A0E64C78914dC0',
+	to: 'Q3535353535353535353535353535353535353535',
 	value: BigInt(100000000000),
 	gas: BigInt(21000),
 	type: BigInt(2),
@@ -219,8 +219,8 @@ export const numbersAsBigIntTransaction: FormatType<
 };
 
 const dummyTransaction: Transaction = {
-	from: 'ZEB014f8c8B418Db6b45774c326A0E64C78914dC0',
-	to: 'Z3535353535353535353535353535353535353535',
+	from: 'QEB014f8c8B418Db6b45774c326A0E64C78914dC0',
+	to: 'Q3535353535353535353535353535353535353535',
 	value: '0x174876e800',
 	gas: '0x5208',
 	maxFeePerGas: '0x4a817c800',
@@ -237,10 +237,10 @@ export const validGetTransactionFromOrToAttrData: { input: any; output: any }[] 
 			role: 'from',
 			transaction: {
 				...dummyTransaction,
-				from: 'Z58422b64d0e95ab4e93a9d95b755d9b53545c9ef',
+				from: 'Q58422b64d0e95ab4e93a9d95b755d9b53545c9ef',
 			},
 		},
-		output: 'Z58422b64d0e95ab4e93a9d95b755d9b53545c9ef',
+		output: 'Q58422b64d0e95ab4e93a9d95b755d9b53545c9ef',
 	},
 ];
 export const invalidGetTransactionFromOrToAttrData: { input: any; output: any }[] = [

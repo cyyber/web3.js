@@ -157,7 +157,7 @@ export const sign = (data: string, seed: Bytes): SignResult => {
  * Signing an eip 1559 transaction
  * ```ts
  * signTransaction({
- *	to: 'ZF0109fC8DF283027b6285cc889F5aA624EaC1F55',
+ *	to: 'QF0109fC8DF283027b6285cc889F5aA624EaC1F55',
  *	maxPriorityFeePerGas: '0x3B9ACA00',
  *	maxFeePerGas: '0xB2D05E00',
  *	gasLimit: '0x6A4012',
@@ -212,7 +212,7 @@ export const signTransaction = async (
  * @returns The Zond address used to sign this transaction
  * ```ts
  * recoverTransaction('0xf869808504e3b29200831e848094f0109fc8df283027b6285cc889f5aa624eac1f55843b9aca008025a0c9cf86333bcb065d140032ecaab5d9281bde80f21b9687b3e94161de42d51895a0727a108a0b8d101465414033c3f705a9c7b826e596766046ee1183dbc8aeaa68');
- * > "Z2c7536E3605D9C16a7a3D7b1898e529396a65c23"
+ * > "Q2c7536E3605D9C16a7a3D7b1898e529396a65c23"
  * ```
  */
 export const recoverTransaction = (rawTransaction: HexString): Address => {
@@ -231,7 +231,7 @@ export const recoverTransaction = (rawTransaction: HexString): Address => {
  * @example
  * ```ts
  * publicKeyToAddress("0xbe6383dad004f233317e46ddb46ad31b16064d14447a95cc1d8c8d4bc61c3728")
- * > "ZEB014f8c8B418Db6b45774c326A0E64C78914dC0"
+ * > "QEB014f8c8B418Db6b45774c326A0E64C78914dC0"
  * ```
  */
 export const publicKeyToAddress = (publicKey: Bytes): string => {
@@ -267,7 +267,7 @@ export const publicKeyToAddress = (publicKey: Bytes): string => {
  * {
  *   version: 1,
  *   id: '1b1dd3e2-ee6f-49c6-8a9b-a4722046582e',
- *   address: 'Z2086ea3853acf31bdeaa7d46f34360e8996d95c5',
+ *   address: 'Q2086ea3853acf31bdeaa7d46f34360e8996d95c5',
  *   crypto: {
  *     ciphertext: '02383d4ea331fdf518651aa638d77f36de002f6b2cb340712c2957b68f927234a9c87f776e40b61227aca366bd4b7056046dfdddee29df22290939a1e96f5be5',
  *     cipherparams: { iv: 'bfb43120ae00e9de110f8325' },
@@ -405,7 +405,7 @@ export const parseAndValidateSeed = (data: Bytes, ignoreLength?: boolean): Uint8
  * seedToAccount("0xdb4078ef7b6631dc329034cc20a969ccd470579b68c2c34897ac733dd72f8fb4fe5dad790336672c108189940eb7ed88");
  * >
  * {
- *   address: 'Z2086EA3853Acf31bDEaa7D46F34360e8996D95C5',
+ *   address: 'Q2086EA3853Acf31bDEaa7D46F34360e8996D95C5',
  *   seed: '0xdb4078ef7b6631dc329034cc20a969ccd470579b68c2c34897ac733dd72f8fb4fe5dad790336672c108189940eb7ed88',
  *   signTransaction: [Function: signTransaction],
  *   sign: [Function: sign],
@@ -441,7 +441,7 @@ export const seedToAccount = (seed: Bytes, ignoreLength?: boolean): Web3Account 
  * ```ts
  * web3.zond.accounts.create();
  * {
- * address: 'ZbD504f977021b5E5DdccD8741A368b147B3B38bB',
+ * address: 'QbD504f977021b5E5DdccD8741A368b147B3B38bB',
  * seed: '0x964ced1c69ad27a311c432fdc0d8211e987595f7eb34ab405a5f16bdc9563ec5',
  * signTransaction: [Function: signTransaction],
  * sign: [Function: sign],
@@ -467,7 +467,7 @@ export const create = (): Web3Account => {
  * decrypt({
  *   version: 1,
  *   id: '1b1dd3e2-ee6f-49c6-8a9b-a4722046582e',
- *   address: 'Z2086ea3853acf31bdeaa7d46f34360e8996d95c5',
+ *   address: 'Q2086ea3853acf31bdeaa7d46f34360e8996d95c5',
  *   crypto: {
  *     ciphertext: '02383d4ea331fdf518651aa638d77f36de002f6b2cb340712c2957b68f927234a9c87f776e40b61227aca366bd4b7056046dfdddee29df22290939a1e96f5be5',
  *     cipherparams: { iv: 'bfb43120ae00e9de110f8325' },
@@ -484,7 +484,7 @@ export const create = (): Web3Account => {
  * }, '123').then((res) => console.log(util.inspect(res, { depth: null })));
  * >
  * {
- *   address: 'Z2086EA3853Acf31bDEaa7D46F34360e8996D95C5',
+ *   address: 'Q2086EA3853Acf31bDEaa7D46F34360e8996D95C5',
  *   seed: '0xdb4078ef7b6631dc329034cc20a969ccd470579b68c2c34897ac733dd72f8fb4fe5dad790336672c108189940eb7ed88',
  *   signTransaction: [Function: signTransaction],
  *   sign: [Function: sign],

@@ -57,7 +57,7 @@ describe('Web3Zond.sendTransaction', () => {
 	it('should make a simple value transfer', async () => {
 		const transaction: Transaction = {
 			from: tempAcc.address,
-			to: 'Z0000000000000000000000000000000000000000',
+			to: 'Q0000000000000000000000000000000000000000',
 			value: BigInt(1),
 			type: BigInt(2),
 		};
@@ -80,7 +80,7 @@ describe('Web3Zond.sendTransaction', () => {
 
 		const transaction: TransactionWithFromLocalWalletIndex = {
 			from: 0,
-			to: 'Z0000000000000000000000000000000000000000',
+			to: 'Q0000000000000000000000000000000000000000',
 			type: BigInt(2),
 			value: BigInt(1),
 		};
@@ -93,7 +93,7 @@ describe('Web3Zond.sendTransaction', () => {
 
 		expect(minedTransactionData).toMatchObject({
 			from: tempAcc.address,
-			to: 'Z0000000000000000000000000000000000000000',
+			to: 'Q0000000000000000000000000000000000000000',
 			value: BigInt(1),
 		});
 	});
@@ -166,7 +166,7 @@ describe('Web3Zond.sendTransaction', () => {
 	it('should make a transaction with no value transfer', async () => {
 		const transaction: Transaction = {
 			from: tempAcc.address,
-			to: 'Z0000000000000000000000000000000000000000',
+			to: 'Q0000000000000000000000000000000000000000',
 			value: BigInt(0),
 			type: BigInt(2),
 		};
@@ -179,7 +179,7 @@ describe('Web3Zond.sendTransaction', () => {
 	it('should send a transaction with data', async () => {
 		const transaction: Transaction = {
 			from: tempAcc.address,
-			to: 'Z0000000000000000000000000000000000000000',
+			to: 'Q0000000000000000000000000000000000000000',
 			data: '0x64edfbf0e2c706ba4a09595315c45355a341a576cc17f3a19f43ac1c02f814ee',
 			value: BigInt(0),
 			type: BigInt(2),
@@ -245,7 +245,7 @@ describe('Web3Zond.sendTransaction', () => {
 		it('should send a successful type 0x2 transaction', async () => {
 			const transaction: Transaction = {
 				from: tempAcc.address,
-				to: 'Z0000000000000000000000000000000000000000',
+				to: 'Q0000000000000000000000000000000000000000',
 				value: BigInt(1),
 				type: BigInt(2),
 			};
@@ -260,7 +260,7 @@ describe('Web3Zond.sendTransaction', () => {
 		it('should send a successful type 0x2 transaction (fee per gas from: calculateFeeData)', async () => {
 			const transaction: Transaction = {
 				from: tempAcc.address,
-				to: 'Z0000000000000000000000000000000000000000',
+				to: 'Q0000000000000000000000000000000000000000',
 				value: BigInt(1),
 				type: BigInt(2),
 			};
@@ -280,7 +280,7 @@ describe('Web3Zond.sendTransaction', () => {
 		it('should send a successful type 0x2 transaction with data', async () => {
 			const transaction: Transaction = {
 				from: tempAcc.address,
-				to: 'Z0000000000000000000000000000000000000000',
+				to: 'Q0000000000000000000000000000000000000000',
 				data: '0x64edfbf0e2c706ba4a09595315c45355a341a576cc17f3a19f43ac1c02f814ee',
 				value: BigInt(1),
 				type: BigInt(2),
@@ -295,7 +295,7 @@ describe('Web3Zond.sendTransaction', () => {
 	it('should autofill a successful type 0x2 transaction with only maxFeePerGas passed', async () => {
 		const transaction: Transaction = {
 			from: tempAcc.address,
-			to: 'Z0000000000000000000000000000000000000000',
+			to: 'Q0000000000000000000000000000000000000000',
 			value: BigInt(1),
 			maxFeePerGas: BigInt(2500000016),
 		};
@@ -309,7 +309,7 @@ describe('Web3Zond.sendTransaction', () => {
 	it('should autofill a successful type 0x2 transaction with only maxPriorityFeePerGas passed', async () => {
 		const transaction: Transaction = {
 			from: tempAcc.address,
-			to: 'Z0000000000000000000000000000000000000000',
+			to: 'Q0000000000000000000000000000000000000000',
 			value: BigInt(1),
 			maxPriorityFeePerGas: BigInt(100),
 		};
@@ -323,7 +323,7 @@ describe('Web3Zond.sendTransaction', () => {
 	it('should send type 0x2 transaction with maxPriorityFeePerGas got from await web3Zond.getMaxPriorityFeePerGas()', async () => {
 		const transaction: Transaction = {
 			from: tempAcc.address,
-			to: 'Z0000000000000000000000000000000000000000',
+			to: 'Q0000000000000000000000000000000000000000',
 			value: BigInt(1),
 			maxPriorityFeePerGas: await web3Zond.getMaxPriorityFeePerGas(),
 		};
@@ -345,7 +345,7 @@ describe('Web3Zond.sendTransaction', () => {
 			tempAcc = await createTempAccount();
 			transaction = {
 				from: tempAcc.address,
-				to: 'Z0000000000000000000000000000000000000000',
+				to: 'Q0000000000000000000000000000000000000000',
 				value: '0x1',
 				type: '0x2',
 			};
@@ -455,7 +455,7 @@ describe('Web3Zond.sendTransaction', () => {
 		it('Should throw TransactionRevertInstructionError because gas too low', async () => {
 			const transaction: Transaction = {
 				from: tempAcc.address,
-				to: 'Z0000000000000000000000000000000000000000',
+				to: 'Q0000000000000000000000000000000000000000',
 				value: BigInt(1),
 				gas: 1,
 				type: BigInt(2),
@@ -480,7 +480,7 @@ describe('Web3Zond.sendTransaction', () => {
 		it('Should throw TransactionRevertInstructionError because insufficient funds', async () => {
 			const transaction: Transaction = {
 				from: tempAcc.address,
-				to: 'Z0000000000000000000000000000000000000000',
+				to: 'Q0000000000000000000000000000000000000000',
 				value: BigInt('999999999999999999999999999999999999999999999999999999999'),
 				type: BigInt(2),
 			};

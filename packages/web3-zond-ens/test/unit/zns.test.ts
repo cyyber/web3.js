@@ -45,7 +45,7 @@ const { getId } = require('@theqrl/web3-net');
 describe('zns', () => {
 	let object: Web3ContextObject;
 	let resolverContract: Contract<typeof PublicResolverAbi>;
-	const mockAddress = 'Z0000000000000000000000000000000000000000';
+	const mockAddress = 'Q0000000000000000000000000000000000000000';
 	const ZNS_NAME = 'web3js.zond';
 	let zns: ZNS;
 

@@ -69,7 +69,7 @@ describe('zns', () => {
 	let accountOne: string;
 
 	const ZERO_NODE: Bytes = '0x0000000000000000000000000000000000000000000000000000000000000000';
-	const addressOne: Address = 'Z0000000000000000000000000000000000000001';
+	const addressOne: Address = 'Q0000000000000000000000000000000000000001';
 
 	beforeAll(async () => {
 		accounts = await getSystemTestAccounts();

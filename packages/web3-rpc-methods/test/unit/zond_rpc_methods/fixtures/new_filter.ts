@@ -45,7 +45,7 @@ export const testData: TestData[] = [
 		'filter = address',
 		[
 			{
-				address: 'Z98afe7a8d28bbc88dcf41f8e06d97c74958a47dc',
+				address: 'Q98afe7a8d28bbc88dcf41f8e06d97c74958a47dc',
 			},
 		],
 	],
@@ -54,8 +54,8 @@ export const testData: TestData[] = [
 		[
 			{
 				address: [
-					'Z98afe7a8d28bbc88dcf41f8e06d97c74958a47dc',
-					'Zdfd5293d8e347dfe59e90efd55b2956a1343963d',
+					'Q98afe7a8d28bbc88dcf41f8e06d97c74958a47dc',
+					'Qdfd5293d8e347dfe59e90efd55b2956a1343963d',
 				],
 			},
 		],
@@ -84,8 +84,8 @@ export const testData: TestData[] = [
 				fromBlock: '0xc0ff3',
 				toBlock: '0xc0ff3',
 				address: [
-					'Z98afe7a8d28bbc88dcf41f8e06d97c74958a47dc',
-					'Zdfd5293d8e347dfe59e90efd55b2956a1343963d',
+					'Q98afe7a8d28bbc88dcf41f8e06d97c74958a47dc',
+					'Qdfd5293d8e347dfe59e90efd55b2956a1343963d',
 				],
 				topics: [
 					'0x000000000000000000000000a94f5374fce5edbc8e2a8697c15331677e6ebf0b',

@@ -53,7 +53,7 @@ export class ZNS extends Web3Context<ZondExecutionAPI & Web3NetAPI> {
 	 * @example
 	 * ```ts
 	 * const zns = new ZNS(
-	 * 	"Z00000000000C2E074eC69A0dFb2997BA6C7d2e1e",
+	 * 	"Q00000000000C2E074eC69A0dFb2997BA6C7d2e1e",
 	 * 	"http://localhost:8545"
 	 * );
 	 *
@@ -84,7 +84,7 @@ export class ZNS extends Web3Context<ZondExecutionAPI & Web3NetAPI> {
 	 * const resolver = await zns.getResolver('resolver');
 	 *
 	 * console.log(resolver.options.address);
-	 * > 'Z1234567890123456789012345678901234567890'
+	 * > 'Q1234567890123456789012345678901234567890'
 	 * ```
 	 */
 	public async getResolver(name: string): Promise<Contract<typeof PublicResolverAbi>> {
@@ -138,7 +138,7 @@ export class ZNS extends Web3Context<ZondExecutionAPI & Web3NetAPI> {
 	 * ```ts
 	 * const address = await web3.zond.zns.getAddress('zond.zns');
 	 * console.log(address);
-	 * > 'ZfB6916095ca1df60bB79Ce92cE3Ea74c37c5d359'
+	 * > 'QfB6916095ca1df60bB79Ce92cE3Ea74c37c5d359'
 	 * ```
 	 */
 	public async getAddress(ZNSName: string, coinType = 60) {
@@ -187,7 +187,7 @@ export class ZNS extends Web3Context<ZondExecutionAPI & Web3NetAPI> {
 	 * @example
 	 * ```ts
 	 * console.log(await web3.zond.zns.checkNetwork());
-	 * > 'Z00000000000C2E074eC69A0dFb2997BA6C7d2e1e'
+	 * > 'Q00000000000C2E074eC69A0dFb2997BA6C7d2e1e'
 	 * ```
 	 */
 	public async checkNetwork() {

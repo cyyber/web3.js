@@ -139,7 +139,7 @@ export const hexToBytes = (bytes: HexString): Uint8Array => {
  *
  * @example
  * ```ts
- * console.log(web3.utils.addressToBytes('Z7465737474657374746573747465737474657374'));
+ * console.log(web3.utils.addressToBytes('Q7465737474657374746573747465737474657374'));
  * > Uint8Array(20) [ 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116 ]
  * ```
  */
@@ -153,7 +153,7 @@ export const addressToBytes = (value: Address): Uint8Array => bytesToUint8Array(
  * @example
  * ```ts
  * console.log(web3.utils.hexToAddress('0x74657374123123131231231313a1231231112312'));
- * > "Z74657374123123131231231313a1231231112312"
+ * > "Q74657374123123131231231313a1231231112312"
  * ```
  */
 export const hexToAddress = (value: HexString): Address => {
@@ -168,7 +168,7 @@ export const hexToAddress = (value: HexString): Address => {
  *
  * @example
  * ```ts
- * console.log(web3.utils.addressToHex('Z74657374123123131231231313a1231231112312'));
+ * console.log(web3.utils.addressToHex('Q74657374123123131231231313a1231231112312'));
  * > "0x74657374123123131231231313a1231231112312"
  * ```
  */
@@ -602,8 +602,8 @@ export const toPlanck = (number: Numbers, unit: ZondUnits): string => {
  * @returns	The checksum address
  * @example
  * ```ts
- * web3.utils.toChecksumAddress('Zc1912fee45d61c87cc5ea59dae31190fffff232d');
- * > "Zc1912fEE45d61C87Cc5EA59DaE31190FFFFf232d"
+ * web3.utils.toChecksumAddress('Qc1912fee45d61c87cc5ea59dae31190fffff232d');
+ * > "Qc1912fEE45d61C87Cc5EA59DaE31190FFFFf232d"
  * ```
  */
 export const toChecksumAddress = (address: Address): string => {

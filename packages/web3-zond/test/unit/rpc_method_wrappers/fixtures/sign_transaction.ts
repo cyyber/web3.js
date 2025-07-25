@@ -25,7 +25,7 @@ import {
 import { decodeSignedTransaction } from '../../../../src/utils/decode_signed_transaction';
 
 const rawType0x2Transaction: Transaction = {
-	from: 'Z2086EA3853Acf31bDEaa7D46F34360e8996D95C5',
+	from: 'Q2086EA3853Acf31bDEaa7D46F34360e8996D95C5',
 	type: '0x2',
 	nonce: '0x0',
 	maxFeePerGas: '0x3b9aca01',
@@ -33,17 +33,17 @@ const rawType0x2Transaction: Transaction = {
 	gasLimit: '0x5208',
 	value: '0x1',
 	input: '0x',
-	to: 'Z0000000000000000000000000000000000000000',
+	to: 'Q0000000000000000000000000000000000000000',
 	accessList: [
 		{
-			address: 'Zde0b295669a9fd93d5f28d9ec85e40f4cb697bae',
+			address: 'Qde0b295669a9fd93d5f28d9ec85e40f4cb697bae',
 			storageKeys: [
 				'0x0000000000000000000000000000000000000000000000000000000000000003',
 				'0x0000000000000000000000000000000000000000000000000000000000000007',
 			],
 		},
 		{
-			address: 'Zbb9bc244d798123fde783fcc1c72d3bb8c189413',
+			address: 'Qbb9bc244d798123fde783fcc1c72d3bb8c189413',
 			storageKeys: [],
 		},
 	],

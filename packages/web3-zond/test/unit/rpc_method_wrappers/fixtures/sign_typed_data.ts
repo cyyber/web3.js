@@ -16,7 +16,7 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 import { Address, Eip712TypedData } from '@theqrl/web3-types';
 
-const address = 'Z407d73d8a49eeb85d32cf465507dd71d507100c1';
+const address = 'Q407d73d8a49eeb85d32cf465507dd71d507100c1';
 
 const typedData = {
 	types: {
@@ -68,16 +68,16 @@ const typedData = {
 		name: 'Ether Mail',
 		version: '1',
 		chainId: 1,
-		verifyingContract: 'ZCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC',
+		verifyingContract: 'QCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC',
 	},
 	message: {
 		from: {
 			name: 'Cow',
-			wallet: 'ZCD2a3d9F938E13CD947Ec05AbC7FE734Df8DD826',
+			wallet: 'QCD2a3d9F938E13CD947Ec05AbC7FE734Df8DD826',
 		},
 		to: {
 			name: 'Bob',
-			wallet: 'ZbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB',
+			wallet: 'QbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB',
 		},
 		contents: 'Hello, Bob!',
 	},

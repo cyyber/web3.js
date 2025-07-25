@@ -27,7 +27,7 @@ jest.mock('isomorphic-ws');
 
 describe('WebSocketProvider', () => {
 	let wsProvider: WebSocketProvider;
-	let jsonRpcPayload: Web3APIPayload<ZondExecutionAPI, 'zond_getBalance'>;
+	let jsonRpcPayload: Web3APIPayload<ZondExecutionAPI, 'qrl_getBalance'>;
 	let jsonRpcResponse: Record<string, unknown>;
 
 	beforeEach(() => {
@@ -38,8 +38,8 @@ describe('WebSocketProvider', () => {
 		jsonRpcPayload = {
 			jsonrpc: '2.0',
 			id: 42,
-			method: 'zond_getBalance',
-			params: ['Z407d73d8a49eeb85d32cf465507dd71d507100c1', 'latest'],
+			method: 'qrl_getBalance',
+			params: ['Q407d73d8a49eeb85d32cf465507dd71d507100c1', 'latest'],
 		};
 		jsonRpcResponse = { ...jsonRpcPayload, result: JSON.stringify(jsonRpcPayload) };
 	});

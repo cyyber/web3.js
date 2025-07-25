@@ -109,7 +109,7 @@ const baseTxValues = {
 	data: generateBufferLikeValues('0x65'),
 	gasLimit: generateBigIntLikeValues(100000),
 	nonce: generateBigIntLikeValues(0),
-	to: generateAddressLikeValues('Z0000000000000000000000000000000000000000'),
+	to: generateAddressLikeValues('Q0000000000000000000000000000000000000000'),
 	publicKey: generateBigIntLikeValues(100),
 	signature: generateBigIntLikeValues(100),
 	value: generateBigIntLikeValues(10),
@@ -181,22 +181,22 @@ test('[Invalid Access Lists]', () => {
 	const invalidAccessLists = [
 		[[]], // does not have an address and does not have slots
 		[[[], []]], // the address is an array
-		[['Zde0b295669a9fd93d5f28d9ec85e40f4cb697bae']], // there is no storage slot array
+		[['Qde0b295669a9fd93d5f28d9ec85e40f4cb697bae']], // there is no storage slot array
 		[
 			[
-				'Zde0b295669a9fd93d5f28d9ec85e40f4cb697bae',
+				'Qde0b295669a9fd93d5f28d9ec85e40f4cb697bae',
 				['0x0000000000000000000000000000000000000000000000000000000000000003', []],
 			],
 		], // one of the slots is an array
 		[
 			[
-				'Zde0b295669a9fd93d5f28d9ec85e40f4cb697bae',
+				'Qde0b295669a9fd93d5f28d9ec85e40f4cb697bae',
 				['0x0000000000000000000000000000000000000000000000000000000000000003'],
 				'0xab',
 			],
 		], // extra field
 		[
-			'Zde0b295669a9fd93d5f28d9ec85e40f4cb697bae',
+			'Qde0b295669a9fd93d5f28d9ec85e40f4cb697bae',
 			['0x0000000000000000000000000000000000000000000000000000000000000003'],
 		], // account/slot needs to be encoded in a deeper array layer
 	];

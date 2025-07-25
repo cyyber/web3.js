@@ -66,7 +66,7 @@ describe('Web3Zond.sendSignedTransaction', () => {
 			const transaction: InternalTransaction = {
 				nonce: accountNonce,
 				from: temp.address,
-				to: 'Z0000000000000000000000000000000000000000',
+				to: 'Q0000000000000000000000000000000000000000',
 				value: '0x1',
 				type: '0x2',
 				gas: '0x5208',
@@ -136,7 +136,7 @@ describe('Web3Zond.sendSignedTransaction', () => {
 			transaction = {
 				nonce: accountNonce,
 				from: tempAcc.address,
-				to: 'Z0000000000000000000000000000000000000000',
+				to: 'Q0000000000000000000000000000000000000000',
 				value: '0x1',
 				type: '0x2',
 				gas: '0x5208',
@@ -231,7 +231,7 @@ describe('Web3Zond.sendSignedTransaction', () => {
 			// This should be revisited to implement a better solution
 			await web3Zond.sendTransaction({
 				from: tempAcc.address,
-				to: 'Z0000000000000000000000000000000000000000',
+				to: 'Q0000000000000000000000000000000000000000',
 				value: '0x1',
 				type: '0x2',
 				gas: '0x5208',
@@ -260,7 +260,7 @@ describe('Web3Zond.sendSignedTransaction', () => {
 		it('Should throw TransactionRevertInstructionError because gas too low', async () => {
 			const transaction: Transaction = {
 				from: tempAcc.address,
-				to: 'Z0000000000000000000000000000000000000000',
+				to: 'Q0000000000000000000000000000000000000000',
 				value: BigInt(1),
 				gas: 1,
 				maxFeePerGas: 1,
@@ -297,7 +297,7 @@ describe('Web3Zond.sendSignedTransaction', () => {
 		it('Should throw InvalidResponseError because insufficient funds', async () => {
 			const transaction: Transaction = {
 				from: tempAcc.address,
-				to: 'Z0000000000000000000000000000000000000000',
+				to: 'Q0000000000000000000000000000000000000000',
 				value: BigInt('999999999999999999999999999999999999999999999999999999999'),
 				nonce: await web3Zond.getTransactionCount(tempAcc.address),
 				gas: 27000,

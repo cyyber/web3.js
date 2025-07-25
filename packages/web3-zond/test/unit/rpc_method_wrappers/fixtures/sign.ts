@@ -19,7 +19,7 @@ import { addressToBytes } from '@theqrl/web3-utils';
 
 export const mockRpcResponse = '0x736f796c656e7420677265656e2069732070656f706c65';
 
-const address = 'Z407d73d8a49eeb85d32cf465507dd71d507100c1';
+const address = 'Q407d73d8a49eeb85d32cf465507dd71d507100c1';
 
 /**
  * Array consists of:
@@ -31,15 +31,15 @@ const address = 'Z407d73d8a49eeb85d32cf465507dd71d507100c1';
 type TestData = [string, [Bytes, Address]];
 export const testData: TestData[] = [
 	[
-		'message = "Zd5677cf67b5aa051bb40496e68ad359eb97cfbf8"',
-		['Zd5677cf67b5aa051bb40496e68ad359eb97cfbf8', address],
+		'message = "Qd5677cf67b5aa051bb40496e68ad359eb97cfbf8"',
+		['Qd5677cf67b5aa051bb40496e68ad359eb97cfbf8', address],
 	],
 	[
-		'message = addressToBytes("Zd5677cf67b5aa051bb40496e68ad359eb97cfbf8")',
-		[addressToBytes('Zd5677cf67b5aa051bb40496e68ad359eb97cfbf8'), address],
+		'message = addressToBytes("Qd5677cf67b5aa051bb40496e68ad359eb97cfbf8")',
+		[addressToBytes('Qd5677cf67b5aa051bb40496e68ad359eb97cfbf8'), address],
 	],
 	[
-		'message = addressToBytes("Zd5677cf67b5aa051bb40496e68ad359eb97cfbf8")',
+		'message = addressToBytes("Qd5677cf67b5aa051bb40496e68ad359eb97cfbf8")',
 		[
 			new Uint8Array([
 				213, 103, 124, 246, 123, 90, 160, 81, 187, 64, 73, 110, 104, 173, 53, 158, 185, 124,
@@ -51,13 +51,13 @@ export const testData: TestData[] = [
 ];
 export const walletTestData: [string, [Bytes, Address | number], any][] = [
 	[
-		'message = "Zd5677cf67b5aa051bb40496e68ad359eb97cfbf8"',
-		['Zd5677cf67b5aa051bb40496e68ad359eb97cfbf8', 0],
+		'message = "Qd5677cf67b5aa051bb40496e68ad359eb97cfbf8"',
+		['Qd5677cf67b5aa051bb40496e68ad359eb97cfbf8', 0],
 		{ number: FMT_NUMBER.STR, bytes: FMT_BYTES.UINT8ARRAY },
 	],
 	[
-		'message = "Zd5677cf67b5aa051bb40496e68ad359eb97cfbf8"',
-		['Zd5677cf67b5aa051bb40496e68ad359eb97cfbf8', 0],
+		'message = "Qd5677cf67b5aa051bb40496e68ad359eb97cfbf8"',
+		['Qd5677cf67b5aa051bb40496e68ad359eb97cfbf8', 0],
 		{ number: FMT_NUMBER.STR, bytes: FMT_BYTES.HEX },
 	],
 ];
