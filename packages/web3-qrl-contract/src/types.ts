@@ -148,7 +148,7 @@ export interface ContractOptions {
 export interface NonPayableMethodObject<Inputs = unknown[], Outputs = unknown[]> {
 	arguments: Inputs;
 	/**
-	 * This will call a method and execute its smart contract method in the ZVM without sending any transaction. Note calling cannot alter the smart contract state.
+	 * This will call a method and execute its smart contract method in the QRVM without sending any transaction. Note calling cannot alter the smart contract state.
 	 *
 	 * ```ts
 	 * // using the promise
@@ -338,7 +338,7 @@ export interface NonPayableMethodObject<Inputs = unknown[], Outputs = unknown[]>
 export interface PayableMethodObject<Inputs = unknown[], Outputs = unknown[]> {
 	arguments: Inputs;
 	/**
-	 * Will call a method and execute its smart contract method in the ZVM without sending any transaction. Note calling cannot alter the smart contract state.
+	 * Will call a method and execute its smart contract method in the QRVM without sending any transaction. Note calling cannot alter the smart contract state.
 	 *
 	 * ```ts
 	 * // using the promise

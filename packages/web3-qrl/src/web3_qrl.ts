@@ -1054,7 +1054,7 @@ export class Web3QRL extends Web3Context<Web3QRLExecutionAPI, RegisteredSubscrip
 	// TODO Decide what to do with transaction.to
 	// https://github.com/theqrl/web3.js/pull/4525#issuecomment-982330076
 	/**
-	 * Executes a message call within the ZVM without creating a transaction.
+	 * Executes a message call within the QRVM without creating a transaction.
 	 * It does not publish anything to the blockchain and does not consume any gas.
 	 *
 	 * @param transaction - A transaction object where all properties are optional except `to`, however it's recommended to include the `from` property or it may default to `Q0000000000000000000000000000000000000000` depending on your node or provider.
@@ -1071,7 +1071,7 @@ export class Web3QRL extends Web3Context<Web3QRLExecutionAPI, RegisteredSubscrip
 	}
 
 	/**
-	 * Simulates the transaction within the ZVM to estimate the amount of gas to be used by the transaction.
+	 * Simulates the transaction within the QRVM to estimate the amount of gas to be used by the transaction.
 	 * The transaction will not be added to the blockchain, and actual gas usage can vary when interacting
 	 * with a contract as a result of updating the contract's state.
 	 *

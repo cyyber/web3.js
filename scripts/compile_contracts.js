@@ -71,7 +71,7 @@ function findImports(path) {
 	const compileInput = {
 		...input,
 		language: 'Hyperion',
-		settings: { outputSelection: { '*': { '*': ['abi', 'zvm.bytecode.object'] } } },
+		settings: { outputSelection: { '*': { '*': ['abi', 'qrvm.bytecode.object'] } } },
 	};
 
 	const compileResult = JSON.parse(
@@ -102,7 +102,7 @@ function findImports(path) {
 		const contractTsInterface = `export const ${contractName}Abi = ${JSON.stringify(
 			contractBuild['abi'],
 		)} as const; \n export const ${contractName}Bytecode = '0x${
-			contractBuild['zvm']['bytecode']['object']
+			contractBuild['qrvm']['bytecode']['object']
 		}';`;
 
 		writeFileSync(

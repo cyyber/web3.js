@@ -311,7 +311,7 @@ describe('Web3QRL.sendSignedTransaction', () => {
 
 			const expectedThrownError = {
 				name: 'TransactionRevertInstructionError',
-				message: 'Transaction has been reverted by the ZVM',
+				message: 'Transaction has been reverted by the QRVM',
 				innerError: undefined,
 				reason:
 					getSystemTestBackend() === 'gzond'

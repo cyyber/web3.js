@@ -131,7 +131,7 @@ const input = {
 const compiledCode = JSON.parse(hypc.compile(JSON.stringify(input)));
 
 // Get the bytecode from the compiled contract
-const bytecode = compiledCode.contracts[fileName][contractName].zvm.bytecode.object;
+const bytecode = compiledCode.contracts[fileName][contractName].qrvm.bytecode.object;
 
 // Write the bytecode to a new file
 const bytecodePath = path.join(__dirname, 'MyContractBytecode.bin');

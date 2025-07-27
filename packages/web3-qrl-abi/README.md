@@ -7,7 +7,7 @@
 
 This is a sub-package of [@theqrl/web3.js](https://github.com/theqrl/web3.js).
 
-`@theqrl/web3-qrl-abi` contains functions for the encode and decode ZVM in/output.
+`@theqrl/web3-qrl-abi` contains functions for the encode and decode QRVM in/output.
 
 ## Installation
 

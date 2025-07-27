@@ -487,7 +487,7 @@ describe('Web3QRL.sendTransaction', () => {
 
 			const expectedThrownError = {
 				name: 'TransactionRevertInstructionError',
-				message: 'Transaction has been reverted by the ZVM',
+				message: 'Transaction has been reverted by the QRVM',
 				code: 402,
 				reason:
 					getSystemTestBackend() === 'gzond'
