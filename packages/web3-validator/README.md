@@ -47,20 +47,20 @@ const errors = validator.validate(['uint8', 'string'], [val1, val2], { silent: t
 
 To see more examples of schema you can use to validate check [following file](./test/fixtures/abi_to_json_schema.ts).
 
-Following zond types are supported to validate.
+Following qrl types are supported to validate.
 
 | Type  | Input As                        | Description                                                                                                                                           |
 | ----- | ------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
-| uint  | `number`, `string`, `HexString` | Unsigned integer, all zond compatible variants are also supported e.g. `uint8`, `uint256`. You can also use array specifiers as `uint[]` or `uint[2]` |
-| int   | `number`, `string`, `HexString` | Signed integer, all zond compatible variants are also supported e.g. `int8`, `int256`. You can also use array specifiers as `int[]` or `int[2]`       |
+| uint  | `number`, `string`, `HexString` | Unsigned integer, all qrl compatible variants are also supported e.g. `uint8`, `uint256`. You can also use array specifiers as `uint[]` or `uint[2]` |
+| int   | `number`, `string`, `HexString` | Signed integer, all qrl compatible variants are also supported e.g. `int8`, `int256`. You can also use array specifiers as `int[]` or `int[2]`       |
 | bytes | `HexString`, `Uint8Array`       | Raw bytes. You can also use fixed length bytes as `bytes[2]`                                                                                          |
 
 | string | `string` | String values |
-| address | `string`, `HexString` | Zond network compatible address |
+| address | `string`, `HexString` | QRL network compatible address |
 | bloom | `string`, `HexString` | Check if a given string is a Eth bloom |
 | tuple | `array` | You can specify any tuple as nested arrays. e.g. `['uint', 'string']`. For a custom tuple or array tuple you can use syntax e.g. `['tuple[3]', ['uint', 'string']]` |
 
-For the zond compatible data values should be passed as arrays e.g. for schema `['uint', 'string']` value should be passed as `[2, 'my-string']`.
+For the qrl compatible data values should be passed as arrays e.g. for schema `['uint', 'string']` value should be passed as `[2, 'my-string']`.
 
 You can also pass full ABI schema for the validation. e.g.
 

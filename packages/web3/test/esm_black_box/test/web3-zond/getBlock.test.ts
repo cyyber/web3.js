@@ -16,7 +16,7 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 import Web3 from '@theqrl/web3';
 import { validator } from '@theqrl/web3-validator';
-import { blockSchema } from '@theqrl/web3-zond';
+import { blockSchema } from '@theqrl/web3-qrl';
 import {
 	closeOpenConnection,
 	getSystemTestProvider,
@@ -24,7 +24,7 @@ import {
 	// eslint-disable-next-line import/no-relative-packages
 } from '../../../shared_fixtures/system_tests_utils';
 
-describe('ESM - Black Box Unit Tests - web3.zond.getBlock', () => {
+describe('ESM - Black Box Unit Tests - web3.qrl.getBlock', () => {
 	let web3: Web3;
 
 	beforeAll(() => {
@@ -36,13 +36,13 @@ describe('ESM - Black Box Unit Tests - web3.zond.getBlock', () => {
 	});
 
 	it('should get the latest block and validate it against blockSchema', async () => {
-		const response = await web3.zond.getBlock('latest');
+		const response = await web3.qrl.getBlock('latest');
 		expect(response).toBeDefined();
 		expect(validator.validateJSONSchema(blockSchema, response)).toBeUndefined();
 	});
 
 	it('should get the latest block and validate it against blockSchema - hydrated = true', async () => {
-		const response = await web3.zond.getBlock('latest', true);
+		const response = await web3.qrl.getBlock('latest', true);
 		expect(response).toBeDefined();
 		expect(validator.validateJSONSchema(blockSchema, response)).toBeUndefined();
 	});

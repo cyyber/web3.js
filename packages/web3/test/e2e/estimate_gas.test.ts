@@ -70,7 +70,7 @@ describe(`${getSystemTestBackend()} tests - estimateGas`, () => {
 			 * results in a missing trie node error, so
 			 * we get latest block for this test
 			 */
-			const latestBlock = await web3.zond.getBlock('finalized');
+			const latestBlock = await web3.qrl.getBlock('finalized');
 			_blockData =
 				block === 'blockHash' ? (latestBlock.hash as string) : toHex(latestBlock.number);
 		}
@@ -79,7 +79,7 @@ describe(`${getSystemTestBackend()} tests - estimateGas`, () => {
 			transaction.data !== undefined
 				? expectedContractDeploymentTransactionGas
 				: expectedSimpleZondTransactionGas;
-		const result = await web3.zond.estimateGas(transaction, _blockData, {
+		const result = await web3.qrl.estimateGas(transaction, _blockData, {
 			number: format as FMT_NUMBER,
 			bytes: FMT_BYTES.HEX,
 		});

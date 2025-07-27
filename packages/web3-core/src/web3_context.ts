@@ -22,7 +22,7 @@ import {
 	Web3AccountProvider,
 	SupportedProviders,
 	HexString,
-	ZondExecutionAPI,
+	QRLExecutionAPI,
 	Web3BaseProvider,
 	Transaction,
 } from '@theqrl/web3-types';
@@ -341,7 +341,7 @@ export class Web3Context<
 	/**
 	 * Will return the givenProvider if available.
 	 *
-	 * When using web3.js in a Zond compatible browser, it will set with the current native provider by that browser. Will return the given provider by the (browser) environment, otherwise `undefined`.
+	 * When using web3.js in a QRL compatible browser, it will set with the current native provider by that browser. Will return the given provider by the (browser) environment, otherwise `undefined`.
 	 */
 	// eslint-disable-next-line class-methods-use-this
 	public get givenProvider() {
@@ -406,8 +406,8 @@ export type TransactionBuilder<API extends Web3APISpec = unknown> = <
 }) => Promise<ReturnType>;
 
 /**
- * Extend this class when creating a plugin that either doesn't require {@link ZondExecutionAPI},
- * or interacts with a RPC node that doesn't fully implement {@link ZondExecutionAPI}.
+ * Extend this class when creating a plugin that either doesn't require {@link QRLExecutionAPI},
+ * or interacts with a RPC node that doesn't fully implement {@link QRLExecutionAPI}.
  *
  * To add type support for RPC methods to the {@link Web3RequestManager},
  * define a {@link Web3APISpec} and pass it as a generic to Web3PluginBase like so:
@@ -429,10 +429,10 @@ export abstract class Web3PluginBase<
 }
 
 /**
- * Extend this class when creating a plugin that makes use of {@link ZondExecutionAPI},
- * or depends on other Web3 packages (such as `web3-zond-contract`) that depend on {@link ZondExecutionAPI}.
+ * Extend this class when creating a plugin that makes use of {@link QRLExecutionAPI},
+ * or depends on other Web3 packages (such as `web3-qrl-contract`) that depend on {@link QRLExecutionAPI}.
  *
- * To add type support for RPC methods to the {@link Web3RequestManager} (in addition to {@link ZondExecutionAPI}),
+ * To add type support for RPC methods to the {@link Web3RequestManager} (in addition to {@link QRLExecutionAPI}),
  * define a {@link Web3APISpec} and pass it as a generic to Web3PluginBase like so:
  *
  * @example
@@ -445,6 +445,6 @@ export abstract class Web3PluginBase<
  * class CustomPlugin extends Web3PluginBase<CustomRpcApi> {...}
  * ```
  */
-export abstract class Web3ZondPluginBase<API extends Web3APISpec = unknown> extends Web3PluginBase<
-	API & ZondExecutionAPI
+export abstract class Web3QRLPluginBase<API extends Web3APISpec = unknown> extends Web3PluginBase<
+	API & QRLExecutionAPI
 > {}

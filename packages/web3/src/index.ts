@@ -41,7 +41,7 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
  *  `Object` A list of module constructors:
  *
  *
- *  + `Zond` - `Constructor`: The Zond module for interacting with the Zond network
+ *  + `QRL` - `Constructor`: The QRL module for interacting with the QRL network
  *
  *
  *  + `Net` - `Constructor`: The Net module for interacting with network properties.
@@ -51,7 +51,7 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
  * ```ts
  * Web3.modules
  * > {
- *   	Zond: Zond(provider),
+ *   	QRL: QRL(provider),
  *   	Net: Net(provider),
  *   }
  * ```
@@ -60,15 +60,15 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
  *
  * # Web3 Instance
  *
- * The Web3 class is an umbrella package to house all Zond related modules.
+ * The Web3 class is an umbrella package to house all QRL related modules.
  *
  * ```ts
  * import Web3 from '@theqrl/web3';
  *
- * // "Web3.givenProvider" will be set if in a Zond supported browser.
+ * // "Web3.givenProvider" will be set if in a QRL supported browser.
  * const web3 = new Web3(Web3.givenProvider || 'ws://some.local-or-remote.node:8546');
  *
- * > web3.zond
+ * > web3.qrl
  * > web3.utils
  * > web3.version
  * ```
@@ -99,13 +99,13 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
  *
  * ```ts
  * web3.setProvider(myProvider)
- * web3.zond.setProvider(myProvider)
+ * web3.qrl.setProvider(myProvider)
  * ...
  * ```
  *
  * Will change the provider for its module.
  *
- * **_NOTE:_** When called on the umbrella package web3 it will also set the provider for all sub modules web3.zond  etc.
+ * **_NOTE:_** When called on the umbrella package web3 it will also set the provider for all sub modules web3.qrl  etc.
  *
  * #### Parameters
  *  `Object`  - `myProvider`: a valid provider.
@@ -115,7 +115,7 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
  *
  * See details: {@link Web3.setProvider}
  *
- * #### Example: Local Zond Node
+ * #### Example: Local QRL Node
  * ```ts
  * import Web3 from "@theqrl/web3";
  * let web3: Web3 = new Web3('http://localhost:8545');
@@ -130,7 +130,7 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
  * //todo add IPC provider
  * ```
  *
- * #### Example: Remote Zond Node
+ * #### Example: Remote QRL Node
  *
  * ```ts
  * // Using a remote node provider, like Alchemy (https://www.alchemyapi.io/supernode), is simple.
@@ -142,7 +142,7 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
  *
  * ```ts
  * web3.providers
- * web3.zond.providers
+ * web3.qrl.providers
  * ```
  * Contains the current available providers.
  *
@@ -168,9 +168,9 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
  * let web3 = new Web3(Web3.givenProvider || new Web3.providers.WebsocketProvider('ws://remotenode.com:8546'));
  *
  * // Using the IPC provider in node.js
- * var web3 = new Web3(new Web3.providers.IpcProvider('/Users/myuser/Library/Zond/gzond.ipc')); // mac os path
+ * var web3 = new Web3(new Web3.providers.IpcProvider('/Users/myuser/Library/QRL/gzond.ipc')); // mac os path
  * // on windows the path is: "\\\\.\\pipe\\gzond.ipc"
- * // on linux the path is: "/users/myuser/.zond/gzond.ipc"
+ * // on linux the path is: "/users/myuser/.qrl/gzond.ipc"
  * ```
  * #### Configuration
  *
@@ -246,10 +246,10 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
  *
  * ```ts
  * web3.givenProvider
- * web3.zond.givenProvider
+ * web3.qrl.givenProvider
  * ...
  * ```
- * When using web3.js in a Zond compatible browser, it will set with the current native provider by that browser.
+ * When using web3.js in a QRL compatible browser, it will set with the current native provider by that browser.
  * Will return the given provider by the (browser) environment, otherwise `undefined`.
  *
  * #### Returns
@@ -261,7 +261,7 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
  *
  * ```ts
  * web3.currentProvider
- * web3.zond.currentProvider
+ * web3.qrl.currentProvider
  * ...
  * ```
  * Will return the current provider, otherwise `undefined`.
@@ -294,12 +294,12 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
  * ```ts
  * let request1: JsonRpcOptionalRequest = {
  * 	id: 10,
- * 	method: 'zond_getBalance',
+ * 	method: 'qrl_getBalance',
  * 	params: ["Qdc6bad79dab7ea733098f66f6c6f9dd008da3258", 'latest'],
  * };
  * let request2: JsonRpcOptionalRequest = {
  * 	id: 11,
- * 	method: 'zond_getBalance',
+ * 	method: 'qrl_getBalance',
  * 	params: ["Q962f9a9c2a6c092474d24def35eccb3d9363265e", 'latest'],
  * };
  *
@@ -327,10 +327,10 @@ export default Web3;
  * Named exports for all objects which are the default-exported-object in their packages
  */
 export { Web3 };
-export { Web3Context, Web3PluginBase, Web3ZondPluginBase } from '@theqrl/web3-core';
-export { Web3Zond } from '@theqrl/web3-zond';
-export { Contract } from '@theqrl/web3-zond-contract';
-export { Iban } from '@theqrl/web3-zond-iban';
+export { Web3Context, Web3PluginBase, Web3QRLPluginBase } from '@theqrl/web3-core';
+export { Web3QRL } from '@theqrl/web3-qrl';
+export { Contract } from '@theqrl/web3-qrl-contract';
+export { Iban } from '@theqrl/web3-qrl-iban';
 export { Net } from '@theqrl/web3-net';
 export { HttpProvider } from '@theqrl/web3-providers-http';
 export { WebSocketProvider } from '@theqrl/web3-providers-ws';
@@ -341,7 +341,7 @@ export { Web3Validator } from '@theqrl/web3-validator';
  */
 export * as core from '@theqrl/web3-core';
 export * as errors from '@theqrl/web3-errors';
-export * as zond from './zond.exports.js';
+export * as qrl from './qrl.exports.js';
 export * as net from '@theqrl/web3-net';
 export * as providers from './providers.exports.js';
 export * as rpcMethods from '@theqrl/web3-rpc-methods';

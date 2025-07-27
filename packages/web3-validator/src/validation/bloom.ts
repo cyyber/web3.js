@@ -87,25 +87,25 @@ export const isInBloom = (bloom: string, value: string | Uint8Array): boolean =>
 };
 
 /**
- * Returns true if the zond users address is part of the given bloom note: false positives are possible.
+ * Returns true if the qrl users address is part of the given bloom note: false positives are possible.
  */
-export const isUserZondAddressInBloom = (bloom: string, zondAddress: string): boolean => {
+export const isUserQRLAddressInBloom = (bloom: string, qrlAddress: string): boolean => {
 	if (!isBloom(bloom)) {
 		return false;
 	}
 
-	if (!isAddressString(zondAddress)) {
+	if (!isAddressString(qrlAddress)) {
 		return false;
 	}
 
-	// you have to pad the zond address to 32 bytes
+	// you have to pad the qrl address to 32 bytes
 	// else the bloom filter does not work
 	// this is only if your matching the USERS
-	// zond address. Contract address do not need this
+	// qrl address. Contract address do not need this
 	// hence why we have 2 methods
 	// (0x is not in the 2nd parameter of padleft so 64 chars is fine)
 
-	const address = padLeft(addressToHex(zondAddress), 64);
+	const address = padLeft(addressToHex(qrlAddress), 64);
 
 	return isInBloom(bloom, address);
 };

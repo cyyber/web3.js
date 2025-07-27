@@ -34,7 +34,7 @@ describe(`${getSystemTestBackend()} tests - getId`, () => {
 	});
 
 	it('should get the network id for the connected node', async () => {
-		const result = await web3.zond.net.getId();
+		const result = await web3.qrl.net.getId();
 		expect(result).toBe(expectedChainId);
 	});
 });

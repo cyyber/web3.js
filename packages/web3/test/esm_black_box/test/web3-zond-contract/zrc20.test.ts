@@ -16,7 +16,7 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 /* eslint-disable import/no-relative-packages */
 import Web3 from '@theqrl/web3';
-import Contract from '@theqrl/web3-zond-contract';
+import Contract from '@theqrl/web3-qrl-contract';
 
 import {
 	closeOpenConnection,
@@ -28,7 +28,7 @@ import {
 } from '../../../shared_fixtures/system_tests_utils';
 import { ZRC20TokenAbi, ZRC20TokenBytecode } from '../../../shared_fixtures/contracts/ZRC20Token';
 
-describeIf(getSystemTestBackend() === 'gzond')('Black Box Unit Tests - web3.zond.Contract', () => {
+describeIf(getSystemTestBackend() === 'gzond')('Black Box Unit Tests - web3.qrl.Contract', () => {
 	describe('Gzond - ZRC20', () => {
 		let account;
 		let web3: Web3;
@@ -40,7 +40,7 @@ describeIf(getSystemTestBackend() === 'gzond')('Black Box Unit Tests - web3.zond
 			});
 
 			web3 = new Web3(getSystemTestProvider());
-			deployedContract = await new web3.zond.Contract(ZRC20TokenAbi)
+			deployedContract = await new web3.qrl.Contract(ZRC20TokenAbi)
 				.deploy({
 					data: ZRC20TokenBytecode,
 					arguments: ['420'],
@@ -53,7 +53,7 @@ describeIf(getSystemTestBackend() === 'gzond')('Black Box Unit Tests - web3.zond
 		});
 
 		it('should get deployed contract info', async () => {
-			const contract = new web3.zond.Contract(
+			const contract = new web3.qrl.Contract(
 				ZRC20TokenAbi,
 				deployedContract.options.address,
 			);

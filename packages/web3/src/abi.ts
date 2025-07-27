@@ -24,7 +24,7 @@ import {
 	encodeFunctionSignature,
 	encodeParameter,
 	encodeParameters,
-} from '@theqrl/web3-zond-abi';
+} from '@theqrl/web3-qrl-abi';
 
 /**
  * The object for `web3.abi`

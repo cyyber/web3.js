@@ -45,14 +45,14 @@ import { Web3PluginBase } from '@theqrl/web3';
 export class CustomRpcMethodsPlugin extends Web3PluginBase { ... }
 ```
 
-### Extending `Web3ZondPluginBase`
+### Extending `Web3QRLPluginBase`
 
-In addition to `Web3PluginBase`, you can choose to extend `Web3ZondPluginBase` which will provide the [Zond JSON RPC API interface](/api/web3-types#ZondExecutionAPI), which packages such as `Web3Zond` use, as a generic to your plugin's `requestManager`, giving it type support for the Zond JSON RPC spec, which is based on [the Ethereum spec](https://ethereum.github.io/execution-apis/docs/reference/json-rpc-api). This would be the recommended approach if your plugin makes Zond JSON RPC calls directly to a provider using web3's provided `requestManager`.
+In addition to `Web3PluginBase`, you can choose to extend `Web3QRLPluginBase` which will provide the [QRL JSON RPC API interface](/api/web3-types#QRLExecutionAPI), which packages such as `Web3QRL` use, as a generic to your plugin's `requestManager`, giving it type support for the QRL JSON RPC spec, which is based on [the Ethereum spec](https://ethereum.github.io/execution-apis/docs/reference/json-rpc-api). This would be the recommended approach if your plugin makes QRL JSON RPC calls directly to a provider using web3's provided `requestManager`.
 
 ```typescript
-import { Web3ZondPluginBase } from '@theqrl/web3';
+import { Web3QRLPluginBase } from '@theqrl/web3';
 
-export class CustomRpcMethodsPlugin extends Web3ZondPluginBase { ... }
+export class CustomRpcMethodsPlugin extends Web3QRLPluginBase { ... }
 ```
 
 ### `pluginNamespace`
@@ -90,7 +90,7 @@ await web3Context.customRpcMethods.someMethod();
 
 ### Using the Inherited `Web3Context`
 
-Below is an example of `CustomRpcMethodsPlugin` making use of `this.requestManager` which will have access to a Zond provider if one was configured by the user. In the event that no `provider` was set by the user, the below code will throw a [ProviderError](/api/web3-errors/class/ProviderError) if `customRpcMethod` was to be called:
+Below is an example of `CustomRpcMethodsPlugin` making use of `this.requestManager` which will have access to a QRL provider if one was configured by the user. In the event that no `provider` was set by the user, the below code will throw a [ProviderError](/api/web3-errors/class/ProviderError) if `customRpcMethod` was to be called:
 
 ```typescript
 import { Web3PluginBase } from '@theqrl/web3';
@@ -107,7 +107,7 @@ export class CustomRpcMethodsPlugin extends Web3PluginBase {
 }
 ```
 
-Below depicts a plugin user's code that does not configure a Zond provider, resulting in a thrown [ProviderError](/api/web3-errors/class/ProviderError) when calling `customRpcMethod`:
+Below depicts a plugin user's code that does not configure a QRL provider, resulting in a thrown [ProviderError](/api/web3-errors/class/ProviderError) when calling `customRpcMethod`:
 
 ```typescript
 // registering_a_plugin.ts
@@ -156,7 +156,7 @@ export class CustomRpcMethodsPlugin extends Web3PluginBase<CustomRpcApi> {
 
 ### Overriding `Web3Context`'s `.link` Method
 
-There currently exists [an issue](https://github.com/web3/web3.js/issues/5492) with certain web3.js packages not correctly linking their `Web3Context` with the context of the class the user has registered the plugin with. As mentioned in the issue, this can result in a bug where a plugin instantiates an instance of `Contract` (from `web3-zond-contract`) and attempts to call a method on the `Contract` instance (which uses the `requestManager` to make a call to the Zond provider), resulting in a [ProviderError](/api/web3-errors/class/ProviderError) even though the plugin user has set a provider and it should be available to the plugin.
+There currently exists [an issue](https://github.com/web3/web3.js/issues/5492) with certain web3.js packages not correctly linking their `Web3Context` with the context of the class the user has registered the plugin with. As mentioned in the issue, this can result in a bug where a plugin instantiates an instance of `Contract` (from `web3-qrl-contract`) and attempts to call a method on the `Contract` instance (which uses the `requestManager` to make a call to the QRL provider), resulting in a [ProviderError](/api/web3-errors/class/ProviderError) even though the plugin user has set a provider and it should be available to the plugin.
 
 A workaround for this issue is available, below is an example of it:
 
@@ -264,7 +264,7 @@ But, the user who does not call `.registerPlugin`, before accessing your plugin,
 
 :::
 
-2. The `registerPlugin` method exists on the `Web3Context` class, so any class that `extends Web3Context` has the ability to add your plugin's additional functionality to its interface. So, by augmenting `Web3Context` to include your plugin's interface, you're essentially providing a blanket augmentation that adds your plugin's interface to **all** Web3 modules that extend `Web3Context` (i.e. `web3`, `web3-zond`, `web3-zond-contract`, etc.).
+2. The `registerPlugin` method exists on the `Web3Context` class, so any class that `extends Web3Context` has the ability to add your plugin's additional functionality to its interface. So, by augmenting `Web3Context` to include your plugin's interface, you're essentially providing a blanket augmentation that adds your plugin's interface to **all** Web3 modules that extend `Web3Context` (i.e. `web3`, `web3-qrl`, `web3-qrl-contract`, etc.).
 
 3. The value of the `pluginNamespace`, that we used `customRpcMethods` for it in our sample code, **MUST** have the exact same name at 2 places: The first place is in the augmentation. And the second is the value of the public `pluginNamespace` inside your plugin class.
 

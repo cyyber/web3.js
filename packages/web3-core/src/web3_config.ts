@@ -108,8 +108,8 @@ export abstract class Web3Config
 
 	/**
 	 * The `handleRevert` options property returns the revert reason string if enabled for the following methods:
-	 * - web3.zond.sendTransaction()
-	 * - web3.zond.call()
+	 * - web3.qrl.sendTransaction()
+	 * - web3.qrl.call()
 	 * - myContract.methods.myMethod().call()
 	 * - myContract.methods.myMethod().send()
 	 * Default is `false`.
@@ -148,8 +148,8 @@ export abstract class Web3Config
 
 	/**
 	 * This default address is used as the default `from` property, if no `from` property is specified in for the following methods:
-	 * - web3.zond.sendTransaction()
-	 * - web3.zond.call()
+	 * - web3.qrl.sendTransaction()
+	 * - web3.qrl.call()
 	 * - myContract.methods.myMethod().call()
 	 * - myContract.methods.myMethod().send()
 	 */
@@ -166,11 +166,11 @@ export abstract class Web3Config
 
 	/**
 	 * The default block is used for certain methods. You can override it by passing in the defaultBlock as last parameter. The default value is `"latest"`.
-	 * - web3.zond.getBalance()
-	 * - web3.zond.getCode()
-	 * - web3.zond.getTransactionCount()
-	 * - web3.zond.getStorageAt()
-	 * - web3.zond.call()
+	 * - web3.qrl.getBalance()
+	 * - web3.qrl.getCode()
+	 * - web3.qrl.getTransactionCount()
+	 * - web3.qrl.getStorageAt()
+	 * - web3.qrl.call()
 	 * - myContract.methods.myMethod().call()
 	 */
 	public get defaultBlock() {
@@ -193,7 +193,7 @@ export abstract class Web3Config
 	}
 
 	/**
-	 * The time used to wait for Zond Node to return the sent transaction result.
+	 * The time used to wait for QRL Node to return the sent transaction result.
 	 * Note: If the RPC call stuck at the Node and therefor timed-out, the transaction may still be pending or even mined by the Network. We recommend checking the pending transactions in such a case.
 	 * Default is `750` seconds (12.5 minutes).
 	 */

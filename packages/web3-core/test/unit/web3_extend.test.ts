@@ -40,7 +40,7 @@ describe('Web3Context extend tests', () => {
 			methods: [
 				{
 					name: 'getL2Balance',
-					call: 'zond_getBalance',
+					call: 'qrl_getBalance',
 				},
 			],
 		});

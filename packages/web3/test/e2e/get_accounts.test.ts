@@ -32,7 +32,7 @@ describe(`${getSystemTestBackend()} tests - getAccounts`, () => {
 	});
 
 	it('should get the accounts for the connected node', async () => {
-		const result = await web3.zond.getAccounts();
+		const result = await web3.qrl.getAccounts();
 		expect(result).toBeInstanceOf(Array<string>);
 	});
 });

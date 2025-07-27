@@ -66,7 +66,7 @@ describe.skip('Sync nodes test', () => {
 
 	describe('Start/end syncing', () => {
 		it('should emit start syncing and end syncing events', async () => {
-			const subs = await web3Node2.zond.subscribe('syncing');
+			const subs = await web3Node2.qrl.subscribe('syncing');
 			const dataPromise = new Promise(resolve => {
 				subs.on('data', resolve);
 			});

@@ -21,18 +21,18 @@ const { join } = require('path');
 
 const packages = [
 	'@theqrl/web3',
-	'@theqrl/web3-zond',
-	'@theqrl/web3-zond-contract',
+	'@theqrl/web3-qrl',
+	'@theqrl/web3-qrl-contract',
 	'@theqrl/web3-utils',
 	'@theqrl/web3-validator',
 	'@theqrl/web3-types',
 	'@theqrl/web3-core',
 	'@theqrl/web3-errors',
 	'@theqrl/web3-net',
-	'@theqrl/web3-zond-abi',
-	'@theqrl/web3-zond-accounts',
-	'@theqrl/web3-zond-ens',
-	'@theqrl/web3-zond-iban',
+	'@theqrl/web3-qrl-abi',
+	'@theqrl/web3-qrl-accounts',
+	'@theqrl/web3-qrl-ens',
+	'@theqrl/web3-qrl-iban',
 	'@theqrl/web3-providers-http',
 	'@theqrl/web3-providers-ws',
 	'@theqrl/web3-providers-ipc',
@@ -41,7 +41,7 @@ const packages = [
 /** @type {import('@docusaurus/types').Config} */
 const config = {
 	title: 'web3.js',
-	tagline: 'The ultimate JavaScript library for Zond',
+	tagline: 'The ultimate JavaScript library for QRL',
 	url: 'https://docs.web3js.org',
 	baseUrl: '/',
 	onBrokenLinks: 'throw',

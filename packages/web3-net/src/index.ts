@@ -16,7 +16,7 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 /**
- * The web3-net package allows you to interact with a Zond node’s network properties.
+ * The web3-net package allows you to interact with a QRL node’s network properties.
  *
  * ```ts
  * import Net from '@theqrl/web3-net';
@@ -26,18 +26,18 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
  * import Web3 from '@theqrl/web3';
  * const web3 = new Web3(Web3.givenProvider || 'ws://some.local-or-remote.node:8546');
  *
- * // -> web3.zond.net
+ * // -> web3.qrl.net
  *
  * // get the ID of the network
- * await web3.zond.net.getId();
+ * await web3.qrl.net.getId();
  * > 5777n
  *
  * // get the peer count
- * await web3.zond.net.getPeerCount();
+ * await web3.qrl.net.getPeerCount();
  * > 0n
  *
  * // Check if the node is listening for peers
- * await web3.zond.net.isListening();
+ * await web3.qrl.net.isListening();
  * > true
  * ```
  */

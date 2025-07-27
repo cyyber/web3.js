@@ -1,11 +1,11 @@
 {
 	"name": "web3.js",
 	"private": true,
-	"description": "Zond API wrappers and utilities",
+	"description": "QRL API wrappers and utilities",
 	"author": "The QRL Contributors",
 	"license": "LGPL-3.0",
 	"keywords": [
-		"zond",
+		"qrl",
 		"web3",
 		"web3js",
 		"web3.js",

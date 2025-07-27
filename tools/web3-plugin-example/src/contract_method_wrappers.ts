@@ -15,7 +15,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 import { Web3PluginBase } from '@theqrl/web3-core';
-import Contract from '@theqrl/web3-zond-contract';
+import Contract from '@theqrl/web3-qrl-contract';
 import {
 	Address,
 	ContractAbi,

@@ -41,7 +41,7 @@ describe('web3.abi', () => {
 	it('hash correctly', () => {
 		const validData = validEncodeParametersData[0];
 
-		const encodedParameters = web3.zond.abi.encodeParameters(
+		const encodedParameters = web3.qrl.abi.encodeParameters(
 			validData.input[0],
 			validData.input[1],
 		);

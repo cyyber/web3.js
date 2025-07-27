@@ -23,7 +23,7 @@ import {
 	ValueTypes,
 	ZPrefixedHexString,
 } from '@theqrl/web3-types';
-import { ZondUnits, hexToBytes } from '../../src/converters';
+import { QRLUnits, hexToBytes } from '../../src/converters';
 
 export const bytesToHexValidData: [Bytes, HexString][] = [
 	[new Uint8Array([72]), '0x48'],
@@ -252,7 +252,7 @@ export const toHexInvalidData: [any, string][] = [
 	[undefined, 'Invalid value given "undefined". Error: can not be converted to hex.'],
 ];
 
-const conversionBaseData: [[Numbers, ZondUnits], string][] = [
+const conversionBaseData: [[Numbers, QRLUnits], string][] = [
 	[[0, 'planck'], '0'],
 	[[123, 'planck'], '123'],
 	[['123', 'planck'], '123'],
@@ -263,37 +263,37 @@ const conversionBaseData: [[Numbers, ZondUnits], string][] = [
 	[['1', 'gplanck'], '0.000000001'],
 	[['1', 'micro'], '0.000000000001'],
 	[['1', 'milli'], '0.000000000000001'],
-	[['1', 'zond'], '0.000000000000000001'],
-	[['1', 'kzond'], '0.000000000000000000001'],
-	[['1', 'mzond'], '0.000000000000000000000001'],
-	[['1', 'gzond'], '0.000000000000000000000000001'],
-	[['1', 'tzond'], '0.000000000000000000000000000001'],
-	[['900000000000000000000000000001', 'tzond'], '0.900000000000000000000000000001'],
+	[['1', 'quanta'], '0.000000000000000001'],
+	[['1', 'kquanta'], '0.000000000000000000001'],
+	[['1', 'mquanta'], '0.000000000000000000000001'],
+	[['1', 'gquanta'], '0.000000000000000000000000001'],
+	[['1', 'tquanta'], '0.000000000000000000000000000001'],
+	[['900000000000000000000000000001', 'tquanta'], '0.900000000000000000000000000001'],
 	[['1000', 'kplanck'], '1'],
 	[['1000000', 'mplanck'], '1'],
 	[['1000000000', 'gplanck'], '1'],
 	[['1000000000000', 'micro'], '1'],
 	[['1000000000000000', 'milli'], '1'],
-	[['1000000000000000000', 'zond'], '1'],
-	[['1000000000000000000000', 'kzond'], '1'],
-	[['1000000000000000000000000', 'mzond'], '1'],
-	[['1000000000000000000000000000', 'gzond'], '1'],
-	[['1000000000000000000000000000000', 'tzond'], '1'],
-	[['1000000000000000000000000000000', 'tzond'], '1'],
+	[['1000000000000000000', 'quanta'], '1'],
+	[['1000000000000000000000', 'kquanta'], '1'],
+	[['1000000000000000000000000', 'mquanta'], '1'],
+	[['1000000000000000000000000000', 'gquanta'], '1'],
+	[['1000000000000000000000000000000', 'tquanta'], '1'],
+	[['1000000000000000000000000000000', 'tquanta'], '1'],
 	[['12345678', 'gplanck'], '0.012345678'],
 	[['76912345678', 'gplanck'], '76.912345678'],
 	[['134439381738', 'gplanck'], '134.439381738'],
-	[['178373938391829348', 'zond'], '0.178373938391829348'],
+	[['178373938391829348', 'quanta'], '0.178373938391829348'],
 	[['879123456788877661', 'gplanck'], '879123456.788877661'],
-	[['879123456788877661', 'tzond'], '0.000000000000879123456788877661'],
+	[['879123456788877661', 'tquanta'], '0.000000000000879123456788877661'],
 ];
 
-export const fromPlanckValidData: [[Numbers, ZondUnits], string][] = [
+export const fromPlanckValidData: [[Numbers, QRLUnits], string][] = [
 	...conversionBaseData,
 	[['0xff', 'planck'], '255'],
 ];
 
-export const toPlanckValidData: [[Numbers, ZondUnits], string][] = [
+export const toPlanckValidData: [[Numbers, QRLUnits], string][] = [
 	...conversionBaseData,
 	[['255', 'planck'], '0xFF'],
 ];
@@ -328,7 +328,7 @@ export const toCheckSumValidData: [string, string][] = [
 	['Qa54D3c09E34aC96807c1CC397404bF2B98DC4eFb', 'Qa54d3c09E34aC96807c1CC397404bF2B98DC4eFb'],
 ];
 export const toCheckSumInvalidData: [string, string][] = [
-	['not an address', 'Invalid value given "not an address". Error: invalid zond address.'],
+	['not an address', 'Invalid value given "not an address". Error: invalid qrl address.'],
 ];
 
 export const bytesToUint8ArrayInvalidData: [any, string][] = bytesToHexInvalidData;

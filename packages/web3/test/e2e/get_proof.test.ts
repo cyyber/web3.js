@@ -62,7 +62,7 @@ describe(`${getSystemTestBackend()} tests - getProof`, () => {
 			],
 		}),
 	)('getProof', async ({ block }) => {
-		const result = await web3.zond.getProof(
+		const result = await web3.qrl.getProof(
 			'Q0000000000000000000000000000000000000000',
 			[],
 			blockData[block],

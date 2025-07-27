@@ -15,35 +15,35 @@ You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Web3Zond } from '@theqrl/web3-zond';
+import { Web3QRL } from '@theqrl/web3-qrl';
 
-import * as abi from '@theqrl/web3-zond-abi';
-import * as accounts from '@theqrl/web3-zond-accounts';
-import * as contract from '@theqrl/web3-zond-contract';
-import * as zns from '@theqrl/web3-zond-ens';
-import * as iban from '@theqrl/web3-zond-iban';
+import * as abi from '@theqrl/web3-qrl-abi';
+import * as accounts from '@theqrl/web3-qrl-accounts';
+import * as contract from '@theqrl/web3-qrl-contract';
+import * as zns from '@theqrl/web3-qrl-ens';
+import * as iban from '@theqrl/web3-qrl-iban';
 
 import * as http from '@theqrl/web3-providers-http';
 import * as ws from '@theqrl/web3-providers-ws';
 
-import Web3Default, { Web3, providers, zond } from '../../src/index';
+import Web3Default, { Web3, providers, qrl } from '../../src/index';
 
 describe('exports of web3 package', () => {
-	describe('zond exports', () => {
+	describe('qrl exports', () => {
 		it('`Web3` is the default exported class', () => {
 			expect(Web3).toEqual(Web3Default);
 		});
 
-		it('`Web3Zond` is available under `zond`', () => {
-			expect(zond.Web3Zond).toEqual(Web3Zond);
+		it('`Web3QRL` is available under `qrl`', () => {
+			expect(qrl.Web3QRL).toEqual(Web3QRL);
 		});
 
-		it('zond sub-namespaces are available under `zond`', () => {
-			expect(zond.abi).toEqual(abi);
-			expect(zond.accounts).toEqual(accounts);
-			expect(zond.contract).toEqual(contract);
-			expect(zond.zns).toEqual(zns);
-			expect(zond.iban).toEqual(iban);
+		it('qrl sub-namespaces are available under `qrl`', () => {
+			expect(qrl.abi).toEqual(abi);
+			expect(qrl.accounts).toEqual(accounts);
+			expect(qrl.contract).toEqual(contract);
+			expect(qrl.zns).toEqual(zns);
+			expect(qrl.iban).toEqual(iban);
 		});
 	});
 

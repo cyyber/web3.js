@@ -78,11 +78,11 @@ describe('Web3 extend tests', () => {
 			methods: [
 				{
 					name: 'getBalance',
-					call: 'zond_getBalance',
+					call: 'qrl_getBalance',
 				},
 				{
 					name: 'getL2Balance',
-					call: 'zond_getBalance',
+					call: 'qrl_getBalance',
 				},
 			],
 		});

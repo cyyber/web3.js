@@ -8,7 +8,7 @@
 
 This is a sub-package of [@theqrl/web3.js](https://github.com/theqrl/web3.js).
 
-`@theqrl/web3-net` package allows to interact with a Zond node’s network properties.
+`@theqrl/web3-net` package allows to interact with a QRL node’s network properties.
 
 ## Installation
 

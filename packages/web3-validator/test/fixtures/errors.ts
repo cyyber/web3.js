@@ -41,9 +41,9 @@ export const fullErrors: any[] = [
 
 export const errorsWithInstanceNoParamsNoMessage: any[] = [
 	{
-		keyword: 'zond',
+		keyword: 'qrl',
 		instancePath: '/0',
-		schemaPath: '#/items/0/zond',
+		schemaPath: '#/items/0/qrl',
 	},
 ];
 

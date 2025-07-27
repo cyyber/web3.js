@@ -69,7 +69,7 @@ describe('ContractMethodWrappersPlugin', () => {
 				DEFAULT_RETURN_FORMAT,
 			);
 			expect(requestManagerSendSpy).toHaveBeenCalledWith({
-				method: 'zond_call',
+				method: 'qrl_call',
 				params: [
 					expect.objectContaining({
 						input: '0x70a082310000000000000000000000008da5e39ec14b57fb9bcd9aa2b4500e909119795d',
@@ -103,9 +103,9 @@ describe('ContractMethodWrappersPlugin', () => {
 				recipient,
 				amount,
 			);
-			// The first call will be to `zond_getBlockByNumber` and the second is to `zond_blockNumber`. And the third one will be to `zond_sendTransaction`:
+			// The first call will be to `qrl_getBlockByNumber` and the second is to `qrl_blockNumber`. And the third one will be to `qrl_sendTransaction`:
 			expect(requestManagerSendSpy).toHaveBeenNthCalledWith(3, {
-				method: 'zond_sendTransaction',
+				method: 'qrl_sendTransaction',
 				params: [
 					expect.objectContaining({
 						input: '0xa9059cbb0000000000000000000000004f641def1e7845caab95ac717c80416082430d0d000000000000000000000000000000000000000000000000000000000000002a',

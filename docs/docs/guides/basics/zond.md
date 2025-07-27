@@ -1,13 +1,13 @@
 ---
 sidebar_position: 2
-sidebar_label: 'Zond Package Usage Example'
+sidebar_label: 'QRL Package Usage Example'
 ---
 
-# Getting Started with `zond` Package
+# Getting Started with `qrl` Package
 
 ## Introduction
 
-The `web3-zond` package provides a set of powerful functionalities to interact with the Zond blockchain and smart contracts. In this tutorial, we will guide you through the basics of using the `web3-zond` package of web3.js. We will be using TypeScript throughout the examples.
+The `web3-qrl` package provides a set of powerful functionalities to interact with the QRL blockchain and smart contracts. In this tutorial, we will guide you through the basics of using the `web3-qrl` package of web3.js. We will be using TypeScript throughout the examples.
 
 ## Overview
 
@@ -16,13 +16,13 @@ Here is a high-level overview of the steps we will be taking in this tutorial:
 1. Setting up the Environment
 2. Create a new project directory and initialize a new Node.js project.
 3. Set up web3.js and connect to the Ganache network
-4. Interact with the Zond blockchain using web3.js.
+4. Interact with the QRL blockchain using web3.js.
 
 ## Step 1: Setting up the Environment
 
 Before we start writing and deploying our contract, we need to set up our environment. For that, we need to install the following:
 
-1. Ganache - Ganache is a personal blockchain for Zond development that allows you to see how your smart contracts function in real-world scenarios. You can download it from http://truffleframework.com/ganache
+1. Ganache - Ganache is a personal blockchain for QRL development that allows you to see how your smart contracts function in real-world scenarios. You can download it from http://truffleframework.com/ganache
 2. Node.js - Node.js is a JavaScript runtime environment that allows you to run JavaScript on the server-side. You can download it from https://nodejs.org/en/download/
 3. npm - Node Package Manager is used to publish and install packages to and from the public npm registry or a private npm registry. Here is how to install it https://docs.npmjs.com/downloading-and-installing-node-js-and-npm. (Alternatively, you can use yarn instead of npm https://classic.yarnpkg.com/lang/en/docs/getting-started/)
 
@@ -31,8 +31,8 @@ Before we start writing and deploying our contract, we need to set up our enviro
 First, create a new project directory for your project and navigate into it:
 
 ```
-mkdir web3-zond-tutorial
-cd web3-zond-tutorial
+mkdir web3-qrl-tutorial
+cd web3-qrl-tutorial
 ```
 
 Next, initialize a new Node.js project using npm:
@@ -71,7 +71,7 @@ const { Web3 } = require('@theqrl/web3'); //  web3.js has native ESM builds and 
 const web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:7545'));
 
 // Log the current block number to the console
-web3.zond
+web3.qrl
 	.getBlockNumber()
 	.then(result => {
 		console.log('Current block number: ' + result);
@@ -91,7 +91,7 @@ npx ts-node index.ts
 
 If everything is working correctly, you should see the current block number logged to the console. However, if you got an error with the reason `connect ECONNREFUSED 127.0.0.1:7545` then double check that you are running Ganache locally on port `7545`.
 
-## Step 3: Interact with the Zond blockchain using web3.js
+## Step 3: Interact with the QRL blockchain using web3.js
 
 In this step, we will use web3.js to interact with the Ganache network.
 
@@ -103,41 +103,41 @@ const { Web3 } = require('@theqrl/web3'); //  web3.js has native ESM builds and 
 const fs = require('fs');
 const path = require('path');
 
-// Set up a connection to the Zond network
+// Set up a connection to the QRL network
 const web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:7545'));
-web3.zond.Contract.handleRevert = true;
+web3.qrl.Contract.handleRevert = true;
 
 async function interact() {
 	//fetch all the available accounts
-	const accounts = await web3.zond.getAccounts();
+	const accounts = await web3.qrl.getAccounts();
 	console.log(accounts);
 
 	let balance1, balance2;
-	//The initial balances of the accounts should be 100 Zond (10^18 planck)
-	balance1 = await web3.zond.getBalance(accounts[0]);
-	balance2 = await web3.zond.getBalance(accounts[1]);
+	//The initial balances of the accounts should be 100 Quanta (10^18 planck)
+	balance1 = await web3.qrl.getBalance(accounts[0]);
+	balance2 = await web3.qrl.getBalance(accounts[1]);
 
 	console.log(balance1, balance2);
 
-	//create a transaction sending 1 Zond from account 0 to account 1
+	//create a transaction sending 1 Quanta from account 0 to account 1
 	const transaction = {
 		from: accounts[0],
 		to: accounts[1],
-		value: web3.utils.toPlanck('1', 'zond'), // value should be passed in planck. For easier use and to avoid mistakes we utilize the auxiliary `toPlanck` function.
+		value: web3.utils.toPlanck('1', 'quanta'), // value should be passed in planck. For easier use and to avoid mistakes we utilize the auxiliary `toPlanck` function.
 	};
 
 	//send the actual transaction
-	const transactionHash = await web3.zond.sendTransaction(transaction);
+	const transactionHash = await web3.qrl.sendTransaction(transaction);
 	console.log('transactionHash', transactionHash);
 
-	balance1 = await web3.zond.getBalance(accounts[0]);
-	balance2 = await web3.zond.getBalance(accounts[1]);
+	balance1 = await web3.qrl.getBalance(accounts[0]);
+	balance2 = await web3.qrl.getBalance(accounts[1]);
 
 	// see the updated balances
 	console.log(balance1, balance2);
 
 	// irrelevant with the actual transaction, just to know the gasPrice
-	const gasPrice = await web3.zond.getGasPrice();
+	const gasPrice = await web3.qrl.getGasPrice();
 	console.log(gasPrice);
 }
 
@@ -194,15 +194,15 @@ transactionHash {
 ```
 
 :::note
-📝 In order to calculate the actual zond spent, we have to calculate the value sent plus the fees. Initial_balance = (Remaining_balance + value + gasUsed\*gasPrice). In our case:
+📝 In order to calculate the actual quanta spent, we have to calculate the value sent plus the fees. Initial_balance = (Remaining_balance + value + gasUsed\*gasPrice). In our case:
 
-98999580000000000000 + 1000000000000000000 + (20000000000\*21000) = 100 Zond
+98999580000000000000 + 1000000000000000000 + (20000000000\*21000) = 100 Quanta
 :::
 
 In the next example, we are going to use `estimateGas` function to see the expected gas for contract deployment. (For more on contracts, please see the corresponding tutotial). Create a file named `estimate.ts` and fill it with the following code:
 
 ```typescript
-import Web3, { ZOND_DATA_FORMAT, DEFAULT_RETURN_FORMAT } from '@theqrl/web3';
+import Web3, { QRL_DATA_FORMAT, DEFAULT_RETURN_FORMAT } from '@theqrl/web3';
 
 async function estimate() {
 	// abi of our contract
@@ -231,10 +231,10 @@ async function estimate() {
 	const web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:7545'));
 
 	//get the available accounts
-	const accounts = await web3.zond.getAccounts();
+	const accounts = await web3.qrl.getAccounts();
 	let acc = await accounts[0];
 
-	let contract = new web3.zond.Contract(abi, undefined);
+	let contract = new web3.qrl.Contract(abi, undefined);
 
 	const deployment = contract.deploy({
 		data: '0x608060405234801561001057600080fd5b506040516101d93803806101d983398181016040528101906100329190610054565b806000819055505061009e565b60008151905061004e81610087565b92915050565b60006020828403121561006657600080fd5b60006100748482850161003f565b91505092915050565b6000819050919050565b6100908161007d565b811461009b57600080fd5b50565b61012c806100ad6000396000f3fe6080604052348015600f57600080fd5b506004361060325760003560e01c806323fd0e401460375780636ffd773c146051575b600080fd5b603d6069565b6040516048919060bf565b60405180910390f35b6067600480360381019060639190608c565b606f565b005b60005481565b8060008190555050565b60008135905060868160e2565b92915050565b600060208284031215609d57600080fd5b600060a9848285016079565b91505092915050565b60b98160d8565b82525050565b600060208201905060d2600083018460b2565b92915050565b6000819050919050565b60e98160d8565b811460f357600080fd5b5056fea2646970667358221220d28cf161457f7936995800eb9896635a02a559a0561bff6a09a40bfb81cd056564736f6c63430008000033',
@@ -254,7 +254,7 @@ async function estimate() {
 		{
 			from: acc,
 		},
-		ZOND_DATA_FORMAT, // the returned data will be formatted as a hexstring
+		QRL_DATA_FORMAT, // the returned data will be formatted as a hexstring
 	);
 
 	console.log(estimatedGas);
@@ -278,7 +278,7 @@ If everything is working correctly, you should see something like the following:
 ```
 
 :::note
-📝 Note that numbers returned from web3.js are returned by default in the `BigInt` format. In this example we used `ZOND_DATA_FORMAT` parameter, which, can be passed in most methods in web3.js in order to format the result in `hex`.
+📝 Note that numbers returned from web3.js are returned by default in the `BigInt` format. In this example we used `QRL_DATA_FORMAT` parameter, which, can be passed in most methods in web3.js in order to format the result in `hex`.
 :::
 
 In the next example we are going to sign a transaction and use `sendSignedTransaction` to send the signed transaction. Create a file named `sendSigned.ts` and fill it with the following code:
@@ -289,10 +289,10 @@ const web3 = new Web3('http://localhost:7545');
 
 //make sure to copy the private key from ganache
 const privateKey = '0x0fed6f64e01bc9fac9587b6e7245fd9d056c3c004ad546a17d3d029977f0930a';
-const value = web3.utils.toPlanck('1', 'zond');
+const value = web3.utils.toPlanck('1', 'quanta');
 
 async function sendSigned() {
-	const accounts = await web3.zond.getAccounts();
+	const accounts = await web3.qrl.getAccounts();
 	const fromAddress = accounts[0];
 	const toAddress = accounts[1];
 	// Create a new transaction object
@@ -303,14 +303,14 @@ async function sendSigned() {
 		gas: 21000,
 		maxFeePerGas: web3.utils.toPlanck('10', 'gplanck'),
 		maxPriorityFeePerGas: 30000000,
-		nonce: await web3.zond.getTransactionCount(fromAddress),
+		nonce: await web3.qrl.getTransactionCount(fromAddress),
 	};
 
 	// Sign the transaction with the private key
-	const signedTx = await web3.zond.accounts.signTransaction(tx, privateKey);
+	const signedTx = await web3.qrl.accounts.signTransaction(tx, privateKey);
 
 	// Send the signed transaction to the network
-	const receipt = await web3.zond.sendSignedTransaction(signedTx.rawTransaction);
+	const receipt = await web3.qrl.sendSignedTransaction(signedTx.rawTransaction);
 
 	console.log('Transaction receipt:', receipt);
 }
@@ -349,7 +349,7 @@ Transaction receipt: {
 
 In this tutorial, we learned how to use different methods provided by the `@theqrl/web3` package.
 
-With this knowledge, you can start experimenting with the Zond blockchain. Keep in mind that this is just the beginning, and there is a lot more to learn about Zond and web3.js. So keep exploring and building, and have fun!
+With this knowledge, you can start experimenting with the QRL blockchain. Keep in mind that this is just the beginning, and there is a lot more to learn about QRL and web3.js. So keep exploring and building, and have fun!
 
 ## Additional Resources
 
@@ -371,6 +371,6 @@ With this knowledge, you can start experimenting with the Zond blockchain. Keep 
 
 ## Final Thoughts
 
-Web3.js provides a powerful and easy-to-use interface for interacting with the Zond network and building decentralized applications. And it has been rewritten in TypeScript but for simplicity of this tutorial we interacted with it in JavaScript.
+Web3.js provides a powerful and easy-to-use interface for interacting with the QRL network and building decentralized applications. And it has been rewritten in TypeScript but for simplicity of this tutorial we interacted with it in JavaScript.
 
-The Zond ecosystem is constantly evolving, and there is always more to learn and discover. As you continue to develop your skills and knowledge, keep exploring and experimenting with new technologies and tools to build innovative and decentralized solutions.
+The QRL ecosystem is constantly evolving, and there is always more to learn and discover. As you continue to develop your skills and knowledge, keep exploring and experimenting with new technologies and tools to build innovative and decentralized solutions.

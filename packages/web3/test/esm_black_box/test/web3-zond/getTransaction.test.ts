@@ -22,7 +22,7 @@ import {
 	// eslint-disable-next-line import/no-relative-packages
 } from '../../../shared_fixtures/system_tests_utils';
 
-describe('ESM - Black Box Unit Tests - web3.zond.getTransaction', () => {
+describe('ESM - Black Box Unit Tests - web3.qrl.getTransaction', () => {
 	let web3: Web3;
 
 	beforeAll(() => {
@@ -59,7 +59,7 @@ describe('ESM - Black Box Unit Tests - web3.zond.getTransaction', () => {
 	// 			value: BigInt(0),
 	// 		};
 
-	// 		const response = await web3.zond.getTransaction(
+	// 		const response = await web3.qrl.getTransaction(
 	// 			'0x133048bfcf6c0f7f8d1f5681df9607802894667acb46f4a3ba8ba187421dfc2b',
 	// 		);
 	// 		// eslint-disable-next-line jest/no-standalone-expect

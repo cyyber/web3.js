@@ -14,7 +14,7 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
-import { Transaction } from './zond_types.js';
+import { Transaction } from './qrl_types.js';
 import { HexString } from './primitives_types.js';
 
 export type Cipher = 'aes-256-gcm';

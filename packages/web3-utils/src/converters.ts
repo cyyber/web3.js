@@ -41,8 +41,8 @@ const expo10 = (expo: number) => base ** BigInt(expo);
 
 // Ref: https://ethdocs.org/en/latest/ether.html
 /** @internal */
-export const zondUnitMap = {
-	nozond: BigInt('0'),
+export const qrlUnitMap = {
+	noquanta: BigInt('0'),
 	planck: BigInt(1),
 	kplanck: expo10(3),
 	Kplanck: expo10(3),
@@ -57,15 +57,15 @@ export const zondUnitMap = {
 	pplanck: expo10(15),
 	Pplanck: expo10(15),
 	milli: expo10(15),
-	zond: expo10(18),
-	kzond: expo10(21),
+	quanta: expo10(18),
+	kquanta: expo10(21),
 	grand: expo10(21),
-	mzond: expo10(24),
-	gzond: expo10(27),
-	tzond: expo10(30),
+	mquanta: expo10(24),
+	gquanta: expo10(27),
+	tquanta: expo10(30),
 };
 
-export type ZondUnits = keyof typeof zondUnitMap;
+export type QRLUnits = keyof typeof qrlUnitMap;
 /**
  * Convert a value from bytes to Uint8Array
  * @param data - Data to be converted
@@ -487,19 +487,19 @@ export const toBigInt = (value: unknown): bigint => {
 };
 
 /**
- * Takes a number of planck and converts it to any other zond unit.
+ * Takes a number of planck and converts it to any other qrl unit.
  * @param number - The value in planck
  * @param unit - The unit to convert to
  * @returns - Returns the converted value in the given unit
  *
  * @example
  * ```ts
- * console.log(web3.utils.fromPlanck("1", "zond"));
+ * console.log(web3.utils.fromPlanck("1", "quanta"));
  * > 0.000000000000000001
  * ```
  */
-export const fromPlanck = (number: Numbers, unit: ZondUnits): string => {
-	const denomination = zondUnitMap[unit];
+export const fromPlanck = (number: Numbers, unit: QRLUnits): string => {
+	const denomination = qrlUnitMap[unit];
 
 	if (!denomination) {
 		throw new InvalidUnitError(unit);
@@ -546,20 +546,20 @@ export const fromPlanck = (number: Numbers, unit: ZondUnits): string => {
  * Takes a number of a unit and converts it to planck.
  *
  * @param number - The number to convert.
- * @param unit - {@link ZondUnits} The unit of the number passed.
+ * @param unit - {@link QRLUnits} The unit of the number passed.
  * @returns The number converted to planck.
  *
  * @example
  * ```ts
- * console.log(web3.utils.toPlanck("0.001", "zond"));
+ * console.log(web3.utils.toPlanck("0.001", "quanta"));
  * > 1000000000000000 //(planck)
  * ```
  */
-// todo in 1.x unit defaults to 'zond'
-export const toPlanck = (number: Numbers, unit: ZondUnits): string => {
+// todo in 1.x unit defaults to 'quanta'
+export const toPlanck = (number: Numbers, unit: QRLUnits): string => {
 	validator.validate(['number'], [number]);
 
-	const denomination = zondUnitMap[unit];
+	const denomination = qrlUnitMap[unit];
 
 	if (!denomination) {
 		throw new InvalidUnitError(unit);
@@ -597,7 +597,7 @@ export const toPlanck = (number: Numbers, unit: ZondUnits): string => {
 };
 
 /**
- * Will convert an upper or lowercase Zond address to a checksum address.
+ * Will convert an upper or lowercase QRL address to a checksum address.
  * @param address - An address string
  * @returns	The checksum address
  * @example
