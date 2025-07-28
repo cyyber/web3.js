@@ -31,7 +31,7 @@ describe('resolver', () => {
 	let resolver: Resolver;
 	let contract: Contract<typeof PublicResolverAbi>;
 	const mockAddress = 'Q0000000000000000000000000000000000000000';
-	const QRNS_NAME = 'web3js.znd';
+	const QRNS_NAME = 'web3js.qrl';
 
 	beforeAll(() => {
 		const context = new Web3Context('http://test.com');

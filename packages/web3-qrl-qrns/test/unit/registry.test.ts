@@ -24,7 +24,7 @@ describe('registry', () => {
 	let object: Web3ContextObject;
 	let registry: Registry;
 	const mockAddress = 'Q0000000000000000000000000000000000000000';
-	const QRNS_NAME = 'web3js.znd';
+	const QRNS_NAME = 'web3js.qrl';
 
 	beforeAll(() => {
 		const context = new Web3Context('http://test.com');

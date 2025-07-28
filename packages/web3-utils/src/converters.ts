@@ -158,7 +158,7 @@ export const addressToBytes = (value: Address): Uint8Array => bytesToUint8Array(
  */
 export const hexToAddress = (value: HexString): Address => {
 	validator.validate(['hex'], [value]);
-	return value.replace('0x', 'Z');
+	return value.replace('0x', 'Q');
 };
 
 /**
@@ -621,7 +621,7 @@ export const toChecksumAddress = (address: Address): string => {
 	)
 		return ''; // // EIP-1052 if hash is equal to c5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470, keccak was given empty data
 
-	let checksumAddress = 'Z';
+	let checksumAddress = 'Q';
 
 	const addressHash = hash.replace(/^0x/i, '');
 

@@ -17,15 +17,15 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 
 export const namehashValidData: [string, string][] = [
 	['', '0x0000000000000000000000000000000000000000000000000000000000000000'],
-	['znd', '0x5ca200831516f7386952dbee215dfe7e4920ece6d31d89501d03e9239082ae7a'],
-	['foo.znd', '0xa5bb084f89105bd16dff5eef797279b0c91d93529934875c65e3f2948b8b5be9'],
-	['FOO.znd', '0xa5bb084f89105bd16dff5eef797279b0c91d93529934875c65e3f2948b8b5be9'],
+	['qrl', '0x5ca200831516f7386952dbee215dfe7e4920ece6d31d89501d03e9239082ae7a'],
+	['foo.qrl', '0xa5bb084f89105bd16dff5eef797279b0c91d93529934875c65e3f2948b8b5be9'],
+	['FOO.qrl', '0xa5bb084f89105bd16dff5eef797279b0c91d93529934875c65e3f2948b8b5be9'],
 ];
 
 export const normalizeValidData: [string, string][] = [
 	['Öbb.at', 'öbb.at'],
 	['Ⓜ', 'm'],
-	['foo.znd', 'foo.znd'],
-	['Foo.znd', 'foo.znd'],
-	['🦚.znd', '🦚.znd'],
+	['foo.qrl', 'foo.qrl'],
+	['Foo.qrl', 'foo.qrl'],
+	['🦚.qrl', '🦚.qrl'],
 ];
