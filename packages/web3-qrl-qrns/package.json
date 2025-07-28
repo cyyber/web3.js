@@ -1,10 +1,10 @@
 {
-	"name": "@theqrl/web3",
+	"name": "@theqrl/web3-qrl-qrns",
 	"version": "0.3.3",
 	"publishConfig": {
 		"access": "public"
 	},
-	"description": "QRL JavaScript API",
+	"description": "This package has QRNS functions for interacting with QRL Name Service.",
 	"main": "./lib/commonjs/index.js",
 	"module": "./lib/esm/index.js",
 	"exports": {
@@ -15,62 +15,43 @@
 		}
 	},
 	"repository": "https://github.com/theqrl/web3.js",
+	"author": "The QRL Contributors",
+	"license": "LGPL-3.0",
 	"engines": {
-		"node": ">=14.0.0",
+		"node": ">=14",
 		"npm": ">=6.12.0"
 	},
-	"author": "The QRL Contributors",
-	"browser": "./dist/web3.min.js",
-	"license": "LGPL-3.0",
-	"keywords": [
-		"QRL",
-		"JavaScript",
-		"API"
-	],
 	"files": [
 		"lib/**/*",
-		"src/**/*",
-		"dist/**/*"
+		"src/**/*"
 	],
 	"scripts": {
 		"clean": "rimraf dist && rimraf lib",
 		"prebuild": "yarn clean",
-		"version:output": "[ -z $npm_package_version ] && rm ./src/version.ts || echo \"/* eslint-disable header/header */ export const Web3PkgInfo = { version: '$npm_package_version' };\" > ./src/version.ts",
-		"build": "yarn version:output && yarn build:cjs & yarn build:esm & yarn build:types",
+		"build": "yarn build:cjs & yarn build:esm & yarn build:types",
 		"build:cjs": "tsc --build tsconfig.cjs.json && echo '{\"type\": \"commonjs\"}' > ./lib/commonjs/package.json",
 		"build:esm": "tsc --build tsconfig.esm.json && echo '{\"type\": \"module\"}' > ./lib/esm/package.json",
 		"build:types": "tsc --build tsconfig.types.json",
-		"build:web": "npx webpack",
-		"build:web:analyze": "npx webpack --config ./webpack.analyze.js",
 		"build:check": "node -e \"require('./lib')\"",
 		"lint": "eslint --ext .js,.ts .",
 		"lint:fix": "eslint --fix --ext .js,.ts .",
 		"format": "prettier --write '**/*'",
 		"test": "jest --config=./test/unit/jest.config.js",
 		"test:coverage:unit": "jest --config=./test/unit/jest.config.js --coverage=true --coverage-reporters=text",
-		"test:coverage:integration": "jest --config=./test/integration/jest.config.js --forceExit --coverage=true --coverage-reporters=text",
-		"test:e2e:mainnet": "jest --config=./test/e2e/jest.config.js --forceExit",
-		"test:e2e:testnet": "jest --config=./test/e2e/jest.config.js --forceExit",
-		"test:sync:integration": "jest --config=./test/integration/jest.config.js ./test/integration/sync.test.ts",
+		"test:coverage:integration": "jest --config=./test/integration/jest.config.js --coverage=true --coverage-reporters=text",
 		"test:ci": "jest --coverage=true --coverage-reporters=json --verbose",
 		"test:watch": "npm test -- --watch",
 		"test:unit": "jest --config=./test/unit/jest.config.js",
-		"test:integration": "jest --config=./test/integration/jest.config.js --forceExit",
-		"test:blackbox:gzond:http": "./scripts/black_box_test.sh gzond http",
-		"test:blackbox:gzond:ws": "./scripts/black_box_test.sh gzond ws"
+		"test:integration": "jest --config=./test/integration/jest.config.js"
 	},
 	"devDependencies": {
 		"@theqrl/eslint-config-base-web3": "^0.3.0",
-		"@theqrl/web3-providers-ipc": "^0.3.3",
-		"@truffle/hdwallet-provider": "^2.0.12",
 		"@types/jest": "^28.1.6",
 		"@typescript-eslint/eslint-plugin": "^5.30.7",
 		"@typescript-eslint/parser": "^5.30.7",
 		"eslint": "^8.20.0",
 		"eslint-config-prettier": "^8.5.0",
 		"eslint-plugin-import": "^2.26.0",
-		"hardhat": "^2.12.2",
-		"in3": "^3.3.3",
 		"jest": "^28.1.3",
 		"jest-extended": "^3.0.1",
 		"prettier": "^2.7.1",
@@ -78,21 +59,15 @@
 		"typescript": "^4.7.4"
 	},
 	"dependencies": {
+		"@adraffy/ens-normalize": "^1.8.8",
 		"@theqrl/web3-core": "^0.3.3",
 		"@theqrl/web3-errors": "^0.3.3",
 		"@theqrl/web3-net": "^0.3.3",
-		"@theqrl/web3-providers-http": "^0.3.3",
-		"@theqrl/web3-providers-ws": "^0.3.3",
-		"@theqrl/web3-rpc-methods": "^0.3.3",
 		"@theqrl/web3-types": "^0.3.3",
 		"@theqrl/web3-utils": "^0.3.3",
 		"@theqrl/web3-validator": "^0.3.3",
 		"@theqrl/web3-qrl": "^0.3.3",
-		"@theqrl/web3-qrl-abi": "^0.3.3",
-		"@theqrl/web3-qrl-accounts": "^0.3.3",
-		"@theqrl/web3-qrl-contract": "^0.3.3",
-		"@theqrl/web3-qrl-qrns": "^0.3.3",
-		"@theqrl/web3-qrl-iban": "^0.3.3"
+		"@theqrl/web3-qrl-contract": "^0.3.3"
 	},
 	"gitHead": "d4f3246946fec86d908a215b27568aa8faea88d7"
 }

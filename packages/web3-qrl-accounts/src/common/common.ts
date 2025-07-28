@@ -816,7 +816,7 @@ export class Common extends EventEmitter {
 
 	/**
 	 * Returns DNS networks for the current chain
-	 * @returns {String[]} Array of DNS ENR urls
+	 * @returns {String[]} Array of DNS QNR urls
 	 */
 	public dnsNetworks(): string[] {
 		return this._chainParams.dnsNetworks!;

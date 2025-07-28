@@ -32,7 +32,7 @@ import { validateTransactionForSigning } from '../validation.js';
 import { formatTransaction } from './format_transaction.js';
 import { transactionBuilder } from './transaction_builder.js';
 
-const getZondjsTxDataFromTransaction = (
+const getQRLjsTxDataFromTransaction = (
 	transaction: FormatType<PopulatedUnsignedTransaction, typeof QRL_DATA_FORMAT>,
 ) => ({
 	nonce: transaction.nonce,
@@ -53,7 +53,7 @@ const getZondjsTxDataFromTransaction = (
 	).maxFeePerGas,
 });
 
-const getZondjsTransactionOptions = (
+const getQRLjsTransactionOptions = (
 	transaction: FormatType<PopulatedUnsignedTransaction, typeof QRL_DATA_FORMAT>,
 	web3Context: Web3Context<QRLExecutionAPI>,
 ) => {
@@ -140,7 +140,7 @@ export const prepareTransactionForSigning = async (
 	);
 
 	return TransactionFactory.fromTxData(
-		getZondjsTxDataFromTransaction(formattedTransaction),
-		getZondjsTransactionOptions(formattedTransaction, web3Context),
+		getQRLjsTxDataFromTransaction(formattedTransaction),
+		getQRLjsTransactionOptions(formattedTransaction, web3Context),
 	);
 };

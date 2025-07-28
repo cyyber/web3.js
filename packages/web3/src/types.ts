@@ -36,7 +36,7 @@ import {
 	Web3Account,
 } from '@theqrl/web3-qrl-accounts';
 import { Contract } from '@theqrl/web3-qrl-contract';
-import { ZNS } from '@theqrl/web3-qrl-ens';
+import { QRNS } from '@theqrl/web3-qrl-qrns';
 import { Net } from '@theqrl/web3-net';
 import { Iban } from '@theqrl/web3-qrl-iban';
 
@@ -58,7 +58,7 @@ export interface Web3QRLInterface extends QRL {
 	Contract: typeof Contract;
 	Iban: typeof Iban;
 	net: Net;
-	zns: ZNS;
+	qrns: QRNS;
 	abi: {
 		encodeEventSignature: typeof encodeFunctionSignature;
 		encodeFunctionCall: typeof encodeFunctionCall;

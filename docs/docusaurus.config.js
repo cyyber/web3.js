@@ -31,7 +31,7 @@ const packages = [
 	'@theqrl/web3-net',
 	'@theqrl/web3-qrl-abi',
 	'@theqrl/web3-qrl-accounts',
-	'@theqrl/web3-qrl-ens',
+	'@theqrl/web3-qrl-qrns',
 	'@theqrl/web3-qrl-iban',
 	'@theqrl/web3-providers-http',
 	'@theqrl/web3-providers-ws',

@@ -23,6 +23,6 @@ export default {
 	],
 	bootstrapNodes: [],
 	dnsNetworks: [
-		'enrtree://AKA3AM6LPBYEUDMVNU3BSVQJ5AD45Y7YPOHJLEF6W26QOE4VTUDPE@all.mainnet.ethdisco.net',
+		'qnrtree://AKA3AM6LPBYEUDMVNU3BSVQJ5AD45Y7YPOHJLEF6W26QOE4VTUDPE@all.mainnet.ethdisco.net',
 	],
 };

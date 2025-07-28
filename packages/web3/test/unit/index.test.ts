@@ -20,7 +20,7 @@ import { Web3QRL } from '@theqrl/web3-qrl';
 import * as abi from '@theqrl/web3-qrl-abi';
 import * as accounts from '@theqrl/web3-qrl-accounts';
 import * as contract from '@theqrl/web3-qrl-contract';
-import * as zns from '@theqrl/web3-qrl-ens';
+import * as qrns from '@theqrl/web3-qrl-qrns';
 import * as iban from '@theqrl/web3-qrl-iban';
 
 import * as http from '@theqrl/web3-providers-http';
@@ -42,7 +42,7 @@ describe('exports of web3 package', () => {
 			expect(qrl.abi).toEqual(abi);
 			expect(qrl.accounts).toEqual(accounts);
 			expect(qrl.contract).toEqual(contract);
-			expect(qrl.zns).toEqual(zns);
+			expect(qrl.qrns).toEqual(qrns);
 			expect(qrl.iban).toEqual(iban);
 		});
 	});

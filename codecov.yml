@@ -39,9 +39,9 @@ component_management:
     - component_id: "@theqrl/web3-qrl-contract"
       paths:
           - /packages/web3-qrl-contract/src/
-    - component_id: "@theqrl/web3-qrl-ens"
+    - component_id: "@theqrl/web3-qrl-qrns"
       paths:
-          - /packages/web3-qrl-ens/src/
+          - /packages/web3-qrl-qrns/src/
     - component_id: "@theqrl/web3-qrl-iban"
       paths:
           - /packages/web3-qrl-iban/src/

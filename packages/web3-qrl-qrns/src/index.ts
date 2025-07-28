@@ -15,18 +15,14 @@ You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-export * from './error_codes.js';
-export * from './web3_error_base.js';
-export * from './errors/account_errors.js';
-export * from './errors/connection_errors.js';
-export * from './errors/contract_errors.js';
-export * from './errors/qrns_errors.js';
-export * from './errors/generic_errors.js';
-export * from './errors/provider_errors.js';
-export * from './errors/signature_errors.js';
-export * from './errors/transaction_errors.js';
-export * from './errors/utils_errors.js';
-export * from './errors/response_errors.js';
-export * from './errors/core_errors.js';
-export * from './errors/rpc_errors.js';
-export * from './errors/rpc_error_messages.js';
+/**
+ * The `web3.qrl.qrns` functions let you interact with QRNS. We recommend reading the [QRNS documentation](https://docs.ens.domains/) to get deeper insights about the internals of the name service.
+ *
+ */
+/**
+ * This comment _supports3_ [Markdown](https://marked.js.org/)
+ */
+import { registryAddresses } from './config.js';
+
+export * from './qrns.js';
+export { registryAddresses };

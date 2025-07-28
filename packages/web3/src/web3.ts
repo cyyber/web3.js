@@ -24,7 +24,7 @@ import {
 } from '@theqrl/web3-core';
 import { Web3QRL, RegisteredSubscription, registeredSubscriptions } from '@theqrl/web3-qrl';
 import Contract from '@theqrl/web3-qrl-contract';
-import { ZNS, registryAddresses } from '@theqrl/web3-qrl-ens';
+import { QRNS, registryAddresses } from '@theqrl/web3-qrl-qrns';
 import { Iban } from '@theqrl/web3-qrl-iban';
 import { Net } from '@theqrl/web3-net';
 import * as utils from '@theqrl/web3-utils';
@@ -53,7 +53,7 @@ export class Web3<
 		Web3QRL,
 		Iban,
 		Net,
-		ZNS,
+		QRNS,
 	};
 
 	public utils: typeof utils;
@@ -155,8 +155,8 @@ export class Web3<
 
 		// QRL Module
 		this.qrl = Object.assign(qrl, {
-			// ZNS module
-			zns: self.use(ZNS, registryAddresses.main), // registry address defaults to main network
+			// QRNS module
+			qrns: self.use(QRNS, registryAddresses.main), // registry address defaults to main network
 
 			// Iban helpers
 			Iban,

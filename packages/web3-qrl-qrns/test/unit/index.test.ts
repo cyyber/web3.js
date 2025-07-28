@@ -14,11 +14,12 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
+import * as qrns from '../../src';
+import { registryAddresses } from '../../src';
 
-export * from '@theqrl/web3-qrl';
-
-export * as abi from '@theqrl/web3-qrl-abi';
-export * as accounts from '@theqrl/web3-qrl-accounts';
-export * as contract from '@theqrl/web3-qrl-contract';
-export * as qrns from '@theqrl/web3-qrl-qrns';
-export * as iban from '@theqrl/web3-qrl-iban';
+describe('main package', () => {
+	it('should import', () => {
+		expect(registryAddresses).toBeDefined();
+		expect(qrns.QRNS).toBeDefined();
+	});
+});
