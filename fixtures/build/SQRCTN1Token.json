@@ -23,7 +23,7 @@
 					"type": "address"
 				}
 			],
-			"name": "ZRC721IncorrectOwner",
+			"name": "SQRCTN1IncorrectOwner",
 			"type": "error"
 		},
 		{
@@ -39,7 +39,7 @@
 					"type": "uint256"
 				}
 			],
-			"name": "ZRC721InsufficientApproval",
+			"name": "SQRCTN1InsufficientApproval",
 			"type": "error"
 		},
 		{
@@ -50,7 +50,7 @@
 					"type": "address"
 				}
 			],
-			"name": "ZRC721InvalidApprover",
+			"name": "SQRCTN1InvalidApprover",
 			"type": "error"
 		},
 		{
@@ -61,7 +61,7 @@
 					"type": "address"
 				}
 			],
-			"name": "ZRC721InvalidOperator",
+			"name": "SQRCTN1InvalidOperator",
 			"type": "error"
 		},
 		{
@@ -72,7 +72,7 @@
 					"type": "address"
 				}
 			],
-			"name": "ZRC721InvalidOwner",
+			"name": "SQRCTN1InvalidOwner",
 			"type": "error"
 		},
 		{
@@ -83,7 +83,7 @@
 					"type": "address"
 				}
 			],
-			"name": "ZRC721InvalidReceiver",
+			"name": "SQRCTN1InvalidReceiver",
 			"type": "error"
 		},
 		{
@@ -94,7 +94,7 @@
 					"type": "address"
 				}
 			],
-			"name": "ZRC721InvalidSender",
+			"name": "SQRCTN1InvalidSender",
 			"type": "error"
 		},
 		{
@@ -105,7 +105,7 @@
 					"type": "uint256"
 				}
 			],
-			"name": "ZRC721NonexistentToken",
+			"name": "SQRCTN1NonexistentToken",
 			"type": "error"
 		},
 		{

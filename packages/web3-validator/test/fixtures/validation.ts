@@ -16,7 +16,7 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { Filter } from '@theqrl/web3-types';
-import { hexToBytes } from 'zond-cryptography/utils';
+import { hexToBytes } from 'qrl-cryptography/utils';
 import { ValidInputTypes } from '../../src/types';
 
 export const validUintData: any[] = [

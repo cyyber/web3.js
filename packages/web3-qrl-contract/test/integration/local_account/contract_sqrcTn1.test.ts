@@ -20,27 +20,27 @@ import Web3 from '@theqrl/web3';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { Web3Account } from '@theqrl/web3-qrl-accounts';
 import { Contract, EventLog } from '../../../src';
-import { ZRC721TokenAbi, ZRC721TokenBytecode } from '../../shared_fixtures/build/ZRC721Token';
+import { SQRCTN1TokenAbi, SQRCTN1TokenBytecode } from '../../shared_fixtures/build/SQRCTN1Token';
 import { getSystemTestProvider, createLocalAccount } from '../../fixtures/system_test_utils';
 import { toUpperCaseHex } from '../../shared_fixtures/utils';
 
 describe('contract', () => {
-	describe('zrc721', () => {
-		let contract: Contract<typeof ZRC721TokenAbi>;
+	describe('sqrcTn1', () => {
+		let contract: Contract<typeof SQRCTN1TokenAbi>;
 		let sendOptions: Record<string, unknown>;
 		let deployOptions: Record<string, unknown>;
 		let localAccount: Web3Account;
 		let web3: Web3;
-		let contractDeployed: Contract<typeof ZRC721TokenAbi>;
+		let contractDeployed: Contract<typeof SQRCTN1TokenAbi>;
 		beforeAll(async () => {
 			web3 = new Web3(getSystemTestProvider());
 			localAccount = await createLocalAccount(web3);
-			contract = new web3.qrl.Contract(ZRC721TokenAbi) as unknown as Contract<
-				typeof ZRC721TokenAbi
+			contract = new web3.qrl.Contract(SQRCTN1TokenAbi) as unknown as Contract<
+				typeof SQRCTN1TokenAbi
 			>;
 
 			deployOptions = {
-				data: ZRC721TokenBytecode,
+				data: SQRCTN1TokenBytecode,
 				arguments: [],
 			};
 

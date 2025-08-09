@@ -17,7 +17,7 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 import { Web3QRL } from '@theqrl/web3-qrl';
 import { Contract } from '../../src';
 import { sleep } from '../shared_fixtures/utils';
-import { ZRC721TokenAbi, ZRC721TokenBytecode } from '../shared_fixtures/build/ZRC721Token';
+import { SQRCTN1TokenAbi, SQRCTN1TokenBytecode } from '../shared_fixtures/build/SQRCTN1Token';
 import { GreeterBytecode, GreeterAbi } from '../shared_fixtures/build/Greeter';
 import { DeployRevertAbi, DeployRevertBytecode } from '../shared_fixtures/build/DeployRevert';
 import {
@@ -108,11 +108,11 @@ describe('contract', () => {
 				expect(Number(estimatedGas)).toBeGreaterThan(0);
 			});
 			it('should return estimated gas of contract constructor without arguments', async () => {
-				const estimatedGas = await new Contract(ZRC721TokenAbi, undefined, {
+				const estimatedGas = await new Contract(SQRCTN1TokenAbi, undefined, {
 					provider: getSystemTestProvider(),
 				})
 					.deploy({
-						data: ZRC721TokenBytecode,
+						data: SQRCTN1TokenBytecode,
 						arguments: [],
 					})
 					.estimateGas({

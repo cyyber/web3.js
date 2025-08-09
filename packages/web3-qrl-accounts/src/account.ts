@@ -18,8 +18,8 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 import {
 	decrypt as createDecipheriv,
 	encrypt as createCipheriv,
-} from 'zond-cryptography/aes.js';
-import { argon2idSync } from 'zond-cryptography/argon2id.js';
+} from 'qrl-cryptography/aes.js';
+import { argon2idSync } from 'qrl-cryptography/argon2id.js';
 import {
 	InvalidKdfError,
 	InvalidPasswordError,

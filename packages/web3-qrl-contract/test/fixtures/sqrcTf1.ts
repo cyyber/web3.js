@@ -19,7 +19,7 @@ import { Address, Numbers } from '@theqrl/web3-types';
 import { LogsSubscription } from '../../src/log_subscription';
 import { ContractEventOptions, PayableMethodObject, NonPayableMethodObject } from '../../src/types';
 
-export interface Zrc20Interface {
+export interface SqrcTf1Interface {
 	methods: {
 		[key: string]: (
 			...args: ReadonlyArray<any>
@@ -60,7 +60,7 @@ export interface Zrc20Interface {
 }
 
 // https://ethereumdev.io/abi-for-erc20-contract-on-ethereum/
-export const zrc20Abi = [
+export const sqrcTf1Abi = [
 	{
 		constant: true,
 		inputs: [],

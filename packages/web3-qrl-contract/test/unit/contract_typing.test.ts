@@ -20,8 +20,8 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 import { expectTypeOf, typecheck } from '@humeris/espresso-shot';
 import { Numbers } from '@theqrl/web3-types';
 import { Contract } from '../../src/contract';
-import { zrc20Abi, Zrc20Interface } from '../fixtures/zrc20';
-import { zrc721Abi, Zrc721Interface } from '../fixtures/zrc721';
+import { sqrcTf1Abi, SqrcTf1Interface } from '../fixtures/sqrcTf1';
+import { sqrcTn1Abi, SqrcTn1Interface } from '../fixtures/sqrcTn1';
 import { NonPayableMethodObject, PayableMethodObject } from '../../src';
 
 describe('contract typing', () => {
@@ -59,44 +59,44 @@ describe('contract typing', () => {
 			>(),
 		);
 	});
-	describe('zrc20', () => {
-		const contract = new Contract(zrc20Abi);
+	describe('sqrcTf1', () => {
+		const contract = new Contract(sqrcTf1Abi);
 
 		typecheck('should contain all methods', () =>
-			expectTypeOf<keyof typeof contract.methods>().toBe<keyof Zrc20Interface['methods']>(),
+			expectTypeOf<keyof typeof contract.methods>().toBe<keyof SqrcTf1Interface['methods']>(),
 		);
 
 		typecheck('should have interface compliance methods', () =>
-			expectTypeOf(contract.methods).toExtend<Zrc20Interface['methods']>(),
+			expectTypeOf(contract.methods).toExtend<SqrcTf1Interface['methods']>(),
 		);
 
 		typecheck('should have all events', () =>
-			expectTypeOf<keyof typeof contract.events>().toBe<keyof Zrc20Interface['events']>(),
+			expectTypeOf<keyof typeof contract.events>().toBe<keyof SqrcTf1Interface['events']>(),
 		);
 
 		typecheck('should have interface compliance events', () =>
-			expectTypeOf(contract.events).toExtend<Zrc20Interface['events']>(),
+			expectTypeOf(contract.events).toExtend<SqrcTf1Interface['events']>(),
 		);
 	});
 
-	describe('zrc721', () => {
-		const contract = new Contract(zrc721Abi);
+	describe('sqrcTn1', () => {
+		const contract = new Contract(sqrcTn1Abi);
 
 		typecheck('should contain all methods', () =>
-			expectTypeOf<keyof typeof contract.methods>().toBe<keyof Zrc721Interface['methods']>(),
+			expectTypeOf<keyof typeof contract.methods>().toBe<keyof SqrcTn1Interface['methods']>(),
 		);
 
 		// TODO: It's not matching types for `safeTransferFrom` because of overloaded method
 		// typecheck('should have interface compliance methods', () =>
-		// 	expectTypeOf(contract.methods).toExtend<Zrc721Interface['methods']>(),
+		// 	expectTypeOf(contract.methods).toExtend<SqrcTn1Interface['methods']>(),
 		// );
 
 		typecheck('should have all events', () =>
-			expectTypeOf<keyof typeof contract.events>().toBe<keyof Zrc721Interface['events']>(),
+			expectTypeOf<keyof typeof contract.events>().toBe<keyof SqrcTn1Interface['events']>(),
 		);
 
 		typecheck('should have interface compliance events', () =>
-			expectTypeOf(contract.events).toExtend<Zrc721Interface['events']>(),
+			expectTypeOf(contract.events).toExtend<SqrcTn1Interface['events']>(),
 		);
 	});
 });

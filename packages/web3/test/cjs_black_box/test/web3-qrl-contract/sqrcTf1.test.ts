@@ -14,10 +14,7 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
-/* eslint-disable import/no-relative-packages */
-import Web3 from '@theqrl/web3';
 import Contract from '@theqrl/web3-qrl-contract';
-
 import {
 	closeOpenConnection,
 	describeIf,
@@ -25,14 +22,22 @@ import {
 	isWs,
 	getSystemTestProvider,
 	createNewAccount,
+	// eslint-disable-next-line import/no-relative-packages
 } from '../../../shared_fixtures/system_tests_utils';
-import { ZRC20TokenAbi, ZRC20TokenBytecode } from '../../../shared_fixtures/contracts/ZRC20Token';
+import {
+	SQRCTF1TokenAbi,
+	SQRCTF1TokenBytecode,
+	// eslint-disable-next-line import/no-relative-packages
+} from '../../../shared_fixtures/contracts/SQRCTF1Token';
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+// eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires
+const Web3 = require('@theqrl/web3').default;
 
 describeIf(getSystemTestBackend() === 'gzond')('Black Box Unit Tests - web3.qrl.Contract', () => {
-	describe('Gzond - ZRC20', () => {
+	describe('Gzond - SQRCTF1', () => {
 		let account;
-		let web3: Web3;
-		let deployedContract: Contract<typeof ZRC20TokenAbi>;
+		let web3: typeof Web3;
+		let deployedContract: Contract<typeof SQRCTF1TokenAbi>;
 
 		beforeAll(async () => {
 			account = await createNewAccount({
@@ -40,9 +45,9 @@ describeIf(getSystemTestBackend() === 'gzond')('Black Box Unit Tests - web3.qrl.
 			});
 
 			web3 = new Web3(getSystemTestProvider());
-			deployedContract = await new web3.qrl.Contract(ZRC20TokenAbi)
+			deployedContract = await new web3.qrl.Contract(SQRCTF1TokenAbi)
 				.deploy({
-					data: ZRC20TokenBytecode,
+					data: SQRCTF1TokenBytecode,
 					arguments: ['420'],
 				})
 				.send({ from: account.address, gas: '10000000' });
@@ -54,7 +59,7 @@ describeIf(getSystemTestBackend() === 'gzond')('Black Box Unit Tests - web3.qrl.
 
 		it('should get deployed contract info', async () => {
 			const contract = new web3.qrl.Contract(
-				ZRC20TokenAbi,
+				SQRCTF1TokenAbi,
 				deployedContract.options.address,
 			);
 

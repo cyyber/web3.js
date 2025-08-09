@@ -163,12 +163,12 @@ A workaround for this issue is available, below is an example of it:
 ```typescript
 import { Contract, ContractAbi, Web3Context, Web3PluginBase, types, utils } from '@theqrl/web3';
 
-import { ZRC20TokenAbi } from './ZRC20Token';
+import { SQRCTF1TokenAbi } from './SQRCTF1Token';
 
 export class ContractMethodWrappersPlugin extends Web3PluginBase {
 	public pluginNamespace = 'contractMethodWrappersPlugin';
 
-	private readonly _contract: Contract<typeof ZRC20TokenAbi>;
+	private readonly _contract: Contract<typeof SQRCTF1TokenAbi>;
 
 	public constructor(abi: ContractAbi, address: types.Address) {
 		super();

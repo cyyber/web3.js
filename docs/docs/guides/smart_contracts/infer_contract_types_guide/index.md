@@ -17,7 +17,7 @@ import ERC20 from './node_modules/@openzeppelin/contracts/build/contracts/ERC20.
 (async function () {
 	const web3 = new Web3('rpc url');
 
-	const contract = new Contract(ZRC20.abi, 'Q7af963cF6D228E564e2A0aA0DdBF06210B38615D', web3);
+	const contract = new Contract(SQRCTF1.abi, 'Q7af963cF6D228E564e2A0aA0DdBF06210B38615D', web3);
 
 	const holder = 'Qa8F6eB216e26C1F7d924A801E46eaE0CE8ed1A0A';
 
@@ -32,7 +32,7 @@ To work around it you need to copy abi into a Typescript file like this:
 import {Contract, Web3} from "web3";
 
 
-const ZRC20 = [
+const SQRCTF1 = [
     ...
     // "as const" is important part, without it typescript would create generic type and remove available methods from type
 ] as const;
@@ -40,7 +40,7 @@ const ZRC20 = [
 (async function() {
     const web3 = new Web3("rpc url")
 
-    const contract = new Contract(ZRC20, "Q7af963cF6D228E564e2A0aA0DdBF06210B38615D", web3)
+    const contract = new Contract(SQRCTF1, "Q7af963cF6D228E564e2A0aA0DdBF06210B38615D", web3)
 
     const holder = "Qa8F6eB216e26C1F7d924A801E46eaE0CE8ed1A0A"
 
@@ -90,8 +90,8 @@ To use this script, just create an `artifacts.json` file at the root of your pro
 
 ```json title="artifacts.json"
 [
-	"@theqrl/zond-contracts/build/contracts/ZRC20.json",
-	"@theqrl/zond-contracts/build/contracts/ZRC1155.json",
+	"@theqrl/qrl-contracts/build/contracts/SQRCTF1.json",
+	"@theqrl/qrl-contracts/build/contracts/SQRCTB1 .json",
 	"./build/contracts/MyContract.json"
 ]
 ```
@@ -107,7 +107,7 @@ import ERC20 from './artifacts/ERC20';
 	const web3 = new Web3('https://goerli.infura.io/v3/fd1f29ab70844ef48e644489a411d4b3');
 
 	const contract = new Contract(
-		ZRC20.abi as ContractAbi,
+		SQRCTF1.abi as ContractAbi,
 		'Q7af963cF6D228E564e2A0aA0DdBF06210B38615D',
 		web3,
 	);

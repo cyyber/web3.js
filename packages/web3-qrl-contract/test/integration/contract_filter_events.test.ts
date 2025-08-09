@@ -17,7 +17,7 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 
 import { toBigInt } from '@theqrl/web3-utils';
 import { Contract } from '../../src';
-import { ZRC20TokenAbi, ZRC20TokenBytecode } from '../shared_fixtures/build/ZRC20Token';
+import { SQRCTF1TokenAbi, SQRCTF1TokenBytecode } from '../shared_fixtures/build/SQRCTF1Token';
 import { BasicAbi, BasicBytecode } from '../shared_fixtures/build/Basic';
 import {
 	getSystemTestProvider,
@@ -29,9 +29,9 @@ import { EventLog } from '../../src/types';
 const initialSupply = BigInt('5000000000');
 
 describe('contract getPastEvent filter', () => {
-	describe('zrc20', () => {
-		let contract: Contract<typeof ZRC20TokenAbi>;
-		let contractDeployed: Contract<typeof ZRC20TokenAbi>;
+	describe('sqrcTf1', () => {
+		let contract: Contract<typeof SQRCTF1TokenAbi>;
+		let contractDeployed: Contract<typeof SQRCTF1TokenAbi>;
 		let deployOptions: Record<string, unknown>;
 		let sendOptions: Record<string, unknown>;
 		let mainAcc: Record<string, string>;
@@ -40,12 +40,12 @@ describe('contract getPastEvent filter', () => {
 		let toAcc3: Record<string, string>;
 
 		beforeAll(async () => {
-			contract = new Contract(ZRC20TokenAbi, undefined, {
+			contract = new Contract(SQRCTF1TokenAbi, undefined, {
 				provider: getSystemTestProvider(),
 			});
 
 			deployOptions = {
-				data: ZRC20TokenBytecode,
+				data: SQRCTF1TokenBytecode,
 				arguments: [initialSupply],
 			};
 			mainAcc = await createTempAccount();

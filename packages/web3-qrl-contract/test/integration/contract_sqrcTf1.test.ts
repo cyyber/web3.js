@@ -17,7 +17,7 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 
 import { LogsOutput } from '@theqrl/web3-types';
 import { Contract } from '../../src';
-import { ZRC20TokenAbi, ZRC20TokenBytecode } from '../shared_fixtures/build/ZRC20Token';
+import { SQRCTF1TokenAbi, SQRCTF1TokenBytecode } from '../shared_fixtures/build/SQRCTF1Token';
 import {
 	getSystemTestProvider,
 	describeIf,
@@ -32,18 +32,18 @@ import { processAsync, toUpperCaseAddress } from '../shared_fixtures/utils';
 const initialSupply = BigInt('5000000000');
 
 describe('contract', () => {
-	describe('zrc20', () => {
-		let contract: Contract<typeof ZRC20TokenAbi>;
+	describe('sqrcTf1', () => {
+		let contract: Contract<typeof SQRCTF1TokenAbi>;
 		let deployOptions: Record<string, unknown>;
 		let sendOptions: Record<string, unknown>;
 
 		beforeAll(() => {
-			contract = new Contract(ZRC20TokenAbi, undefined, {
+			contract = new Contract(SQRCTF1TokenAbi, undefined, {
 				provider: getSystemTestProvider(),
 			});
 
 			deployOptions = {
-				data: ZRC20TokenBytecode,
+				data: SQRCTF1TokenBytecode,
 				arguments: [initialSupply],
 			};
 		});
@@ -57,7 +57,7 @@ describe('contract', () => {
 		});
 
 		describe('contract instance', () => {
-			let contractDeployed: Contract<typeof ZRC20TokenAbi>;
+			let contractDeployed: Contract<typeof SQRCTF1TokenAbi>;
 			let pkAccount: { address: string; seed: string };
 			let mainAcc: { address: string; seed: string };
 			const prepareForTransfer = async (value: string) => {

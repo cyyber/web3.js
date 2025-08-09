@@ -18,7 +18,7 @@ import Web3 from '@theqrl/web3';
 import { DEFAULT_RETURN_FORMAT } from '@theqrl/web3-types';
 
 import { ContractMethodWrappersPlugin } from '../../src/contract_method_wrappers';
-import { ZRC20TokenAbi } from '../../src/ZRC20Token';
+import { SQRCTF1TokenAbi } from '../../src/SQRCTF1Token';
 
 declare module '../web3_export_helper' {
 	interface Web3 {
@@ -31,7 +31,7 @@ describe('ContractMethodWrappersPlugin', () => {
 		const web3 = new Web3('http://127.0.0.1:8545');
 		web3.registerPlugin(
 			new ContractMethodWrappersPlugin(
-				ZRC20TokenAbi,
+				SQRCTF1TokenAbi,
 				'QdAC17F958D2ee523a2206206994597C13D831ec7',
 			),
 		);
@@ -53,7 +53,7 @@ describe('ContractMethodWrappersPlugin', () => {
 
 		beforeAll(() => {
 			web3 = new Web3('http://127.0.0.1:8545');
-			web3.registerPlugin(new ContractMethodWrappersPlugin(ZRC20TokenAbi, contractAddress));
+			web3.registerPlugin(new ContractMethodWrappersPlugin(SQRCTF1TokenAbi, contractAddress));
 		});
 
 		beforeEach(() => {

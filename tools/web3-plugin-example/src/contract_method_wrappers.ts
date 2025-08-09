@@ -25,7 +25,7 @@ import {
 } from '@theqrl/web3-types';
 import { format, numberToHex } from '@theqrl/web3-utils';
 // eslint-disable-next-line require-extensions/require-extensions
-import { ZRC20TokenAbi } from './ZRC20Token';
+import { SQRCTF1TokenAbi } from './SQRCTF1Token';
 // eslint-disable-next-line require-extensions/require-extensions
 import { Web3Context } from './reexported_web3_context';
 
@@ -34,7 +34,7 @@ export class ContractMethodWrappersPlugin extends Web3PluginBase {
 
 	// This should be private, but it's public so _contract.requestManager.send can
 	// be mocked in contract_method_wrappers.test.ts
-	public readonly _contract: Contract<typeof ZRC20TokenAbi>;
+	public readonly _contract: Contract<typeof SQRCTF1TokenAbi>;
 
 	public constructor(abi: ContractAbi, address: Address) {
 		super();
