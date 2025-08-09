@@ -23,7 +23,7 @@ import { uint8ArrayToHexString } from '../utils.js';
  * Checks the checksum of a given address. Will also return false on non-checksum addresses.
  */
 export const checkAddressCheckSum = (data: string): boolean => {
-	if (!/^Z[0-9a-f]{40}$/i.test(data)) return false;
+	if (!/^Q[0-9a-f]{40}$/i.test(data)) return false;
 	const address = data.slice(1);
 	const updatedData = utf8ToBytes(address.toLowerCase());
 
@@ -50,11 +50,11 @@ export const isAddressString = (value: string, checkChecksum = true) => {
 	}
 
 	// check if it has the basic requirements of an address
-	if (!/^Z[0-9a-f]{40}$/i.test(value)) {
+	if (!/^Q[0-9a-f]{40}$/i.test(value)) {
 		return false;
 	}
 	// If it's ALL lowercase or ALL upppercase
-	if (/^Z[0-9a-f]{40}$/.test(value) || /^Z[0-9A-F]{40}$/.test(value)) {
+	if (/^Q[0-9a-f]{40}$/.test(value) || /^Q[0-9A-F]{40}$/.test(value)) {
 		return true;
 		// Otherwise check each case
 	}
