@@ -67,7 +67,7 @@ export const sendFewTxes = async ({
 	return res;
 };
 
-const regexAddress = /Z[0-9a-fA-F]{40}/i;
+const regexAddress = /Q[0-9a-fA-F]{40}/i;
 const regexHex32 = /0[xX][0-9a-fA-F]{64}/i;
 
 type ExpectOptions = {

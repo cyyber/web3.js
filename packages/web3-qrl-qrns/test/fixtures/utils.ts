@@ -17,9 +17,9 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 
 export const namehashValidData: [string, string][] = [
 	['', '0x0000000000000000000000000000000000000000000000000000000000000000'],
-	['qrl', '0x5ca200831516f7386952dbee215dfe7e4920ece6d31d89501d03e9239082ae7a'],
-	['foo.qrl', '0xa5bb084f89105bd16dff5eef797279b0c91d93529934875c65e3f2948b8b5be9'],
-	['FOO.qrl', '0xa5bb084f89105bd16dff5eef797279b0c91d93529934875c65e3f2948b8b5be9'],
+	['qrl', '0x2e567ec4acbf65494d1ba700c19be055d50a2c97fe0ab1bc3e1180be43b3656a'],
+	['foo.qrl', '0x53eee0632697b8eca7afe53ea586de69711eee0c93db01d74119828543ee99fe'],
+	['FOO.qrl', '0x53eee0632697b8eca7afe53ea586de69711eee0c93db01d74119828543ee99fe'],
 ];
 
 export const normalizeValidData: [string, string][] = [

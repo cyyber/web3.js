@@ -354,7 +354,7 @@ export const encrypt = async (
 	return {
 		version: 1,
 		id: uuidV4(),
-		address: `Z${acc.address.slice(1).toLowerCase()}`,
+		address: `Q${acc.address.slice(1).toLowerCase()}`,
 		crypto: {
 			ciphertext,
 			cipherparams: {

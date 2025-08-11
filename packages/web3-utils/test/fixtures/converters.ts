@@ -21,7 +21,7 @@ import {
 	HexString,
 	Numbers,
 	ValueTypes,
-	ZPrefixedHexString,
+	QPrefixedHexString,
 } from '@theqrl/web3-types';
 import { QRLUnits, hexToBytes } from '../../src/converters';
 
@@ -357,7 +357,7 @@ export const toBigIntInvalidData: [any, string][] = [
 	['zzzzee0xiiuu', ' Error: can not parse as number data'],
 ];
 
-export const addressToBytesValidData: [ZPrefixedHexString, Uint8Array][] = [
+export const addressToBytesValidData: [QPrefixedHexString, Uint8Array][] = [
 	[
 		'Q4848484848484848484848484848484848484848',
 		new Uint8Array([
@@ -379,7 +379,7 @@ export const addressToBytesValidData: [ZPrefixedHexString, Uint8Array][] = [
 	],
 ];
 
-export const addressToHexValidData: [ZPrefixedHexString, HexString][] = [
+export const addressToHexValidData: [QPrefixedHexString, HexString][] = [
 	['Q4848484848484848484848484848484848484848', '0x4848484848484848484848484848484848484848'],
 	['Q3772377237723772377237723772377237723772', '0x3772377237723772377237723772377237723772'],
 	['Q480c480c480c480c480c480c480c480c480c480c', '0x480c480c480c480c480c480c480c480c480c480c'],
@@ -388,7 +388,7 @@ export const addressToHexValidData: [ZPrefixedHexString, HexString][] = [
 ];
 
 export const invalidAddressData: [any, string][] = [
-	['Z1', 'value "Z1" at "/0" must pass "address" validation'],
+	['Q1', 'value "Q1" at "/0" must pass "address" validation'],
 	[
 		'QE247a45c287191d435A8a5D72A7C8dc030451E9F',
 		'value "QE247a45c287191d435A8a5D72A7C8dc030451E9F" at "/0" must pass "address" validation',
@@ -399,7 +399,7 @@ export const invalidAddressData: [any, string][] = [
 	],
 ];
 
-export const hexToAddressValidData: [HexString, ZPrefixedHexString][] = [
+export const hexToAddressValidData: [HexString, QPrefixedHexString][] = [
 	['0x4848484848484848484848484848484848484848', 'Q4848484848484848484848484848484848484848'],
 	['0x3772377237723772377237723772377237723772', 'Q3772377237723772377237723772377237723772'],
 	['0x480c480c480c480c480c480c480c480c480c480c', 'Q480c480c480c480c480c480c480c480c480c480c'],

@@ -279,7 +279,7 @@ describe('Web3QRL.sendSignedTransaction', () => {
 				reason:
 					getSystemTestBackend() === 'gzond'
 						? expect.stringContaining(
-								'err: max fee per gas less than block base fee: address Z',
+								'err: max fee per gas less than block base fee: address Q',
 						  )
 						: 'VM Exception while processing transaction: out of gas',
 				signature: undefined,
@@ -316,7 +316,7 @@ describe('Web3QRL.sendSignedTransaction', () => {
 				reason:
 					getSystemTestBackend() === 'gzond'
 						? expect.stringContaining(
-								'err: insufficient funds for gas * price + value: address Z',
+								'err: insufficient funds for gas * price + value: address Q',
 						  )
 						: 'VM Exception while processing transaction: insufficient balance',
 				signature: undefined,

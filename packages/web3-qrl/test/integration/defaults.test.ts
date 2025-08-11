@@ -129,8 +129,8 @@ describe('defaults', () => {
 				value: '0x1',
 				type: BigInt(2),
 			});
-			expect(tx.from).toBe(`Z${tempAcc.address.slice(1).toLowerCase()}`);
-			expect(txSend.from).toBe(`Z${tempAcc.address.slice(1).toLowerCase()}`);
+			expect(tx.from).toBe(`Q${tempAcc.address.slice(1).toLowerCase()}`);
+			expect(txSend.from).toBe(`Q${tempAcc.address.slice(1).toLowerCase()}`);
 
 			const tx2 = await contractMsgFrom.methods.setTestString('test3').send({
 				from: tempAcc2.address,
@@ -140,8 +140,8 @@ describe('defaults', () => {
 				value: '0x1',
 				from: tempAcc2.address,
 			});
-			expect(tx2.from).toBe(`Z${tempAcc2.address.slice(1).toLowerCase()}`);
-			expect(tx2Send.from).toBe(`Z${tempAcc2.address.slice(1).toLowerCase()}`);
+			expect(tx2.from).toBe(`Q${tempAcc2.address.slice(1).toLowerCase()}`);
+			expect(tx2Send.from).toBe(`Q${tempAcc2.address.slice(1).toLowerCase()}`);
 
 			const fromDefault = await contractMsgFrom.methods?.from().call();
 			const fromPass = await contractMsgFrom.methods?.from().call({ from: tempAcc.address });

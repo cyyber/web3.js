@@ -389,7 +389,7 @@ const res = await contract.methods.greet().call();
 // Another way to do this is to set it within the contract using `dataInputFill`
 
 const contract = new Contract(
-	erc721Abi,
+	sqrcTn1Abi,
 	'Q1230B93ffd14F2F022039675fA3fc3A46eE4C701',
 	{ gas: '123', dataInputFill: "data" }, // methods will now be populating `data` field
 );
@@ -400,7 +400,7 @@ contract.methods.approve('Q00000000219ab540356cBB839Cbe05303d7705Fa', 1).call(),
 // Another way to do this is to set `data` when calling methods
 
 const contract = new Contract(
-	erc721Abi,
+	sqrcTn1Abi,
 	'Q1230B93ffd14F2F022039675fA3fc3A46eE4C701',
 );
 

@@ -69,7 +69,7 @@ describe('prepareTransactionForSigning', () => {
 				const signedTransaction = qrljsTx.sign(hexToBytes(expectedSeed.substring(2)));
 
 				const senderAddress = signedTransaction.getSenderAddress().toString();
-				expect(senderAddress).toBe(`Z${expectedAddress.slice(1).toLowerCase()}`);
+				expect(senderAddress).toBe(`Q${expectedAddress.slice(1).toLowerCase()}`);
 
 				// should be able to obtain expectedRlpEncodedTransaction
 				const rlpEncodedTransaction = bytesToHex(signedTransaction.serialize());

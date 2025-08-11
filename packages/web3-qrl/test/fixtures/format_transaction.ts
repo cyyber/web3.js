@@ -249,30 +249,30 @@ export const invalidGetTransactionFromOrToAttrData: { input: any; output: any }[
 			role: 'from',
 			transaction: {
 				...dummyTransaction,
-				from: 'Z58422b64d0e95ab4e93a9d95b755d9b53545c9eff',
+				from: 'Q58422b64d0e95ab4e93a9d95b755d9b53545c9eff',
 			},
 		},
-		output: 'Invalid value given "Z58422b64d0e95ab4e93a9d95b755d9b53545c9eff". Error: invalid transaction with invalid sender',
+		output: 'Invalid value given "Q58422b64d0e95ab4e93a9d95b755d9b53545c9eff". Error: invalid transaction with invalid sender',
 	},
 	{
 		input: {
 			role: 'to',
 			transaction: {
 				...dummyTransaction,
-				to: 'Z58422b64d0e95ab4e93a9d95b755d9b53545c9eff',
+				to: 'Q58422b64d0e95ab4e93a9d95b755d9b53545c9eff',
 			},
 		},
-		output: 'Invalid value given "Z58422b64d0e95ab4e93a9d95b755d9b53545c9eff". Error: invalid transaction with invalid receiver',
+		output: 'Invalid value given "Q58422b64d0e95ab4e93a9d95b755d9b53545c9eff". Error: invalid transaction with invalid receiver',
 	},
 	{
 		input: {
 			role: 'from',
 			transaction: {
 				...dummyTransaction,
-				from: 'Z1',
+				from: 'Q1',
 			},
 		},
-		output: 'Invalid value given "Z1". Error: invalid transaction with invalid sender',
+		output: 'Invalid value given "Q1". Error: invalid transaction with invalid sender',
 	},
 	{
 		input: {

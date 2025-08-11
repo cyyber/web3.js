@@ -14,7 +14,7 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
-import type { Numbers, ZPrefixedHexString } from '@theqrl/web3-types';
+import type { Numbers, QPrefixedHexString } from '@theqrl/web3-types';
 
 import type { Common } from '../common/common.js';
 // eslint-disable-next-line require-extensions/require-extensions
@@ -61,7 +61,7 @@ export interface TxOptions {
  */
 
 export type AccessListItem = {
-	address: ZPrefixedHexString;
+	address: QPrefixedHexString;
 	storageKeys: PrefixedHexString[];
 };
 
@@ -106,7 +106,7 @@ export type TxData = {
 	/**
 	 * The transaction's the address is sent to.
 	 */
-	to?: Address | Uint8Array | ZPrefixedHexString;
+	to?: Address | Uint8Array | QPrefixedHexString;
 
 	/**
 	 * The amount of QRL sent.

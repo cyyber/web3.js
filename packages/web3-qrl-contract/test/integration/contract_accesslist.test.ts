@@ -64,7 +64,7 @@ describe('contract', () => {
 					{
 						address: isNullish(deployedContract.options.address)
 							? deployedContract.options.address
-							: `Z${deployedContract.options.address.slice(1).toLowerCase()}`,
+							: `Q${deployedContract.options.address.slice(1).toLowerCase()}`,
 						storageKeys: [
 							'0x0000000000000000000000000000000000000000000000000000000000000001',
 						],
@@ -92,7 +92,7 @@ describe('contract', () => {
 					{
 						address: isNullish(deployedContract.options.address)
 							? deployedContract.options.address
-							: `Z${deployedContract.options.address.slice(1).toLowerCase()}`,
+							: `Q${deployedContract.options.address.slice(1).toLowerCase()}`,
 						storageKeys: [
 							'0x0000000000000000000000000000000000000000000000000000000000000001',
 						],

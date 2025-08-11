@@ -162,7 +162,7 @@ describe('contract', () => {
 						status: BigInt(0),
 						to: isNullish(contractDeployed.options.address)
 							? contractDeployed.options.address
-							: `Z${contractDeployed.options.address.slice(1).toLowerCase()}`,
+							: `Q${contractDeployed.options.address.slice(1).toLowerCase()}`,
 						transactionIndex: BigInt(0),
 						type: BigInt(2),
 					},

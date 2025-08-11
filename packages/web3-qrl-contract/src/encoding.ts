@@ -113,7 +113,7 @@ export const encodeEventABI = (
 	if (!opts.topics.length) delete opts.topics;
 
 	if (address) {
-		opts.address = `Z${address.slice(1).toLowerCase()}`;
+		opts.address = `Q${address.slice(1).toLowerCase()}`;
 	}
 
 	return opts;

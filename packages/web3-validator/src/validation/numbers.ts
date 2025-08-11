@@ -120,7 +120,7 @@ export const isNumber = (value: ValidInputTypes) => {
 		typeof value === 'string' &&
 		/[0-9.]/.test(value) &&
 		// NOTE(rgeraldes24): issue found during the tests; previously, values such
-		// as 'Z1' returned true; making sure that we just have numbers and dot here
+		// as 'Q1' returned true; making sure that we just have numbers and dot here
 		!/[^0-9.]/.test(value) &&
 		value.indexOf('.') === value.lastIndexOf('.')
 	) {
