@@ -52,7 +52,7 @@ const web3 = new Web3(/* PROVIDER*/);
 const seedString = '0x1f953dc9b6437fb94fcafa5dabe3faa0c34315b954dd66f41bf53273339c6d26';
 const account = web3.qrl.accounts.wallet.add(seedString).get(0);
 
-// Make sure the account has enough qrl on balance to send the transaction
+// Make sure the account has enough quanta on balance to send the transaction
 
 // Third step: sign and send the transaction
 // In any function where you can pass from the address set address of the account that exists in a wallet, it will be automatically signed.
