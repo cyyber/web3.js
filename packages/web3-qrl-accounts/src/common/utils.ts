@@ -48,9 +48,8 @@ const intToHex = function (i: number) {
 	return `0x${i.toString(16)}`;
 };
 
-// TODO(rgeraldes24)
 /**
- * Converts Gzond genesis parameters to a QRLJS compatible `CommonOpts` object
+ * Converts Gzond genesis parameters to a `CommonOpts` object
  * @param json object representing the Gzond genesis file hardfork
  * @returns genesis parameters in a `CommonOpts` compliant object
  */

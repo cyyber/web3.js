@@ -256,9 +256,8 @@ gzond --dev --ipcpath <path>
 
 Make sure to replace `<path>` with the desired IPC path. For example:
 
-// TODO(rgeraldes24)
 ```bash
-gzond --dev --ipcpath /Users/username/Library/Zond/gzond.ipc
+gzond --dev --ipcpath /Users/username/Library/QRL/Execution/gzond.ipc
 ```
 
 This will start a `gzond` node in development mode with IPC enabled and an IPC path specified. If the command is successful, the `gzond` node will be running, and you should see output similar to the following:

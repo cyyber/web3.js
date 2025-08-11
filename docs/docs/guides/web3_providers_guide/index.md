@@ -77,13 +77,13 @@ web3.setProvider(new Web3.providers.WebsocketProvider('ws://localhost:8546'));
 
 // Using the IPC provider in node.js
 const net = require('net');
-const web3 = new Web3('/Users/myuser/Library/QRL/gzond.ipc', net); // mac os path
+const web3 = new Web3('/Users/myuser/Library/QRL/Execution/gzond.ipc', net); // mac os path
 // or
 const web3 = new Web3(
-	new Web3.providers.IpcProvider('/Users/myuser/Library/QRL/gzond.ipc', net),
+	new Web3.providers.IpcProvider('/Users/myuser/Library/QRL/Execution/gzond.ipc', net),
 ); // mac os path
 // on windows the path is: "\\\\.\\pipe\\gzond.ipc"
-// on linux the path is: "/users/myuser/.qrl/gzond.ipc"
+// on linux the path is: "/users/myuser/.qrl/execution/gzond.ipc"
 ```
 
 ### Remote Node Provider
