@@ -109,7 +109,7 @@ export type TxData = {
 	to?: Address | Uint8Array | QPrefixedHexString;
 
 	/**
-	 * The amount of QRL sent.
+	 * The amount of Quanta sent.
 	 */
 	value?: Numbers | Uint8Array;
 
