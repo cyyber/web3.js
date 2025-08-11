@@ -18,7 +18,7 @@ import { Chain, Common, Hardfork } from '../../../src/common';
 
 describe('[Common]: Parameter access for param(), paramByHardfork()', () => {
 	it('Basic usage', () => {
-		const c = new Common({ chain: Chain.Mainnet, eips: [] });
+		const c = new Common({ chain: Chain.Mainnet, qips: [] });
 		expect(c.paramByHardfork('gasPrices', 'ecAdd', 'shanghai')).toEqual(BigInt(150));
 
 		// NOTE(rgeraldes24): there are no param updates yet
@@ -81,21 +81,21 @@ describe('[Common]: Parameter access for param(), paramByHardfork()', () => {
 		*/
 	});
 
-	// NOTE(rgeraldes): unused: no eips available(merged)
-	it.skip('EIP param access, paramByEIP()', () => {
+	// NOTE(rgeraldes): unused: no qips available(merged)
+	it.skip('QIP param access, paramByQIP()', () => {
 		const c = new Common({ chain: Chain.Mainnet });
 
-		expect(c.paramByEIP('gasPrices', 'notexistingvalue', 2537)).toBeUndefined();
+		expect(c.paramByQIP('gasPrices', 'notexistingvalue', 2537)).toBeUndefined();
 
-		const UNSUPPORTED_EIP = 1000000;
+		const UNSUPPORTED_QIP = 1000000;
 		expect(() => {
-			c.paramByEIP('gasPrices', 'Bls12381G1AddGas', UNSUPPORTED_EIP);
+			c.paramByQIP('gasPrices', 'Bls12381G1AddGas', UNSUPPORTED_QIP);
 		}).toThrow('not supported');
 
 		expect(() => {
-			c.paramByEIP('notExistingTopic', 'Bls12381G1AddGas', 2537);
+			c.paramByQIP('notExistingTopic', 'Bls12381G1AddGas', 2537);
 		}).toThrow('not defined');
 
-		expect(c.paramByEIP('gasPrices', 'Bls12381G1AddGas', 2537)).toEqual(BigInt(600));
+		expect(c.paramByQIP('gasPrices', 'Bls12381G1AddGas', 2537)).toEqual(BigInt(600));
 	});
 });

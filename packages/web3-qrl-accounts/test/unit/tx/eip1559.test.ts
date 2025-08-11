@@ -139,7 +139,7 @@ describe('[FeeMarketEIP1559Transaction]', () => {
 		expect(Object.isFrozen(signedTxn)).toBe(false);
 	});
 
-	// NOTE(rgeraldes24): test not valid atm: no eips available
+	// NOTE(rgeraldes24): test not valid atm: no qips available
 	it.skip('common propagates from the common of tx, not the common in TxOptions', () => {
 		const data = testdata[0];
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-call
@@ -148,7 +148,7 @@ describe('[FeeMarketEIP1559Transaction]', () => {
 		const newCommon = new Common({
 			chain: Chain.Mainnet,
 			hardfork: Hardfork.Shanghai,
-			eips: [2537],
+			qips: [2537],
 		});
 		expect(Object.isFrozen(newCommon)).not.toEqual(common);
 		Object.defineProperty(txn, 'common', {
@@ -157,7 +157,7 @@ describe('[FeeMarketEIP1559Transaction]', () => {
 			},
 		});
 		const signedTxn = txn.sign(seed);
-		expect(signedTxn.common.eips()).toContain(2537);
+		expect(signedTxn.common.qips()).toContain(2537);
 	});
 
 	it('unsigned tx -> getMessageToSign()', () => {

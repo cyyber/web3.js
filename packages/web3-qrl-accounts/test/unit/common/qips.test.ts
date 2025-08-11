@@ -18,40 +18,40 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 // import { Chain, Common, Hardfork } from '../../../src/common';
 
 // NOTE(rgeraldes24): unused for now
-describe.skip('[Common/EIPs]: Initialization / Chain params', () => {
+describe.skip('[Common/QIPs]: Initialization / Chain params', () => {
 	it.skip('Correct initialization', () => {
-		// let eips = [2537, 2929];
-		// const c = new Common({ chain: Chain.Mainnet, eips });
-		// expect(c.eips()).toEqual(eips);
-		// eips = [2718, 2929, 2930];
+		// let qips = [2537, 2929];
+		// const c = new Common({ chain: Chain.Mainnet, qips });
+		// expect(c.qips()).toEqual(qips);
+		// qips = [2718, 2929, 2930];
 		// expect(() => {
 		// 	// eslint-disable-next-line no-new
-		// 	new Common({ chain: Chain.Mainnet, eips, hardfork: Hardfork.Istanbul });
+		// 	new Common({ chain: Chain.Mainnet, qips, hardfork: Hardfork.Istanbul });
 		// }).not.toThrow();
-		// eips = [2930];
+		// qips = [2930];
 		// expect(() => {
 		// 	// eslint-disable-next-line no-new
-		// 	new Common({ chain: Chain.Mainnet, eips, hardfork: Hardfork.Istanbul });
+		// 	new Common({ chain: Chain.Mainnet, qips, hardfork: Hardfork.Istanbul });
 		// }).toThrow();
 	});
 
 	/*
 	it('Initialization errors', () => {
-		const UNSUPPORTED_EIP = 1000000;
-		const eips = [UNSUPPORTED_EIP];
+		const UNSUPPORTED_QIP = 1000000;
+		const qips = [UNSUPPORTED_QIP];
 		expect(() => {
 			// eslint-disable-next-line no-new
-			new Common({ chain: Chain.Mainnet, eips });
+			new Common({ chain: Chain.Mainnet, qips });
 		}).toThrow('not supported');
 
 		
     // Manual test since no test triggering EIP config available
     // TODO: recheck on addition of new EIP configs
     // To run manually change minimumHardfork in EIP2537 config to petersburg
-    // eips = [ 2537, ]
+    // qips = [ 2537, ]
     // msg = 'should throw on not meeting minimum hardfork requirements'
     // f = () => {
-    //   new Common({ chain: Chain.Mainnet, hardfork: Hardfork.Byzantium, eips })
+    //   new Common({ chain: Chain.Mainnet, hardfork: Hardfork.Byzantium, qips })
     // }
     // st.throws(f, /minimumHardfork/, msg)
     
@@ -60,7 +60,7 @@ describe.skip('[Common/EIPs]: Initialization / Chain params', () => {
 	it('isActivatedEIP()', () => {
 		let c = new Common({ chain: Chain.Goerli, hardfork: Hardfork.Istanbul });
 		expect(c.isActivatedEIP(2315)).toBe(false);
-		c = new Common({ chain: Chain.Goerli, hardfork: Hardfork.Istanbul, eips: [2315] });
+		c = new Common({ chain: Chain.Goerli, hardfork: Hardfork.Istanbul, qips: [2315] });
 		expect(c.isActivatedEIP(2315)).toBe(true);
 		c = new Common({ chain: Chain.Goerli, hardfork: Hardfork.Berlin });
 		expect(c.isActivatedEIP(2929)).toBe(true);

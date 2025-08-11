@@ -77,10 +77,10 @@ interface BaseOpts {
 	 */
 	hardfork?: string | Hardfork;
 	/**
-	 * Selected EIPs which can be activated, please use an array for instantiation.
+	 * Selected QIPs which can be activated, please use an array for instantiation.
 	 *
 	 */
-	eips?: number[];
+	qips?: number[];
 }
 
 /**

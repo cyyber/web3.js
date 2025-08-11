@@ -21,7 +21,7 @@ import { bytesToHex, hexToBytes, uint8ArrayConcat } from '@theqrl/web3-utils';
 import { TypeOutput } from './types.js';
 import { intToUint8Array, toType, parseGzondGenesis } from './utils.js';
 import mainnet from './chains/mainnet.js';
-import { EIPs } from './eips/index.js';
+import { QIPs } from './qips/index.js';
 import type { ConsensusAlgorithm, ConsensusType } from './enums.js';
 import { Chain, CustomChain, Hardfork } from './enums.js';
 import { hardforks as HARDFORK_SPECS } from './hardforks/index.js';
@@ -56,7 +56,7 @@ export class Common extends EventEmitter {
 
 	private _chainParams: ChainConfig;
 	private _hardfork: string | Hardfork;
-	private _eips: number[] = [];
+	private _qips: number[] = [];
 	private readonly _customChains: ChainConfig[];
 
 	private readonly HARDFORK_CHANGES: [HardforkSpecKeys, HardforkSpecValues][];
@@ -110,18 +110,18 @@ export class Common extends EventEmitter {
 	/**
 	 * Static method to load and set common from a gzond genesis json
 	 * @param genesisJson json of gzond configuration
-	 * @param { chain, eips, genesisHash, hardfork } to further configure the common instance
+	 * @param { chain, qips, genesisHash, hardfork } to further configure the common instance
 	 * @returns Common
 	 */
 	public static fromGzondGenesis(
 		genesisJson: any,
-		{ chain, eips, genesisHash, hardfork }: GzondConfigOpts,
+		{ chain, qips, genesisHash, hardfork }: GzondConfigOpts,
 	): Common {
 		const genesisParams = parseGzondGenesis(genesisJson, chain);
 		const common = new Common({
 			chain: genesisParams.name ?? 'custom',
 			customChains: [genesisParams],
-			eips,
+			qips,
 			hardfork: hardfork ?? genesisParams.hardfork,
 		});
 		if (genesisHash !== undefined) {
@@ -178,8 +178,8 @@ export class Common extends EventEmitter {
 		if (opts.hardfork !== undefined) {
 			this.setHardfork(opts.hardfork);
 		}
-		if (opts.eips) {
-			this.setEIPs(opts.eips);
+		if (opts.qips) {
+			this.setQIPs(opts.qips);
 		}
 	}
 
@@ -354,43 +354,43 @@ export class Common extends EventEmitter {
 	}
 
 	/**
-	 * Sets the active EIPs
-	 * @param eips
+	 * Sets the active QIPs
+	 * @param qips
 	 */
-	public setEIPs(eips: number[] = []) {
-		for (const eip of eips) {
-			if (!(eip in EIPs)) {
-				throw new Error(`${eip} not supported`);
+	public setQIPs(qips: number[] = []) {
+		for (const qip of qips) {
+			if (!(qip in QIPs)) {
+				throw new Error(`${qip} not supported`);
 			}
 			// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument
-			const minHF = this.gteHardfork(EIPs[eip].minimumHardfork);
+			const minHF = this.gteHardfork(QIPs[qip].minimumHardfork);
 			if (!minHF) {
 				throw new Error(
 					// eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-					`${eip} cannot be activated on hardfork ${this.hardfork()}, minimumHardfork: ${minHF}`,
+					`${qip} cannot be activated on hardfork ${this.hardfork()}, minimumHardfork: ${minHF}`,
 				);
 			}
 			// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-			if (EIPs[eip].requiredEIPs !== undefined) {
+			if (QIPs[qip].requiredQIPs !== undefined) {
 				// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-				for (const elem of EIPs[eip].requiredEIPs) {
+				for (const elem of QIPs[qip].requiredQIPs) {
 					// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-					if (!(eips.includes(elem) || this.isActivatedEIP(elem))) {
+					if (!(qips.includes(elem) || this.isActivatedQIP(elem))) {
 						throw new Error(
 							// eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-							`${eip} requires EIP ${elem}, but is not included in the EIP list`,
+							`${qip} requires QIP ${elem}, but is not included in the QIP list`,
 						);
 					}
 				}
 			}
 		}
-		this._eips = eips;
+		this._qips = qips;
 	}
 
 	/**
 	 * Returns a parameter for the current chain setup
 	 *
-	 * If the parameter is present in an EIP, the EIP always takes precedence.
+	 * If the parameter is present in an QIP, the QIP always takes precedence.
 	 * Otherwise the parameter if taken from the latest applied HF with
 	 * a change on the respective parameter.
 	 *
@@ -399,11 +399,11 @@ export class Common extends EventEmitter {
 	 * @returns The value requested or `BigInt(0)` if not found
 	 */
 	public param(topic: string, name: string): bigint {
-		// TODO: consider the case that different active EIPs
+		// TODO: consider the case that different active QIPs
 		// can change the same parameter
 		let value;
-		for (const eip of this._eips) {
-			value = this.paramByEIP(topic, name, eip);
+		for (const qip of this._qips) {
+			value = this.paramByQIP(topic, name, qip);
 			if (value !== undefined) return value;
 		}
 		return this.paramByHardfork(topic, name, this._hardfork);
@@ -420,15 +420,15 @@ export class Common extends EventEmitter {
 		// eslint-disable-next-line no-null/no-null
 		let value = null;
 		for (const hfChanges of this.HARDFORK_CHANGES) {
-			// EIP-referencing HF file (e.g. berlin.json)
-			if ('eips' in hfChanges[1]) {
+			// QIP-referencing HF file (e.g. berlin.json)
+			if ('qips' in hfChanges[1]) {
 				// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment
-				const hfEIPs = hfChanges[1].eips;
-				for (const eip of hfEIPs) {
+				const hfQIPs = hfChanges[1].qips;
+				for (const qip of hfQIPs) {
 					// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-					const valueEIP = this.paramByEIP(topic, name, eip);
+					const valueQIP = this.paramByQIP(topic, name, qip);
 					// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-					value = typeof valueEIP === 'bigint' ? valueEIP : value;
+					value = typeof valueQIP === 'bigint' ? valueQIP : value;
 				}
 				// Parameter-inlining HF file (e.g. istanbul.json)
 			} else {
@@ -449,28 +449,28 @@ export class Common extends EventEmitter {
 	}
 
 	/**
-	 * Returns a parameter corresponding to an EIP
+	 * Returns a parameter corresponding to an QIP
 	 * @param topic Parameter topic ('gasConfig', 'gasPrices', 'vm', 'pos')
 	 * @param name Parameter name (e.g. 'minGasLimit' for 'gasConfig' topic)
-	 * @param eip Number of the EIP
+	 * @param qip Number of the QIP
 	 * @returns The value requested or `undefined` if not found
 	 */
 	// eslint-disable-next-line class-methods-use-this
-	public paramByEIP(topic: string, name: string, eip: number): bigint | undefined {
-		if (!(eip in EIPs)) {
-			throw new Error(`${eip} not supported`);
+	public paramByQIP(topic: string, name: string, qip: number): bigint | undefined {
+		if (!(qip in QIPs)) {
+			throw new Error(`${qip} not supported`);
 		}
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-		const eipParams = EIPs[eip];
-		if (!(topic in eipParams)) {
+		const qipParams = QIPs[qip];
+		if (!(topic in qipParams)) {
 			throw new Error(`Topic ${topic} not defined`);
 		}
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-		if (eipParams[topic][name] === undefined) {
+		if (qipParams[topic][name] === undefined) {
 			return undefined;
 		}
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment
-		const value = eipParams[topic][name].v;
+		const value = qipParams[topic][name].v;
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
 		return BigInt(value);
 	}
@@ -494,25 +494,25 @@ export class Common extends EventEmitter {
 	}
 
 	/**
-	 * Checks if an EIP is activated by either being included in the EIPs
-	 * manually passed in with the {@link CommonOpts.eips} or in a
+	 * Checks if an QIP is activated by either being included in the QIPs
+	 * manually passed in with the {@link CommonOpts.qips} or in a
 	 * hardfork currently being active
 	 *
-	 * Note: this method only works for EIPs being supported
-	 * by the {@link CommonOpts.eips} constructor option
-	 * @param eip
+	 * Note: this method only works for QIPs being supported
+	 * by the {@link CommonOpts.qips} constructor option
+	 * @param qip
 	 */
-	public isActivatedEIP(eip: number): boolean {
-		if (this.eips().includes(eip)) {
+	public isActivatedQIP(qip: number): boolean {
+		if (this.qips().includes(qip)) {
 			return true;
 		}
 		for (const hfChanges of this.HARDFORK_CHANGES) {
 			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 			const hf = hfChanges[1];
 			// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument
-			if (this.gteHardfork(hf.name) && 'eips' in hf) {
+			if (this.gteHardfork(hf.name) && 'qips' in hf) {
 				// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-				if ((hf.eips as number[]).includes(eip)) {
+				if ((hf.qips as number[]).includes(qip)) {
 					return true;
 				}
 			}
@@ -615,18 +615,18 @@ export class Common extends EventEmitter {
 	}
 
 	/**
-	 * Returns the hardfork change block for eip
-	 * @param eip EIP number
+	 * Returns the hardfork change block for qip
+	 * @param qip QIP number
 	 * @returns Block number or null if unscheduled
 	 */
 	// eslint-disable-next-line @typescript-eslint/ban-types
-	public eipBlock(eip: number): bigint | null {
+	public qipBlock(qip: number): bigint | null {
 		for (const hfChanges of this.HARDFORK_CHANGES) {
 			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 			const hf = hfChanges[1];
-			if ('eips' in hf) {
+			if ('qips' in hf) {
 				// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-				if (hf.eips.includes(eip)) {
+				if (hf.qips.includes(qip)) {
 					return this.hardforkBlock(
 						typeof hfChanges[0] === 'number' ? String(hfChanges[0]) : hfChanges[0],
 					);
@@ -734,7 +734,7 @@ export class Common extends EventEmitter {
 	}
 
 	/**
-	 * Returns an eth/64 compliant fork hash (EIP-2124)
+	 * Returns an eth/64 compliant fork hash (QIP-2124)
 	 * @param hardfork Hardfork name, optional if HF set
 	 * @param genesisHash Genesis block hash of the chain, optional if already defined and not needed to be calculated
 	 */
@@ -855,11 +855,11 @@ export class Common extends EventEmitter {
 	}
 
 	/**
-	 * Returns the active EIPs
-	 * @returns List of EIPs
+	 * Returns the active QIPs
+	 * @returns List of QIPs
 	 */
-	public eips(): number[] {
-		return this._eips;
+	public qips(): number[] {
+		return this._qips;
 	}
 
 	/**
