@@ -1,7 +1,7 @@
 {
 	"_format": "hh-sol-artifact-1",
 	"contractName": "QRNSRegistry",
-	"sourceName": "contracts/registry/QRNSRegistry.sol",
+	"sourceName": "contracts/registry/QRNSRegistry.hyp",
 	"abi": [
 		{
 			"inputs": [],
