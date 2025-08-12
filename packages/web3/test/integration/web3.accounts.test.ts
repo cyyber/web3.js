@@ -71,7 +71,7 @@ describe('web3.accounts', () => {
 					maxPriorityFeePerGas: '0x5eae5feec',
 				};
 
-				// Fund this account with some qrl
+				// Fund this account with some quanta
 				await expect(
 					web3.qrl.sendTransaction({
 						from: tempAccount,
