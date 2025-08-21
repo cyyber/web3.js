@@ -89,8 +89,8 @@ start() {
 		--keystore $TMP_FOLDER/execution/keystore \
 		--unlock "0,1,2,3,4,5,6,7,8,9" \
 		--password $TMP_FOLDER/execution/password.txt \
-		--http.api web3,zond,admin,debug,txpool,net \
-		--ws.api web3,zond,admin,debug,miner,txpool,net \
+		--http.api web3,qrl,admin,debug,txpool,net \
+		--ws.api web3,qrl,admin,debug,miner,txpool,net \
 		--syncmode=full >> ${TMP_FOLDER}/logs/gzond.log 2>&1 &
 	
 	echo "Waiting for gzond..."
@@ -109,7 +109,7 @@ start() {
 		--accept-terms-of-use \
 		--jwt-secret=${TMP_FOLDER}/data/gzond/jwtsecret \
 		--contract-deployment-block=0 \
-		--suggested-fee-recipient=Z123463a4b065722e99115d6c222f267d9cabb524 \
+		--suggested-fee-recipient=Q123463a4b065722e99115d6c222f267d9cabb524 \
 		--enable-debug-rpc-endpoints >> ${TMP_FOLDER}/logs/beacon.log 2>&1 &
 
 	echo "Waiting for validator..."

@@ -15,8 +15,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { keccak256 } from 'zond-cryptography/keccak.js';
-import { utf8ToBytes } from 'zond-cryptography/utils.js';
+import { keccak256 } from 'qrl-cryptography/keccak.js';
+import { utf8ToBytes } from 'qrl-cryptography/utils.js';
 import {
 	InvalidAddressError,
 	InvalidBooleanError,
@@ -105,7 +105,7 @@ export const sha3Raw = (data: Bytes): string => {
 };
 
 /**
- * A wrapper for zond-cryptography/keccak256 to allow hashing a `string` and a `bigint` in addition to `UInt8Array`
+ * A wrapper for qrl-cryptography/keccak256 to allow hashing a `string` and a `bigint` in addition to `UInt8Array`
  * @param data - the input to hash
  * @returns - the Keccak-256 hash of the input
  *

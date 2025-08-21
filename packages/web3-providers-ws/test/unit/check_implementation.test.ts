@@ -95,8 +95,8 @@ describe('WebSocketProvider', () => {
 				ws.request({
 					jsonrpc: '2.0',
 					id: 42,
-					method: 'zond_getBalance',
-					params: ['Z407d73d8a49eeb85d32cf465507dd71d507100c1', 'latest'],
+					method: 'qrl_getBalance',
+					params: ['Q407d73d8a49eeb85d32cf465507dd71d507100c1', 'latest'],
 				}),
 			).rejects.toThrow('Connection not open');
 		});

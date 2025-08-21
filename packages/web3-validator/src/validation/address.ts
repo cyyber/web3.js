@@ -15,15 +15,15 @@ You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { keccak256 } from 'zond-cryptography/keccak.js';
-import { utf8ToBytes } from 'zond-cryptography/utils.js';
+import { keccak256 } from 'qrl-cryptography/keccak.js';
+import { utf8ToBytes } from 'qrl-cryptography/utils.js';
 import { uint8ArrayToHexString } from '../utils.js';
 
 /**
  * Checks the checksum of a given address. Will also return false on non-checksum addresses.
  */
 export const checkAddressCheckSum = (data: string): boolean => {
-	if (!/^Z[0-9a-f]{40}$/i.test(data)) return false;
+	if (!/^Q[0-9a-f]{40}$/i.test(data)) return false;
 	const address = data.slice(1);
 	const updatedData = utf8ToBytes(address.toLowerCase());
 
@@ -42,7 +42,7 @@ export const checkAddressCheckSum = (data: string): boolean => {
 };
 
 /**
- * Checks if a given string is a valid Zond address. It will also check the checksum, if the address has upper and lowercase letters.
+ * Checks if a given string is a valid QRL address. It will also check the checksum, if the address has upper and lowercase letters.
  */
 export const isAddressString = (value: string, checkChecksum = true) => {
 	if (typeof value !== 'string') {
@@ -50,11 +50,11 @@ export const isAddressString = (value: string, checkChecksum = true) => {
 	}
 
 	// check if it has the basic requirements of an address
-	if (!/^Z[0-9a-f]{40}$/i.test(value)) {
+	if (!/^Q[0-9a-f]{40}$/i.test(value)) {
 		return false;
 	}
 	// If it's ALL lowercase or ALL upppercase
-	if (/^Z[0-9a-f]{40}$/.test(value) || /^Z[0-9A-F]{40}$/.test(value)) {
+	if (/^Q[0-9a-f]{40}$/.test(value) || /^Q[0-9A-F]{40}$/.test(value)) {
 		return true;
 		// Otherwise check each case
 	}

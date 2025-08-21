@@ -101,7 +101,7 @@ export class TransactionRevertInstructionError<
 		public data?: string,
 	) {
 		super(
-			`Transaction has been reverted by the ZVM${
+			`Transaction has been reverted by the QRVM${
 				receipt === undefined ? '' : `:\n ${BaseWeb3Error.convertToString(receipt)}`
 			}`,
 		);
@@ -177,7 +177,7 @@ export class TransactionRevertedWithoutReasonError<
 > extends TransactionError<ReceiptType> {
 	public constructor(receipt?: ReceiptType) {
 		super(
-			`Transaction has been reverted by the ZVM${
+			`Transaction has been reverted by the QRVM${
 				receipt === undefined ? '' : `:\n ${BaseWeb3Error.convertToString(receipt)}`
 			}`,
 			receipt,
@@ -263,7 +263,7 @@ export class ChainIdMismatchError extends InvalidValueError {
 	public constructor(value: { txChainId: unknown; customChainId: unknown }) {
 		super(
 			JSON.stringify(value),
-			// https://github.com/theqrl/web3.js/blob/8783f4d64e424456bdc53b34ef1142d0a7cee4d7/packages/web3-zond-accounts/src/index.js#L176
+			// https://github.com/theqrl/web3.js/blob/8783f4d64e424456bdc53b34ef1142d0a7cee4d7/packages/web3-qrl-accounts/src/index.js#L176
 			'Chain Id doesnt match in tx.chainId tx.common.customChain.chainId',
 		);
 	}
@@ -412,7 +412,7 @@ export class TransactionSendTimeoutError extends BaseWeb3Error {
 
 	public constructor(value: { numberOfSeconds: number; transactionHash?: Bytes }) {
 		super(
-			`The connected Zond Node did not respond within ${
+			`The connected QRL Node did not respond within ${
 				value.numberOfSeconds
 			} seconds, please make sure your transaction was properly sent and you are connected to a healthy Node. Be aware that transaction might still be pending or mined!\n\tTransaction Hash: ${
 				value.transactionHash ? value.transactionHash.toString() : 'not available'

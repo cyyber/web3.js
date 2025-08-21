@@ -458,7 +458,7 @@ export class Interface {
 		);
 	}
 
-	// Decode the result from a function call (e.g. from zond_call)
+	// Decode the result from a function call (e.g. from qrl_call)
 	decodeFunctionResult(functionFragment: FunctionFragment | string, data: BytesLike): Result {
 		if (typeof functionFragment === 'string') {
 			functionFragment = this.getFunction(functionFragment);
@@ -517,7 +517,7 @@ export class Interface {
 		});
 	}
 
-	// Encode the result for a function call (e.g. for zond_call)
+	// Encode the result for a function call (e.g. for qrl_call)
 	encodeFunctionResult(
 		functionFragment: FunctionFragment | string,
 		values?: ReadonlyArray<any>,
@@ -529,7 +529,7 @@ export class Interface {
 		return hexlify(this._abiCoder.encode(functionFragment.outputs, values || []));
 	}
 
-	// Create the filter for the event with search criteria (e.g. for zond_filterLog)
+	// Create the filter for the event with search criteria (e.g. for qrl_filterLog)
 	encodeFilterTopics(
 		eventFragment: EventFragment | string,
 		values: ReadonlyArray<any>,

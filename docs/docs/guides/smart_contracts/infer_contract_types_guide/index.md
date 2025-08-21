@@ -4,7 +4,7 @@ sidebar_label: 'Infer Contract Types from JSON Artifact'
 
 # Infer Contract Types from JSON Artifact
 
-Web3.js is a popular library used for interacting with ZVM blockchains. One of its key features is the ability to invoke ZVM smart contracts deployed on the blockchain. In this blog post, we will show how to interact with the smart contract in typescript, with a special focus on how to infer types from JSON artifact files.
+Web3.js is a popular library used for interacting with QRVM blockchains. One of its key features is the ability to invoke QRVM smart contracts deployed on the blockchain. In this blog post, we will show how to interact with the smart contract in typescript, with a special focus on how to infer types from JSON artifact files.
 
 Before we dive into the problem, let's take a quick look at the problem. Web3.js provides a simple and convenient way to interact with Hyperion contracts. To use Web3.js to interact with a Hyperion contract, you need to know the contract's address and the ABI (Application Binary Interface) of the contract. The ABI is JSON data that contains the definition of the functions in the contract, including their, name, input parameters and return values.
 
@@ -17,9 +17,9 @@ import ERC20 from './node_modules/@openzeppelin/contracts/build/contracts/ERC20.
 (async function () {
 	const web3 = new Web3('rpc url');
 
-	const contract = new Contract(ZRC20.abi, 'Z7af963cF6D228E564e2A0aA0DdBF06210B38615D', web3);
+	const contract = new Contract(SQRCTF1.abi, 'Q7af963cF6D228E564e2A0aA0DdBF06210B38615D', web3);
 
-	const holder = 'Za8F6eB216e26C1F7d924A801E46eaE0CE8ed1A0A';
+	const holder = 'Qa8F6eB216e26C1F7d924A801E46eaE0CE8ed1A0A';
 
 	//Error because Contract doesn't know what methods exists
 	const balance = await contract.methods.balanceOf(holder).call();
@@ -32,7 +32,7 @@ To work around it you need to copy abi into a Typescript file like this:
 import {Contract, Web3} from "web3";
 
 
-const ZRC20 = [
+const SQRCTF1 = [
     ...
     // "as const" is important part, without it typescript would create generic type and remove available methods from type
 ] as const;
@@ -40,9 +40,9 @@ const ZRC20 = [
 (async function() {
     const web3 = new Web3("rpc url")
 
-    const contract = new Contract(ZRC20, "Z7af963cF6D228E564e2A0aA0DdBF06210B38615D", web3)
+    const contract = new Contract(SQRCTF1, "Q7af963cF6D228E564e2A0aA0DdBF06210B38615D", web3)
 
-    const holder = "Za8F6eB216e26C1F7d924A801E46eaE0CE8ed1A0A"
+    const holder = "Qa8F6eB216e26C1F7d924A801E46eaE0CE8ed1A0A"
 
     //Works now
     const balance = await contract.methods.balanceOf(holder).call()
@@ -90,8 +90,8 @@ To use this script, just create an `artifacts.json` file at the root of your pro
 
 ```json title="artifacts.json"
 [
-	"@theqrl/zond-contracts/build/contracts/ZRC20.json",
-	"@theqrl/zond-contracts/build/contracts/ZRC1155.json",
+	"@theqrl/qrl-contracts/build/contracts/SQRCTF1.json",
+	"@theqrl/qrl-contracts/build/contracts/SQRCTB1 .json",
 	"./build/contracts/MyContract.json"
 ]
 ```
@@ -107,12 +107,12 @@ import ERC20 from './artifacts/ERC20';
 	const web3 = new Web3('https://goerli.infura.io/v3/fd1f29ab70844ef48e644489a411d4b3');
 
 	const contract = new Contract(
-		ZRC20.abi as ContractAbi,
-		'Z7af963cF6D228E564e2A0aA0DdBF06210B38615D',
+		SQRCTF1.abi as ContractAbi,
+		'Q7af963cF6D228E564e2A0aA0DdBF06210B38615D',
 		web3,
 	);
 
-	const holder = 'Za8F6eB216e26C1F7d924A801E46eaE0CE8ed1A0A';
+	const holder = 'Qa8F6eB216e26C1F7d924A801E46eaE0CE8ed1A0A';
 
 	const balance = await contract.methods.balanceOf(holder).call();
 	const ticker = await contract.methods.symbol().call();

@@ -15,7 +15,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Web3Account } from '@theqrl/web3-zond-accounts';
+import { Web3Account } from '@theqrl/web3-qrl-accounts';
 import {
 	getSystemTestProvider,
 	createNewAccount,
@@ -26,7 +26,7 @@ import {
 import Web3, { SupportedProviders } from '../../src/index';
 
 const hexRegx = /0[xX][0-9a-fA-F]+/;
-const addressRegx = /Z[0-9a-fA-F]{40}/;
+const addressRegx = /Q[0-9a-fA-F]{40}/;
 
 describe('web3.accounts', () => {
 	let clientUrl: string | SupportedProviders;
@@ -48,7 +48,7 @@ describe('web3.accounts', () => {
 
 	describe('create', () => {
 		it('should create account', () => {
-			const account: Web3Account = web3.zond.accounts.create();
+			const account: Web3Account = web3.qrl.accounts.create();
 
 			expect(account).toEqual(
 				expect.objectContaining({
@@ -60,23 +60,23 @@ describe('web3.accounts', () => {
 
 		describe('signTransaction', () => {
 			it('should be able to sign the transaction from created account', async () => {
-				const account: Web3Account = web3.zond.accounts.create();
+				const account: Web3Account = web3.qrl.accounts.create();
 				const tx = {
 					from: account.address,
 					to: tempAccount,
-					value: web3.utils.toPlanck('0.00001', 'zond'),
+					value: web3.utils.toPlanck('0.00001', 'quanta'),
 					gas: '0x5218',
 					data: '0x1',
 					maxFeePerGas: '0x19475bd7f8',
 					maxPriorityFeePerGas: '0x5eae5feec',
 				};
 
-				// Fund this account with some zond
+				// Fund this account with some quanta
 				await expect(
-					web3.zond.sendTransaction({
+					web3.qrl.sendTransaction({
 						from: tempAccount,
 						to: account.address,
-						value: web3.utils.toPlanck('2', 'zond'),
+						value: web3.utils.toPlanck('2', 'quanta'),
 					}),
 				).resolves.toBeDefined();
 
@@ -97,19 +97,19 @@ describe('web3.accounts', () => {
 
 				// The signed transaction is accepted by the node
 				await expect(
-					web3.zond.sendSignedTransaction(signedTx.rawTransaction),
+					web3.qrl.sendSignedTransaction(signedTx.rawTransaction),
 				).resolves.toEqual(
 					expect.objectContaining({ transactionHash: signedTx.transactionHash }),
 				);
 			});
 
 			it('should throw error if gas is to low', async () => {
-				const account: Web3Account = web3.zond.accounts.create();
+				const account: Web3Account = web3.qrl.accounts.create();
 
 				const tx = {
 					from: account.address,
 					to: tempAccount,
-					value: web3.utils.toPlanck('0.1', 'zond'),
+					value: web3.utils.toPlanck('0.1', 'quanta'),
 					gas: '0x1',
 					data: '0x1',
 					maxFeePerGas: '0x19475bd7f8',
@@ -122,12 +122,12 @@ describe('web3.accounts', () => {
 			// TODO This test should fail, but it's not. Need to debug further to figure out why.
 			// eslint-disable-next-line jest/no-disabled-tests
 			it.skip('should throw error if signed by private key not associated with "from" field', async () => {
-				const account: Web3Account = web3.zond.accounts.create();
+				const account: Web3Account = web3.qrl.accounts.create();
 
 				const tx = {
 					from: tempAccount,
 					to: account.address,
-					value: web3.utils.toPlanck('0.1', 'zond'),
+					value: web3.utils.toPlanck('0.1', 'quanta'),
 					gas: '0x1',
 					data: '0x1',
 				};
@@ -139,29 +139,29 @@ describe('web3.accounts', () => {
 
 	describe('signTransaction', () => {
 		it('should be able to sign the transaction from created account', async () => {
-			const account: Web3Account = web3.zond.accounts.create();
+			const account: Web3Account = web3.qrl.accounts.create();
 
 			const tx = {
 				from: account.address,
 				to: tempAccount,
-				value: web3.utils.toPlanck('0.1', 'zond'),
+				value: web3.utils.toPlanck('0.1', 'quanta'),
 				gas: '0x5218',
 				data: '0x1',
 				maxFeePerGas: '0x19475bd7f8',
 				maxPriorityFeePerGas: '0x5eae5feec',
 			};
 
-			// Fund this account with some zond
+			// Fund this account with some quanta
 			await expect(
-				web3.zond.sendTransaction({
+				web3.qrl.sendTransaction({
 					from: tempAccount,
 					to: account.address,
-					value: web3.utils.toPlanck('0.5', 'zond'),
+					value: web3.utils.toPlanck('0.5', 'quanta'),
 				}),
 			).resolves.toBeDefined();
 
 			// Sign the tx from that account
-			const signedTx = await web3.zond.accounts.signTransaction(tx, account.seed);
+			const signedTx = await web3.qrl.accounts.signTransaction(tx, account.seed);
 
 			expect(signedTx).toEqual(
 				expect.objectContaining({
@@ -173,25 +173,25 @@ describe('web3.accounts', () => {
 			);
 
 			// The signed transaction is accepted by the node
-			await expect(web3.zond.sendSignedTransaction(signedTx.rawTransaction)).resolves.toEqual(
+			await expect(web3.qrl.sendSignedTransaction(signedTx.rawTransaction)).resolves.toEqual(
 				expect.objectContaining({ transactionHash: signedTx.transactionHash }),
 			);
 		});
 
 		it('should throw error if gas is to low', async () => {
-			const account: Web3Account = web3.zond.accounts.create();
+			const account: Web3Account = web3.qrl.accounts.create();
 
 			const tx = {
 				from: account.address,
 				to: tempAccount,
-				value: web3.utils.toPlanck('0.1', 'zond'),
+				value: web3.utils.toPlanck('0.1', 'quanta'),
 				gas: '0x1',
 				data: '0x1',
 				maxFeePerGas: '0x19475bd7f8',
 				maxPriorityFeePerGas: '0x5eae5feec',
 			};
 
-			await expect(web3.zond.accounts.signTransaction(tx, account.seed)).rejects.toThrow(
+			await expect(web3.qrl.accounts.signTransaction(tx, account.seed)).rejects.toThrow(
 				'gasLimit is too low.',
 			);
 		});
@@ -200,7 +200,7 @@ describe('web3.accounts', () => {
 	describe('seedToAccount', () => {
 		it('should create account from seed', async () => {
 			const acc = await createNewAccount();
-			const createdAccount: Web3Account = web3.zond.accounts.seedToAccount(acc.seed);
+			const createdAccount: Web3Account = web3.qrl.accounts.seedToAccount(acc.seed);
 			expect(acc.address.toLowerCase()).toBe(createdAccount.address.toLowerCase());
 		});
 	});

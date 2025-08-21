@@ -22,10 +22,10 @@ import {
 	Web3SubscriptionConstructor,
 	isSupportedProvider,
 } from '@theqrl/web3-core';
-import { Web3Zond, RegisteredSubscription, registeredSubscriptions } from '@theqrl/web3-zond';
-import Contract from '@theqrl/web3-zond-contract';
-import { ZNS, registryAddresses } from '@theqrl/web3-zond-ens';
-import { Iban } from '@theqrl/web3-zond-iban';
+import { Web3QRL, RegisteredSubscription, registeredSubscriptions } from '@theqrl/web3-qrl';
+import Contract from '@theqrl/web3-qrl-contract';
+import { QRNS, registryAddresses } from '@theqrl/web3-qrl-qrns';
+import { Iban } from '@theqrl/web3-qrl-iban';
 import { Net } from '@theqrl/web3-net';
 import * as utils from '@theqrl/web3-utils';
 import { isNullish } from '@theqrl/web3-utils';
@@ -33,44 +33,44 @@ import {
 	Address,
 	ContractAbi,
 	ContractInitOptions,
-	ZondExecutionAPI,
+	QRLExecutionAPI,
 	SupportedProviders,
 } from '@theqrl/web3-types';
 import { InvalidMethodParamsError } from '@theqrl/web3-errors';
 import abi from './abi.js';
 import { initAccountsForContext } from './accounts.js';
-import { Web3ZondInterface } from './types.js';
+import { Web3QRLInterface } from './types.js';
 import { Web3PkgInfo } from './version.js';
 
 export class Web3<
 	CustomRegisteredSubscription extends {
-		[key: string]: Web3SubscriptionConstructor<ZondExecutionAPI>;
+		[key: string]: Web3SubscriptionConstructor<QRLExecutionAPI>;
 	} = RegisteredSubscription,
-> extends Web3Context<ZondExecutionAPI, CustomRegisteredSubscription & RegisteredSubscription> {
+> extends Web3Context<QRLExecutionAPI, CustomRegisteredSubscription & RegisteredSubscription> {
 	public static version = Web3PkgInfo.version;
 	public static utils = utils;
 	public static modules = {
-		Web3Zond,
+		Web3QRL,
 		Iban,
 		Net,
-		ZNS,
+		QRNS,
 	};
 
 	public utils: typeof utils;
 
-	public zond: Web3ZondInterface;
+	public qrl: Web3QRLInterface;
 
 	public constructor(
 		providerOrContext?:
 			| string
-			| SupportedProviders<ZondExecutionAPI>
-			| Web3ContextInitOptions<ZondExecutionAPI, CustomRegisteredSubscription>,
+			| SupportedProviders<QRLExecutionAPI>
+			| Web3ContextInitOptions<QRLExecutionAPI, CustomRegisteredSubscription>,
 	) {
 		if (
 			isNullish(providerOrContext) ||
 			(typeof providerOrContext === 'string' && providerOrContext.trim() === '') ||
 			(typeof providerOrContext !== 'string' &&
-				!isSupportedProvider(providerOrContext as SupportedProviders<ZondExecutionAPI>) &&
+				!isSupportedProvider(providerOrContext as SupportedProviders<QRLExecutionAPI>) &&
 				!(providerOrContext as Web3ContextInitOptions).provider)
 		) {
 			console.warn(
@@ -78,7 +78,7 @@ export class Web3<
 			);
 		}
 
-		let contextInitOptions: Web3ContextInitOptions<ZondExecutionAPI> = {};
+		let contextInitOptions: Web3ContextInitOptions<QRLExecutionAPI> = {};
 		if (
 			typeof providerOrContext === 'string' ||
 			isSupportedProvider(providerOrContext as SupportedProviders)
@@ -94,7 +94,7 @@ export class Web3<
 		}
 
 		contextInitOptions.registeredSubscriptions = {
-			// all the Zond standard subscriptions
+			// all the QRL standard subscriptions
 			...registeredSubscriptions,
 			// overridden and combined with any custom subscriptions
 			...(contextInitOptions.registeredSubscriptions ?? {}),
@@ -151,12 +151,12 @@ export class Web3<
 			}
 		}
 
-		const zond = self.use(Web3Zond);
+		const qrl = self.use(Web3QRL);
 
-		// Zond Module
-		this.zond = Object.assign(zond, {
-			// ZNS module
-			zns: self.use(ZNS, registryAddresses.main), // registry address defaults to main network
+		// QRL Module
+		this.qrl = Object.assign(qrl, {
+			// QRNS module
+			qrns: self.use(QRNS, registryAddresses.main), // registry address defaults to main network
 
 			// Iban helpers
 			Iban,

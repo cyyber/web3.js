@@ -128,7 +128,7 @@ export const hyperionSha3Data: [TypedObject[] | TypedObjectAbbreviated[], string
 		'0x661136a4267dba9ccdf6bfddb7c00e714de936674c4bdb065a531cf1cb15c7fc',
 	],
 	[
-		[{ type: 'address', value: 'Z407D73d8a49eeb85D32Cf465507dd71d507100c1' }],
+		[{ type: 'address', value: 'Q407D73d8a49eeb85D32Cf465507dd71d507100c1' }],
 		'0x4e8ebbefa452077428f93c9520d3edd60594ff452a29ac7d2ccc11d47f3ab95b',
 	],
 	[
@@ -139,7 +139,7 @@ export const hyperionSha3Data: [TypedObject[] | TypedObjectAbbreviated[], string
 		[
 			{ t: 'string', v: 'Hello!%' },
 			{ t: 'int8', v: -23 },
-			{ t: 'address', v: 'Z85F43D8a49eeB85d32Cf465507DD71d507100C1d' },
+			{ t: 'address', v: 'Q85F43D8a49eeB85d32Cf465507DD71d507100C1d' },
 		],
 		'0xa13b31627c1ed7aaded5aecec71baf02fe123797fffd45e662eac8e06fbe4955',
 	],
@@ -193,7 +193,7 @@ export const encodePackData: [TypedObject[] | TypedObjectAbbreviated[], any][] =
 	],
 	[[{ type: 'string', value: '' }], '0x'],
 	[
-		[{ type: 'address', value: 'Zc1912fee45d61c87cc5ea59dae31190fffff232d' }],
+		[{ type: 'address', value: 'Qc1912fee45d61c87cc5ea59dae31190fffff232d' }],
 		'0xc1912fee45d61c87cc5ea59dae31190fffff232d',
 	],
 	[[{ type: 'bool', value: true }], '0x01'],
@@ -219,7 +219,7 @@ export const encodePackData: [TypedObject[] | TypedObjectAbbreviated[], any][] =
 		'0x44555ffffffffdd2222222222222244445565535220000000000000000000000',
 	],
 	[
-		[{ v: 'Z407D73d8a49eeb85D32Cf465507dd71d507100c1', t: 'address' }],
+		[{ v: 'Q407D73d8a49eeb85D32Cf465507dd71d507100c1', t: 'address' }],
 		'0x407d73d8a49eeb85d32cf465507dd71d507100c1',
 	],
 	[
@@ -263,8 +263,8 @@ export const encodePackedInvalidData: [any, string][] = [
 	[{ type: 'string', value: true }, 'Invalid value given "true". Error: not a valid string.'],
 	[{ type: 'string', value: 1234 }, 'Invalid value given "1234". Error: not a valid string.'],
 	[{ type: 'boolean', value: 1234 }, 'Invalid value given "1234". Error: not a valid boolean.'],
-	[{ type: 'address', value: 1234 }, 'Invalid value given "1234". Error: invalid zond address'],
-	[{ type: 'address', value: '0x2' }, 'Invalid value given "0x2". Error: invalid zond address'],
+	[{ type: 'address', value: 1234 }, 'Invalid value given "1234". Error: invalid qrl address'],
+	[{ type: 'address', value: '0x2' }, 'Invalid value given "0x2". Error: invalid qrl address'],
 	[{ type: 'uint612', value: 13 }, 'Invalid value given "13". Error: invalid size given.'],
 	[
 		{ type: 'uint8', value: 1000 },

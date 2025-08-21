@@ -1850,6 +1850,9 @@
     semver "^5.5.0"
     tmp "0.0.33"
 
+"@theqrl/qrl-contracts@file:../qrl-contracts":
+  version "0.1.0"
+
 "@theqrl/wallet.js@^0.1.0":
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/@theqrl/wallet.js/-/wallet.js-0.1.1.tgz#4a400d6aa8e886a2953ddbf6f43de1cee1f6d82b"
@@ -1858,9 +1861,6 @@
     "@theqrl/dilithium5" "^0.0.9"
     randombytes "^2.1.0"
     sha3 "^2.1.4"
-
-"@theqrl/zond-contracts@file:../zond-contracts":
-  version "0.1.0"
 
 "@tootallnate/once@2":
   version "2.0.0"
@@ -9527,6 +9527,12 @@ q@^1.5.1:
   resolved "https://registry.yarnpkg.com/q/-/q-1.5.1.tgz#7e32f75b41381291d04611f1bf14109ac00651d7"
   integrity sha512-kV/CThkXo6xyFEZUugw/+pIOywXcDbFYgSct5cT3gqlbkBE1SJdwy6UQoZvodiWF/ckQLZyDE/Bu1M6gVu5lVw==
 
+"qrl-cryptography@file:../js-qrl-cryptography":
+  version "0.1.0"
+  dependencies:
+    "@noble/curves" "1.0.0"
+    "@noble/hashes" "1.6.1"
+
 qs@6.10.3:
   version "6.10.3"
   resolved "https://registry.yarnpkg.com/qs/-/qs-6.10.3.tgz#d6cde1b2ffca87b5aa57889816c5f81535e22e8e"
@@ -11804,9 +11810,3 @@ zod@^3.21.4:
   version "3.21.4"
   resolved "https://registry.yarnpkg.com/zod/-/zod-3.21.4.tgz#10882231d992519f0a10b5dd58a38c9dabbb64db"
   integrity sha512-m46AKbrzKVzOzs/DZgVnG5H55N1sv1M8qZU3A8RIKbs3mrACDNeIOeilDymVb2HdmP8uwshOCF4uJ8uM9rCqJw==
-
-"zond-cryptography@file:../js-zond-cryptography":
-  version "0.1.0"
-  dependencies:
-    "@noble/curves" "1.0.0"
-    "@noble/hashes" "1.6.1"

@@ -30,12 +30,12 @@ import secrets from '../../../../.secrets.json';
 export const getSystemE2ETestProvider = (): string => {
 	if (process.env.WEB3_SYTEM_TEST_MODE === 'http') {
 		return getSystemTestBackend() === 'testnet'
-			? process.env.ZOND_TESTNET_HTTP ?? secrets.TESTNET.HTTP
-			: process.env.ZOND_MAINNET_HTTP ?? secrets.MAINNET.HTTP;
+			? process.env.QRL_TESTNET_HTTP ?? secrets.TESTNET.HTTP
+			: process.env.QRL_MAINNET_HTTP ?? secrets.MAINNET.HTTP;
 	}
 	return getSystemTestBackend() === 'testnet'
-		? process.env.ZOND_TESTNET_WS ?? secrets.TESTNET.WS
-		: process.env.ZOND_MAINNET_WS ?? secrets.MAINNET.WS;
+		? process.env.QRL_TESTNET_WS ?? secrets.TESTNET.WS
+		: process.env.QRL_MAINNET_WS ?? secrets.MAINNET.WS;
 };
 
 export const getE2ETestAccountAddress = (): string => {

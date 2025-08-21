@@ -1,0 +1,10 @@
+// SPDX-License-Identifier: GNU
+pragma hyperion >=0.0;
+
+import '@theqrl/qrl-contracts/token/SQRCTF1/SQRCTF1.hyp';
+
+contract SQRCTF1Token is SQRCTF1 {
+	constructor(uint256 initialSupply) SQRCTF1('Gold', 'GLD') {
+		_mint(msg.sender, initialSupply);
+	}
+}

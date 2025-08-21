@@ -26,7 +26,7 @@ import {
 import HttpProvider from '@theqrl/web3-providers-http';
 import WSProvider from '@theqrl/web3-providers-ws';
 import {
-	ZondExecutionAPI,
+	QRLExecutionAPI,
 	JsonRpcBatchRequest,
 	JsonRpcBatchResponse,
 	JsonRpcPayload,
@@ -67,7 +67,7 @@ const availableProviders: {
 };
 
 export class Web3RequestManager<
-	API extends Web3APISpec = ZondExecutionAPI,
+	API extends Web3APISpec = QRLExecutionAPI,
 > extends Web3EventEmitter<{
 	[key in Web3RequestManagerEvent]: SupportedProviders<API> | undefined;
 }> {

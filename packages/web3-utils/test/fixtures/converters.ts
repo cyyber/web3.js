@@ -21,9 +21,9 @@ import {
 	HexString,
 	Numbers,
 	ValueTypes,
-	ZPrefixedHexString,
+	QPrefixedHexString,
 } from '@theqrl/web3-types';
-import { ZondUnits, hexToBytes } from '../../src/converters';
+import { QRLUnits, hexToBytes } from '../../src/converters';
 
 export const bytesToHexValidData: [Bytes, HexString][] = [
 	[new Uint8Array([72]), '0x48'],
@@ -241,7 +241,7 @@ export const toHexValidData: [Numbers | Bytes | Address | boolean, [HexString, V
 		['0x72fdb1c1ddd4c67804f42b93de95cf6a8c51d2d1', 'bytes'],
 	],
 	[
-		'Z72fdb1c1ddd4c67804f42b93de95cf6a8c51d2d1',
+		'Q72fdb1c1ddd4c67804f42b93de95cf6a8c51d2d1',
 		['0x72fdb1c1ddd4c67804f42b93de95cf6a8c51d2d1', 'address'],
 	],
 	['-0x01', ['-0x1', 'int256']],
@@ -252,7 +252,7 @@ export const toHexInvalidData: [any, string][] = [
 	[undefined, 'Invalid value given "undefined". Error: can not be converted to hex.'],
 ];
 
-const conversionBaseData: [[Numbers, ZondUnits], string][] = [
+const conversionBaseData: [[Numbers, QRLUnits], string][] = [
 	[[0, 'planck'], '0'],
 	[[123, 'planck'], '123'],
 	[['123', 'planck'], '123'],
@@ -263,37 +263,37 @@ const conversionBaseData: [[Numbers, ZondUnits], string][] = [
 	[['1', 'gplanck'], '0.000000001'],
 	[['1', 'micro'], '0.000000000001'],
 	[['1', 'milli'], '0.000000000000001'],
-	[['1', 'zond'], '0.000000000000000001'],
-	[['1', 'kzond'], '0.000000000000000000001'],
-	[['1', 'mzond'], '0.000000000000000000000001'],
-	[['1', 'gzond'], '0.000000000000000000000000001'],
-	[['1', 'tzond'], '0.000000000000000000000000000001'],
-	[['900000000000000000000000000001', 'tzond'], '0.900000000000000000000000000001'],
+	[['1', 'quanta'], '0.000000000000000001'],
+	[['1', 'kquanta'], '0.000000000000000000001'],
+	[['1', 'mquanta'], '0.000000000000000000000001'],
+	[['1', 'gquanta'], '0.000000000000000000000000001'],
+	[['1', 'tquanta'], '0.000000000000000000000000000001'],
+	[['900000000000000000000000000001', 'tquanta'], '0.900000000000000000000000000001'],
 	[['1000', 'kplanck'], '1'],
 	[['1000000', 'mplanck'], '1'],
 	[['1000000000', 'gplanck'], '1'],
 	[['1000000000000', 'micro'], '1'],
 	[['1000000000000000', 'milli'], '1'],
-	[['1000000000000000000', 'zond'], '1'],
-	[['1000000000000000000000', 'kzond'], '1'],
-	[['1000000000000000000000000', 'mzond'], '1'],
-	[['1000000000000000000000000000', 'gzond'], '1'],
-	[['1000000000000000000000000000000', 'tzond'], '1'],
-	[['1000000000000000000000000000000', 'tzond'], '1'],
+	[['1000000000000000000', 'quanta'], '1'],
+	[['1000000000000000000000', 'kquanta'], '1'],
+	[['1000000000000000000000000', 'mquanta'], '1'],
+	[['1000000000000000000000000000', 'gquanta'], '1'],
+	[['1000000000000000000000000000000', 'tquanta'], '1'],
+	[['1000000000000000000000000000000', 'tquanta'], '1'],
 	[['12345678', 'gplanck'], '0.012345678'],
 	[['76912345678', 'gplanck'], '76.912345678'],
 	[['134439381738', 'gplanck'], '134.439381738'],
-	[['178373938391829348', 'zond'], '0.178373938391829348'],
+	[['178373938391829348', 'quanta'], '0.178373938391829348'],
 	[['879123456788877661', 'gplanck'], '879123456.788877661'],
-	[['879123456788877661', 'tzond'], '0.000000000000879123456788877661'],
+	[['879123456788877661', 'tquanta'], '0.000000000000879123456788877661'],
 ];
 
-export const fromPlanckValidData: [[Numbers, ZondUnits], string][] = [
+export const fromPlanckValidData: [[Numbers, QRLUnits], string][] = [
 	...conversionBaseData,
 	[['0xff', 'planck'], '255'],
 ];
 
-export const toPlanckValidData: [[Numbers, ZondUnits], string][] = [
+export const toPlanckValidData: [[Numbers, QRLUnits], string][] = [
 	...conversionBaseData,
 	[['255', 'planck'], '0xFF'],
 ];
@@ -323,12 +323,12 @@ export const toPlanckInvalidData: [[any, any], string][] = [
 	[['1234', 'uplanck'], 'Invalid value given "uplanck". Error: invalid unit.'],
 ];
 export const toCheckSumValidData: [string, string][] = [
-	['Z0089d53f703f7e0843953d48133f74ce247184c2', 'Z0089d53F703f7E0843953D48133f74cE247184c2'],
-	['Z5fbc2b6c19ee3dd5f9af96ff337ddc89e30ceaef', 'Z5FBc2b6C19EE3DD5f9Af96ff337DDC89e30ceAef'],
-	['Za54D3c09E34aC96807c1CC397404bF2B98DC4eFb', 'Za54d3c09E34aC96807c1CC397404bF2B98DC4eFb'],
+	['Q0089d53f703f7e0843953d48133f74ce247184c2', 'Q0089d53F703f7E0843953D48133f74cE247184c2'],
+	['Q5fbc2b6c19ee3dd5f9af96ff337ddc89e30ceaef', 'Q5FBc2b6C19EE3DD5f9Af96ff337DDC89e30ceAef'],
+	['Qa54D3c09E34aC96807c1CC397404bF2B98DC4eFb', 'Qa54d3c09E34aC96807c1CC397404bF2B98DC4eFb'],
 ];
 export const toCheckSumInvalidData: [string, string][] = [
-	['not an address', 'Invalid value given "not an address". Error: invalid zond address.'],
+	['not an address', 'Invalid value given "not an address". Error: invalid qrl address.'],
 ];
 
 export const bytesToUint8ArrayInvalidData: [any, string][] = bytesToHexInvalidData;
@@ -357,54 +357,54 @@ export const toBigIntInvalidData: [any, string][] = [
 	['zzzzee0xiiuu', ' Error: can not parse as number data'],
 ];
 
-export const addressToBytesValidData: [ZPrefixedHexString, Uint8Array][] = [
+export const addressToBytesValidData: [QPrefixedHexString, Uint8Array][] = [
 	[
-		'Z4848484848484848484848484848484848484848',
+		'Q4848484848484848484848484848484848484848',
 		new Uint8Array([
 			72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72,
 		]),
 	],
 	[
-		'Z3772377237723772377237723772377237723772',
+		'Q3772377237723772377237723772377237723772',
 		new Uint8Array([
 			55, 114, 55, 114, 55, 114, 55, 114, 55, 114, 55, 114, 55, 114, 55, 114, 55, 114, 55,
 			114,
 		]),
 	],
 	[
-		'Z480c480c480c480c480c480c480c480c480c480c',
+		'Q480c480c480c480c480c480c480c480c480c480c',
 		new Uint8Array([
 			72, 12, 72, 12, 72, 12, 72, 12, 72, 12, 72, 12, 72, 12, 72, 12, 72, 12, 72, 12,
 		]),
 	],
 ];
 
-export const addressToHexValidData: [ZPrefixedHexString, HexString][] = [
-	['Z4848484848484848484848484848484848484848', '0x4848484848484848484848484848484848484848'],
-	['Z3772377237723772377237723772377237723772', '0x3772377237723772377237723772377237723772'],
-	['Z480c480c480c480c480c480c480c480c480c480c', '0x480c480c480c480c480c480c480c480c480c480c'],
-	['Z9c129c129c129c129c129c129c129c129c129c12', '0x9c129c129c129c129c129c129c129c129c129c12'],
-	['Z12c612c612c612c612c612c612c612c612c612c6', '0x12c612c612c612c612c612c612c612c612c612c6'],
+export const addressToHexValidData: [QPrefixedHexString, HexString][] = [
+	['Q4848484848484848484848484848484848484848', '0x4848484848484848484848484848484848484848'],
+	['Q3772377237723772377237723772377237723772', '0x3772377237723772377237723772377237723772'],
+	['Q480c480c480c480c480c480c480c480c480c480c', '0x480c480c480c480c480c480c480c480c480c480c'],
+	['Q9c129c129c129c129c129c129c129c129c129c12', '0x9c129c129c129c129c129c129c129c129c129c12'],
+	['Q12c612c612c612c612c612c612c612c612c612c6', '0x12c612c612c612c612c612c612c612c612c612c6'],
 ];
 
 export const invalidAddressData: [any, string][] = [
-	['Z1', 'value "Z1" at "/0" must pass "address" validation'],
+	['Q1', 'value "Q1" at "/0" must pass "address" validation'],
 	[
-		'ZE247a45c287191d435A8a5D72A7C8dc030451E9F',
-		'value "ZE247a45c287191d435A8a5D72A7C8dc030451E9F" at "/0" must pass "address" validation',
+		'QE247a45c287191d435A8a5D72A7C8dc030451E9F',
+		'value "QE247a45c287191d435A8a5D72A7C8dc030451E9F" at "/0" must pass "address" validation',
 	], // Invalid checksum
 	[
-		'-Z407d73d8a49eeb85d32cf465507dd71d507100c1',
-		'value "-Z407d73d8a49eeb85d32cf465507dd71d507100c1" at "/0" must pass "address" validation',
+		'-Q407d73d8a49eeb85d32cf465507dd71d507100c1',
+		'value "-Q407d73d8a49eeb85d32cf465507dd71d507100c1" at "/0" must pass "address" validation',
 	],
 ];
 
-export const hexToAddressValidData: [HexString, ZPrefixedHexString][] = [
-	['0x4848484848484848484848484848484848484848', 'Z4848484848484848484848484848484848484848'],
-	['0x3772377237723772377237723772377237723772', 'Z3772377237723772377237723772377237723772'],
-	['0x480c480c480c480c480c480c480c480c480c480c', 'Z480c480c480c480c480c480c480c480c480c480c'],
-	['0x9c129c129c129c129c129c129c129c129c129c12', 'Z9c129c129c129c129c129c129c129c129c129c12'],
-	['0x12c612c612c612c612c612c612c612c612c612c6', 'Z12c612c612c612c612c612c612c612c612c612c6'],
+export const hexToAddressValidData: [HexString, QPrefixedHexString][] = [
+	['0x4848484848484848484848484848484848484848', 'Q4848484848484848484848484848484848484848'],
+	['0x3772377237723772377237723772377237723772', 'Q3772377237723772377237723772377237723772'],
+	['0x480c480c480c480c480c480c480c480c480c480c', 'Q480c480c480c480c480c480c480c480c480c480c'],
+	['0x9c129c129c129c129c129c129c129c129c129c12', 'Q9c129c129c129c129c129c129c129c129c129c12'],
+	['0x12c612c612c612c612c612c612c612c612c612c6', 'Q12c612c612c612c612c612c612c612c612c612c6'],
 ];
 
 export const hexToAddressInvalidData: [HexString, string][] = [

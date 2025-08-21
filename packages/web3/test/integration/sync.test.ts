@@ -25,16 +25,16 @@ import {
 	isWs,
 } from '../shared_fixtures/system_tests_utils';
 
-const addPeer = async (web3: Web3, eNode: string) => {
+const addPeer = async (web3: Web3, qNode: string) => {
 	return web3.requestManager.send({
 		method: 'admin_addPeer',
-		params: [eNode],
+		params: [qNode],
 	});
 };
-const removePeer = async (web3: Web3, eNode: string) => {
+const removePeer = async (web3: Web3, qNode: string) => {
 	return web3.requestManager.send({
 		method: 'admin_removePeer',
-		params: [eNode],
+		params: [qNode],
 	});
 };
 const nodeInfo = async (web3: Web3) => {
@@ -66,7 +66,7 @@ describe.skip('Sync nodes test', () => {
 
 	describe('Start/end syncing', () => {
 		it('should emit start syncing and end syncing events', async () => {
-			const subs = await web3Node2.zond.subscribe('syncing');
+			const subs = await web3Node2.qrl.subscribe('syncing');
 			const dataPromise = new Promise(resolve => {
 				subs.on('data', resolve);
 			});
@@ -75,7 +75,7 @@ describe.skip('Sync nodes test', () => {
 			});
 			// await minerStart(web3Node1, 0);
 			const node1Info = await nodeInfo(web3Node1);
-			await addPeer(web3Node2, node1Info.enode);
+			await addPeer(web3Node2, node1Info.qnode);
 			// await minerStart(web3Node1, 1);
 
 			expect(await syncStartPromise).toBe(true);
@@ -84,7 +84,7 @@ describe.skip('Sync nodes test', () => {
 				subs.on('changed', resolve);
 			});
 			expect(await syncEndPromise).toBe(false);
-			await removePeer(web3Node2, node1Info.enode);
+			await removePeer(web3Node2, node1Info.qnode);
 		});
 	});
 });

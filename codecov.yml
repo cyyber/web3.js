@@ -27,24 +27,24 @@ component_management:
     - component_id: "@theqrl/web3-errors"
       paths:
           - /packages/web3-errors/src/
-    - component_id: "@theqrl/web3-zond"
+    - component_id: "@theqrl/web3-qrl"
       paths:
-          - /packages/web3-zond/src/
-    - component_id: "@theqrl/web3-zond-abi"
+          - /packages/web3-qrl/src/
+    - component_id: "@theqrl/web3-qrl-abi"
       paths:
-          - /packages/web3-zond-abi/src/
-    - component_id: "@theqrl/web3-zond-accounts"
+          - /packages/web3-qrl-abi/src/
+    - component_id: "@theqrl/web3-qrl-accounts"
       paths:
-          - /packages/web3-zond-accounts/src/
-    - component_id: "@theqrl/web3-zond-contract"
+          - /packages/web3-qrl-accounts/src/
+    - component_id: "@theqrl/web3-qrl-contract"
       paths:
-          - /packages/web3-zond-contract/src/
-    - component_id: "@theqrl/web3-zond-ens"
+          - /packages/web3-qrl-contract/src/
+    - component_id: "@theqrl/web3-qrl-qrns"
       paths:
-          - /packages/web3-zond-ens/src/
-    - component_id: "@theqrl/web3-zond-iban"
+          - /packages/web3-qrl-qrns/src/
+    - component_id: "@theqrl/web3-qrl-iban"
       paths:
-          - /packages/web3-zond-iban/src/
+          - /packages/web3-qrl-iban/src/
     - component_id: "@theqrl/web3-net"
       paths:
           - /packages/web3-net/src/

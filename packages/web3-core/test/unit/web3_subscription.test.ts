@@ -61,7 +61,7 @@ describe('Web3Subscription', () => {
 
 			expect(requestManager.send).toHaveBeenCalledTimes(1);
 			expect(requestManager.send).toHaveBeenCalledWith({
-				method: 'zond_subscribe',
+				method: 'qrl_subscribe',
 				params: ['newHeads'],
 			});
 		});
@@ -95,7 +95,7 @@ describe('Web3Subscription', () => {
 
 			expect(requestManager.send).toHaveBeenCalledTimes(1);
 			expect(requestManager.send).toHaveBeenCalledWith({
-				method: 'zond_unsubscribe',
+				method: 'qrl_unsubscribe',
 				params: ['sub-id'],
 			});
 		});

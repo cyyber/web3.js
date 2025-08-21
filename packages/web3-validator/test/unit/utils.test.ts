@@ -18,7 +18,7 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 import { InvalidNumberError, InvalidBytesError } from '@theqrl/web3-errors';
 import { ValidInputTypes } from '../../src/types';
 import {
-	zondAbiToJsonSchema,
+	qrlAbiToJsonSchema,
 	transformJsonDataToAbiFormat,
 	codePointToInt,
 	hexToNumber,
@@ -64,13 +64,13 @@ describe('utils', () => {
 	describe('ethAbiToJsonSchema', () => {
 		describe('full schema', () => {
 			it.each(abiToJsonSchemaCases)('$title', ({ abi, json }) => {
-				expect(zondAbiToJsonSchema(abi.fullSchema)).toEqual(json.fullSchema);
+				expect(qrlAbiToJsonSchema(abi.fullSchema)).toEqual(json.fullSchema);
 			});
 		});
 
 		describe('short schema', () => {
 			it.each(abiToJsonSchemaCases)('$title', ({ abi, json }) => {
-				expect(zondAbiToJsonSchema(abi.shortSchema)).toEqual(json.shortSchema);
+				expect(qrlAbiToJsonSchema(abi.shortSchema)).toEqual(json.shortSchema);
 			});
 		});
 	});

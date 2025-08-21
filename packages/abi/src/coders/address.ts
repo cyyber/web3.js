@@ -27,7 +27,7 @@ export class AddressCoder extends Coder {
 	}
 
 	defaultValue(): string {
-		return 'Z0000000000000000000000000000000000000000';
+		return 'Q0000000000000000000000000000000000000000';
 	}
 
 	encode(writer: Writer, value: string): number {

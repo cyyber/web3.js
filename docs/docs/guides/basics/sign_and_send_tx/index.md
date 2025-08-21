@@ -9,6 +9,6 @@ You can sign and send transactions in different ways.
 
 -   [Local wallet signing](./local_wallet)
 -   [Using raw transaction](./raw)
--   [Using wallet of Zond Node](./wallet_of_zond_node)
+-   [Using wallet of QRL Node](./wallet_of_qrl_node)
 
 For each of them you can use [Web3PromiEvent](./promi_event) to catch extra transaction's events

@@ -16,13 +16,13 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 export * from './error_types.js';
-export * from './apis/zond_execution_api.js';
-export * from './apis/web3_zond_execution_api.js';
+export * from './apis/qrl_execution_api.js';
+export * from './apis/web3_qrl_execution_api.js';
 export * from './apis/web3_net_api.js';
 export * from './data_format_types.js';
-export * from './zond_types.js';
-export * from './zond_abi_types.js';
-export * from './zond_contract_types.js';
+export * from './qrl_types.js';
+export * from './qrl_abi_types.js';
+export * from './qrl_contract_types.js';
 export * from './json_rpc_types.js';
 export * from './primitives_types.js';
 export * from './utility_types.js';

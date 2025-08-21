@@ -41,7 +41,7 @@ describe(`${getSystemTestBackend()} tests - getGasPrice`, () => {
 			format: Object.values(FMT_NUMBER),
 		}),
 	)('getGasPrice', async ({ format }) => {
-		const result = await web3.zond.getGasPrice({
+		const result = await web3.qrl.getGasPrice({
 			number: format as FMT_NUMBER,
 			bytes: FMT_BYTES.HEX,
 		});

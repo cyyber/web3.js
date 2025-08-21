@@ -16,7 +16,7 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { InvalidBytesError, InvalidNumberError } from '@theqrl/web3-errors';
-import { VALID_ZOND_BASE_TYPES } from './constants.js';
+import { VALID_QRL_BASE_TYPES } from './constants.js';
 import {
 	FullValidationSchema,
 	JsonSchema,
@@ -31,7 +31,7 @@ import { isAddressString } from './validation/address.js';
 
 const extraTypes = ['hex', 'number', 'blockNumber', 'blockNumberOrTag', 'filter', 'bloom'];
 
-export const parseBaseType = <T = typeof VALID_ZOND_BASE_TYPES[number]>(
+export const parseBaseType = <T = typeof VALID_QRL_BASE_TYPES[number]>(
 	type: string,
 ): {
 	baseType?: T;
@@ -56,7 +56,7 @@ export const parseBaseType = <T = typeof VALID_ZOND_BASE_TYPES[number]>(
 		isArray = arraySizes.length > 0;
 	}
 
-	if (VALID_ZOND_BASE_TYPES.includes(strippedType)) {
+	if (VALID_QRL_BASE_TYPES.includes(strippedType)) {
 		return { baseType: strippedType as unknown as T, isArray, baseTypeSize, arraySizes };
 	}
 
@@ -243,7 +243,7 @@ export const abiSchemaToJsonSchema = (
 	return schema;
 };
 
-export const zondAbiToJsonSchema = (abis: ValidationSchemaInput) => abiSchemaToJsonSchema(abis);
+export const qrlAbiToJsonSchema = (abis: ValidationSchemaInput) => abiSchemaToJsonSchema(abis);
 
 export const fetchArrayElement = (data: Array<unknown>, level: number): unknown => {
 	if (level === 1) {
@@ -398,7 +398,7 @@ export const addressToHex = (value: string): string => {
 	if (!isAddressString(value)) {
 		throw new Error('Invalid address string');
 	}
-	return value.replace('Z', '0x');
+	return value.replace('Q', '0x');
 };
 
 /**

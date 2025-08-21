@@ -16,15 +16,15 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 import {
-	ZondExecutionAPI,
+	QRLExecutionAPI,
 	Bytes,
 	Transaction,
 	KeyStore,
-	ZOND_DATA_FORMAT,
+	QRL_DATA_FORMAT,
 } from '@theqrl/web3-types';
 import { format } from '@theqrl/web3-utils';
 import { Web3Context } from '@theqrl/web3-core';
-import { prepareTransactionForSigning } from '@theqrl/web3-zond';
+import { prepareTransactionForSigning } from '@theqrl/web3-qrl';
 import {
 	create,
 	decrypt,
@@ -35,20 +35,20 @@ import {
 	sign,
 	Wallet,
 	seedToAccount,
-} from '@theqrl/web3-zond-accounts';
+} from '@theqrl/web3-qrl-accounts';
 
 /**
  * Initialize the accounts module for the given context.
  *
- * To avoid multiple package dependencies for `@theqrl/web3-zond-accounts` we are creating
- * this function in `web3` package. In future the actual `@theqrl/web3-zond-accounts` package
+ * To avoid multiple package dependencies for `@theqrl/web3-qrl-accounts` we are creating
+ * this function in `web3` package. In future the actual `@theqrl/web3-qrl-accounts` package
  * should be converted to context aware.
  */
-export const initAccountsForContext = (context: Web3Context<ZondExecutionAPI>) => {
+export const initAccountsForContext = (context: Web3Context<QRLExecutionAPI>) => {
 	const signTransactionWithContext = async (transaction: Transaction, seed: Bytes) => {
 		const tx = await prepareTransactionForSigning(transaction, context);
 
-		const seedBytes = format({ format: 'bytes' }, seed, ZOND_DATA_FORMAT);
+		const seedBytes = format({ format: 'bytes' }, seed, QRL_DATA_FORMAT);
 
 		return signTransaction(tx, seedBytes);
 	};
