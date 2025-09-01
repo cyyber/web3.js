@@ -185,7 +185,7 @@ export class Web3QRL extends Web3Context<Web3QRLExecutionAPI, RegisteredSubscrip
 	 * 	   baseFeePerGas: 20000000000n
 	 * }
 	 *
-	 * web3.qrl.calculateFeeData(qrlUnitMap.Gplanck, 2n).then(console.log);
+	 * web3.qrl.calculateFeeData(qrlUnitMap.shor, 2n).then(console.log);
 	 * > {
 	 *     maxFeePerGas: 40000000000n,
 	 *     maxPriorityFeePerGas: 20000000000n,
@@ -195,7 +195,7 @@ export class Web3QRL extends Web3Context<Web3QRLExecutionAPI, RegisteredSubscrip
 	 */
 	public async calculateFeeData(
 		baseFeePerGasFactor = BigInt(2),
-		alternativeMaxPriorityFeePerGas = qrlUnitMap.Gplanck,
+		alternativeMaxPriorityFeePerGas = qrlUnitMap.shor,
 	): Promise<FeeData> {
 		const block = await this.getBlock<{ number: FMT_NUMBER.BIGINT; bytes: FMT_BYTES.HEX }>(
 			undefined,

@@ -301,7 +301,7 @@ async function sendSigned() {
 		to: toAddress,
 		value: value,
 		gas: 21000,
-		maxFeePerGas: web3.utils.toPlanck('10', 'gplanck'),
+		maxFeePerGas: web3.utils.toPlanck('10', 'shor'),
 		maxPriorityFeePerGas: 30000000,
 		nonce: await web3.qrl.getTransactionCount(fromAddress),
 	};
