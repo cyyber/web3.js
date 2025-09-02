@@ -260,7 +260,7 @@ export class Contract<Abi extends ContractAbi>
 	 * ```ts title="Example"
 	 * var myContract = new web3.qrl.Contract([...], 'Qde0B295669a9FD93d5F28D9Ec85E40f4cb697BAe', {
 	 *   from: 'Q1234567890123456789012345678901234567891', // default from address
-	 *   maxFeePerGas: '20000000000' // default max fee per gas in planck, 20 gplanck in this case
+	 *   maxFeePerGas: '20000000000' // default max fee per gas in planck, 20 shor in this case
 	 * });
 	 * ```
 	 *

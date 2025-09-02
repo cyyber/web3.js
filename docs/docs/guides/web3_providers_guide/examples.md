@@ -501,7 +501,7 @@ Follow these steps to connect to the QRL network with MetaMask and web3.js, incl
 						).textContent += `\n  Transaction hash: ${transactionReceipt.transactionHash}`;
 						document.getElementById(
 							'log',
-						).textContent += `\n  Gas Used: ${transactionReceipt.gasUsed} gplanck`;
+						).textContent += `\n  Gas Used: ${transactionReceipt.gasUsed} shor`;
 					} catch (error) {
 						console.log('error', error);
 						document.getElementById('log').textContent =
