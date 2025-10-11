@@ -45,7 +45,7 @@ import {
 	UnableToPopulateNonceError,
 } from '@theqrl/web3-errors';
 import { bytesToHex, format, hexToBytes } from '@theqrl/web3-utils';
-import { Dilithium } from '@theqrl/wallet.js';
+import { MLDSA87 } from '@theqrl/wallet.js';
 import { NUMBER_DATA_FORMAT } from '../constants.js';
 // eslint-disable-next-line import/no-cycle
 import { getChainId, getTransactionCount, estimateGas } from '../rpc_method_wrappers.js';
@@ -144,7 +144,7 @@ export async function defaultTransactionBuilder<ReturnType = Transaction>(option
 			const _seed =
 				typeof options.seed === 'string' ? hexToBytes(options.seed) : options.seed;
 			const buf = Buffer.from(_seed);
-			const d = new Dilithium(buf);
+			const d = new MLDSA87(buf);
 			publicKey = d.getPK();
 		}
 

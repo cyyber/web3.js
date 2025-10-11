@@ -62,8 +62,8 @@
 	},
 	"dependencies": {
 		"@ethereumjs/rlp": "^4.0.1",
-		"@theqrl/dilithium5": "^0.0.9",
-		"@theqrl/wallet.js": "^0.1.0",
+		"@theqrl/mldsa87": "file:../../../qrypto.js/packages/mldsa87",
+		"@theqrl/wallet.js": "file:../../../wallet.js",
 		"@theqrl/web3-errors": "^0.3.3",
 		"@theqrl/web3-types": "^0.3.3",
 		"@theqrl/web3-utils": "^0.3.3",

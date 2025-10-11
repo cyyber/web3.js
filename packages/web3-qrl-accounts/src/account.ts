@@ -57,8 +57,8 @@ import {
 
 import { isHexStrict, isNullish, isString, validator } from '@theqrl/web3-validator';
 import { keyStoreSchema } from './schemas.js';
-import { CryptoPublicKeyBytes } from '@theqrl/dilithium5';
-import { Dilithium, getDilithiumAddressFromPK } from '@theqrl/wallet.js';
+import { CryptoPublicKeyBytes } from '@theqrl/mldsa87';
+import { MLDSA87, getMLDSA87AddressFromPK } from '@theqrl/wallet.js';
 import { TransactionFactory } from './tx/transactionFactory.js';
 import type { SignTransactionResult, TypedTransaction, Web3Account, SignResult } from './types.js';
 
@@ -132,7 +132,7 @@ export const hashMessage = (message: string): string => {
 export const sign = (data: string, seed: Bytes): SignResult => {
 	const seedUint8Array = parseAndValidateSeed(seed);
 	const buf = Buffer.from(seedUint8Array);
-	const acc = new Dilithium(buf);
+	const acc = new MLDSA87(buf);
 	const hash = hashMessage(data);
 	const signature = acc.sign(hash.substring(2));
 
@@ -224,10 +224,10 @@ export const recoverTransaction = (rawTransaction: HexString): Address => {
 };
 
 /**
- * Get the dilithium5 Address from a public key
+ * Get the mldsa87 Address from a public key
  *
  * @param publicKey - String or Uint8Array of 4864 bytes
- * @returns The Dilithium5 address
+ * @returns The MLDSA87 address
  * @example
  * ```ts
  * publicKeyToAddress("0xbe6383dad004f233317e46ddb46ad31b16064d14447a95cc1d8c8d4bc61c3728")
@@ -236,7 +236,7 @@ export const recoverTransaction = (rawTransaction: HexString): Address => {
  */
 export const publicKeyToAddress = (publicKey: Bytes): string => {
 	const publicKeyUint8Array = parseAndValidatePublicKey(publicKey);
-	const address = getDilithiumAddressFromPK(publicKeyUint8Array);
+	const address = getMLDSA87AddressFromPK(publicKeyUint8Array);
 
 	return toChecksumAddress(hexToAddress(bytesToHex(address)));
 };
@@ -416,7 +416,7 @@ export const parseAndValidateSeed = (data: Bytes, ignoreLength?: boolean): Uint8
 export const seedToAccount = (seed: Bytes, ignoreLength?: boolean): Web3Account => {
 	const seedUint8Array = parseAndValidateSeed(seed, ignoreLength);
 	const buf = Buffer.from(seedUint8Array);
-	const acc = new Dilithium(buf);
+	const acc = new MLDSA87(buf);
 
 	return {
 		address: publicKeyToAddress(acc.getPK()),

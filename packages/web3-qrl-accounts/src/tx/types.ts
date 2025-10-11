@@ -119,12 +119,12 @@ export type TxData = {
 	data?: Uint8ArrayLike;
 
 	/**
-	 * Dilithium5 signature.
+	 * MLDSA87 signature.
 	 */
 	signature?: Numbers | Uint8Array;
 
 	/**
-	 * Dilithium5 public key.
+	 * MLDSA87 public key.
 	 */
 	publicKey?: Numbers | Uint8Array;
 

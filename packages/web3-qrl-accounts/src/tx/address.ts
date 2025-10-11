@@ -15,8 +15,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 import { bytesToHex, hexToAddress, uint8ArrayEquals } from '@theqrl/web3-utils';
-import { getDilithiumAddressFromPK } from '@theqrl/wallet.js';
-import { CryptoPublicKeyBytes } from '@theqrl/dilithium5';
+import { getMLDSA87AddressFromPK } from '@theqrl/wallet.js';
+import { CryptoPublicKeyBytes } from '@theqrl/mldsa87';
 import { assertIsUint8Array, zeros } from '../common/utils.js';
 
 export class Address {
@@ -66,8 +66,8 @@ export class Address {
 
 	/**
 	 * Returns the qrl address of a given public key.
-	 * Accepts "Dilithium5 public keys".
-	 * @param pubKey The Dilithium5 public key
+	 * Accepts "MLDSA87 public keys".
+	 * @param pubKey The MLDSA87 public key
 	 */
 	public static publicToAddress(_pubKey: Uint8Array): Uint8Array {
 		const pubKey = _pubKey;
@@ -77,6 +77,6 @@ export class Address {
 			throw new Error(`Expected pubKey to be of length ${CryptoPublicKeyBytes}`);
 		}
 
-		return getDilithiumAddressFromPK(pubKey);
+		return getMLDSA87AddressFromPK(pubKey);
 	}
 }
