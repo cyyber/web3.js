@@ -113,9 +113,9 @@ export class FeeMarketEIP1559Transaction extends BaseTransaction<FeeMarketEIP155
 	 * accessList, publicKey, signature, descriptor]`
 	 */
 	public static fromValuesArray(values: FeeMarketEIP1559ValuesArray, opts: TxOptions = {}) {
-		if (values.length !== 9 && values.length !== 11) {
+		if (values.length !== 9 && values.length !== 12) {
 			throw new Error(
-				'Invalid EIP-1559 transaction. Only expecting 9 values (for unsigned tx) or 11 values (for signed tx).',
+				'Invalid EIP-1559 transaction. Only expecting 9 values (for unsigned tx) or 12 values (for signed tx).',
 			);
 		}
 
@@ -284,7 +284,7 @@ export class FeeMarketEIP1559Transaction extends BaseTransaction<FeeMarketEIP155
 	 * Returns the serialized encoding of the EIP-1559 transaction.
 	 *
 	 * Format: `0x02 || rlp([chainId, nonce, maxPriorityFeePerGas, maxFeePerGas, gasLimit, to, value, data,
-	 * accessList, signature, publickey, descriptor])`
+	 * accessList, publickey, signature, descriptor])`
 	 *
 	 * Note that in contrast to the legacy tx serialization format this is not
 	 * valid RLP any more due to the raw tx type preceding and concatenated to
