@@ -71,6 +71,7 @@ export interface Transaction1559UnsignedAPI extends BaseTransactionAPI {
 export interface Transaction1559SignedAPI extends Transaction1559UnsignedAPI {
 	readonly publicKey: HexStringBytes;
 	readonly signature: HexStringBytes;
+	readonly descriptor: HexStringBytes;
 }
 
 // https://github.com/ethereum/execution-apis/blob/main/src/schemas/transaction.yaml#L144

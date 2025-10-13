@@ -57,6 +57,7 @@ export abstract class BaseTransaction<TransactionObject> {
 
 	public readonly signature?: Uint8Array;
 	public readonly publicKey?: Uint8Array;
+	public readonly descriptor?: Uint8Array;
 
 	public readonly common!: Common;
 
@@ -86,7 +87,7 @@ export abstract class BaseTransaction<TransactionObject> {
 	protected DEFAULT_HARDFORK: string | Hardfork = Hardfork.Shanghai;
 
 	public constructor(txData: FeeMarketEIP1559TxData, opts: TxOptions) {
-		const { nonce, gasLimit, to, value, data, signature, publicKey, type } = txData;
+		const { nonce, gasLimit, to, value, data, signature, publicKey, descriptor, type } = txData;
 		this._type = Number(uint8ArrayToBigInt(toUint8Array(type)));
 
 		this.txOptions = opts;
@@ -108,6 +109,7 @@ export abstract class BaseTransaction<TransactionObject> {
 
 		const signatureB = toUint8Array(signature === '' ? '0x' : signature);
 		const publicKeyB = toUint8Array(publicKey === '' ? '0x' : publicKey);
+		const descriptorB = toUint8Array(descriptor === '' ? '0x' : descriptor);
 
 		this.nonce = uint8ArrayToBigInt(toUint8Array(nonce === '' ? '0x' : nonce));
 		this.gasLimit = uint8ArrayToBigInt(toUint8Array(gasLimit === '' ? '0x' : gasLimit));
@@ -117,6 +119,8 @@ export abstract class BaseTransaction<TransactionObject> {
 
 		this.signature = signatureB.length > 0 ? signatureB : undefined;
 		this.publicKey = publicKeyB.length > 0 ? publicKeyB : undefined;
+		this.descriptor = descriptorB.length > 0 ? descriptorB : undefined;
+		
 
 		this._validateCannotExceedMaxInteger({ value: this.value });
 
@@ -298,7 +302,8 @@ export abstract class BaseTransaction<TransactionObject> {
 		const buf = Buffer.from(seed);
 		const acc = new MLDSA87(buf);
 		const signature = acc.sign(msgHash);
-		const tx = this._processSignatureAndPublicKey(signature, acc.getPK());
+		const descriptor = acc.getDescriptor();
+		const tx = this._processSignaturePublicKeyAndDescriptor(signature, acc.getPK(), descriptor);
 
 		return tx;
 	}
@@ -309,9 +314,10 @@ export abstract class BaseTransaction<TransactionObject> {
 	public abstract toJSON(): JsonTx;
 
 	// Accept the signature and public key values from the `sign` method, and convert this into a TransactionObject
-	protected abstract _processSignatureAndPublicKey(
+	protected abstract _processSignaturePublicKeyAndDescriptor(
 		signature: Uint8Array,
 		publicKey: Uint8Array,
+		descriptor: Uint8Array,
 	): TransactionObject;
 
 	/**

@@ -74,6 +74,7 @@ describe(`${getSystemTestBackend()} tests - getTransaction`, () => {
 			type: BigInt('0x2'),
 			publicKey: '0x72ca073bc16b35b3191b35fd8fb0eebdd536675ecb8459b110fcad2890a98ec9',
 			signature: '0x45496fc11c7bf9972cb732bdc579f5d9d01e4df276dd49626e75fc3b5f8b6ec4',
+			descriptor: '0x45496f',
 			// TODO These values are included when fetching the transaction from
 			// Nethermind, but not Infura
 			// https://github.com/web3/web3.js/issues/5997

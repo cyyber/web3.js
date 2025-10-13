@@ -141,6 +141,9 @@ export const transactionSchema = {
 		signature: {
 			format: 'bytes',
 		},
+		descriptor: {
+			format: 'bytes',
+		},
 	},
 };
 
@@ -203,6 +206,9 @@ export const transactionInfoSchema = {
 			format: 'bytes',
 		},
 		signature: {
+			format: 'bytes',
+		},
+		descriptor: {
 			format: 'bytes',
 		},
 	},

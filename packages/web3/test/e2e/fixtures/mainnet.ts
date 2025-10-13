@@ -287,6 +287,7 @@ export const mainnetTransactionFromBlock = {
 	nonce: BigInt(6346),
 	publicKey: '0x601ab6acc74820bf5d8d8675ed0828447937869c985ec46bf8010de898aabbcb',
 	signature: '0x17da59e605337ada87592aac2952cbf731575a8eb0fe4bdefd4fa8ce35260bde',
+	descriptor: '0x17da59',
 	to: 'Q3f1b0278a9ee595635b61817630cc19de792f506',
 	transactionIndex: BigInt(1),
 	type: BigInt(2),

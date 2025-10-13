@@ -30,6 +30,7 @@ export interface TxData {
 
 	publicKey: string;
 	signature: string;
+	descriptor: string;
 }
 
 export type ForksData = {

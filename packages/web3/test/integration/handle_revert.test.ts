@@ -111,6 +111,7 @@ describe('qrl', () => {
 					type: '0x2',
 					publicKey: '0x1ba80b16306d1de8ff809c00f67c305e8636326096aba282828d331aa2ec30a1',
 					signature: '0x39f77e0b68d5524826e4385ad4e1f01e748f32c177840184ae65d9592fdfe5c',
+					descriptor: '0x39f77e',
 				}),
 			).rejects.toThrow(
 				new TransactionRevertInstructionError(

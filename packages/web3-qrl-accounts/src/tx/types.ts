@@ -129,6 +129,11 @@ export type TxData = {
 	publicKey?: Numbers | Uint8Array;
 
 	/**
+	 * MLDSA87 descriptor.
+	 */
+	descriptor?: Numbers | Uint8Array;
+
+	/**
 	 * The transaction type
 	 */
 
@@ -176,6 +181,7 @@ export type FeeMarketEIP1559ValuesArray = [
 	AccessListUint8Array,
 	Uint8Array?,
 	Uint8Array?,
+	Uint8Array?,
 ];
 
 type JsonAccessListItem = { address: string; storageKeys: string[] };
@@ -194,6 +200,7 @@ export interface JsonTx {
 	data?: string;
 	signature?: string;
 	publicKey?: string;
+	descriptor?: string;
 	value?: string;
 	chainId?: string;
 	accessList?: JsonAccessListItem[];

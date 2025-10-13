@@ -94,6 +94,7 @@ describe('[FeeMarketEIP1559Transaction] -> EIP-2930 Compatibility', () => {
 			'value',
 			'publicKey',
 			'signature',
+			'descriptor',
 		];
 		const cases = [
 			10.1,

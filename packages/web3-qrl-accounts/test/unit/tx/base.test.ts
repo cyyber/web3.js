@@ -168,12 +168,13 @@ describe('[BaseTransaction]', () => {
 						...tx,
 						publicKey: undefined,
 						signature: undefined,
+						descriptor: undefined,
 					}),
 				),
 			];
 			for (const tx of txs) {
 				expect(tx.isSigned()).toEqual(
-					tx.publicKey !== undefined && tx.signature !== undefined,
+					tx.publicKey !== undefined && tx.signature !== undefined && tx.descriptor !== undefined,
 				);
 			}
 		}
@@ -233,9 +234,11 @@ describe('[BaseTransaction]', () => {
 			data: '',
 			publicKey: '',
 			signature: '',
+			descriptor: '',
 		});
 		expect(tx.publicKey).toBeUndefined();
 		expect(tx.signature).toBeUndefined();
+		expect(tx.descriptor).toBeUndefined();
 		expect(tx.to).toBeUndefined();
 		expect(tx.value).toBe(uint8ArrayToBigInt(uInt8ArrayZero));
 		expect(tx.data).toEqual(uInt8ArrayZero);
