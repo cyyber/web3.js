@@ -255,7 +255,7 @@ export const publicKeyToAddress = (publicKey: Bytes, descriptor?: Bytes): string
  * Encrypt using argon2id options
  * ```ts
  * encrypt(
- *   '0xdb4078ef7b6631dc329034cc20a969ccd470579b68c2c34897ac733dd72f8fb4fe5dad790336672c108189940eb7ed88', 
+ *   '0xcea755979937e2dc6137c0e51ba0d1eb2a44920cefffb1a860cf194ea7d23d694045fd2c8a72ec5aecf1e7e5bb591ff2', 
  *    '123',
  *    {
  *      m: 8192,
@@ -267,7 +267,7 @@ export const publicKeyToAddress = (publicKey: Bytes, descriptor?: Bytes): string
  * {
  *   version: 1,
  *   id: '1b1dd3e2-ee6f-49c6-8a9b-a4722046582e',
- *   address: 'Q2086ea3853acf31bdeaa7d46f34360e8996d95c5',
+ *   address: 'Qcfec0cbee560cbd6ed89580204af71448f1fb8c5',
  *   crypto: {
  *     ciphertext: '02383d4ea331fdf518651aa638d77f36de002f6b2cb340712c2957b68f927234a9c87f776e40b61227aca366bd4b7056046dfdddee29df22290939a1e96f5be5',
  *     cipherparams: { iv: 'bfb43120ae00e9de110f8325' },
@@ -402,11 +402,11 @@ export const parseAndValidateSeed = (data: Bytes, ignoreLength?: boolean): Uint8
  * Use {@link Web3.qrl.accounts.signTransaction} instead.
  *
  * ```ts
- * seedToAccount("0xdb4078ef7b6631dc329034cc20a969ccd470579b68c2c34897ac733dd72f8fb4fe5dad790336672c108189940eb7ed88");
+ * seedToAccount("0xcea755979937e2dc6137c0e51ba0d1eb2a44920cefffb1a860cf194ea7d23d694045fd2c8a72ec5aecf1e7e5bb591ff2");
  * >
  * {
- *   address: 'Q2086EA3853Acf31bDEaa7D46F34360e8996D95C5',
- *   seed: '0xdb4078ef7b6631dc329034cc20a969ccd470579b68c2c34897ac733dd72f8fb4fe5dad790336672c108189940eb7ed88',
+ *   address: 'QcfEC0CbEe560cbD6ED89580204AF71448F1fb8c5',
+ *   seed: '0xcea755979937e2dc6137c0e51ba0d1eb2a44920cefffb1a860cf194ea7d23d694045fd2c8a72ec5aecf1e7e5bb591ff2',
  *   signTransaction: [Function: signTransaction],
  *   sign: [Function: sign],
  *   encrypt: [Function: encrypt]
@@ -467,7 +467,7 @@ export const create = (): Web3Account => {
  * decrypt({
  *   version: 1,
  *   id: '1b1dd3e2-ee6f-49c6-8a9b-a4722046582e',
- *   address: 'Q2086ea3853acf31bdeaa7d46f34360e8996d95c5',
+ *   address: 'Qcfec0cbee560cbd6ed89580204af71448f1fb8c5',
  *   crypto: {
  *     ciphertext: '02383d4ea331fdf518651aa638d77f36de002f6b2cb340712c2957b68f927234a9c87f776e40b61227aca366bd4b7056046dfdddee29df22290939a1e96f5be5',
  *     cipherparams: { iv: 'bfb43120ae00e9de110f8325' },
@@ -484,8 +484,8 @@ export const create = (): Web3Account => {
  * }, '123').then((res) => console.log(util.inspect(res, { depth: null })));
  * >
  * {
- *   address: 'Q2086EA3853Acf31bDEaa7D46F34360e8996D95C5',
- *   seed: '0xdb4078ef7b6631dc329034cc20a969ccd470579b68c2c34897ac733dd72f8fb4fe5dad790336672c108189940eb7ed88',
+ *   address: 'QcfEC0CbEe560cbD6ED89580204AF71448F1fb8c5',
+ *   seed: '0xcea755979937e2dc6137c0e51ba0d1eb2a44920cefffb1a860cf194ea7d23d694045fd2c8a72ec5aecf1e7e5bb591ff2',
  *   signTransaction: [Function: signTransaction],
  *   sign: [Function: sign],
  *   encrypt: [Function: encrypt]

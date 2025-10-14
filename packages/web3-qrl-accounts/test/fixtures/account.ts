@@ -216,7 +216,7 @@ export const invalidEncryptData: [
 	],
 	[
 		[
-			'0xe6768fa565489b1a11a8541782f7ece4cd791ac92dd6dee0c8c897bafae7dc0e5e43769916b6e2d285ad4919fb1dc7aa',
+			'0x32c89a84a46859934c42dec330511fd3642e98f00575e74a44c486c8d112dbf19d7129cd61d3e6bd72c4f2f66e5556f3',
 			'123',
 			{
 				iv: 'bfb43120ae00e9de110f8325',
@@ -232,13 +232,13 @@ export const invalidEncryptData: [
 	],
 	[
 		// no password provided
-		['0xe6768fa565489b1a11a8541782f7ece4cd791ac92dd6dee0c8c897bafae7dc0e5e43769916b6e2d285ad4919fb1dc7aa', undefined, {}],
+		['0x32c89a84a46859934c42dec330511fd3642e98f00575e74a44c486c8d112dbf19d7129cd61d3e6bd72c4f2f66e5556f3', undefined, {}],
 		new InvalidPasswordError(),
 	],
 	[
 		// iv length is not 12 bytes
 		[
-			'0xdb4078ef7b6631dc329034cc20a969ccd470579b68c2c34897ac733dd72f8fb4fe5dad790336672c108189940eb7ed88',
+			'0xcea755979937e2dc6137c0e51ba0d1eb2a44920cefffb1a860cf194ea7d23d694045fd2c8a72ec5aecf1e7e5bb591ff2',
 			'123',
 			{
 				m: 8192,
