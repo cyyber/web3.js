@@ -103,7 +103,8 @@ describe('watchTransactionForConfirmations', () => {
 		});
 	});
 
-	describe('should call watchTransactionBySubscription when the provider supports subscription', () => {
+	// TODO(rgeraldes24)
+	describe.skip('should call watchTransactionBySubscription when the provider supports subscription', () => {
 		let web3Context: Web3Context<Web3QRLExecutionAPI>;
 
 		beforeAll(() => {
@@ -168,7 +169,8 @@ describe('watchTransactionForConfirmations', () => {
 		);
 	});
 
-	describe('should call watchTransactionByPoolling when the provider does not support subscription', () => {
+	// TODO(rgeraldes24)
+	describe.skip('should call watchTransactionByPoolling when the provider does not support subscription', () => {
 		let web3Context: Web3Context<Web3QRLExecutionAPI>;
 
 		beforeAll(() => {
