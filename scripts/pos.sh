@@ -67,7 +67,7 @@ start() {
 		--gzond-genesis-json-in=$TMP_FOLDER/execution/genesis.json \
 		--output-ssz=$TMP_FOLDER/consensus/genesis.ssz \
 		--chain-config-file=$TMP_FOLDER/consensus/config.yml \
-		--deposit-json-file=$TMP_FOLDER/consensus/validator_keys/deposit_data-1751540683.json  \
+		--deposit-json-file=$TMP_FOLDER/consensus/validator_keys/deposit_data-1760427169.json  \
 		--genesis-time="${GENESIS_TIME}"
 
 	buildGzond
@@ -109,7 +109,7 @@ start() {
 		--accept-terms-of-use \
 		--jwt-secret=${TMP_FOLDER}/data/gzond/jwtsecret \
 		--contract-deployment-block=0 \
-		--suggested-fee-recipient=Q123463a4b065722e99115d6c222f267d9cabb524 \
+		--suggested-fee-recipient=Q123463a4B065722E99115D6c222f267d9cABb524 \
 		--enable-debug-rpc-endpoints >> ${TMP_FOLDER}/logs/beacon.log 2>&1 &
 
 	echo "Waiting for validator..."
