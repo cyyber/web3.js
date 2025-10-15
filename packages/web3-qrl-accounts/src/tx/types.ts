@@ -119,17 +119,17 @@ export type TxData = {
 	data?: Uint8ArrayLike;
 
 	/**
-	 * MLDSA87 signature.
+	 * ML-DSA-87 signature.
 	 */
 	signature?: Numbers | Uint8Array;
 
 	/**
-	 * MLDSA87 public key.
+	 * ML-DSA-87 public key.
 	 */
 	publicKey?: Numbers | Uint8Array;
 
 	/**
-	 * MLDSA87 descriptor.
+	 * ML-DSA-87 descriptor.
 	 */
 	descriptor?: Numbers | Uint8Array;
 
