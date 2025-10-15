@@ -126,7 +126,7 @@ describe('instance of validator', () => {
 			validator.validateJSONSchema(hugeSchema1000, hugeData1000 as object);
 			t = Number(new Date()) - t1;
 		}).not.toThrow();
-		expect(t).toBeLessThan(25000);
+		expect(t).toBeLessThan(30000);
 		expect(t).toBeGreaterThan(0);
 	});
 

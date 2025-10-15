@@ -181,7 +181,7 @@ export const signTransaction = async (
 	// eslint-disable-next-line @typescript-eslint/require-await
 ): Promise<SignTransactionResult> => {
 	const signedTx = transaction.sign(hexToBytes(seed));
-	if (isNullish(signedTx.signature) || isNullish(signedTx.publicKey))
+	if (isNullish(signedTx.signature) || isNullish(signedTx.publicKey) || isNullish(signedTx.descriptor))
 		throw new TransactionSigningError('Signer Error');
 
 	const validationErrors = signedTx.validate(true);

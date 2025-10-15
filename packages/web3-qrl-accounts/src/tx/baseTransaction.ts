@@ -121,7 +121,6 @@ export abstract class BaseTransaction<TransactionObject> {
 		this.publicKey = publicKeyB.length > 0 ? publicKeyB : undefined;
 		this.descriptor = descriptorB.length > 0 ? descriptorB : undefined;
 		
-
 		this._validateCannotExceedMaxInteger({ value: this.value });
 
 		// gzond limits gasLimit to 2^64-1
