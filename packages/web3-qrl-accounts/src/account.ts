@@ -224,10 +224,10 @@ export const recoverTransaction = (rawTransaction: HexString): Address => {
 };
 
 /**
- * Get the mldsa87 Address from a public key
+ * Get the ML-DSA-87 Address from a public key
  *
  * @param publicKey - String or Uint8Array of 4864 bytes
- * @returns The MLDSA87 address
+ * @returns The ML-DSA-87 address
  * @example
  * ```ts
  * publicKeyToAddress("0xbe6383dad004f233317e46ddb46ad31b16064d14447a95cc1d8c8d4bc61c3728")
