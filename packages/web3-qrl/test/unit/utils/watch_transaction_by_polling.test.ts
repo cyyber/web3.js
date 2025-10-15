@@ -54,8 +54,7 @@ describe('watchTransactionByPolling', () => {
 			jest.spyOn(qrlRpcMethods, 'getBlockByNumber').mockResolvedValue(mockBlockData as any);
 		});
 
-		it.skip.each(testData)(
-			// TODO(rgeraldes24): fix inputSignedTransaction
+		it.each(testData)(
 			`watchTransactionByPolling logic\n ${testMessage}`,
 			async (_, inputTransaction) => {
 				const formattedTransactionReceipt = format(

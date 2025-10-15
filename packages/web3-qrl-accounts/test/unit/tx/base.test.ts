@@ -123,8 +123,7 @@ describe('[BaseTransaction]', () => {
 		}
 	});
 
-	// TODO(rgeraldes24)
-	it.skip('verifySignature()', () => {
+	it('verifySignature()', () => {
 		for (const txType of txTypes) {
 			for (const tx of txType.txs) {
 				expect(tx.verifySignature()).toBe(true);
@@ -132,8 +131,7 @@ describe('[BaseTransaction]', () => {
 		}
 	});
 
-	// TODO(rgeraldes24)
-	it.skip('verifySignature() -> invalid', () => {
+	it('verifySignature() -> invalid', () => {
 		for (const txType of txTypes) {
 			// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 			for (const txFixture of txType.fixtures.slice(0, 4)) {

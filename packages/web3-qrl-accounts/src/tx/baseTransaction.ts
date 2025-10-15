@@ -246,8 +246,8 @@ export abstract class BaseTransaction<TransactionObject> {
 	public abstract getMessageToVerifySignature(): Uint8Array;
 
 	public isSigned(): boolean {
-		const { signature, publicKey } = this;
-		if (signature === undefined || publicKey === undefined) {
+		const { signature, publicKey, descriptor } = this;
+		if (signature === undefined || publicKey === undefined || descriptor === undefined) {
 			return false;
 		}
 		return true;

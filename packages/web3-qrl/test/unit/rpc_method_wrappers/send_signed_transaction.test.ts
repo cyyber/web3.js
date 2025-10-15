@@ -33,8 +33,7 @@ jest.mock('@theqrl/web3-rpc-methods');
 jest.mock('../../../src/utils/wait_for_transaction_receipt');
 jest.mock('../../../src/utils/watch_transaction_for_confirmations');
 
-// TODO(rgeraldes24)
-describe.skip('sendTransaction', () => {
+describe('sendTransaction', () => {
 	const testMessage =
 		'Title: %s\ninputSignedTransaction: %s\nexpectedTransactionHash: %s\nexpectedTransactionReceipt: %s\n';
 
@@ -225,8 +224,7 @@ describe.skip('sendTransaction', () => {
 		},
 	);
 
-	// TODO(rgeraldes24)
-	it.skip.each(testData)(
+	it.each(testData)(
 		`watchTransactionForConfirmations is called when expected\n ${testMessage}`,
 		async (_, inputTransaction) => {
 			const watchTransactionForConfirmationsSpy = jest.spyOn(

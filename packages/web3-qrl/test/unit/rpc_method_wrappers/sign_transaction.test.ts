@@ -30,15 +30,14 @@ import { formatTransaction } from '../../../src';
 
 jest.mock('@theqrl/web3-rpc-methods');
 
-// TODO(rgeraldes24)
-describe.skip('signTransaction', () => {
+describe('signTransaction', () => {
 	let web3Context: Web3Context<Web3QRLExecutionAPI>;
 
 	beforeAll(() => {
 		web3Context = new Web3Context('http://127.0.0.1:8545');
 	});
 
-	it.skip.each(testData)(
+	it.each(testData)(
 		`should call rpcMethods.signTransaction with expected parameters\nTitle: %s\nInput parameters: %s\n`,
 		async (_, inputParameters) => {
 			const [inputTransaction, signedTransactionInfo] = inputParameters;
@@ -58,7 +57,7 @@ describe.skip('signTransaction', () => {
 		},
 	);
 
-	it.skip.each(testData)(
+	it.each(testData)(
 		`should format mockRpcResponse using provided return format\nTitle: %s\nInput parameters: %s\n`,
 		async (_, inputParameters) => {
 			const [inputTransaction, signedTransactionInfo, expectedFormattedResult] =
