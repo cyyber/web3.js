@@ -237,8 +237,8 @@ export abstract class BaseTransaction<TransactionObject> {
 	//
 	// Note: do not use code docs here since VS Studio is then not able to detect the
 	// comments from the inherited methods
-	public abstract getMessageToSign(hashMessage: false): Uint8Array | Uint8Array[];
-	public abstract getMessageToSign(hashMessage?: true): Uint8Array;
+	public abstract getMessageToSign(descriptor: Uint8Array, hashMessage: false): Uint8Array | Uint8Array[];
+	public abstract getMessageToSign(descriptor: Uint8Array, hashMessage?: true): Uint8Array;
 
 	public abstract hash(): Uint8Array;
 
@@ -297,11 +297,11 @@ export abstract class BaseTransaction<TransactionObject> {
 			throw new Error(msg);
 		}
 
-		const msgHash = this.getMessageToSign(true);
+		const descriptor = getMLDSA87Descriptor();
+		const msgHash = this.getMessageToSign(descriptor, true);
 		const buf = Buffer.from(seed);
 		const acc = new MLDSA87(buf);
 		const signature = acc.sign(msgHash);
-		const descriptor = getMLDSA87Descriptor();
 		const tx = this._processSignaturePublicKeyAndDescriptor(signature, acc.getPK(), descriptor);
 
 		return tx;

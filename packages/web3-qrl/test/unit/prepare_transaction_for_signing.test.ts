@@ -81,7 +81,8 @@ describe('prepareTransactionForSigning', () => {
 				expect(transactionHash).toBe(expectedTransactionHash);
 
 				// should be able to obtain expectedMessageToSign
-				const messageToSign = bytesToHex(signedTransaction.getMessageToSign());
+				const descriptor = signedTransaction.descriptor !== undefined ? signedTransaction.descriptor : Uint8Array.from([]);
+				const messageToSign = bytesToHex(signedTransaction.getMessageToSign(descriptor));
 				expect(messageToSign).toBe(expectedMessageToSign);
 
 				// should have expected public key and signature
@@ -91,12 +92,9 @@ describe('prepareTransactionForSigning', () => {
 				const signature = !isNullish(signedTransaction.signature)
 					? bytesToHex(signedTransaction.signature)
 					: '';
-				const descriptor = !isNullish(signedTransaction.descriptor)
-					? bytesToHex(signedTransaction.descriptor)
-					: '';
 				expect(publicKey).toBe(expectedPublicKey);
 				expect(signature).toBe(expectedSignature);
-				expect(descriptor).toBe(expectedDescriptor);
+				expect(bytesToHex(descriptor)).toBe(expectedDescriptor);
 			},
 		);
 	});

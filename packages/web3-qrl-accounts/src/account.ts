@@ -198,7 +198,7 @@ export const signTransaction = async (
 	const txHash = sha3Raw(rawTx); // using keccak in web3-utils.sha3Raw instead of SHA3 (NIST Standard) as both are different
 
 	return {
-		messageHash: bytesToHex(signedTx.getMessageToSign(true)),
+		messageHash: bytesToHex(signedTx.getMessageToSign(signedTx.descriptor, true)),
 		signature: bytesToHex(signedTx.signature),
 		rawTransaction: rawTx,
 		transactionHash: bytesToHex(txHash),

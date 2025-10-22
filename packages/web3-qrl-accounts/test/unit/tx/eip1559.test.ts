@@ -21,6 +21,7 @@ import { Chain, Common, Hardfork } from '../../../src/common';
 import { FeeMarketEIP1559Transaction } from '../../../src';
 
 import testdata from '../../fixtures/json/eip1559.json';
+import { getMLDSA87Descriptor } from '@theqrl/wallet.js';
 
 const common = new Common({
 	chain: 1,
@@ -162,6 +163,7 @@ describe('[FeeMarketEIP1559Transaction]', () => {
 	});
 
 	it('unsigned tx -> getMessageToSign()', () => {
+		const desc = getMLDSA87Descriptor()
 		const unsignedTx = FeeMarketEIP1559Transaction.fromTxData(
 			{
 				data: hexToBytes('010200'),
@@ -174,12 +176,12 @@ describe('[FeeMarketEIP1559Transaction]', () => {
 		const expectedHash = hexToBytes(
 			'0xfa81814f7dd57bad435657a05eabdba2815f41e3f15ddd6139027e7db56b0dea',
 		);
-		expect(unsignedTx.getMessageToSign(true)).toEqual(expectedHash);
+		expect(unsignedTx.getMessageToSign(desc, true)).toEqual(expectedHash);
 
 		const expectedSerialization = hexToBytes(
 			'0x02f85904808080809401010101010101010101010101010101010101018083010200f838f7940101010101010101010101010101010101010101e1a00101010101010101010101010101010101010101010101010101010101010101',
 		);
-		expect(unsignedTx.getMessageToSign(false)).toEqual(expectedSerialization);
+		expect(unsignedTx.getMessageToSign(desc, false)).toEqual(expectedSerialization);
 	});
 
 	it('toJSON()', () => {

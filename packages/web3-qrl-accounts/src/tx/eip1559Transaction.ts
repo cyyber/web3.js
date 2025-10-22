@@ -308,8 +308,8 @@ export class FeeMarketEIP1559Transaction extends BaseTransaction<FeeMarketEIP155
 	 *
 	 * @param hashMessage - Return hashed message if set to true (default: true)
 	 */
-	public getMessageToSign(hashMessage = true): Uint8Array {
-		const base = this.raw().slice(0, 9);
+	public getMessageToSign(descriptor: Uint8Array, hashMessage = true): Uint8Array {
+		const base = this.raw().slice(0, 9).push(descriptor);
 		const message = uint8ArrayConcat(TRANSACTION_TYPE_UINT8ARRAY, RLP.encode(base));
 		if (hashMessage) {
 			return keccak256(message);
@@ -343,7 +343,8 @@ export class FeeMarketEIP1559Transaction extends BaseTransaction<FeeMarketEIP155
 	 * Computes a sha3-256 hash which can be used to verify the signature
 	 */
 	public getMessageToVerifySignature(): Uint8Array {
-		return this.getMessageToSign();
+		const descriptor = this.descriptor !== undefined ? this.descriptor : Uint8Array.from([]);
+		return this.getMessageToSign(descriptor);
 	}
 
 	/**
