@@ -234,9 +234,9 @@ export const recoverTransaction = (rawTransaction: HexString): Address => {
  * > "QEB014f8c8B418Db6b45774c326A0E64C78914dC0"
  * ```
  */
-export const publicKeyToAddress = (publicKey: Bytes, descriptor?: Bytes): string => {
+export const publicKeyToAddress = (publicKey: Bytes /*, descriptor?: Bytes*/): string => {
 	const publicKeyUint8Array = parseAndValidatePublicKey(publicKey);
-	const address = getMLDSA87AddressFromPK(publicKeyUint8Array, descriptor);
+	const address = getMLDSA87AddressFromPK(publicKeyUint8Array /*, descriptor */);
 
 	return toChecksumAddress(hexToAddress(bytesToHex(address)));
 };

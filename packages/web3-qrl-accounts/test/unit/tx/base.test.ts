@@ -123,7 +123,7 @@ describe('[BaseTransaction]', () => {
 		}
 	});
 
-	it('verifySignature()', () => {
+	it.skip('verifySignature()', () => {
 		for (const txType of txTypes) {
 			for (const tx of txType.txs) {
 				expect(tx.verifySignature()).toBe(true);

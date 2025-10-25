@@ -260,7 +260,7 @@ export class FeeMarketEIP1559Transaction extends BaseTransaction<FeeMarketEIP155
 	 * with {@link Block.fromValuesArray}.
 	 *
 	 * For an unsigned tx this method uses the empty Uint8Array values for the
-	 * signature parameters `v`, `r` and `s` for encoding. For an EIP-155 compliant
+	 * signature parameters for encoding. For an EIP-155 compliant
 	 * representation for external signing use {@link FeeMarketEIP1559Transaction.getMessageToSign}.
 	 */
 	public raw(): FeeMarketEIP1559ValuesArray {
@@ -309,7 +309,8 @@ export class FeeMarketEIP1559Transaction extends BaseTransaction<FeeMarketEIP155
 	 * @param hashMessage - Return hashed message if set to true (default: true)
 	 */
 	public getMessageToSign(descriptor: Uint8Array, hashMessage = true): Uint8Array {
-		const base = this.raw().slice(0, 9).push(descriptor);
+		const base = this.raw().slice(0, 9);
+		base.push(descriptor);
 		const message = uint8ArrayConcat(TRANSACTION_TYPE_UINT8ARRAY, RLP.encode(base));
 		if (hashMessage) {
 			return keccak256(message);
