@@ -24,13 +24,13 @@ import {
 	InvalidKdfError,
 	InvalidPasswordError,
 	InvalidPublicKeyError,
-	InvalidSeedError,
 	IVLengthError,
 	KeyStoreVersionError,
 	PublicKeyLengthError,
-	SeedLengthError,
 	TransactionSigningError,
 	UndefinedRawTransactionError,
+	SeedLengthError,
+	InvalidSeedError,
 } from '@theqrl/web3-errors';
 import {
 	Address,
@@ -51,14 +51,13 @@ import {
 	toChecksumAddress,
 	uint8ArrayConcat,
 	utf8ToHex,
-	hexToAddress,
 	uuidV4,
 } from '@theqrl/web3-utils';
 
 import { isHexStrict, isNullish, isString, validator } from '@theqrl/web3-validator';
 import { keyStoreSchema } from './schemas.js';
 import { CryptoPublicKeyBytes } from '@theqrl/mldsa87';
-import { MLDSA87, getMLDSA87AddressFromPK } from '@theqrl/wallet.js';
+import { MLDSA87, Seed } from '@theqrl/wallet.js';
 import { TransactionFactory } from './tx/transactionFactory.js';
 import type { SignTransactionResult, TypedTransaction, Web3Account, SignResult } from './types.js';
 
@@ -84,6 +83,30 @@ export const parseAndValidatePublicKey = (data: Bytes, ignoreLength?: boolean): 
 	}
 
 	return publicKeyUint8Array;
+};
+
+/**
+ * Get the seed Uint8Array after the validation
+ */
+export const parseAndValidateSeed = (data: Bytes, ignoreLength?: boolean): Uint8Array => {
+	let seedUint8Array: Uint8Array;
+
+	// To avoid the case of 1 character less in a hex string which is prefixed with '0' by using 'bytesToUint8Array'
+	if (!ignoreLength && typeof data === 'string' && isHexStrict(data) && data.length !== 96) {
+		throw new SeedLengthError();
+	}
+
+	try {
+		seedUint8Array = data instanceof Uint8Array ? data : bytesToUint8Array(data);
+	} catch {
+		throw new InvalidSeedError();
+	}
+
+	if (!ignoreLength && seedUint8Array.byteLength !== 48) {
+		throw new SeedLengthError();
+	}
+
+	return seedUint8Array;
 };
 
 /**
@@ -130,11 +153,9 @@ export const hashMessage = (message: string): string => {
  * ```
  */
 export const sign = (data: string, seed: Bytes): SignResult => {
-	const seedUint8Array = parseAndValidateSeed(seed);
-	const buf = Buffer.from(seedUint8Array);
-	const acc = new MLDSA87(buf);
+	const wallet = new MLDSA87.newWalletFromSeed(Seed.from(seed));
 	const hash = hashMessage(data);
-	const signature = acc.sign(hash.substring(2));
+	const signature = wallet.Sign(hash.substring(2));
 
 	return {
 		message: data,
@@ -221,24 +242,6 @@ export const recoverTransaction = (rawTransaction: HexString): Address => {
 	const tx = TransactionFactory.fromSerializedData(hexToBytes(rawTransaction));
 
 	return toChecksumAddress(tx.getSenderAddress().toString());
-};
-
-/**
- * Get the ML-DSA-87 Address from a public key
- *
- * @param publicKey - String or Uint8Array of 4864 bytes
- * @returns The ML-DSA-87 address
- * @example
- * ```ts
- * publicKeyToAddress("0xbe6383dad004f233317e46ddb46ad31b16064d14447a95cc1d8c8d4bc61c3728")
- * > "QEB014f8c8B418Db6b45774c326A0E64C78914dC0"
- * ```
- */
-export const publicKeyToAddress = (publicKey: Bytes /*, descriptor?: Bytes*/): string => {
-	const publicKeyUint8Array = parseAndValidatePublicKey(publicKey);
-	const address = getMLDSA87AddressFromPK(publicKeyUint8Array /*, descriptor */);
-
-	return toChecksumAddress(hexToAddress(bytesToHex(address)));
 };
 
 /**
@@ -368,30 +371,6 @@ export const encrypt = async (
 };
 
 /**
- * Get the seed Uint8Array after the validation
- */
-export const parseAndValidateSeed = (data: Bytes, ignoreLength?: boolean): Uint8Array => {
-	let seedUint8Array: Uint8Array;
-
-	// To avoid the case of 1 character less in a hex string which is prefixed with '0' by using 'bytesToUint8Array'
-	if (!ignoreLength && typeof data === 'string' && isHexStrict(data) && data.length !== 98) {
-		throw new SeedLengthError();
-	}
-
-	try {
-		seedUint8Array = data instanceof Uint8Array ? data : bytesToUint8Array(data);
-	} catch {
-		throw new InvalidSeedError();
-	}
-
-	if (!ignoreLength && seedUint8Array.byteLength !== 48) {
-		throw new SeedLengthError();
-	}
-
-	return seedUint8Array;
-};
-
-/**
  * Get an Account object from the seed
  *
  * @param seed - String or Uint8Array of 40 bytes
@@ -413,14 +392,12 @@ export const parseAndValidateSeed = (data: Bytes, ignoreLength?: boolean): Uint8
  * }
  * ```
  */
-export const seedToAccount = (seed: Bytes, ignoreLength?: boolean): Web3Account => {
-	const seedUint8Array = parseAndValidateSeed(seed, ignoreLength);
-	const buf = Buffer.from(seedUint8Array);
-	const acc = new MLDSA87(buf);
+export const seedToAccount = (seed: Bytes): Web3Account => {
+	const wallet = new MLDSA87.newWalletFromSeed(Seed.from(seed));
 
 	return {
-		address: publicKeyToAddress(acc.getPK()),
-		seed: acc.getHexSeed(),
+		address: toChecksumAddress(wallet.GetAddressStr()),
+		seed: wallet.GetHexSeed(),
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		signTransaction: (_tx: Transaction) => {
 			throw new TransactionSigningError('Do not have network access to sign the transaction');
@@ -428,7 +405,7 @@ export const seedToAccount = (seed: Bytes, ignoreLength?: boolean): Web3Account 
 		sign: (data: Record<string, unknown> | string) =>
 			sign(typeof data === 'string' ? data : JSON.stringify(data), seed),
 		encrypt: async (password: string, options?: Record<string, unknown>) =>
-		 	encrypt(seedUint8Array, password, options),
+		 	encrypt(wallet.getSeed().ToBytes(), password, options),
 	};
 };
 

@@ -34,7 +34,6 @@ import {
 	QRL_DATA_FORMAT,
 } from '@theqrl/web3-types';
 import { Web3Context } from '@theqrl/web3-core';
-import { publicKeyToAddress } from '@theqrl/web3-qrl-accounts';
 import { getId } from '@theqrl/web3-net';
 import { isNullish, isNumber, isAddressString } from '@theqrl/web3-validator';
 import {
@@ -44,8 +43,8 @@ import {
 	TransactionDataAndInputError,
 	UnableToPopulateNonceError,
 } from '@theqrl/web3-errors';
-import { bytesToHex, format, hexToBytes } from '@theqrl/web3-utils';
-import { MLDSA87 } from '@theqrl/wallet.js';
+import { bytesToHex, format, toChecksumAddress } from '@theqrl/web3-utils';
+import { MLDSA87, Seed } from '@theqrl/wallet.js';
 import { NUMBER_DATA_FORMAT } from '../constants.js';
 // eslint-disable-next-line import/no-cycle
 import { getChainId, getTransactionCount, estimateGas } from '../rpc_method_wrappers.js';
@@ -54,6 +53,7 @@ import { transactionSchema } from '../schemas.js';
 import { InternalTransaction } from '../types.js';
 // eslint-disable-next-line import/no-cycle
 import { getTransactionGasPricing } from './get_transaction_gas_pricing.js';
+import { Wallet } from '@theqrl/wallet.js/types/wallet/ml_dsa_87/wallet.js';
 
 export const getTransactionFromOrToAttr = (
 	attr: 'from' | 'to',
@@ -63,7 +63,7 @@ export const getTransactionFromOrToAttr = (
 		| TransactionWithFromLocalWalletIndex
 		| TransactionWithToLocalWalletIndex
 		| TransactionWithFromAndToLocalWalletIndex,
-	publicKey?: HexString | Uint8Array,
+	wallet?: Wallet,
 ): Address | undefined => {
 	if (transaction !== undefined && attr in transaction && transaction[attr] !== undefined) {
 		if (typeof transaction[attr] === 'string' && isAddressString(transaction[attr] as string)) {
@@ -90,7 +90,7 @@ export const getTransactionFromOrToAttr = (
 		}
 	}
 	if (attr === 'from') {
-		if (!isNullish(publicKey)) return publicKeyToAddress(publicKey);
+		if (!isNullish(wallet)) return toChecksumAddress(wallet.GetAddressStr());
 		if (!isNullish(web3Context.defaultAccount)) return web3Context.defaultAccount;
 	}
 
@@ -139,20 +139,16 @@ export async function defaultTransactionBuilder<ReturnType = Transaction>(option
 	) as InternalTransaction;
 
 	if (isNullish(populatedTransaction.from)) {
-		let publicKey;
+		let wallet;
 		if (!isNullish(options.seed)) {
-			const _seed =
-				typeof options.seed === 'string' ? hexToBytes(options.seed) : options.seed;
-			const buf = Buffer.from(_seed);
-			const d = new MLDSA87(buf);
-			publicKey = d.getPK();
+			wallet = MLDSA87.newWalletFromSeed(Seed.from(options.seed));
 		}
 
 		populatedTransaction.from = getTransactionFromOrToAttr(
 			'from',
 			options.web3Context,
 			undefined,
-			publicKey,
+			wallet,
 		);
 	}
 

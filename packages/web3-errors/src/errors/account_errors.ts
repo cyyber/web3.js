@@ -27,6 +27,7 @@ import {
 	ERR_IV_LENGTH,
 	ERR_INVALID_SEED,
 	ERR_SEED_LENGTH,
+	ERR_DESCRIPTOR_LENGTH,
 } from '../error_codes.js';
 import { BaseWeb3Error } from '../web3_error_base.js';
 
@@ -34,6 +35,13 @@ export class PublicKeyLengthError extends BaseWeb3Error {
 	public code = ERR_PUBLIC_KEY_LENGTH;
 	public constructor() {
 		super(`Public key must be 2592 bytes.`);
+	}
+}
+
+export class DescriptorLengthError extends BaseWeb3Error {
+	public code = ERR_DESCRIPTOR_LENGTH;
+	public constructor() {
+		super(`Seed must be 3 bytes.`);
 	}
 }
 

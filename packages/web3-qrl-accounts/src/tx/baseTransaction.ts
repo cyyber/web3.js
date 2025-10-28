@@ -18,7 +18,7 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 import { Numbers } from '@theqrl/web3-types';
 import { bytesToHex, toHex } from '@theqrl/web3-utils';
 import { cryptoSignVerify } from '@theqrl/mldsa87';
-import { MLDSA87, getMLDSA87Descriptor } from '@theqrl/wallet.js';
+import { MLDSA87 } from '@theqrl/wallet.js';
 import { isAddressString } from '@theqrl/web3-validator';
 import { MAX_INTEGER, MAX_UINT64, SEED_BYTES } from './constants.js';
 import { Chain, Common, Hardfork, toUint8Array, uint8ArrayToBigInt } from '../common/index.js';
@@ -273,8 +273,8 @@ export abstract class BaseTransaction<TransactionObject> {
 	 * Returns the sender's address
 	 */
 	public getSenderAddress(): Address {
-		const { publicKey } = this;
-		return new Address(Address.publicToAddress(publicKey!));
+		const { publicKey, descriptor } = this;
+		return new Address(Address.publicAndDescriptorToAddress(publicKey!, descriptor!));
 	}
 
 	/**
@@ -297,12 +297,12 @@ export abstract class BaseTransaction<TransactionObject> {
 			throw new Error(msg);
 		}
 
-		const descriptor = getMLDSA87Descriptor();
-		const msgHash = this.getMessageToSign(descriptor, true);
 		const buf = Buffer.from(seed);
-		const acc = new MLDSA87(buf);
-		const signature = acc.sign(msgHash);
-		const tx = this._processSignaturePublicKeyAndDescriptor(signature, acc.getPK(), descriptor);
+		const wallet = MLDSA87.newWalletFromSeed(buf);
+		const desc = wallet.getDescriptor();
+		const msgHash = this.getMessageToSign(desc, true);
+		const signature = wallet.Sign(msgHash);
+		const tx = this._processSignaturePublicKeyAndDescriptor(signature, wallet.GetPK(), desc);
 
 		return tx;
 	}

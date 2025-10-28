@@ -21,7 +21,7 @@ import { Chain, Common, Hardfork } from '../../../src/common';
 import { FeeMarketEIP1559Transaction } from '../../../src';
 
 import testdata from '../../fixtures/json/eip1559.json';
-import { getMLDSA87Descriptor } from '@theqrl/wallet.js';
+import { NewMLDSA87Descriptor } from '@theqrl/wallet.js';
 
 const common = new Common({
 	chain: 1,
@@ -163,7 +163,7 @@ describe('[FeeMarketEIP1559Transaction]', () => {
 	});
 
 	it('unsigned tx -> getMessageToSign()', () => {
-		const desc = getMLDSA87Descriptor()
+		const desc = NewMLDSA87Descriptor();
 		const unsignedTx = FeeMarketEIP1559Transaction.fromTxData(
 			{
 				data: hexToBytes('010200'),

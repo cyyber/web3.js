@@ -23,7 +23,6 @@ import {
 	encrypt,
 	hashMessage,
 	seedToAccount,
-	publicKeyToAddress,
 	recoverTransaction,
 	sign,
 	signTransaction,
@@ -33,14 +32,12 @@ import {
 	invalidEncryptData,
 	invalidKeyStore,
 	invalidSeedtoAccountData,
-	invalidPublicKeyToAddressData,
 	signatureRecoverData,
 	transactionsTestData,
 	validDecryptData,
 	validEncryptData,
 	validHashMessageData,
 	validSeedtoAccountData,
-	validPublicKeyToAddressData,
 } from '../fixtures/account';
 import { TransactionFactory } from '../../src/tx/transactionFactory';
 import { TxData } from '../../src/tx/types';
@@ -56,20 +53,6 @@ describe('accounts', () => {
 				expect(typeof account.encrypt).toBe('function');
 				expect(typeof account.sign).toBe('function');
 				expect(typeof account.signTransaction).toBe('function');
-			});
-		});
-	});
-
-	describe('publicKeyToAddress', () => {
-		describe('valid cases', () => {
-			it.each(validPublicKeyToAddressData)('%s', (input, output) => {
-				expect(publicKeyToAddress(input)).toEqual(output);
-			});
-		});
-
-		describe('invalid cases', () => {
-			it.each(invalidPublicKeyToAddressData)('%s', (input, output) => {
-				expect(() => publicKeyToAddress(input)).toThrow(output);
 			});
 		});
 	});
