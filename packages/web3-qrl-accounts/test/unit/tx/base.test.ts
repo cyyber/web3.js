@@ -25,9 +25,8 @@ import type { BaseTransaction } from '../../../src/tx/baseTransaction';
 import eip1559Fixtures from '../../fixtures/json/eip1559txs.json';
 
 const seedToPublic = function (seed: HexString): Uint8Array {
-	const _seed = Seed.from(seed);
-	const wallet = new MLDSA87.newWalletFromSeed(_seed);
-	return wallet.GetPK();
+	const wallet = MLDSA87.newWalletFromSeed(Seed.from(seed));
+	return wallet.getPK();
 };
 const common = new Common({
 	chain: 1,

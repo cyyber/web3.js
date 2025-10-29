@@ -153,9 +153,9 @@ export const hashMessage = (message: string): string => {
  * ```
  */
 export const sign = (data: string, seed: Bytes): SignResult => {
-	const wallet = new MLDSA87.newWalletFromSeed(Seed.from(seed));
+	const wallet = MLDSA87.newWalletFromSeed(Seed.from(seed));
 	const hash = hashMessage(data);
-	const signature = wallet.Sign(hash.substring(2));
+	const signature = wallet.sign(hash.substring(2));
 
 	return {
 		message: data,
@@ -393,11 +393,11 @@ export const encrypt = async (
  * ```
  */
 export const seedToAccount = (seed: Bytes): Web3Account => {
-	const wallet = new MLDSA87.newWalletFromSeed(Seed.from(seed));
+	const wallet = MLDSA87.newWalletFromSeed(Seed.from(seed));
 
 	return {
-		address: toChecksumAddress(wallet.GetAddressStr()),
-		seed: wallet.GetHexSeed(),
+		address: toChecksumAddress(wallet.getAddressStr()),
+		seed: wallet.getHexSeed(),
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		signTransaction: (_tx: Transaction) => {
 			throw new TransactionSigningError('Do not have network access to sign the transaction');
@@ -405,7 +405,7 @@ export const seedToAccount = (seed: Bytes): Web3Account => {
 		sign: (data: Record<string, unknown> | string) =>
 			sign(typeof data === 'string' ? data : JSON.stringify(data), seed),
 		encrypt: async (password: string, options?: Record<string, unknown>) =>
-		 	encrypt(wallet.getSeed().ToBytes(), password, options),
+		 	encrypt(wallet.getSeed().toBytes(), password, options),
 	};
 };
 

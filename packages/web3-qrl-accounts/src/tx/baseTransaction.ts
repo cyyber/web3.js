@@ -18,7 +18,7 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 import { Numbers } from '@theqrl/web3-types';
 import { bytesToHex, toHex } from '@theqrl/web3-utils';
 import { cryptoSignVerify } from '@theqrl/mldsa87';
-import { MLDSA87 } from '@theqrl/wallet.js';
+import { MLDSA87, Seed } from '@theqrl/wallet.js';
 import { isAddressString } from '@theqrl/web3-validator';
 import { MAX_INTEGER, MAX_UINT64, SEED_BYTES } from './constants.js';
 import { Chain, Common, Hardfork, toUint8Array, uint8ArrayToBigInt } from '../common/index.js';
@@ -297,12 +297,11 @@ export abstract class BaseTransaction<TransactionObject> {
 			throw new Error(msg);
 		}
 
-		const buf = Buffer.from(seed);
-		const wallet = MLDSA87.newWalletFromSeed(buf);
-		const desc = wallet.getDescriptor();
-		const msgHash = this.getMessageToSign(desc, true);
-		const signature = wallet.Sign(msgHash);
-		const tx = this._processSignaturePublicKeyAndDescriptor(signature, wallet.GetPK(), desc);
+		const wallet = MLDSA87.newWalletFromSeed(Seed.from(seed));
+		const descBytes = wallet.getDescriptor().toBytes();
+		const msgHash = this.getMessageToSign(descBytes, true);
+		const signature = wallet.sign(msgHash);
+		const tx = this._processSignaturePublicKeyAndDescriptor(signature, wallet.getPK(), descBytes);
 
 		return tx;
 	}

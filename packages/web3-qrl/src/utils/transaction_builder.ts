@@ -90,7 +90,7 @@ export const getTransactionFromOrToAttr = (
 		}
 	}
 	if (attr === 'from') {
-		if (!isNullish(wallet)) return toChecksumAddress(wallet.GetAddressStr());
+		if (!isNullish(wallet)) return toChecksumAddress(wallet.getAddressStr());
 		if (!isNullish(web3Context.defaultAccount)) return web3Context.defaultAccount;
 	}
 
