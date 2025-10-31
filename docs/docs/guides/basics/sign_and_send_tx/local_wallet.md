@@ -15,7 +15,7 @@ import Web3 from '@theqrl/web3';
 const web3 = new Web3(/* PROVIDER*/);
 
 // Second step: add an account to wallet
-const seedString = '0x1f953dc9b6437fb94fcafa5dabe3faa0c34315b954dd66f41bf53273339c6d26';
+const seedString = '0x0100001f953dc9b6437fb94fcafa5dabe3faa0c34315b954dd66f41bf53273339c6d26';
 const account = web3.qrl.accounts.wallet.add(seedString).get(0);
 
 // Make sure the account has enough quanta on balance to send the transaction
@@ -49,7 +49,7 @@ import Web3 from '@theqrl/web3';
 const web3 = new Web3(/* PROVIDER*/);
 
 // Second step: add an account to wallet
-const seedString = '0x1f953dc9b6437fb94fcafa5dabe3faa0c34315b954dd66f41bf53273339c6d26';
+const seedString = '0x0100001f953dc9b6437fb94fcafa5dabe3faa0c34315b954dd66f41bf53273339c6d26';
 const account = web3.qrl.accounts.wallet.add(seedString).get(0);
 
 // Make sure the account has enough quanta on balance to send the transaction

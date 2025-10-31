@@ -44,7 +44,7 @@ import {
 	UnableToPopulateNonceError,
 } from '@theqrl/web3-errors';
 import { bytesToHex, format, toChecksumAddress } from '@theqrl/web3-utils';
-import { MLDSA87, Seed } from '@theqrl/wallet.js';
+import { ExtendedSeed } from '@theqrl/wallet.js';
 import { NUMBER_DATA_FORMAT } from '../constants.js';
 // eslint-disable-next-line import/no-cycle
 import { getChainId, getTransactionCount, estimateGas } from '../rpc_method_wrappers.js';
@@ -53,7 +53,7 @@ import { transactionSchema } from '../schemas.js';
 import { InternalTransaction } from '../types.js';
 // eslint-disable-next-line import/no-cycle
 import { getTransactionGasPricing } from './get_transaction_gas_pricing.js';
-import { Wallet } from '@theqrl/wallet.js/types/wallet/ml_dsa_87/wallet.js';
+import { Wallet as MLDSA87 } from '@theqrl/wallet.js/types/wallet/ml_dsa_87/wallet.js';
 
 export const getTransactionFromOrToAttr = (
 	attr: 'from' | 'to',
@@ -63,7 +63,7 @@ export const getTransactionFromOrToAttr = (
 		| TransactionWithFromLocalWalletIndex
 		| TransactionWithToLocalWalletIndex
 		| TransactionWithFromAndToLocalWalletIndex,
-	wallet?: Wallet,
+	wallet?: MLDSA87,
 ): Address | undefined => {
 	if (transaction !== undefined && attr in transaction && transaction[attr] !== undefined) {
 		if (typeof transaction[attr] === 'string' && isAddressString(transaction[attr] as string)) {
@@ -141,7 +141,8 @@ export async function defaultTransactionBuilder<ReturnType = Transaction>(option
 	if (isNullish(populatedTransaction.from)) {
 		let wallet;
 		if (!isNullish(options.seed)) {
-			wallet = MLDSA87.newWalletFromSeed(Seed.from(options.seed));
+			const extendedSeed = ExtendedSeed.from(options.seed);
+			wallet = MLDSA87.newWalletFromExtendedSeed(extendedSeed);
 		}
 
 		populatedTransaction.from = getTransactionFromOrToAttr(

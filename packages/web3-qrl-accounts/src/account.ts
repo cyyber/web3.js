@@ -57,7 +57,7 @@ import {
 import { isHexStrict, isNullish, isString, validator } from '@theqrl/web3-validator';
 import { keyStoreSchema } from './schemas.js';
 import { CryptoPublicKeyBytes } from '@theqrl/mldsa87';
-import { MLDSA87, Seed } from '@theqrl/wallet.js';
+import { Wallet } from '@theqrl/wallet.js';
 import { TransactionFactory } from './tx/transactionFactory.js';
 import type { SignTransactionResult, TypedTransaction, Web3Account, SignResult } from './types.js';
 
@@ -153,7 +153,7 @@ export const hashMessage = (message: string): string => {
  * ```
  */
 export const sign = (data: string, seed: Bytes): SignResult => {
-	const wallet = MLDSA87.newWalletFromSeed(Seed.from(seed));
+	const wallet = Wallet.newWalletFromExtendedSeed(seed);
 	const hash = hashMessage(data);
 	const signature = wallet.sign(hash.substring(2));
 
@@ -381,11 +381,11 @@ export const encrypt = async (
  * Use {@link Web3.qrl.accounts.signTransaction} instead.
  *
  * ```ts
- * seedToAccount("0xcea755979937e2dc6137c0e51ba0d1eb2a44920cefffb1a860cf194ea7d23d694045fd2c8a72ec5aecf1e7e5bb591ff2");
+ * seedToAccount("0x010000cea755979937e2dc6137c0e51ba0d1eb2a44920cefffb1a860cf194ea7d23d694045fd2c8a72ec5aecf1e7e5bb591ff2");
  * >
  * {
  *   address: 'QcfEC0CbEe560cbD6ED89580204AF71448F1fb8c5',
- *   seed: '0xcea755979937e2dc6137c0e51ba0d1eb2a44920cefffb1a860cf194ea7d23d694045fd2c8a72ec5aecf1e7e5bb591ff2',
+ *   seed: '0x010000cea755979937e2dc6137c0e51ba0d1eb2a44920cefffb1a860cf194ea7d23d694045fd2c8a72ec5aecf1e7e5bb591ff2',
  *   signTransaction: [Function: signTransaction],
  *   sign: [Function: sign],
  *   encrypt: [Function: encrypt]
@@ -393,11 +393,11 @@ export const encrypt = async (
  * ```
  */
 export const seedToAccount = (seed: Bytes): Web3Account => {
-	const wallet = MLDSA87.newWalletFromSeed(Seed.from(seed));
+	const wallet = Wallet.newWalletFromExtendedSeed(seed);
 
 	return {
 		address: toChecksumAddress(wallet.getAddressStr()),
-		seed: wallet.getHexSeed(),
+		seed: bytesToHex(wallet.getExtendedSeed().toBytes()),
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		signTransaction: (_tx: Transaction) => {
 			throw new TransactionSigningError('Do not have network access to sign the transaction');
@@ -405,7 +405,7 @@ export const seedToAccount = (seed: Bytes): Web3Account => {
 		sign: (data: Record<string, unknown> | string) =>
 			sign(typeof data === 'string' ? data : JSON.stringify(data), seed),
 		encrypt: async (password: string, options?: Record<string, unknown>) =>
-		 	encrypt(wallet.getSeed().toBytes(), password, options),
+		 	encrypt(wallet.getExtendedSeed().toBytes(), password, options),
 	};
 };
 
