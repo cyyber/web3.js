@@ -22,6 +22,7 @@ import {
 	InvalidPasswordError,
 	IVLengthError,
 	InvalidSeedError,
+	SeedLengthError,
 } from '@theqrl/web3-errors';
 import { CipherOptions, KeyStore } from '@theqrl/web3-types';
 import { hexToBytes } from '@theqrl/web3-utils';
@@ -62,7 +63,7 @@ export const validSeedtoAccountData: [any, any][] = [
 	[
 		{
 			address:
-				'0x034da61fe50c659a3285549dc395571e2bf6891c462c041e3c6b9061fc73eb3687d03f940e5e65d582019ef10ce1327f',
+				'0x010000034da61fe50c659a3285549dc395571e2bf6891c462c041e3c6b9061fc73eb3687d03f940e5e65d582019ef10ce1327f',
 			ignoreLength: false,
 		},
 		{
@@ -76,7 +77,7 @@ export const validSeedtoAccountData: [any, any][] = [
 	[
 		{
 			address:
-				'0x7fc43a2ccb557f900d4ca924c187b4438a7f8185b8edbfbabdd26b87f125594495268f55ceac9c9eb23efaab76b0d4c5',
+				'0x0100007fc43a2ccb557f900d4ca924c187b4438a7f8185b8edbfbabdd26b87f125594495268f55ceac9c9eb23efaab76b0d4c5',
 		},
 		{
 			address: 'Q50D1766d3113D213131a20d97CcC89190Ef68ea3',
@@ -89,7 +90,7 @@ export const validSeedtoAccountData: [any, any][] = [
 	[
 		{
 			address:
-				'0xc902ea9bbf1dd51aaa2ee9bed126aba921f6a6afac9cf09a21f3d915b057bace6787a894a71d1d103992aca0a6a4250c', // ignoreLength parameter set true
+				'0x010000c902ea9bbf1dd51aaa2ee9bed126aba921f6a6afac9cf09a21f3d915b057bace6787a894a71d1d103992aca0a6a4250c', // ignoreLength parameter set true
 			ignoreLength: true,
 		},
 		{
@@ -171,7 +172,7 @@ export const validEncryptData: [[any, string | Uint8Array, CipherOptions], KeySt
 	// Test taken from https://github.com/theQRL/go-zond/tree/main/accounts/keystore/testdata/v1_test_vector.json
 	[
 		[
-			'0x5dfdcad4f721fe41d1bdf632de24ba60ba7cfab9c9a79287fa007b6a0dec8200b1fa35d2575bb15bd44d59b8d878828b',
+			'0x0100005dfdcad4f721fe41d1bdf632de24ba60ba7cfab9c9a79287fa007b6a0dec8200b1fa35d2575bb15bd44d59b8d878828b',
 			'1234567890',
 			{
 				t: 1,
@@ -215,12 +216,12 @@ export const invalidEncryptData: [
 	),
 ][] = [
 	[
-		['0x67f476289210e3bef3c1c75e4de993ff0a00663df00def84e73aa7411eac18a', '123', {}],
+		['0x01000067f476289210e3bef3c1c75e4de993ff0a00663df00def84e73aa7411eac18a', '123', {}],
 		new SeedLengthError(),
 	],
 	[
 		[
-			'0x32c89a84a46859934c42dec330511fd3642e98f00575e74a44c486c8d112dbf19d7129cd61d3e6bd72c4f2f66e5556f3',
+			'0x01000032c89a84a46859934c42dec330511fd3642e98f00575e74a44c486c8d112dbf19d7129cd61d3e6bd72c4f2f66e5556f3',
 			'123',
 			{
 				iv: 'bfb43120ae00e9de110f8325',
@@ -236,13 +237,13 @@ export const invalidEncryptData: [
 	],
 	[
 		// no password provided
-		['0x32c89a84a46859934c42dec330511fd3642e98f00575e74a44c486c8d112dbf19d7129cd61d3e6bd72c4f2f66e5556f3', undefined, {}],
+		['0x01000032c89a84a46859934c42dec330511fd3642e98f00575e74a44c486c8d112dbf19d7129cd61d3e6bd72c4f2f66e5556f3', undefined, {}],
 		new InvalidPasswordError(),
 	],
 	[
 		// iv length is not 12 bytes
 		[
-			'0xcea755979937e2dc6137c0e51ba0d1eb2a44920cefffb1a860cf194ea7d23d694045fd2c8a72ec5aecf1e7e5bb591ff2',
+			'0x010000cea755979937e2dc6137c0e51ba0d1eb2a44920cefffb1a860cf194ea7d23d694045fd2c8a72ec5aecf1e7e5bb591ff2',
 			'123',
 			{
 				m: 8192,
@@ -284,7 +285,7 @@ export const invalidKeyStore: [[any, string]][] = [
 export const validDecryptData: [[string, string, CipherOptions, string]][] = [
 	[
 		[
-			'0x5dfdcad4f721fe41d1bdf632de24ba60ba7cfab9c9a79287fa007b6a0dec8200b1fa35d2575bb15bd44d59b8d878828b',
+			'0x0100005dfdcad4f721fe41d1bdf632de24ba60ba7cfab9c9a79287fa007b6a0dec8200b1fa35d2575bb15bd44d59b8d878828b',
 			'1234567890',
 			{
 				t: 1,
@@ -295,7 +296,7 @@ export const validDecryptData: [[string, string, CipherOptions, string]][] = [
 					'2c2f566f38f5b79634d17267d95a0914ed47a44fe91f9cbb0b8765ebaa0b7ddd',
 				),
 			},
-			'0x5dfdcad4f721fe41d1bdf632de24ba60ba7cfab9c9a79287fa007b6a0dec8200b1fa35d2575bb15bd44d59b8d878828b',
+			'0x0100005dfdcad4f721fe41d1bdf632de24ba60ba7cfab9c9a79287fa007b6a0dec8200b1fa35d2575bb15bd44d59b8d878828b',
 		],
 	],
 ];
