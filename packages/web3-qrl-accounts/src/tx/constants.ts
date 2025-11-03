@@ -27,4 +27,4 @@ export const MAX_INTEGER = BigInt(
 	'0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
 );
 
-export const SEED_BYTES = 48;
+export const SEED_BYTES = 51;

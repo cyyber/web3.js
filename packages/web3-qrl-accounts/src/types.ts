@@ -46,6 +46,8 @@ export interface Web3Account extends Web3BaseWalletAccount {
 	seed: HexString;
 }
 
+export type Web3AccountType = 'ml-dsa-87' | 'sphincs+256s';
+
 // To avoid dependency of "dom" library for TS, copying this interface within project
 /** This Web Storage API interface provides access to a particular domain's session or local storage. It allows, for example, the addition, modification, or deletion of stored data items. */
 export interface WebStorage {

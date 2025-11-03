@@ -57,9 +57,11 @@ import {
 import { isHexStrict, isNullish, isString, validator } from '@theqrl/web3-validator';
 import { keyStoreSchema } from './schemas.js';
 import { CryptoPublicKeyBytes } from '@theqrl/mldsa87';
-import { Wallet } from '@theqrl/wallet.js';
+import { Wallet, Seed } from '@theqrl/wallet.js';
 import { TransactionFactory } from './tx/transactionFactory.js';
-import type { SignTransactionResult, TypedTransaction, Web3Account, SignResult } from './types.js';
+import type { SignTransactionResult, TypedTransaction, Web3Account, SignResult, Web3AccountType } from './types.js';
+import { newMLDSA87Descriptor } from '@theqrl/wallet.js';
+import { ExtendedSeed } from '@theqrl/wallet.js';
 
 /**
  * Get the public key Uint8Array after the validation
@@ -92,7 +94,7 @@ export const parseAndValidateSeed = (data: Bytes, ignoreLength?: boolean): Uint8
 	let seedUint8Array: Uint8Array;
 
 	// To avoid the case of 1 character less in a hex string which is prefixed with '0' by using 'bytesToUint8Array'
-	if (!ignoreLength && typeof data === 'string' && isHexStrict(data) && data.length !== 96) {
+	if (!ignoreLength && typeof data === 'string' && isHexStrict(data) && data.length !== 104) {
 		throw new SeedLengthError();
 	}
 
@@ -102,7 +104,7 @@ export const parseAndValidateSeed = (data: Bytes, ignoreLength?: boolean): Uint8
 		throw new InvalidSeedError();
 	}
 
-	if (!ignoreLength && seedUint8Array.byteLength !== 48) {
+	if (!ignoreLength && seedUint8Array.byteLength !== 51) {
 		throw new SeedLengthError();
 	}
 
@@ -393,11 +395,11 @@ export const encrypt = async (
  * ```
  */
 export const seedToAccount = (seed: Bytes): Web3Account => {
-	const wallet = Wallet.newWalletFromExtendedSeed(seed);
+	const acc = Wallet.newWalletFromExtendedSeed(seed);
 
 	return {
-		address: toChecksumAddress(wallet.getAddressStr()),
-		seed: bytesToHex(wallet.getExtendedSeed().toBytes()),
+		address: toChecksumAddress(acc.getAddressStr()),
+		seed: bytesToHex(acc.getExtendedSeed().toBytes()),
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		signTransaction: (_tx: Transaction) => {
 			throw new TransactionSigningError('Do not have network access to sign the transaction');
@@ -405,7 +407,7 @@ export const seedToAccount = (seed: Bytes): Web3Account => {
 		sign: (data: Record<string, unknown> | string) =>
 			sign(typeof data === 'string' ? data : JSON.stringify(data), seed),
 		encrypt: async (password: string, options?: Record<string, unknown>) =>
-		 	encrypt(wallet.getExtendedSeed().toBytes(), password, options),
+		 	encrypt(acc.getExtendedSeed().toBytes(), password, options),
 	};
 };
 
@@ -418,17 +420,26 @@ export const seedToAccount = (seed: Bytes): Web3Account => {
  * ```ts
  * web3.qrl.accounts.create();
  * {
- * address: 'QbD504f977021b5E5DdccD8741A368b147B3B38bB',
- * seed: '0x964ced1c69ad27a311c432fdc0d8211e987595f7eb34ab405a5f16bdc9563ec5',
+ * address: 'QcfEC0CbEe560cbD6ED89580204AF71448F1fb8c5',
+ * seed: '0x010000cea755979937e2dc6137c0e51ba0d1eb2a44920cefffb1a860cf194ea7d23d694045fd2c8a72ec5aecf1e7e5bb591ff2',
  * signTransaction: [Function: signTransaction],
  * sign: [Function: sign],
  * encrypt: [AsyncFunction: encrypt]
  * }
  * ```
  */
-export const create = (): Web3Account => {
-	const seed = randomBytes(48);
-	return seedToAccount(seed);
+export const create = (type: Web3AccountType = 'ml-dsa-87'): Web3Account => {
+	let descriptor;
+	switch (type) {
+	  case 'ml-dsa-87':
+		descriptor = newMLDSA87Descriptor()
+		break;
+	  default: 
+		throw new Error(`Unsupported account type: ${type}`);
+	}
+	const seed = new Seed(randomBytes(48));
+	const extendedSeed = ExtendedSeed.newExtendedSeed(descriptor, seed);
+	return seedToAccount(extendedSeed.toBytes());
 };
 
 /**
@@ -462,7 +473,7 @@ export const create = (): Web3Account => {
  * >
  * {
  *   address: 'QcfEC0CbEe560cbD6ED89580204AF71448F1fb8c5',
- *   seed: '0xcea755979937e2dc6137c0e51ba0d1eb2a44920cefffb1a860cf194ea7d23d694045fd2c8a72ec5aecf1e7e5bb591ff2',
+ *   seed: '0x010000cea755979937e2dc6137c0e51ba0d1eb2a44920cefffb1a860cf194ea7d23d694045fd2c8a72ec5aecf1e7e5bb591ff2',
  *   signTransaction: [Function: signTransaction],
  *   sign: [Function: sign],
  *   encrypt: [Function: encrypt]

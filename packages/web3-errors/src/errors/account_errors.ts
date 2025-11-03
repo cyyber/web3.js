@@ -40,7 +40,7 @@ export class PublicKeyLengthError extends BaseWeb3Error {
 export class SeedLengthError extends BaseWeb3Error {
 	public code = ERR_SEED_LENGTH;
 	public constructor() {
-		super(`Seed must be 48 bytes.`);
+		super(`Seed must be 51 bytes.`);
 	}
 }
 

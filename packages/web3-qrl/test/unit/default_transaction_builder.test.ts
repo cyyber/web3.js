@@ -137,7 +137,7 @@ describe('defaultTransactionBuilder', () => {
 			const result = await defaultTransactionBuilder({
 				transaction: input,
 				web3Context,
-				seed: '0x71e121bdd81cdae8da5a9733bb6c1cd5a43feb8a2cc754a4aeb797cbc2054626e77c05ddad0182ef962233ca6c5906c6',
+				seed: '0x01000071e121bdd81cdae8da5a9733bb6c1cd5a43feb8a2cc754a4aeb797cbc2054626e77c05ddad0182ef962233ca6c5906c6',
 				fillGasPrice: true,
 			});
 			expect(result.from).toBe(expectedFrom);
