@@ -15,7 +15,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 import { bytesToUint8Array, hexToBytes, uint8ArrayEquals } from '@theqrl/web3-utils';
-import { MLDSA87, Seed } from '@theqrl/wallet.js';
+import { Wallet } from '@theqrl/wallet.js';
 import { HexString } from '@theqrl/web3-types';
 import { FeeMarketEIP1559Transaction } from '../../../src';
 import { Chain, Common, Hardfork, toUint8Array, uint8ArrayToBigInt } from '../../../src/common';
@@ -25,7 +25,7 @@ import type { BaseTransaction } from '../../../src/tx/baseTransaction';
 import eip1559Fixtures from '../../fixtures/json/eip1559txs.json';
 
 const seedToPublic = function (seed: HexString): Uint8Array {
-	const wallet = MLDSA87.newWalletFromSeed(Seed.from(seed));
+	const wallet = Wallet.newWalletFromSeed(seed);
 	return wallet.getPK();
 };
 const common = new Common({

@@ -44,7 +44,6 @@ import {
 	UnableToPopulateNonceError,
 } from '@theqrl/web3-errors';
 import { bytesToHex, format, toChecksumAddress } from '@theqrl/web3-utils';
-import { ExtendedSeed } from '@theqrl/wallet.js';
 import { NUMBER_DATA_FORMAT } from '../constants.js';
 // eslint-disable-next-line import/no-cycle
 import { getChainId, getTransactionCount, estimateGas } from '../rpc_method_wrappers.js';
@@ -53,7 +52,7 @@ import { transactionSchema } from '../schemas.js';
 import { InternalTransaction } from '../types.js';
 // eslint-disable-next-line import/no-cycle
 import { getTransactionGasPricing } from './get_transaction_gas_pricing.js';
-import { Wallet as MLDSA87 } from '@theqrl/wallet.js/types/wallet/ml_dsa_87/wallet.js';
+import { Wallet } from '@theqrl/wallet.js';
 
 export const getTransactionFromOrToAttr = (
 	attr: 'from' | 'to',
@@ -63,7 +62,7 @@ export const getTransactionFromOrToAttr = (
 		| TransactionWithFromLocalWalletIndex
 		| TransactionWithToLocalWalletIndex
 		| TransactionWithFromAndToLocalWalletIndex,
-	wallet?: MLDSA87,
+	seed?: HexString | Uint8Array,
 ): Address | undefined => {
 	if (transaction !== undefined && attr in transaction && transaction[attr] !== undefined) {
 		if (typeof transaction[attr] === 'string' && isAddressString(transaction[attr] as string)) {
@@ -90,7 +89,10 @@ export const getTransactionFromOrToAttr = (
 		}
 	}
 	if (attr === 'from') {
-		if (!isNullish(wallet)) return toChecksumAddress(wallet.getAddressStr());
+		if (!isNullish(seed)) {
+			const wallet = Wallet.newWalletFromExtendedSeed(seed);
+			return toChecksumAddress(wallet.getAddressStr());
+		} 
 		if (!isNullish(web3Context.defaultAccount)) return web3Context.defaultAccount;
 	}
 
@@ -139,17 +141,16 @@ export async function defaultTransactionBuilder<ReturnType = Transaction>(option
 	) as InternalTransaction;
 
 	if (isNullish(populatedTransaction.from)) {
-		let wallet;
+		let seed;
 		if (!isNullish(options.seed)) {
-			const extendedSeed = ExtendedSeed.from(options.seed);
-			wallet = MLDSA87.newWalletFromExtendedSeed(extendedSeed);
+			seed = options.seed;
 		}
 
 		populatedTransaction.from = getTransactionFromOrToAttr(
 			'from',
 			options.web3Context,
 			undefined,
-			wallet,
+			seed,
 		);
 	}
 
