@@ -34,7 +34,6 @@ import {
 	signTransaction,
 	Wallet,
 	Web3Account,
-	Web3AccountType,
 } from '@theqrl/web3-qrl-accounts';
 import { Contract } from '@theqrl/web3-qrl-contract';
 import { QRNS } from '@theqrl/web3-qrl-qrns';
@@ -71,7 +70,7 @@ export interface Web3QRLInterface extends QRL {
 		decodeLog: typeof decodeLog;
 	};
 	accounts: {
-		create: (type?: Web3AccountType) => Web3Account;
+		create: () => Web3Account;
 		seedToAccount: (seed: Uint8Array | string) => Web3Account;
 		signTransaction: (
 			transaction: Transaction,

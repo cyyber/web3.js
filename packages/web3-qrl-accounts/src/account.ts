@@ -59,7 +59,7 @@ import { keyStoreSchema } from './schemas.js';
 import { CryptoPublicKeyBytes } from '@theqrl/mldsa87';
 import { Wallet, Seed } from '@theqrl/wallet.js';
 import { TransactionFactory } from './tx/transactionFactory.js';
-import type { SignTransactionResult, TypedTransaction, Web3Account, SignResult, Web3AccountType } from './types.js';
+import type { SignTransactionResult, TypedTransaction, Web3Account, SignResult } from './types.js';
 import { newMLDSA87Descriptor } from '@theqrl/wallet.js';
 import { ExtendedSeed } from '@theqrl/wallet.js';
 
@@ -428,15 +428,8 @@ export const seedToAccount = (seed: Bytes): Web3Account => {
  * }
  * ```
  */
-export const create = (type: Web3AccountType = 'ml-dsa-87'): Web3Account => {
-	let descriptor;
-	switch (type) {
-	  case 'ml-dsa-87':
-		descriptor = newMLDSA87Descriptor()
-		break;
-	  default: 
-		throw new Error(`Unsupported account type: ${type}`);
-	}
+export const create = (): Web3Account => {
+	const descriptor = newMLDSA87Descriptor();
 	const seed = new Seed(randomBytes(48));
 	const extendedSeed = ExtendedSeed.newExtendedSeed(descriptor, seed);
 	return seedToAccount(extendedSeed.toBytes());

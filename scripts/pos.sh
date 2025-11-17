@@ -31,12 +31,12 @@ download(){
 
     if [ ! -e "$TMP_FOLDER/go-zond" ]
     then
-        git clone -b feature/descriptor https://github.com/rgeraldes24/go-zond ${TMP_FOLDER}/go-zond
+        git clone -b feature/extended-seed https://github.com/rgeraldes24/go-zond ${TMP_FOLDER}/go-zond
     fi
 
 	if [ ! -e "$TMP_FOLDER/qrysm" ]
     then
-        git clone -b feature/descriptor https://github.com/rgeraldes24/qrysm ${TMP_FOLDER}/qrysm
+        git clone -b feature/extended-seed https://github.com/rgeraldes24/qrysm ${TMP_FOLDER}/qrysm
     fi
 }
 
@@ -67,7 +67,7 @@ start() {
 		--gzond-genesis-json-in=$TMP_FOLDER/execution/genesis.json \
 		--output-ssz=$TMP_FOLDER/consensus/genesis.ssz \
 		--chain-config-file=$TMP_FOLDER/consensus/config.yml \
-		--deposit-json-file=$TMP_FOLDER/consensus/validator_keys/deposit_data-1760427169.json  \
+		--deposit-json-file=$TMP_FOLDER/consensus/validator_keys/deposit_data-1763367182.json  \
 		--genesis-time="${GENESIS_TIME}"
 
 	buildGzond

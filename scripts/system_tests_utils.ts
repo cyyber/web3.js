@@ -23,7 +23,6 @@ import {
 	decrypt,
 	seedToAccount,
 	signTransaction,
-	Web3AccountType,
 } from '@theqrl/web3-qrl-accounts';
 
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -206,8 +205,8 @@ export const createAccountProvider = (context: Web3Context<QRLExecutionAPI>) => 
 		};
 	};
 
-	const createWithContext = (type: Web3AccountType = 'ml-dsa-87') => {
-		const account = _createAccount(type);
+	const createWithContext = () => {
+		const account = _createAccount();
 
 		return {
 			...account,

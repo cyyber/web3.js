@@ -35,7 +35,6 @@ import {
 	sign,
 	Wallet,
 	seedToAccount,
-	Web3AccountType,
 } from '@theqrl/web3-qrl-accounts';
 
 /**
@@ -78,8 +77,8 @@ export const initAccountsForContext = (context: Web3Context<QRLExecutionAPI>) =>
 		};
 	};
 
-	const createWithContext = (type: Web3AccountType = 'ml-dsa-87') => {
-		const account = create(type);
+	const createWithContext = () => {
+		const account = create();
 
 		return {
 			...account,
