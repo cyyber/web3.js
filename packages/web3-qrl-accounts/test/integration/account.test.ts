@@ -56,8 +56,7 @@ describe('accounts', () => {
 		});
 	});
 
-	// TODO(rgeraldes24)
-	describe.skip('seedToAccount', () => {
+	describe('seedToAccount', () => {
 		describe('valid cases', () => {
 			it.each(validSeedtoAccountData)('%s', (input, output) => {
 				expect(JSON.stringify(seedToAccount(input.address))).toEqual(

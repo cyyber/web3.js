@@ -266,7 +266,6 @@ describe('[FeeMarketEIP1559Transaction] -> EIP-2930 Compatibility', () => {
 			let signed = tx.sign(seed);
 			const signedAddress = signed.getSenderAddress();
 			expect(uint8ArrayEquals(signedAddress.buf, address)).toBeTruthy();
-			// TODO(rgeraldes24)
 			// expect(signedAddress).toEqual(Address.publicToAddress(Buffer.from(address)));
 			signed.verifySignature(); // If this throws, test will not end.
 
