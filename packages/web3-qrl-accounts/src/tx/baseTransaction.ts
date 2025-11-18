@@ -276,7 +276,7 @@ export abstract class BaseTransaction<TransactionObject> {
 	 */
 	public getSenderAddress(): Address {
 		const { publicKey, descriptor } = this;
-		return new Address(Address.publicAndDescriptorToAddress(publicKey!, descriptor!));
+		return new Address(Address.publicKeyAndDescriptorToAddress(publicKey!, descriptor!));
 	}
 
 	/**

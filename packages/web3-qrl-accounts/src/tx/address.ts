@@ -66,10 +66,10 @@ export class Address {
 
 	/**
 	 * Returns the qrl address of a given public key.
-	 * Accepts "MLDSA87 public keys".
-	 * @param pubKey The MLDSA87 public key
+	 * Accepts "public keys".
+	 * @param pubKey The public key
 	 */
-	public static publicAndDescriptorToAddress(_pubKey: Uint8Array, _descriptor: Uint8Array): Uint8Array {
+	public static publicKeyAndDescriptorToAddress(_pubKey: Uint8Array, _descriptor: Uint8Array): Uint8Array {
 		const pubKey = _pubKey;
 		assertIsUint8Array(pubKey);
 		const descBytes = _descriptor;
