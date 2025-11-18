@@ -86,7 +86,7 @@ export abstract class BaseTransaction<TransactionObject> {
 	protected DEFAULT_HARDFORK: string | Hardfork = Hardfork.Shanghai;
 
 	public constructor(txData: FeeMarketEIP1559TxData, opts: TxOptions) {
-		const { nonce, gasLimit, to, value, data, signature, publicKey, descriptor, type } = txData;
+		const { nonce, gasLimit, to, value, data, publicKey, signature, descriptor, type } = txData;
 		this._type = Number(uint8ArrayToBigInt(toUint8Array(type)));
 
 		this.txOptions = opts;
@@ -244,7 +244,7 @@ export abstract class BaseTransaction<TransactionObject> {
 	public abstract getMessageToVerifySignature(): Uint8Array;
 
 	public isSigned(): boolean {
-		const { signature, publicKey, descriptor } = this;
+		const { publicKey, signature, descriptor } = this;
 		if (signature === undefined || publicKey === undefined || descriptor === undefined) {
 			return false;
 		}
