@@ -79,6 +79,6 @@ export class Address {
 			throw new Error(`Expected pubKey to be of length ${CryptoPublicKeyBytes}`);
 		}
 
-		return getAddressFromPKAndDescriptor(pubKey, new Descriptor(descBytes));
+		return getAddressFromPKAndDescriptor(pubKey, Descriptor.from(descBytes));
 	}
 }

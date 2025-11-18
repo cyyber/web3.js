@@ -88,30 +88,6 @@ export const parseAndValidatePublicKey = (data: Bytes, ignoreLength?: boolean): 
 };
 
 /**
- * Get the seed Uint8Array after the validation
- */
-export const parseAndValidateSeed = (data: Bytes, ignoreLength?: boolean): Uint8Array => {
-	let seedUint8Array: Uint8Array;
-
-	// To avoid the case of 1 character less in a hex string which is prefixed with '0' by using 'bytesToUint8Array'
-	if (!ignoreLength && typeof data === 'string' && isHexStrict(data) && data.length !== 104) {
-		throw new SeedLengthError();
-	}
-
-	try {
-		seedUint8Array = data instanceof Uint8Array ? data : bytesToUint8Array(data);
-	} catch {
-		throw new InvalidSeedError();
-	}
-
-	if (!ignoreLength && seedUint8Array.byteLength !== 51) {
-		throw new SeedLengthError();
-	}
-
-	return seedUint8Array;
-};
-
-/**
  *
  * Hashes the given message. The data will be UTF-8 HEX decoded and enveloped as follows: "\\x19QRL Signed Message:\\n" + message.length + message and hashed using keccak256.
  *
@@ -373,6 +349,30 @@ export const encrypt = async (
 };
 
 /**
+ * Get the seed Uint8Array after the validation
+ */
+export const parseAndValidateSeed = (data: Bytes, ignoreLength?: boolean): Uint8Array => {
+	let seedUint8Array: Uint8Array;
+
+	// To avoid the case of 1 character less in a hex string which is prefixed with '0' by using 'bytesToUint8Array'
+	if (!ignoreLength && typeof data === 'string' && isHexStrict(data) && data.length !== 104) {
+		throw new SeedLengthError();
+	}
+
+	try {
+		seedUint8Array = data instanceof Uint8Array ? data : bytesToUint8Array(data);
+	} catch {
+		throw new InvalidSeedError();
+	}
+
+	if (!ignoreLength && seedUint8Array.byteLength !== 51) {
+		throw new SeedLengthError();
+	}
+
+	return seedUint8Array;
+};
+
+/**
  * Get an Account object from the seed
  *
  * @param seed - String or Uint8Array of 40 bytes
@@ -430,7 +430,7 @@ export const seedToAccount = (seed: Bytes): Web3Account => {
  */
 export const create = (): Web3Account => {
 	const descriptor = newMLDSA87Descriptor();
-	const seed = new Seed(randomBytes(48));
+	const seed = Seed.from(randomBytes(48));
 	const extendedSeed = ExtendedSeed.newExtendedSeed(descriptor, seed);
 	return seedToAccount(extendedSeed.toBytes());
 };

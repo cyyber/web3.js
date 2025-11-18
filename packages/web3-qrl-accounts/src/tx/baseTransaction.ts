@@ -259,7 +259,7 @@ export abstract class BaseTransaction<TransactionObject> {
 		const { publicKey, signature, descriptor } = this;
 		
 		try {
-			const desc = new Descriptor(descriptor!);
+			const desc = Descriptor.from(descriptor!);
 			switch (desc.type()) {
 			  case WalletType.ML_DSA_87:
 			    return Wallet.MLDSA87.verify(signature!, msgHash, publicKey!);
