@@ -163,7 +163,6 @@ describe('[FeeMarketEIP1559Transaction]', () => {
 	});
 
 	it('unsigned tx -> getMessageToSign()', () => {
-		const desc = newMLDSA87Descriptor();
 		const unsignedTx = FeeMarketEIP1559Transaction.fromTxData(
 			{
 				data: hexToBytes('010200'),
@@ -176,6 +175,7 @@ describe('[FeeMarketEIP1559Transaction]', () => {
 		const expectedHash = hexToBytes(
 			'0x0b23ffbd208965302cabc5422c0cdf5314b931609ba18bb97d713afec7c12e20',
 		);
+		const desc = newMLDSA87Descriptor();
 		expect(unsignedTx.getMessageToSign(desc.toBytes(), true)).toEqual(expectedHash);
 		const expectedSerialization = hexToBytes(
 			'0x02f85d04808080809401010101010101010101010101010101010101018083010200f838f7940101010101010101010101010101010101010101e1a0010101010101010101010101010101010101010101010101010101010101010183010000',
