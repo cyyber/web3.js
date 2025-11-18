@@ -54,8 +54,8 @@ export abstract class BaseTransaction<TransactionObject> {
 	public readonly value: bigint;
 	public readonly data: Uint8Array;
 
-	public readonly signature?: Uint8Array;
 	public readonly publicKey?: Uint8Array;
+	public readonly signature?: Uint8Array;
 	public readonly descriptor?: Uint8Array;
 
 	public readonly common!: Common;
