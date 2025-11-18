@@ -24,13 +24,13 @@ import {
 	InvalidKdfError,
 	InvalidPasswordError,
 	InvalidPublicKeyError,
+	InvalidSeedError,
 	IVLengthError,
 	KeyStoreVersionError,
 	PublicKeyLengthError,
+	SeedLengthError,
 	TransactionSigningError,
 	UndefinedRawTransactionError,
-	SeedLengthError,
-	InvalidSeedError,
 } from '@theqrl/web3-errors';
 import {
 	Address,
