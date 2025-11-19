@@ -299,7 +299,7 @@ export abstract class BaseTransaction<TransactionObject> {
 			throw new Error(msg);
 		}
 
-		const wallet = Wallet.newWalletFromExtendedSeed(seed);
+		const wallet = Wallet.fromExtendedSeed(seed);
 		const descBytes = wallet.getDescriptor().toBytes();
 		const msgHash = this.getMessageToSign(descBytes, true);
 		const signature = wallet.sign(msgHash);

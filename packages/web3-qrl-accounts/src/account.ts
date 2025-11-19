@@ -131,7 +131,7 @@ export const hashMessage = (message: string): string => {
  * ```
  */
 export const sign = (data: string, seed: Bytes): SignResult => {
-	const wallet = Wallet.newWalletFromExtendedSeed(seed);
+	const wallet = Wallet.fromExtendedSeed(seed);
 	const hash = hashMessage(data);
 	const signature = wallet.sign(hash.substring(2));
 
@@ -395,7 +395,7 @@ export const parseAndValidateSeed = (data: Bytes, ignoreLength?: boolean): Uint8
  * ```
  */
 export const seedToAccount = (seed: Bytes): Web3Account => {
-	const acc = Wallet.newWalletFromExtendedSeed(seed);
+	const acc = Wallet.fromExtendedSeed(seed);
 
 	return {
 		address: toChecksumAddress(acc.getAddressStr()),

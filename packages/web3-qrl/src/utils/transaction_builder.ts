@@ -90,7 +90,7 @@ export const getTransactionFromOrToAttr = (
 	}
 	if (attr === 'from') {
 		if (!isNullish(seed)) {
-			const wallet = Wallet.newWalletFromExtendedSeed(seed);
+			const wallet = Wallet.fromExtendedSeed(seed);
 			return toChecksumAddress(wallet.getAddressStr());
 		} 
 		if (!isNullish(web3Context.defaultAccount)) return web3Context.defaultAccount;

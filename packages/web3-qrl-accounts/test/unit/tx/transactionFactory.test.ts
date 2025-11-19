@@ -25,7 +25,7 @@ const common = new Common({
 });
 
 const seed = hexToBytes(
-	'd00fd401dc076020ab57f52becab30305bbfc5b3bd7334287c06cdb500c860c54e54b5bd2c5c137d601ef6e8a9e9fac8',
+	'010000d00fd401dc076020ab57f52becab30305bbfc5b3bd7334287c06cdb500c860c54e54b5bd2c5c137d601ef6e8a9e9fac8',
 );
 
 const unsignedEIP1559Tx = FeeMarketEIP1559Transaction.fromTxData(
