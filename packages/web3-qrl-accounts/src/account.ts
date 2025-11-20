@@ -57,11 +57,9 @@ import {
 import { isHexStrict, isNullish, isString, validator } from '@theqrl/web3-validator';
 import { keyStoreSchema } from './schemas.js';
 import { CryptoPublicKeyBytes } from '@theqrl/mldsa87';
-import { newWalletFromExtendedSeed, Seed } from '@theqrl/wallet.js';
+import { newWalletFromExtendedSeed, Seed, newMLDSA87Descriptor, ExtendedSeed } from '@theqrl/wallet.js';
 import { TransactionFactory } from './tx/transactionFactory.js';
 import type { SignTransactionResult, TypedTransaction, Web3Account, SignResult } from './types.js';
-import { newMLDSA87Descriptor } from '@theqrl/wallet.js';
-import { ExtendedSeed } from '@theqrl/wallet.js';
 
 /**
  * Get the public key Uint8Array after the validation
