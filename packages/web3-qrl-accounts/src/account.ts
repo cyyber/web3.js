@@ -57,7 +57,7 @@ import {
 import { isHexStrict, isNullish, isString, validator } from '@theqrl/web3-validator';
 import { keyStoreSchema } from './schemas.js';
 import { CryptoPublicKeyBytes } from '@theqrl/mldsa87';
-import { Wallet, Seed } from '@theqrl/wallet.js';
+import { newWalletFromExtendedSeed, Seed } from '@theqrl/wallet.js';
 import { TransactionFactory } from './tx/transactionFactory.js';
 import type { SignTransactionResult, TypedTransaction, Web3Account, SignResult } from './types.js';
 import { newMLDSA87Descriptor } from '@theqrl/wallet.js';
@@ -131,7 +131,7 @@ export const hashMessage = (message: string): string => {
  * ```
  */
 export const sign = (data: string, seed: Bytes): SignResult => {
-	const wallet = Wallet.fromExtendedSeed(seed);
+	const wallet = newWalletFromExtendedSeed(seed);
 	const hash = hashMessage(data);
 	const signature = wallet.sign(hash.substring(2));
 
@@ -395,7 +395,7 @@ export const parseAndValidateSeed = (data: Bytes, ignoreLength?: boolean): Uint8
  * ```
  */
 export const seedToAccount = (seed: Bytes): Web3Account => {
-	const acc = Wallet.fromExtendedSeed(seed);
+	const acc = newWalletFromExtendedSeed(seed);
 
 	return {
 		address: toChecksumAddress(acc.getAddressStr()),

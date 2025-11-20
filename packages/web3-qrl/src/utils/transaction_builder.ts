@@ -52,7 +52,7 @@ import { transactionSchema } from '../schemas.js';
 import { InternalTransaction } from '../types.js';
 // eslint-disable-next-line import/no-cycle
 import { getTransactionGasPricing } from './get_transaction_gas_pricing.js';
-import { Wallet } from '@theqrl/wallet.js';
+import { newWalletFromExtendedSeed } from '@theqrl/wallet.js';
 
 export const getTransactionFromOrToAttr = (
 	attr: 'from' | 'to',
@@ -90,7 +90,7 @@ export const getTransactionFromOrToAttr = (
 	}
 	if (attr === 'from') {
 		if (!isNullish(seed)) {
-			const wallet = Wallet.fromExtendedSeed(seed);
+			const wallet = newWalletFromExtendedSeed(seed);
 			return toChecksumAddress(wallet.getAddressStr());
 		} 
 		if (!isNullish(web3Context.defaultAccount)) return web3Context.defaultAccount;

@@ -15,7 +15,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 import { bytesToUint8Array, hexToBytes, uint8ArrayEquals } from '@theqrl/web3-utils';
-import { Wallet } from '@theqrl/wallet.js';
+import { newWalletFromExtendedSeed } from '@theqrl/wallet.js';
 import { FeeMarketEIP1559Transaction } from '../../../src';
 import { Chain, Common, Hardfork, toUint8Array, uint8ArrayToBigInt } from '../../../src/common';
 import { MAX_INTEGER, MAX_UINT64 } from '../../../src/tx/constants';
@@ -196,7 +196,7 @@ describe('[BaseTransaction]', () => {
 				const signedTx = tx.sign(hexToBytes(seed));
 				const txPubKey = signedTx.getSenderPublicKey();
 
-				const wallet = Wallet.fromExtendedSeed(seed);
+				const wallet = newWalletFromExtendedSeed(seed);
 				const pubKeyFromSeed = wallet.getPK();
 
 				expect(uint8ArrayEquals(txPubKey, pubKeyFromSeed)).toBe(true);
