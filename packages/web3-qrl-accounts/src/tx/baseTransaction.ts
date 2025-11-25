@@ -17,8 +17,7 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 
 import { Numbers } from '@theqrl/web3-types';
 import { bytesToHex, toHex } from '@theqrl/web3-utils';
-import { cryptoSignVerify } from '@theqrl/dilithium5';
-import { Dilithium } from '@theqrl/wallet.js';
+import { newWalletFromExtendedSeed, MLDSA87, Descriptor, WalletType } from '@theqrl/wallet.js';
 import { isAddressString } from '@theqrl/web3-validator';
 import { MAX_INTEGER, MAX_UINT64, SEED_BYTES } from './constants.js';
 import { Chain, Common, Hardfork, toUint8Array, uint8ArrayToBigInt } from '../common/index.js';
@@ -55,8 +54,9 @@ export abstract class BaseTransaction<TransactionObject> {
 	public readonly value: bigint;
 	public readonly data: Uint8Array;
 
-	public readonly signature?: Uint8Array;
 	public readonly publicKey?: Uint8Array;
+	public readonly signature?: Uint8Array;
+	public readonly descriptor?: Uint8Array;
 
 	public readonly common!: Common;
 
@@ -86,7 +86,7 @@ export abstract class BaseTransaction<TransactionObject> {
 	protected DEFAULT_HARDFORK: string | Hardfork = Hardfork.Shanghai;
 
 	public constructor(txData: FeeMarketEIP1559TxData, opts: TxOptions) {
-		const { nonce, gasLimit, to, value, data, signature, publicKey, type } = txData;
+		const { nonce, gasLimit, to, value, data, publicKey, signature, descriptor, type } = txData;
 		this._type = Number(uint8ArrayToBigInt(toUint8Array(type)));
 
 		this.txOptions = opts;
@@ -108,6 +108,7 @@ export abstract class BaseTransaction<TransactionObject> {
 
 		const signatureB = toUint8Array(signature === '' ? '0x' : signature);
 		const publicKeyB = toUint8Array(publicKey === '' ? '0x' : publicKey);
+		const descriptorB = toUint8Array(descriptor === '' ? '0x' : descriptor);
 
 		this.nonce = uint8ArrayToBigInt(toUint8Array(nonce === '' ? '0x' : nonce));
 		this.gasLimit = uint8ArrayToBigInt(toUint8Array(gasLimit === '' ? '0x' : gasLimit));
@@ -117,7 +118,8 @@ export abstract class BaseTransaction<TransactionObject> {
 
 		this.signature = signatureB.length > 0 ? signatureB : undefined;
 		this.publicKey = publicKeyB.length > 0 ? publicKeyB : undefined;
-
+		this.descriptor = descriptorB.length > 0 ? descriptorB : undefined;
+		
 		this._validateCannotExceedMaxInteger({ value: this.value });
 
 		// gzond limits gasLimit to 2^64-1
@@ -234,16 +236,16 @@ export abstract class BaseTransaction<TransactionObject> {
 	//
 	// Note: do not use code docs here since VS Studio is then not able to detect the
 	// comments from the inherited methods
-	public abstract getMessageToSign(hashMessage: false): Uint8Array | Uint8Array[];
-	public abstract getMessageToSign(hashMessage?: true): Uint8Array;
+	public abstract getMessageToSign(descriptor: Uint8Array, hashMessage: false): Uint8Array | Uint8Array[];
+	public abstract getMessageToSign(descriptor: Uint8Array, hashMessage?: true): Uint8Array;
 
 	public abstract hash(): Uint8Array;
 
 	public abstract getMessageToVerifySignature(): Uint8Array;
 
 	public isSigned(): boolean {
-		const { signature, publicKey } = this;
-		if (signature === undefined || publicKey === undefined) {
+		const { publicKey, signature, descriptor } = this;
+		if (signature === undefined || publicKey === undefined || descriptor === undefined) {
 			return false;
 		}
 		return true;
@@ -254,13 +256,16 @@ export abstract class BaseTransaction<TransactionObject> {
 	 */
 	public verifySignature(): boolean {
 		const msgHash = this.getMessageToVerifySignature();
-		const { publicKey, signature } = this;
-		const sigBuf = Buffer.from(signature!);
-		const pubKeyBuf = Buffer.from(publicKey!);
-		const msgHashBuf = Buffer.from(msgHash);
-
+		const { publicKey, signature, descriptor } = this;
+		
 		try {
-			return cryptoSignVerify(sigBuf, msgHashBuf, pubKeyBuf);
+			const desc = Descriptor.from(descriptor!);
+			switch (desc.type()) {
+			  case WalletType.ML_DSA_87:
+			    return MLDSA87.verify(signature!, msgHash, publicKey!);
+			  default:
+			    return false;
+			}
 		} catch (e: any) {
 			return false;
 		}
@@ -270,8 +275,8 @@ export abstract class BaseTransaction<TransactionObject> {
 	 * Returns the sender's address
 	 */
 	public getSenderAddress(): Address {
-		const { publicKey } = this;
-		return new Address(Address.publicToAddress(publicKey!));
+		const { publicKey, descriptor } = this;
+		return new Address(Address.publicKeyAndDescriptorToAddress(publicKey!, descriptor!));
 	}
 
 	/**
@@ -294,11 +299,11 @@ export abstract class BaseTransaction<TransactionObject> {
 			throw new Error(msg);
 		}
 
-		const msgHash = this.getMessageToSign(true);
-		const buf = Buffer.from(seed);
-		const acc = new Dilithium(buf);
-		const signature = acc.sign(msgHash);
-		const tx = this._processSignatureAndPublicKey(signature, acc.getPK());
+		const wallet = newWalletFromExtendedSeed(seed);
+		const descBytes = wallet.getDescriptor().toBytes();
+		const msgHash = this.getMessageToSign(descBytes, true);
+		const signature = wallet.sign(msgHash);
+		const tx = this._processSignaturePublicKeyAndDescriptor(signature, wallet.getPK(), descBytes);
 
 		return tx;
 	}
@@ -309,9 +314,10 @@ export abstract class BaseTransaction<TransactionObject> {
 	public abstract toJSON(): JsonTx;
 
 	// Accept the signature and public key values from the `sign` method, and convert this into a TransactionObject
-	protected abstract _processSignatureAndPublicKey(
+	protected abstract _processSignaturePublicKeyAndDescriptor(
 		signature: Uint8Array,
 		publicKey: Uint8Array,
+		descriptor: Uint8Array,
 	): TransactionObject;
 
 	/**

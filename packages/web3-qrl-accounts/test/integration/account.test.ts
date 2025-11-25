@@ -23,7 +23,6 @@ import {
 	encrypt,
 	hashMessage,
 	seedToAccount,
-	publicKeyToAddress,
 	recoverTransaction,
 	sign,
 	signTransaction,
@@ -34,14 +33,12 @@ import {
 	invalidEncryptData,
 	invalidKeyStore,
 	invalidSeedtoAccountData,
-	invalidPublicKeyToAddressData,
 	signatureRecoverData,
 	transactionsTestData,
 	validDecryptData,
 	validEncryptData,
 	validHashMessageData,
 	validSeedtoAccountData,
-	validPublicKeyToAddressData,
 } from '../fixtures/account';
 
 describe('accounts', () => {
@@ -58,24 +55,11 @@ describe('accounts', () => {
 			});
 		});
 	});
-	describe('publicKeyToAddress', () => {
-		describe('valid cases', () => {
-			it.each(validPublicKeyToAddressData)('%s', (input, output) => {
-				expect(publicKeyToAddress(input)).toEqual(output);
-			});
-		});
-
-		describe('invalid cases', () => {
-			it.each(invalidPublicKeyToAddressData)('%s', (input, output) => {
-				expect(() => publicKeyToAddress(input)).toThrow(output);
-			});
-		});
-	});
 
 	describe('seedToAccount', () => {
 		describe('valid cases', () => {
 			it.each(validSeedtoAccountData)('%s', (input, output) => {
-				expect(JSON.stringify(seedToAccount(input.address, input.ignoreLength))).toEqual(
+				expect(JSON.stringify(seedToAccount(input.address))).toEqual(
 					JSON.stringify(output),
 				);
 			});

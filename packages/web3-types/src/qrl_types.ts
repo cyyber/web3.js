@@ -303,6 +303,7 @@ interface TransactionBase {
 	gasLimit?: Numbers;
 	publicKey?: Bytes;
 	signature?: Bytes;
+	descriptor?: Bytes;
 }
 
 export interface Transaction extends TransactionBase {

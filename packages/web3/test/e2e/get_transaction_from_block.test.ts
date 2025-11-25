@@ -92,6 +92,7 @@ describe(`${getSystemTestBackend()} tests - getTransactionFromBlock`, () => {
 				type: expect.any(BigInt),
 				publicKey: expect.any(String),
 				signature: expect.any(String),
+				descriptor: expect.any(String),
 				to: null,
 				value: '0x0',
 			});

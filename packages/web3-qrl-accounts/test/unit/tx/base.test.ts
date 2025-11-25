@@ -15,8 +15,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 import { bytesToUint8Array, hexToBytes, uint8ArrayEquals } from '@theqrl/web3-utils';
-import { Dilithium } from '@theqrl/wallet.js';
-import { HexString } from '@theqrl/web3-types';
+import { newWalletFromExtendedSeed } from '@theqrl/wallet.js';
 import { FeeMarketEIP1559Transaction } from '../../../src';
 import { Chain, Common, Hardfork, toUint8Array, uint8ArrayToBigInt } from '../../../src/common';
 import { MAX_INTEGER, MAX_UINT64 } from '../../../src/tx/constants';
@@ -24,12 +23,6 @@ import { MAX_INTEGER, MAX_UINT64 } from '../../../src/tx/constants';
 import type { BaseTransaction } from '../../../src/tx/baseTransaction';
 import eip1559Fixtures from '../../fixtures/json/eip1559txs.json';
 
-const seedToPublic = function (seed: HexString): Uint8Array {
-	const _seed = hexToBytes(seed);
-	const buf = Buffer.from(_seed);
-	const d = new Dilithium(buf);
-	return d.getPK();
-};
 const common = new Common({
 	chain: 1,
 	hardfork: Hardfork.Shanghai,
@@ -168,12 +161,13 @@ describe('[BaseTransaction]', () => {
 						...tx,
 						publicKey: undefined,
 						signature: undefined,
+						descriptor: undefined,
 					}),
 				),
 			];
 			for (const tx of txs) {
 				expect(tx.isSigned()).toEqual(
-					tx.publicKey !== undefined && tx.signature !== undefined,
+					tx.publicKey !== undefined && tx.signature !== undefined && tx.descriptor !== undefined,
 				);
 			}
 		}
@@ -202,7 +196,9 @@ describe('[BaseTransaction]', () => {
 				const signedTx = tx.sign(hexToBytes(seed));
 				const txPubKey = signedTx.getSenderPublicKey();
 
-				const pubKeyFromSeed = seedToPublic(seed);
+				const wallet = newWalletFromExtendedSeed(seed);
+				const pubKeyFromSeed = wallet.getPK();
+
 				expect(uint8ArrayEquals(txPubKey, pubKeyFromSeed)).toBe(true);
 			}
 		}
@@ -233,9 +229,11 @@ describe('[BaseTransaction]', () => {
 			data: '',
 			publicKey: '',
 			signature: '',
+			descriptor: '',
 		});
 		expect(tx.publicKey).toBeUndefined();
 		expect(tx.signature).toBeUndefined();
+		expect(tx.descriptor).toBeUndefined();
 		expect(tx.to).toBeUndefined();
 		expect(tx.value).toBe(uint8ArrayToBigInt(uInt8ArrayZero));
 		expect(tx.data).toEqual(uInt8ArrayZero);

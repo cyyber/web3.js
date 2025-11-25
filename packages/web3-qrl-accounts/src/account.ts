@@ -51,14 +51,13 @@ import {
 	toChecksumAddress,
 	uint8ArrayConcat,
 	utf8ToHex,
-	hexToAddress,
 	uuidV4,
 } from '@theqrl/web3-utils';
 
 import { isHexStrict, isNullish, isString, validator } from '@theqrl/web3-validator';
 import { keyStoreSchema } from './schemas.js';
-import { CryptoPublicKeyBytes } from '@theqrl/dilithium5';
-import { Dilithium, getDilithiumAddressFromPK } from '@theqrl/wallet.js';
+import { CryptoPublicKeyBytes } from '@theqrl/mldsa87';
+import { newWalletFromExtendedSeed, Seed, newMLDSA87Descriptor, ExtendedSeed } from '@theqrl/wallet.js';
 import { TransactionFactory } from './tx/transactionFactory.js';
 import type { SignTransactionResult, TypedTransaction, Web3Account, SignResult } from './types.js';
 
@@ -130,11 +129,9 @@ export const hashMessage = (message: string): string => {
  * ```
  */
 export const sign = (data: string, seed: Bytes): SignResult => {
-	const seedUint8Array = parseAndValidateSeed(seed);
-	const buf = Buffer.from(seedUint8Array);
-	const acc = new Dilithium(buf);
+	const wallet = newWalletFromExtendedSeed(seed);
 	const hash = hashMessage(data);
-	const signature = acc.sign(hash.substring(2));
+	const signature = wallet.sign(hash.substring(2));
 
 	return {
 		message: data,
@@ -181,7 +178,7 @@ export const signTransaction = async (
 	// eslint-disable-next-line @typescript-eslint/require-await
 ): Promise<SignTransactionResult> => {
 	const signedTx = transaction.sign(hexToBytes(seed));
-	if (isNullish(signedTx.signature) || isNullish(signedTx.publicKey))
+	if (isNullish(signedTx.signature) || isNullish(signedTx.publicKey) || isNullish(signedTx.descriptor))
 		throw new TransactionSigningError('Signer Error');
 
 	const validationErrors = signedTx.validate(true);
@@ -198,7 +195,7 @@ export const signTransaction = async (
 	const txHash = sha3Raw(rawTx); // using keccak in web3-utils.sha3Raw instead of SHA3 (NIST Standard) as both are different
 
 	return {
-		messageHash: bytesToHex(signedTx.getMessageToSign(true)),
+		messageHash: bytesToHex(signedTx.getMessageToSign(signedTx.descriptor, true)),
 		signature: bytesToHex(signedTx.signature),
 		rawTransaction: rawTx,
 		transactionHash: bytesToHex(txHash),
@@ -224,24 +221,6 @@ export const recoverTransaction = (rawTransaction: HexString): Address => {
 };
 
 /**
- * Get the dilithium5 Address from a public key
- *
- * @param publicKey - String or Uint8Array of 4864 bytes
- * @returns The Dilithium5 address
- * @example
- * ```ts
- * publicKeyToAddress("0xbe6383dad004f233317e46ddb46ad31b16064d14447a95cc1d8c8d4bc61c3728")
- * > "QEB014f8c8B418Db6b45774c326A0E64C78914dC0"
- * ```
- */
-export const publicKeyToAddress = (publicKey: Bytes): string => {
-	const publicKeyUint8Array = parseAndValidatePublicKey(publicKey);
-	const address = getDilithiumAddressFromPK(publicKeyUint8Array);
-
-	return toChecksumAddress(hexToAddress(bytesToHex(address)));
-};
-
-/**
  * encrypt a private key seed with a password, returns a V1 JSON Keystore
  *
  * Read more: https://github.com/ethereum/wiki/wiki/Web3-Secret-Storage-Definition
@@ -255,7 +234,7 @@ export const publicKeyToAddress = (publicKey: Bytes): string => {
  * Encrypt using argon2id options
  * ```ts
  * encrypt(
- *   '0xdb4078ef7b6631dc329034cc20a969ccd470579b68c2c34897ac733dd72f8fb4fe5dad790336672c108189940eb7ed88', 
+ *   '0xcea755979937e2dc6137c0e51ba0d1eb2a44920cefffb1a860cf194ea7d23d694045fd2c8a72ec5aecf1e7e5bb591ff2', 
  *    '123',
  *    {
  *      m: 8192,
@@ -267,7 +246,7 @@ export const publicKeyToAddress = (publicKey: Bytes): string => {
  * {
  *   version: 1,
  *   id: '1b1dd3e2-ee6f-49c6-8a9b-a4722046582e',
- *   address: 'Q2086ea3853acf31bdeaa7d46f34360e8996d95c5',
+ *   address: 'Qcfec0cbee560cbd6ed89580204af71448f1fb8c5',
  *   crypto: {
  *     ciphertext: '02383d4ea331fdf518651aa638d77f36de002f6b2cb340712c2957b68f927234a9c87f776e40b61227aca366bd4b7056046dfdddee29df22290939a1e96f5be5',
  *     cipherparams: { iv: 'bfb43120ae00e9de110f8325' },
@@ -374,7 +353,7 @@ export const parseAndValidateSeed = (data: Bytes, ignoreLength?: boolean): Uint8
 	let seedUint8Array: Uint8Array;
 
 	// To avoid the case of 1 character less in a hex string which is prefixed with '0' by using 'bytesToUint8Array'
-	if (!ignoreLength && typeof data === 'string' && isHexStrict(data) && data.length !== 98) {
+	if (!ignoreLength && typeof data === 'string' && isHexStrict(data) && data.length !== 104) {
 		throw new SeedLengthError();
 	}
 
@@ -384,7 +363,7 @@ export const parseAndValidateSeed = (data: Bytes, ignoreLength?: boolean): Uint8
 		throw new InvalidSeedError();
 	}
 
-	if (!ignoreLength && seedUint8Array.byteLength !== 48) {
+	if (!ignoreLength && seedUint8Array.byteLength !== 51) {
 		throw new SeedLengthError();
 	}
 
@@ -402,25 +381,23 @@ export const parseAndValidateSeed = (data: Bytes, ignoreLength?: boolean): Uint8
  * Use {@link Web3.qrl.accounts.signTransaction} instead.
  *
  * ```ts
- * seedToAccount("0xdb4078ef7b6631dc329034cc20a969ccd470579b68c2c34897ac733dd72f8fb4fe5dad790336672c108189940eb7ed88");
+ * seedToAccount("0x010000cea755979937e2dc6137c0e51ba0d1eb2a44920cefffb1a860cf194ea7d23d694045fd2c8a72ec5aecf1e7e5bb591ff2");
  * >
  * {
- *   address: 'Q2086EA3853Acf31bDEaa7D46F34360e8996D95C5',
- *   seed: '0xdb4078ef7b6631dc329034cc20a969ccd470579b68c2c34897ac733dd72f8fb4fe5dad790336672c108189940eb7ed88',
+ *   address: 'QcfEC0CbEe560cbD6ED89580204AF71448F1fb8c5',
+ *   seed: '0x010000cea755979937e2dc6137c0e51ba0d1eb2a44920cefffb1a860cf194ea7d23d694045fd2c8a72ec5aecf1e7e5bb591ff2',
  *   signTransaction: [Function: signTransaction],
  *   sign: [Function: sign],
  *   encrypt: [Function: encrypt]
  * }
  * ```
  */
-export const seedToAccount = (seed: Bytes, ignoreLength?: boolean): Web3Account => {
-	const seedUint8Array = parseAndValidateSeed(seed, ignoreLength);
-	const buf = Buffer.from(seedUint8Array);
-	const acc = new Dilithium(buf);
+export const seedToAccount = (seed: Bytes): Web3Account => {
+	const acc = newWalletFromExtendedSeed(seed);
 
 	return {
-		address: publicKeyToAddress(acc.getPK()),
-		seed: acc.getHexSeed(),
+		address: toChecksumAddress(acc.getAddressStr()),
+		seed: bytesToHex(acc.getExtendedSeed().toBytes()),
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		signTransaction: (_tx: Transaction) => {
 			throw new TransactionSigningError('Do not have network access to sign the transaction');
@@ -428,7 +405,7 @@ export const seedToAccount = (seed: Bytes, ignoreLength?: boolean): Web3Account 
 		sign: (data: Record<string, unknown> | string) =>
 			sign(typeof data === 'string' ? data : JSON.stringify(data), seed),
 		encrypt: async (password: string, options?: Record<string, unknown>) =>
-		 	encrypt(seedUint8Array, password, options),
+		 	encrypt(acc.getExtendedSeed().toBytes(), password, options),
 	};
 };
 
@@ -441,8 +418,8 @@ export const seedToAccount = (seed: Bytes, ignoreLength?: boolean): Web3Account 
  * ```ts
  * web3.qrl.accounts.create();
  * {
- * address: 'QbD504f977021b5E5DdccD8741A368b147B3B38bB',
- * seed: '0x964ced1c69ad27a311c432fdc0d8211e987595f7eb34ab405a5f16bdc9563ec5',
+ * address: 'QcfEC0CbEe560cbD6ED89580204AF71448F1fb8c5',
+ * seed: '0x010000cea755979937e2dc6137c0e51ba0d1eb2a44920cefffb1a860cf194ea7d23d694045fd2c8a72ec5aecf1e7e5bb591ff2',
  * signTransaction: [Function: signTransaction],
  * sign: [Function: sign],
  * encrypt: [AsyncFunction: encrypt]
@@ -450,8 +427,10 @@ export const seedToAccount = (seed: Bytes, ignoreLength?: boolean): Web3Account 
  * ```
  */
 export const create = (): Web3Account => {
-	const seed = randomBytes(48);
-	return seedToAccount(seed);
+	const descriptor = newMLDSA87Descriptor();
+	const seed = Seed.from(randomBytes(48));
+	const extendedSeed = ExtendedSeed.newExtendedSeed(descriptor, seed);
+	return seedToAccount(extendedSeed.toBytes());
 };
 
 /**
@@ -467,7 +446,7 @@ export const create = (): Web3Account => {
  * decrypt({
  *   version: 1,
  *   id: '1b1dd3e2-ee6f-49c6-8a9b-a4722046582e',
- *   address: 'Q2086ea3853acf31bdeaa7d46f34360e8996d95c5',
+ *   address: 'Qcfec0cbee560cbd6ed89580204af71448f1fb8c5',
  *   crypto: {
  *     ciphertext: '02383d4ea331fdf518651aa638d77f36de002f6b2cb340712c2957b68f927234a9c87f776e40b61227aca366bd4b7056046dfdddee29df22290939a1e96f5be5',
  *     cipherparams: { iv: 'bfb43120ae00e9de110f8325' },
@@ -484,8 +463,8 @@ export const create = (): Web3Account => {
  * }, '123').then((res) => console.log(util.inspect(res, { depth: null })));
  * >
  * {
- *   address: 'Q2086EA3853Acf31bDEaa7D46F34360e8996D95C5',
- *   seed: '0xdb4078ef7b6631dc329034cc20a969ccd470579b68c2c34897ac733dd72f8fb4fe5dad790336672c108189940eb7ed88',
+ *   address: 'QcfEC0CbEe560cbD6ED89580204AF71448F1fb8c5',
+ *   seed: '0x010000cea755979937e2dc6137c0e51ba0d1eb2a44920cefffb1a860cf194ea7d23d694045fd2c8a72ec5aecf1e7e5bb591ff2',
  *   signTransaction: [Function: signTransaction],
  *   sign: [Function: sign],
  *   encrypt: [Function: encrypt]

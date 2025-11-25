@@ -1080,6 +1080,23 @@
   resolved "https://registry.yarnpkg.com/@noble/hashes/-/hashes-1.6.1.tgz#df6e5943edcea504bac61395926d6fd67869a0d5"
   integrity sha512-pq5D8h10hHBjyqX+cfBm0i8JUXJ0UhczFc4r74zbuT9XgewFo2E3J1cOaGtdZynILNmQ685YWGzGE1Zv6io50w==
 
+"@noble/hashes@1.7.0":
+  version "1.7.0"
+  resolved "https://registry.yarnpkg.com/@noble/hashes/-/hashes-1.7.0.tgz#5d9e33af2c7d04fee35de1519b80c958b2e35e39"
+  integrity sha512-HXydb0DgzTpDPwbVeDGCG1gIu7X6+AuU6Zl6av/E/KG8LMsvPntvq+w17CHRpKBmN6Ybdrt1eP3k4cj8DJa78w==
+
+"@noble/hashes@^1.8.0":
+  version "1.8.0"
+  resolved "https://registry.yarnpkg.com/@noble/hashes/-/hashes-1.8.0.tgz#cee43d801fcef9644b11b8194857695acd5f815a"
+  integrity sha512-jCs9ldd7NwzpgXDIf6P3+NrHh9/sD6CQdxHyjQI+h/6rDNo88ypBxxz45UDuZHz9r3tNz7N/VInSVoVdtXEI4A==
+
+"@noble/post-quantum@0.3.0":
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/@noble/post-quantum/-/post-quantum-0.3.0.tgz#cbc765a736d17f3ea17f2ee601ed91e52fe2cf51"
+  integrity sha512-RrwI6QqgToSwhyN9E9p+xwKi39k9pDxLy5A60u+murRupwUiKRrIrHMhKEuaZQ20+aAITU3Z/ZHtZ0hC6EKT/w==
+  dependencies:
+    "@noble/hashes" "1.7.0"
+
 "@noble/secp256k1@1.6.3", "@noble/secp256k1@~1.6.0":
   version "1.6.3"
   resolved "https://registry.yarnpkg.com/@noble/secp256k1/-/secp256k1-1.6.3.tgz#7eed12d9f4404b416999d0c87686836c4c5c9b94"
@@ -1829,14 +1846,6 @@
     "@ethersproject/strings" "^5.7.0"
     "@theqrl/web3-utils" "^0.3.0"
 
-"@theqrl/dilithium5@^0.0.9":
-  version "0.0.9"
-  resolved "https://registry.yarnpkg.com/@theqrl/dilithium5/-/dilithium5-0.0.9.tgz#f4b80654faf0f345fabc6420991c40063673baa9"
-  integrity sha512-GZAGr+XBLEcqNKnAMEDSJ7eubJv9Lbv9wfqZ1ELNo2ZFdaeqgeZDN7DxhT23bIyQ1/HWFssbJKHGJMaxFRYZRg==
-  dependencies:
-    randombytes "^2.1.0"
-    sha3 "^2.1.4"
-
 "@theqrl/hypc@^0.0.2":
   version "0.0.2"
   resolved "https://registry.yarnpkg.com/@theqrl/hypc/-/hypc-0.0.2.tgz#9030fa95906d718f306460e9f90f9ca7c5b05aa0"
@@ -1850,17 +1859,21 @@
     semver "^5.5.0"
     tmp "0.0.33"
 
+"@theqrl/mldsa87@file:../qrypto.js/packages/mldsa87":
+  version "0.1.0"
+  dependencies:
+    randombytes "^2.1.0"
+    sha3 "^2.1.4"
+
 "@theqrl/qrl-contracts@file:../qrl-contracts":
   version "0.1.0"
 
-"@theqrl/wallet.js@^0.1.0":
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/@theqrl/wallet.js/-/wallet.js-0.1.1.tgz#4a400d6aa8e886a2953ddbf6f43de1cee1f6d82b"
-  integrity sha512-AmR73Nbgfibi9L5tOS59m1E8+/8Me5VG03h/qpRZFcHqVYOYb1w0+PB6BiV55kEInavHVXyhUWU1+tJByv1tjw==
+"@theqrl/wallet.js@file:../wallet.js":
+  version "0.1.3"
   dependencies:
-    "@theqrl/dilithium5" "^0.0.9"
+    "@noble/hashes" "^1.8.0"
+    "@theqrl/mldsa87" "file:../../../Library/Caches/Yarn/v6/npm-@theqrl-wallet-js-0.1.3-1e94344e-d6a4-4496-a3fc-b9ba777f1868-1760177357479/node_modules/@theqrl/qrypto.js/packages/mldsa87"
     randombytes "^2.1.0"
-    sha3 "^2.1.4"
 
 "@tootallnate/once@2":
   version "2.0.0"
@@ -9532,6 +9545,7 @@ q@^1.5.1:
   dependencies:
     "@noble/curves" "1.0.0"
     "@noble/hashes" "1.6.1"
+    "@noble/post-quantum" "0.3.0"
 
 qs@6.10.3:
   version "6.10.3"

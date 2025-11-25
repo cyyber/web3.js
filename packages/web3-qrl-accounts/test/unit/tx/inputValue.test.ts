@@ -154,7 +154,7 @@ test('[Invalid Array Input values]', () => {
 		for (const txType of txTypes) {
 			let tx = TransactionFactory.fromTxData({ type: txType });
 			if (signed) {
-				tx = tx.sign(hexToBytes('42'.repeat(48)));
+				tx = tx.sign(hexToBytes('010000' + '42'.repeat(48)));
 			}
 			const rawValues = tx.raw();
 			for (let x = 0; x < rawValues.length; x += 1) {
@@ -218,7 +218,7 @@ test('[Invalid Access Lists]', () => {
 					tx = TransactionFactory.fromTxData({ type: txType });
 					if (signed) {
 						// eslint-disable-next-line @typescript-eslint/no-unsafe-call
-						tx = tx.sign(hexToBytes('42'.repeat(48)));
+						tx = tx.sign(hexToBytes('010000' + '42'.repeat(48)));
 					}
 				}
 				// eslint-disable-next-line @typescript-eslint/no-unsafe-call

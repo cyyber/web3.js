@@ -41,7 +41,7 @@ jest.mock('@theqrl/web3-net', () => ({
 }));
 
 describe('defaultTransactionBuilder', () => {
-	const expectedFrom = 'Q206E7Ec6854337F059BF6b637ac7cECd2F3D1933';
+	const expectedFrom = 'Q6e66597715136a50f44a01EcC6F15e6F611c1347';
 	const expectedNonce = '0x42';
 	const expectedGas = BigInt(21000);
 	const expectedGasLimit = expectedGas;
@@ -120,7 +120,7 @@ describe('defaultTransactionBuilder', () => {
 			transaction: input,
 			web3Context,
 			// VALID_QRL_BASE_TYPES.HexString,
-			// '0xe6768fa565489b1a11a8541782f7ece4cd791ac92dd6dee0c8c897bafae7dc0e5e43769916b6e2d285ad4919fb1dc7aa',
+			// '0x32c89a84a46859934c42dec330511fd3642e98f00575e74a44c486c8d112dbf19d7129cd61d3e6bd72c4f2f66e5556f3',
 			// overrideFunction,
 			fillGasPrice: true,
 		});
@@ -137,7 +137,7 @@ describe('defaultTransactionBuilder', () => {
 			const result = await defaultTransactionBuilder({
 				transaction: input,
 				web3Context,
-				seed: '0x71e121bdd81cdae8da5a9733bb6c1cd5a43feb8a2cc754a4aeb797cbc2054626e77c05ddad0182ef962233ca6c5906c6',
+				seed: '0x01000071e121bdd81cdae8da5a9733bb6c1cd5a43feb8a2cc754a4aeb797cbc2054626e77c05ddad0182ef962233ca6c5906c6',
 				fillGasPrice: true,
 			});
 			expect(result.from).toBe(expectedFrom);

@@ -34,7 +34,7 @@ describe('prepareTransactionForSigning', () => {
 
 	describe('should return an web3-utils/tx instance with expected properties', () => {
 		it.each(validTransactions)(
-			'mockBlock: %s\nexpectedTransaction: %s\nexpectedSeed: %s\nexpectedAddress: %s\nexpectedRlpEncodedTransaction: %s\nexpectedTransactionHash: %s\nexpectedMessageToSign: %s\nexpectedPublicKey: %s\nexpectedSignature: %s',
+			'mockBlock: %s\nexpectedTransaction: %s\nexpectedSeed: %s\nexpectedAddress: %s\nexpectedRlpEncodedTransaction: %s\nexpectedTransactionHash: %s\nexpectedMessageToSign: %s\nexpectedPublicKey: %s\nexpectedSignature: %s\nexpectedDescriptor: %s',
 			async (
 				mockBlock,
 				expectedTransaction,
@@ -45,6 +45,7 @@ describe('prepareTransactionForSigning', () => {
 				expectedMessageToSign,
 				expectedPublicKey,
 				expectedSignature,
+				expectedDescriptor,
 			) => {
 				// (i.e. requestManager, blockNumber, hydrated params), but that doesn't matter for the test
 				jest.spyOn(qrlRpcMethods, 'estimateGas').mockImplementation(
@@ -80,18 +81,23 @@ describe('prepareTransactionForSigning', () => {
 				expect(transactionHash).toBe(expectedTransactionHash);
 
 				// should be able to obtain expectedMessageToSign
-				const messageToSign = bytesToHex(signedTransaction.getMessageToSign());
+				const desc = signedTransaction.descriptor !== undefined ? signedTransaction.descriptor : Uint8Array.from([]);
+				const messageToSign = bytesToHex(signedTransaction.getMessageToSign(desc));
 				expect(messageToSign).toBe(expectedMessageToSign);
 
-				// should have expected public key and signature
+				// should have expected public key, signature and descriptor
 				const publicKey = !isNullish(signedTransaction.publicKey)
 					? bytesToHex(signedTransaction.publicKey)
 					: '';
 				const signature = !isNullish(signedTransaction.signature)
 					? bytesToHex(signedTransaction.signature)
 					: '';
+				const descriptor = !isNullish(signedTransaction.descriptor)
+					? bytesToHex(signedTransaction.descriptor)
+					: '';
 				expect(publicKey).toBe(expectedPublicKey);
 				expect(signature).toBe(expectedSignature);
+				expect(descriptor).toBe(expectedDescriptor);
 			},
 		);
 	});

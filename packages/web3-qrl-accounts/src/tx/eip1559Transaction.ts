@@ -73,7 +73,7 @@ export class FeeMarketEIP1559Transaction extends BaseTransaction<FeeMarketEIP155
 	 * Instantiate a transaction from a data dictionary.
 	 *
 	 * Format: { chainId, nonce, maxPriorityFeePerGas, maxFeePerGas, gasLimit, to, value, data,
-	 * accessList, publicKey, signature }
+	 * accessList, publicKey, signature, descriptor }
 	 *
 	 * Notes:
 	 * - `chainId` will be set automatically if not provided
@@ -87,7 +87,7 @@ export class FeeMarketEIP1559Transaction extends BaseTransaction<FeeMarketEIP155
 	 * Instantiate a transaction from the serialized tx.
 	 *
 	 * Format: `0x02 || rlp([chainId, nonce, maxPriorityFeePerGas, maxFeePerGas, gasLimit, to, value, data,
-	 * accessList, signature, publicKey])`
+	 * accessList, publicKey, signature, descriptor ])`
 	 */
 	public static fromSerializedTx(serialized: Uint8Array, opts: TxOptions = {}) {
 		if (!uint8ArrayEquals(serialized.subarray(0, 1), TRANSACTION_TYPE_UINT8ARRAY)) {
@@ -110,12 +110,12 @@ export class FeeMarketEIP1559Transaction extends BaseTransaction<FeeMarketEIP155
 	 * Create a transaction from a values array.
 	 *
 	 * Format: `[chainId, nonce, maxPriorityFeePerGas, maxFeePerGas, gasLimit, to, value, data,
-	 * accessList, publicKey, signature]`
+	 * accessList, publicKey, signature, descriptor]`
 	 */
 	public static fromValuesArray(values: FeeMarketEIP1559ValuesArray, opts: TxOptions = {}) {
-		if (values.length !== 9 && values.length !== 11) {
+		if (values.length !== 9 && values.length !== 12) {
 			throw new Error(
-				'Invalid EIP-1559 transaction. Only expecting 9 values (for unsigned tx) or 11 values (for signed tx).',
+				'Invalid EIP-1559 transaction. Only expecting 9 values (for unsigned tx) or 12 values (for signed tx).',
 			);
 		}
 
@@ -131,6 +131,7 @@ export class FeeMarketEIP1559Transaction extends BaseTransaction<FeeMarketEIP155
 			accessList,
 			publicKey,
 			signature,
+			descriptor,
 		] = values;
 
 		this._validateNotArray({ chainId });
@@ -155,6 +156,7 @@ export class FeeMarketEIP1559Transaction extends BaseTransaction<FeeMarketEIP155
 				accessList: accessList ?? [],
 				publicKey,
 				signature,
+				descriptor,
 			},
 			opts,
 		);
@@ -258,7 +260,7 @@ export class FeeMarketEIP1559Transaction extends BaseTransaction<FeeMarketEIP155
 	 * with {@link Block.fromValuesArray}.
 	 *
 	 * For an unsigned tx this method uses the empty Uint8Array values for the
-	 * signature parameters `v`, `r` and `s` for encoding. For an EIP-155 compliant
+	 * signature parameters for encoding. For an EIP-155 compliant
 	 * representation for external signing use {@link FeeMarketEIP1559Transaction.getMessageToSign}.
 	 */
 	public raw(): FeeMarketEIP1559ValuesArray {
@@ -274,6 +276,7 @@ export class FeeMarketEIP1559Transaction extends BaseTransaction<FeeMarketEIP155
 			this.accessList,
 			this.publicKey !== undefined ? this.publicKey : Uint8Array.from([]),
 			this.signature !== undefined ? this.signature : Uint8Array.from([]),
+			this.descriptor !== undefined ? this.descriptor : Uint8Array.from([]),
 		];
 	}
 
@@ -281,7 +284,7 @@ export class FeeMarketEIP1559Transaction extends BaseTransaction<FeeMarketEIP155
 	 * Returns the serialized encoding of the EIP-1559 transaction.
 	 *
 	 * Format: `0x02 || rlp([chainId, nonce, maxPriorityFeePerGas, maxFeePerGas, gasLimit, to, value, data,
-	 * accessList, signature, publickey])`
+	 * accessList, publickey, signature, descriptor])`
 	 *
 	 * Note that in contrast to the legacy tx serialization format this is not
 	 * valid RLP any more due to the raw tx type preceding and concatenated to
@@ -305,8 +308,9 @@ export class FeeMarketEIP1559Transaction extends BaseTransaction<FeeMarketEIP155
 	 *
 	 * @param hashMessage - Return hashed message if set to true (default: true)
 	 */
-	public getMessageToSign(hashMessage = true): Uint8Array {
+	public getMessageToSign(descriptor: Uint8Array, hashMessage = true): Uint8Array {
 		const base = this.raw().slice(0, 9);
+		base.push(descriptor);
 		const message = uint8ArrayConcat(TRANSACTION_TYPE_UINT8ARRAY, RLP.encode(base));
 		if (hashMessage) {
 			return keccak256(message);
@@ -340,7 +344,8 @@ export class FeeMarketEIP1559Transaction extends BaseTransaction<FeeMarketEIP155
 	 * Computes a sha3-256 hash which can be used to verify the signature
 	 */
 	public getMessageToVerifySignature(): Uint8Array {
-		return this.getMessageToSign();
+		const descriptor = this.descriptor !== undefined ? this.descriptor : Uint8Array.from([]);
+		return this.getMessageToSign(descriptor);
 	}
 
 	/**
@@ -355,7 +360,7 @@ export class FeeMarketEIP1559Transaction extends BaseTransaction<FeeMarketEIP155
 		return this.publicKey!;
 	}
 
-	public _processSignatureAndPublicKey(signature: Uint8Array, publicKey: Uint8Array) {
+	public _processSignaturePublicKeyAndDescriptor(signature: Uint8Array, publicKey: Uint8Array, descriptor: Uint8Array) {
 		const opts = { ...this.txOptions, common: this.common };
 
 		return FeeMarketEIP1559Transaction.fromTxData(
@@ -371,6 +376,7 @@ export class FeeMarketEIP1559Transaction extends BaseTransaction<FeeMarketEIP155
 				accessList: this.accessList,
 				publicKey,
 				signature,
+				descriptor,
 			},
 			opts,
 		);
@@ -394,6 +400,7 @@ export class FeeMarketEIP1559Transaction extends BaseTransaction<FeeMarketEIP155
 			accessList: accessListJSON,
 			publicKey: this.publicKey !== undefined ? bytesToHex(this.publicKey) : undefined,
 			signature: this.signature !== undefined ? bytesToHex(this.signature) : undefined,
+			descriptor: this.descriptor !== undefined ? bytesToHex(this.descriptor) : undefined,
 		};
 	}
 
