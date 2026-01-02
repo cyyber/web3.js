@@ -67,9 +67,10 @@ describe('Web3QRL.signTransaction', () => {
 
 		// Pulling out of toMatchObject to be compatiable with Cypress
 		expect(response.raw).toMatch(/0[xX][0-9a-fA-F]+/);
-		expect(response.tx.publicKey).toMatch(/0[xX][0-9a-fA-F]{64}/);
-		expect(response.tx.signature).toMatch(/0[xX][0-9a-fA-F]{64}/);
 		expect(response.tx.descriptor).toMatch(/0[xX][0-9a-fA-F]{6}/);
+		expect(response.tx.extraParams).toMatch(/0[xX][0-9a-fA-F]{0}/);
+		expect(response.tx.signature).toMatch(/0[xX][0-9a-fA-F]{64}/);
+		expect(response.tx.publicKey).toMatch(/0[xX][0-9a-fA-F]{64}/);
 	});
 
 	it('should sign a contract deployment', async () => {
@@ -102,8 +103,9 @@ describe('Web3QRL.signTransaction', () => {
 		expect(response).toMatchObject(expectedResponse);
 		// Pulling out of toMatchObject to be compatiable with Cypress
 		expect(response.raw).toMatch(/0[xX][0-9a-fA-F]+/);
-		expect(response.tx.publicKey).toMatch(/0[xX][0-9a-fA-F]{64}/);
-		expect(response.tx.signature).toMatch(/0[xX][0-9a-fA-F]{64}/);
 		expect(response.tx.descriptor).toMatch(/0[xX][0-9a-fA-F]{6}/);
+		expect(response.tx.extraParams).toMatch(/0[xX][0-9a-fA-F]{0}/);
+		expect(response.tx.signature).toMatch(/0[xX][0-9a-fA-F]{64}/);
+		expect(response.tx.publicKey).toMatch(/0[xX][0-9a-fA-F]{64}/);
 	});
 });

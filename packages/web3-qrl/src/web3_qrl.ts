@@ -469,9 +469,10 @@ export class Web3QRL extends Web3Context<Web3QRLExecutionAPI, RegisteredSubscrip
 	 *    maxFeePerGas: 2000000000n,
 	 *    maxPriorityFeePerGas: 0n,
 	 *    input: '0x',
+	 *    descriptor: '0x010000'
+	 *    extraParams: '0x'
 	 *    publicKey: '0x8b336c290f6d7b2af3ccb2c02203a8356cc7d5b150ab19cce549d55636a3a78c',
 	 *    signature: '0x5a83c6f816befc5cd4b0c997a347224a8aa002e5799c4b082a3ec726d0e9531d',
-	 *    descriptor: '0x010000'
 	 *  }
 	 *
 	 * web3.qrl.getTransaction(

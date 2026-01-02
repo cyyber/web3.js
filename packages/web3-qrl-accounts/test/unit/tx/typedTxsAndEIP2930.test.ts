@@ -92,9 +92,10 @@ describe('[FeeMarketEIP1559Transaction] -> EIP-2930 Compatibility', () => {
 			'maxPriorityFeePerGas',
 			'gasLimit',
 			'value',
-			'publicKey',
-			'signature',
 			'descriptor',
+			'extraParams',
+			'signature',
+			'publicKey',
 		];
 		const cases = [
 			10.1,

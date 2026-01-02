@@ -135,13 +135,16 @@ export const transactionSchema = {
 		gasLimit: {
 			format: 'uint',
 		},
-		publicKey: {
+		descriptor: {
+			format: 'bytes',
+		},
+		extraParams: {
 			format: 'bytes',
 		},
 		signature: {
 			format: 'bytes',
 		},
-		descriptor: {
+		publicKey: {
 			format: 'bytes',
 		},
 	},
@@ -202,13 +205,16 @@ export const transactionInfoSchema = {
 		gasLimit: {
 			format: 'uint',
 		},
-		publicKey: {
+		descriptor: {
+			format: 'bytes',
+		},
+		extraParams: {
 			format: 'bytes',
 		},
 		signature: {
 			format: 'bytes',
 		},
-		descriptor: {
+		publicKey: {
 			format: 'bytes',
 		},
 	},

@@ -73,7 +73,7 @@ export class FeeMarketEIP1559Transaction extends BaseTransaction<FeeMarketEIP155
 	 * Instantiate a transaction from a data dictionary.
 	 *
 	 * Format: { chainId, nonce, maxPriorityFeePerGas, maxFeePerGas, gasLimit, to, value, data,
-	 * accessList, publicKey, signature, descriptor }
+	 * accessList, descriptor, extraParams, signature, publicKey }
 	 *
 	 * Notes:
 	 * - `chainId` will be set automatically if not provided
@@ -87,7 +87,7 @@ export class FeeMarketEIP1559Transaction extends BaseTransaction<FeeMarketEIP155
 	 * Instantiate a transaction from the serialized tx.
 	 *
 	 * Format: `0x02 || rlp([chainId, nonce, maxPriorityFeePerGas, maxFeePerGas, gasLimit, to, value, data,
-	 * accessList, publicKey, signature, descriptor ])`
+	 * accessList, descriptor, extraParams, signature, publicKey ])`
 	 */
 	public static fromSerializedTx(serialized: Uint8Array, opts: TxOptions = {}) {
 		if (!uint8ArrayEquals(serialized.subarray(0, 1), TRANSACTION_TYPE_UINT8ARRAY)) {
@@ -110,7 +110,7 @@ export class FeeMarketEIP1559Transaction extends BaseTransaction<FeeMarketEIP155
 	 * Create a transaction from a values array.
 	 *
 	 * Format: `[chainId, nonce, maxPriorityFeePerGas, maxFeePerGas, gasLimit, to, value, data,
-	 * accessList, publicKey, signature, descriptor]`
+	 * accessList, descriptor, extraParams, signature, publicKey ]`
 	 */
 	public static fromValuesArray(values: FeeMarketEIP1559ValuesArray, opts: TxOptions = {}) {
 		if (values.length !== 9 && values.length !== 12) {
@@ -129,9 +129,10 @@ export class FeeMarketEIP1559Transaction extends BaseTransaction<FeeMarketEIP155
 			value,
 			data,
 			accessList,
-			publicKey,
-			signature,
 			descriptor,
+			extraParams,
+			signature,
+			publicKey,
 		] = values;
 
 		this._validateNotArray({ chainId });
@@ -398,9 +399,10 @@ export class FeeMarketEIP1559Transaction extends BaseTransaction<FeeMarketEIP155
 			value: bigIntToHex(this.value),
 			data: bytesToHex(this.data),
 			accessList: accessListJSON,
-			publicKey: this.publicKey !== undefined ? bytesToHex(this.publicKey) : undefined,
-			signature: this.signature !== undefined ? bytesToHex(this.signature) : undefined,
 			descriptor: this.descriptor !== undefined ? bytesToHex(this.descriptor) : undefined,
+			extraParams: this.extraParams !== undefined ? bytesToHex(this.extraParams) : undefined,
+			signature: this.signature !== undefined ? bytesToHex(this.signature) : undefined,
+			publicKey: this.publicKey !== undefined ? bytesToHex(this.publicKey) : undefined,
 		};
 	}
 
