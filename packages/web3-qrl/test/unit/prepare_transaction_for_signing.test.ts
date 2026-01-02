@@ -93,11 +93,11 @@ describe('prepareTransactionForSigning', () => {
 				const extraParams = !isNullish(signedTransaction.extraParams)
 					? bytesToHex(signedTransaction.extraParams)
 					: '';
-				const publicKey = !isNullish(signedTransaction.publicKey)
-					? bytesToHex(signedTransaction.publicKey)
-					: '';
 				const signature = !isNullish(signedTransaction.signature)
 					? bytesToHex(signedTransaction.signature)
+					: '';
+				const publicKey = !isNullish(signedTransaction.publicKey)
+					? bytesToHex(signedTransaction.publicKey)
 					: '';
 				expect(descriptor).toBe(expectedDescriptor);
 				expect(extraParams).toBe(expectedExtraParams);

@@ -161,8 +161,8 @@ describe('[BaseTransaction]', () => {
 						...tx,
 						descriptor: undefined,
 						extraParams: undefined,
-						publicKey: undefined,
 						signature: undefined,
+						publicKey: undefined,
 					}),
 				),
 			];
@@ -170,8 +170,8 @@ describe('[BaseTransaction]', () => {
 				expect(tx.isSigned()).toEqual(
 					tx.descriptor !== undefined &&
 					tx.extraParams !== undefined &&
-					tx.publicKey !== undefined && 
-					tx.signature !== undefined,
+					tx.signature !== undefined &&
+					tx.publicKey !== undefined,
 				);
 			}
 		}

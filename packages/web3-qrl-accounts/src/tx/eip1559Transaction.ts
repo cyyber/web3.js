@@ -155,9 +155,10 @@ export class FeeMarketEIP1559Transaction extends BaseTransaction<FeeMarketEIP155
 				value,
 				data,
 				accessList: accessList ?? [],
-				publicKey,
-				signature,
 				descriptor,
+				extraParams,
+				signature,
+				publicKey,
 			},
 			opts,
 		);
@@ -275,9 +276,10 @@ export class FeeMarketEIP1559Transaction extends BaseTransaction<FeeMarketEIP155
 			bigIntToUnpaddedUint8Array(this.value),
 			this.data,
 			this.accessList,
+			this.descriptor !== undefined ? this.descriptor : Uint8Array.from([]),
+			this.extraParams !== undefined ? this.extraParams : Uint8Array.from([]),
 			this.publicKey !== undefined ? this.publicKey : Uint8Array.from([]),
 			this.signature !== undefined ? this.signature : Uint8Array.from([]),
-			this.descriptor !== undefined ? this.descriptor : Uint8Array.from([]),
 		];
 	}
 
@@ -285,7 +287,7 @@ export class FeeMarketEIP1559Transaction extends BaseTransaction<FeeMarketEIP155
 	 * Returns the serialized encoding of the EIP-1559 transaction.
 	 *
 	 * Format: `0x02 || rlp([chainId, nonce, maxPriorityFeePerGas, maxFeePerGas, gasLimit, to, value, data,
-	 * accessList, publickey, signature, descriptor])`
+	 * accessList, descriptor, extraParams, signature, publickey ])`
 	 *
 	 * Note that in contrast to the legacy tx serialization format this is not
 	 * valid RLP any more due to the raw tx type preceding and concatenated to
@@ -361,7 +363,7 @@ export class FeeMarketEIP1559Transaction extends BaseTransaction<FeeMarketEIP155
 		return this.publicKey!;
 	}
 
-	public _processSignaturePublicKeyAndDescriptor(signature: Uint8Array, publicKey: Uint8Array, descriptor: Uint8Array) {
+	public _processAuthValues(descriptor: Uint8Array, extraParams: Uint8Array, signature: Uint8Array, publicKey: Uint8Array) {
 		const opts = { ...this.txOptions, common: this.common };
 
 		return FeeMarketEIP1559Transaction.fromTxData(
@@ -375,9 +377,10 @@ export class FeeMarketEIP1559Transaction extends BaseTransaction<FeeMarketEIP155
 				value: this.value,
 				data: this.data,
 				accessList: this.accessList,
-				publicKey,
-				signature,
 				descriptor,
+				extraParams,
+				signature,
+				publicKey,
 			},
 			opts,
 		);
