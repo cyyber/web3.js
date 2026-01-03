@@ -187,6 +187,7 @@ export type FeeMarketEIP1559ValuesArray = [
 	Uint8Array?,
 	Uint8Array?,
 	Uint8Array?,
+	Uint8Array?,
 ];
 
 type JsonAccessListItem = { address: string; storageKeys: string[] };

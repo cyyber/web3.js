@@ -113,9 +113,9 @@ export class FeeMarketEIP1559Transaction extends BaseTransaction<FeeMarketEIP155
 	 * accessList, descriptor, extraParams, signature, publicKey ]`
 	 */
 	public static fromValuesArray(values: FeeMarketEIP1559ValuesArray, opts: TxOptions = {}) {
-		if (values.length !== 9 && values.length !== 12) {
+		if (values.length !== 9 && values.length !== 13) {
 			throw new Error(
-				'Invalid EIP-1559 transaction. Only expecting 9 values (for unsigned tx) or 12 values (for signed tx).',
+				'Invalid EIP-1559 transaction. Only expecting 9 values (for unsigned tx) or 13 values (for signed tx).',
 			);
 		}
 
