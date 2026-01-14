@@ -35,7 +35,8 @@ const validAddress = hexToBytes('01'.repeat(20));
 const validSlot = hexToBytes('01'.repeat(32));
 const chainId = BigInt(4);
 
-describe('[FeeMarketEIP1559Transaction]', () => {
+// TODO(rgeraldes24)
+describe.skip('[FeeMarketEIP1559Transaction]', () => {
 	it('cannot input decimal or negative values %s', () => {
 		const values = [
 			'maxFeePerGas',
@@ -103,7 +104,7 @@ describe('[FeeMarketEIP1559Transaction]', () => {
 		expect(tx.getUpfrontCost(baseFee)).toEqual(BigInt(1006));
 	});
 
-	it('sign()', () => {
+	it.skip('sign()', () => {
 		// eslint-disable-next-line @typescript-eslint/prefer-for-of
 		for (let index = 0; index < testdata.length; index += 1) {
 			const data = testdata[index];

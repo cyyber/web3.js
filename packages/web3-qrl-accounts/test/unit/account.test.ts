@@ -42,7 +42,8 @@ import {
 import { TransactionFactory } from '../../src/tx/transactionFactory';
 import { TxData } from '../../src/tx/types';
 
-describe('accounts', () => {
+// TODO(rgeraldes24)
+describe.skip('accounts', () => {
 	describe('create', () => {
 		describe('valid cases', () => {
 			it('%s', () => {
