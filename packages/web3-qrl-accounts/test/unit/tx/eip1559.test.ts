@@ -178,11 +178,12 @@ describe.skip('[FeeMarketEIP1559Transaction]', () => {
 			'0x0b23ffbd208965302cabc5422c0cdf5314b931609ba18bb97d713afec7c12e20',
 		);
 		const desc = newMLDSA87Descriptor();
-		expect(unsignedTx.getMessageToSign(desc.toBytes(), true)).toEqual(expectedHash);
+		const extraParams = Uint8Array.from([]);
+		expect(unsignedTx.getMessageToSign(desc.toBytes(), extraParams, true)).toEqual(expectedHash);
 		const expectedSerialization = hexToBytes(
 			'0x02f85d04808080809401010101010101010101010101010101010101018083010200f838f7940101010101010101010101010101010101010101e1a0010101010101010101010101010101010101010101010101010101010101010183010000',
 		);
-		expect(unsignedTx.getMessageToSign(desc.toBytes(), false)).toEqual(expectedSerialization);
+		expect(unsignedTx.getMessageToSign(desc.toBytes(), extraParams, false)).toEqual(expectedSerialization);
 	});
 
 	it('toJSON()', () => {

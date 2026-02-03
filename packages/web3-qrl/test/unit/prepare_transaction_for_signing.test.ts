@@ -84,7 +84,8 @@ describe.skip('prepareTransactionForSigning', () => {
 
 				// should be able to obtain expectedMessageToSign
 				const desc = signedTransaction.descriptor !== undefined ? signedTransaction.descriptor : Uint8Array.from([]);
-				const messageToSign = bytesToHex(signedTransaction.getMessageToSign(desc));
+				const eparams = signedTransaction.extraParams !== undefined ? signedTransaction.extraParams : Uint8Array.from([]);
+				const messageToSign = bytesToHex(signedTransaction.getMessageToSign(desc, eparams));
 				expect(messageToSign).toBe(expectedMessageToSign);
 
 				// should have expected public key, signature and descriptor

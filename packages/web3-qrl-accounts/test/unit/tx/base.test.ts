@@ -124,8 +124,7 @@ describe('[BaseTransaction]', () => {
 		}
 	});
 
-	// TODO(rgeraldes24)
-	it.skip('verifySignature() -> invalid', () => {
+	it('verifySignature() -> invalid', () => {
 		for (const txType of txTypes) {
 			// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 			for (const txFixture of txType.fixtures.slice(0, 4)) {
@@ -170,7 +169,6 @@ describe('[BaseTransaction]', () => {
 			for (const tx of txs) {
 				expect(tx.isSigned()).toEqual(
 					tx.descriptor !== undefined &&
-					tx.extraParams !== undefined &&
 					tx.signature !== undefined &&
 					tx.publicKey !== undefined,
 				);
@@ -191,8 +189,7 @@ describe('[BaseTransaction]', () => {
 		}
 	});
 
-	// TODO(rgeraldes24)
-	it.skip('getSenderPublicKey()', () => {
+	it('getSenderPublicKey()', () => {
 		for (const txType of txTypes) {
 			for (const [i, tx] of txType.txs.entries()) {
 				const { seed } = txType.fixtures[i];
@@ -210,8 +207,7 @@ describe('[BaseTransaction]', () => {
 		}
 	});
 
-	// TODO(rgeraldes24)
-	it.skip('verifySignature()->valid', () => {
+	it('verifySignature()->valid', () => {
 		for (const txType of txTypes) {
 			for (const [i, tx] of txType.txs.entries()) {
 				const { seed } = txType.fixtures[i];

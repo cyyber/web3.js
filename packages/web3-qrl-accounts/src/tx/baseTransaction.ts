@@ -239,17 +239,16 @@ export abstract class BaseTransaction<TransactionObject> {
 	//
 	// Note: do not use code docs here since VS Studio is then not able to detect the
 	// comments from the inherited methods
-	public abstract getMessageToSign(descriptor: Uint8Array, hashMessage: false): Uint8Array | Uint8Array[];
-	public abstract getMessageToSign(descriptor: Uint8Array, hashMessage?: true): Uint8Array;
+	public abstract getMessageToSign(descriptor: Uint8Array, extraParams: Uint8Array, hashMessage: false): Uint8Array | Uint8Array[];
+	public abstract getMessageToSign(descriptor: Uint8Array, extraParams: Uint8Array, hashMessage?: true): Uint8Array;
 
 	public abstract hash(): Uint8Array;
 
 	public abstract getMessageToVerifySignature(): Uint8Array;
 
 	public isSigned(): boolean {
-		const { descriptor, extraParams, signature, publicKey } = this;
+		const { descriptor, signature, publicKey } = this;
 		if (descriptor === undefined || 
-			extraParams === undefined || 
 			signature === undefined || 
 			publicKey === undefined
 		) {
@@ -308,7 +307,8 @@ export abstract class BaseTransaction<TransactionObject> {
 
 		const wallet = newWalletFromExtendedSeed(seed);
 		const descBytes = wallet.getDescriptor().toBytes();
-		const msgHash = this.getMessageToSign(descBytes, true);
+		const extraParamsBytes = Uint8Array.from([]);
+		const msgHash = this.getMessageToSign(descBytes, extraParamsBytes, true);
 		const signature = wallet.sign(msgHash);
 		const tx = this._processAuthValues(descBytes, new Uint8Array(), signature, wallet.getPK());
 
