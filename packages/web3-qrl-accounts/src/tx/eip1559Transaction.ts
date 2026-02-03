@@ -278,8 +278,8 @@ export class FeeMarketEIP1559Transaction extends BaseTransaction<FeeMarketEIP155
 			this.accessList,
 			this.descriptor !== undefined ? this.descriptor : Uint8Array.from([]),
 			this.extraParams !== undefined ? this.extraParams : Uint8Array.from([]),
-			this.publicKey !== undefined ? this.publicKey : Uint8Array.from([]),
 			this.signature !== undefined ? this.signature : Uint8Array.from([]),
+			this.publicKey !== undefined ? this.publicKey : Uint8Array.from([]),
 		];
 	}
 

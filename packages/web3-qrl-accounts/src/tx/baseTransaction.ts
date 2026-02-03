@@ -310,7 +310,7 @@ export abstract class BaseTransaction<TransactionObject> {
 		const extraParamsBytes = Uint8Array.from([]);
 		const msgHash = this.getMessageToSign(descBytes, extraParamsBytes, true);
 		const signature = wallet.sign(msgHash);
-		const tx = this._processAuthValues(descBytes, new Uint8Array(), signature, wallet.getPK());
+		const tx = this._processAuthValues(descBytes, extraParamsBytes, signature, wallet.getPK());
 
 		return tx;
 	}

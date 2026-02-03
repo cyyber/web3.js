@@ -76,7 +76,6 @@ describe('[TransactionFactory]: Basic functions', () => {
 		}
 	});
 
-	// TODO(rgeraldes24)
 	it.skip('fromBlockBodyData() -> success cases', () => {
 		for (const txType of txTypes) {
 			const rawTx = txType.signed.serialize();
