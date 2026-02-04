@@ -36,7 +36,6 @@ export const expectedTransactionReceipt: TransactionReceipt = {
 	status: '0x1',
 };
 
-// TODO(rgeraldes24)
 /**
  * Array consists of:
  * - Test title
