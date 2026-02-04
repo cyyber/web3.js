@@ -39,7 +39,7 @@ const mockBlockData = {
 
 const testMessage =
 	'Title: %s\ninputSignedTransaction: %s\nexpectedTransactionHash: %s\nexpectedTransactionReceipt: %s\n';
-describe.skip('watchTransactionByPolling', () => {
+describe('watchTransactionByPolling', () => {
 	describe('should call getBlockByNumber', () => {
 		let web3Context: Web3Context<Web3QRLExecutionAPI>;
 
