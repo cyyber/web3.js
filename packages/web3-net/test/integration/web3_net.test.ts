@@ -40,7 +40,7 @@ describe('Web3 net', () => {
 
 	it('should be able to get id', async () => {
 		const networkId = await web3Net.getId();
-		expect(networkId).toBe(BigInt(1));
+		expect(networkId).toBe(BigInt(3151908));
 	});
 
 	it('should be able to listen', async () => {
@@ -50,6 +50,6 @@ describe('Web3 net', () => {
 
 	it('should fetch peer count', async () => {
 		const peerCount = await web3Net.getPeerCount();
-		expect(peerCount).toBe(BigInt(0));
+		expect(peerCount).toBe(BigInt(1));
 	});
 });

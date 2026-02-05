@@ -26,7 +26,7 @@ import {
 	waitForOpenConnection,
 } from '../fixtures/system_test_utils';
 
-describe('eth', () => {
+describe('qrl', () => {
 	let web3QRL: Web3QRL;
 
 	let clientUrl: string | SupportedProviders;
