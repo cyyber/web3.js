@@ -66,7 +66,7 @@ describe('Web3QRL.sendSignedTransaction', () => {
 			const transaction: InternalTransaction = {
 				nonce: accountNonce,
 				from: temp.address,
-				to: 'Q0000000000000000000000000000000000000000',
+				to: 'Q0000000000000000000000000000000000000010',
 				value: '0x1',
 				type: '0x2',
 				gas: '0x5208',
@@ -260,7 +260,7 @@ describe('Web3QRL.sendSignedTransaction', () => {
 		it('Should throw TransactionRevertInstructionError because gas too low', async () => {
 			const transaction: Transaction = {
 				from: tempAcc.address,
-				to: 'Q0000000000000000000000000000000000000000',
+				to: 'Q0000000000000000000000000000000000000010',
 				value: BigInt(1),
 				gas: 1,
 				maxFeePerGas: 1,

@@ -24,10 +24,10 @@ type rpcRequest struct {
 }
 
 type rpcResponse struct {
-	JSONRPC string           `json:"jsonrpc"`
-	Result  any              `json:"result,omitempty"`
+	JSONRPC string            `json:"jsonrpc"`
+	Result  any               `json:"result,omitempty"`
 	Error   *rpcResponseError `json:"error,omitempty"`
-	ID      json.RawMessage  `json:"id"`
+	ID      json.RawMessage   `json:"id"`
 }
 
 type rpcResponseError struct {
@@ -73,6 +73,7 @@ func main() {
 		"--http",
 		fmt.Sprintf("--http.port=%d", *httpPort),
 		"--suppress-bootwarn",
+		"--advanced",
 	}
 
 	cmd := exec.Command(*clefBin, clefArgs...)

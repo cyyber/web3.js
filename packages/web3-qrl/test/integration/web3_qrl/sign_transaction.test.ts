@@ -41,7 +41,7 @@ describe('Web3QRL.signTransaction', () => {
 		const transaction: Transaction = {
 			from: tempAcc.address,
 			nonce,
-			to: 'Q0000000000000000000000000000000000000000',
+			to: 'Q0000000000000000000000000000000000000010',
 			value: '0x1',
 			type: BigInt(2),
 			gas: 21000,

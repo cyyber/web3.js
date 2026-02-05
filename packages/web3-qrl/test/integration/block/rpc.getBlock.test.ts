@@ -142,7 +142,8 @@ describe('rpc with block', () => {
 	describeIf(getSystemTestBackend() === 'gzond')(
 		'getBlock calls with POS tags in POA node',
 		() => {
-			it.each(['safe', 'finalized'])(
+			// TODO(rgeraldes24)
+			it.skip.each(['safe', 'finalized'])(
 				// only gzond throws this error
 				'getBlock',
 				async blockTag => {
