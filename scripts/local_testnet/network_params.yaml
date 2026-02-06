@@ -1,6 +1,8 @@
 participants:
   - el_type: gzond
     el_image: qrledger/go-zond:stable
+    el_extra_params:
+      - "--gcmode=archive"
     cl_type: qrysm
     # cl_image: qrledger/qrysm:beacon-chain-latest
     cl_image: qrledger/qrysm-beacon
@@ -15,8 +17,8 @@ participants:
     use_remote_signer: true
     remote_signer_type: clef
 network_params:
-  seconds_per_slot: 6
-  slots_per_epoch: 3
+  seconds_per_slot: 3
+  slots_per_epoch: 6
   preset: "mainnet"
   prefunded_accounts: '{"QD5812F6cf4a0f645aA620CD57319a0Ed649Dd8f5": {"balance": "200000000000000000000000000QRL"}, "Qa5AEDb928f8300DE98C66bb4BB66b9bB137e9A17": {"balance": "200000000000000000000000000QRL"}, "Qcfec0cbee560cbd6ed89580204af71448f1fb8c5": {"balance": "200000000000000000000000000QRL"}, "Q33380cd8b47eed92b0dcd1ccca2ee84efd0c8b87": {"balance": "200000000000000000000000000QRL"}, "Q73308de47979b11dbd527534db61118010264612": {"balance": "200000000000000000000000000QRL"}, "Q7e93e63a4efe335543278c450914ddd021367956": {"balance": "200000000000000000000000000QRL"}, "Q6d36b90dc1558a51edfb86d2459ab6a46a6a55e5": {"balance": "200000000000000000000000000QRL"}, "Qfc9ed32c051759c88dc5e673940b72fc2f1eb480": {"balance": "200000000000000000000000000QRL"}, "Q32b364a797bc307149e9caaf0eed125a99c148a8": {"balance": "200000000000000000000000000QRL"}, "Q5880b045f70db5a8452007f8a7fdc21a4c114f1c": {"balance": "200000000000000000000000000QRL"}, "Q2865edce52ea4f22b8ee3bfd6d2eb721c72b64fd": {"balance": "200000000000000000000000000QRL"}, "Q50847b98252a1ac43adb267c4d396189e5954ade": {"balance": "200000000000000000000000000QRL"}}' # tx spammer/clef + scripts/accounts.json
   light_kdf_enabled: True
