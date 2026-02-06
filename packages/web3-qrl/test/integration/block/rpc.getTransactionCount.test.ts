@@ -27,8 +27,7 @@ import { BasicAbi, BasicBytecode } from '../../shared_fixtures/build/Basic';
 import { toAllVariants } from '../../shared_fixtures/utils';
 import { sendFewTxes } from '../helper';
 
-// TODO(rgeraldes24)
-describe.skip('rpc with block', () => {
+describe('rpc with block', () => {
 	let web3QRL: Web3QRL;
 	let clientUrl: string | SupportedProviders;
 

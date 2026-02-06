@@ -44,8 +44,7 @@ describe('defaults', () => {
 		await closeOpenConnection(web3QRL);
 	});
 
-	// TODO(rgeraldes24)
-	describe.skip('defaults', () => {
+	describe('defaults', () => {
 		it('should fail if QRL Node did not respond because of a high nonce', async () => {
 			// Make the test run faster by causing the timeout to happen after 0.2 second
 			web3QRL.transactionSendTimeout = 200;

@@ -60,8 +60,7 @@ describe('defaults', () => {
 		await closeOpenConnection(web3.qrl);
 	});
 
-	// TODO(rgeraldes24)
-	describe.skip('defaults', () => {
+	describe('defaults', () => {
 		it('should fail if transaction was not mined within `transactionBlockTimeout` blocks', async () => {
 			account1 = await createLocalAccount(web3);
 			account2 = await createLocalAccount(web3);

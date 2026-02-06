@@ -223,7 +223,7 @@ export const createAccountProvider = (context: Web3Context<QRLExecutionAPI>) => 
 };
 
 export const refillAccount = async (from: string, to: string, value: string | number) => {
-	const web3QRL = new Web3QRL(DEFAULT_SYSTEM_PROVIDER);
+	const web3QRL = new Web3QRL(getSystemTestProviderUrl());
 
 	await web3QRL.sendTransaction({
 		from,
@@ -239,7 +239,7 @@ export const createNewAccount = async (config?: {
 }): Promise<{ address: string; seed: string }> => {
 	const acc = config?.seed ? seedToAccount(config?.seed) : _createAccount();
 
-	const clientUrl = DEFAULT_SYSTEM_PROVIDER;
+	const clientUrl = getSystemTestProviderUrl();
 
 	if (config?.refill) {
 		const web3QRL = new Web3QRL(clientUrl);
@@ -394,7 +394,7 @@ export const waitForEvent = async (
 	});
 
 export const sendFewSampleTxs = async (cnt = 1) => {
-	const web3 = new Web3(DEFAULT_SYSTEM_PROVIDER);
+	const web3 = new Web3(getSystemTestProviderUrl());
 	const fromAcc = await createLocalAccount(web3);
 	const toAcc = createAccount();
 	const res = [];

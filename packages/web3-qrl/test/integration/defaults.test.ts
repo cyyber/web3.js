@@ -58,8 +58,7 @@ import { MsgSenderAbi, MsgSenderBytecode } from '../shared_fixtures/build/MsgSen
 import { getTransactionGasPricing } from '../../src/utils/get_transaction_gas_pricing';
 import { Resolve, sendFewTxes } from './helper';
 
-// TODO(rgeraldes24)
-describe.skip('defaults', () => {
+describe('defaults', () => {
 	let web3QRL: Web3QRL;
 	let qrl2: Web3QRL;
 	let clientUrl: string | SupportedProviders;
