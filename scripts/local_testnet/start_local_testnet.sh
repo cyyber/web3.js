@@ -65,6 +65,9 @@ fi
 kurtosis run --enclave $ENCLAVE_NAME /Users/ricardogeraldes/workspace/rgeraldes24/qrl-package --args-file $NETWORK_PARAMS_FILE
 
 echo "Started!"
-echo "Optional: enable clef auto-authorization + import scripts/accounts.json:"
-echo "  - ./scripts/local_testnet/setup_clef.sh -e $ENCLAVE_NAME"
-echo "  - yarn pos:clef:setup -- -e $ENCLAVE_NAME"
+echo "Running clef setup..."
+(
+  cd "$SCRIPT_DIR/../.."
+  yarn pos:clef:setup -- -e "$ENCLAVE_NAME"
+)
+echo "Clef setup completed."

@@ -4,6 +4,7 @@
 
 - Start: `yarn pos:start`
 - Stop: `yarn pos:stop`
+- `yarn pos:start` also runs `yarn pos:clef:setup` after the network is up.
 
 ## Clef: import accounts + auto-authorization
 
@@ -13,7 +14,7 @@ To:
 - import the seeds in `scripts/accounts.json` into the clef keystore, and
 - enable non-interactive signing (auto-approve + auto-password)
 
-run:
+run manually:
 
 - `yarn pos:clef:setup`
 
@@ -25,5 +26,4 @@ This will:
 
 - Default clef key password is `passwordpassword` (override with `CLEF_KEY_PASSWORD=...`).
 - This is meant for **local testing only**; it auto-approves signing requests.
-- If you tear down the enclave (`yarn pos:stop`) you’ll need to run `yarn pos:clef:setup` again after restarting.
-
+- If you tear down the enclave (`yarn pos:stop`), `yarn pos:start` will run clef setup again on the next start.
