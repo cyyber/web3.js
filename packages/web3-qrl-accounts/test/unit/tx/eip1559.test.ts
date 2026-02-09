@@ -103,7 +103,7 @@ describe('[FeeMarketEIP1559Transaction]', () => {
 		expect(tx.getUpfrontCost(baseFee)).toEqual(BigInt(1006));
 	});
 
-	it.skip('sign()', () => {
+	it('sign()', () => {
 		// eslint-disable-next-line @typescript-eslint/prefer-for-of
 		for (let index = 0; index < testdata.length; index += 1) {
 			const data = testdata[index];
