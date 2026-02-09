@@ -141,7 +141,7 @@ export default class WebSocketProvider<
 	protected _addSocketListeners(): void {
 		this._socketConnection?.addEventListener('open', this._onOpenHandler);
 		this._socketConnection?.addEventListener('message', this._onMessageHandler);
-		this._socketConnection?.addEventListener('close', e => this._onCloseHandler(e));
+		this._socketConnection?.addEventListener('close', this._onCloseHandler);
 		this._socketConnection?.addEventListener('error', this._onErrorHandler);
 	}
 

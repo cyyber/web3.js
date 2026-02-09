@@ -79,12 +79,11 @@ describeIf(isWs)('Support of Basic Auth', () => {
 		);
 	});
 	afterEach(async () => {
-		// make sure we try to close the connection after it is established
-		if (webSocketProvider.getStatus() === 'connecting') {
-			await waitForSocketConnect(webSocketProvider);
+		if (webSocketProvider.getStatus() !== 'disconnected') {
+			const closePromise = waitForCloseSocketConnection(webSocketProvider);
+			webSocketProvider.disconnect();
+			await closePromise;
 		}
-		webSocketProvider.disconnect();
-		await waitForCloseSocketConnection(webSocketProvider);
 	});
 	// eslint-disable-next-line jest/expect-expect
 	test('should connect with basic auth', async () => {

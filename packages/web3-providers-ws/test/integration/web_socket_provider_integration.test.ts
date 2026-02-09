@@ -64,11 +64,11 @@ describeIf(isWs)('WebSocketProvider - implemented methods', () => {
 		);
 	});
 	afterEach(async () => {
-		// make sure we try to close the connection after it is established
-		if (webSocketProvider.getStatus() === 'connecting') {
-			await waitForSocketConnect(webSocketProvider);
+		if (webSocketProvider.getStatus() !== 'disconnected') {
+			const closePromise = waitForCloseSocketConnection(webSocketProvider);
+			webSocketProvider.disconnect(1000);
+			await closePromise;
 		}
-		webSocketProvider.disconnect(1000);
 	});
 
 	describe('websocker provider tests', () => {
