@@ -159,15 +159,18 @@ describe('[BaseTransaction]', () => {
 				...txType.txs.map(tx =>
 					txType.class.fromTxData({
 						...tx,
-						publicKey: undefined,
-						signature: undefined,
 						descriptor: undefined,
+						extraParams: undefined,
+						signature: undefined,
+						publicKey: undefined,
 					}),
 				),
 			];
 			for (const tx of txs) {
 				expect(tx.isSigned()).toEqual(
-					tx.publicKey !== undefined && tx.signature !== undefined && tx.descriptor !== undefined,
+					tx.descriptor !== undefined &&
+					tx.signature !== undefined &&
+					tx.publicKey !== undefined,
 				);
 			}
 		}
@@ -227,13 +230,15 @@ describe('[BaseTransaction]', () => {
 			to: '',
 			value: '',
 			data: '',
-			publicKey: '',
-			signature: '',
 			descriptor: '',
+			extraParams: '',
+			signature: '',
+			publicKey: '',
 		});
-		expect(tx.publicKey).toBeUndefined();
-		expect(tx.signature).toBeUndefined();
 		expect(tx.descriptor).toBeUndefined();
+		expect(tx.extraParams).toBeUndefined();
+		expect(tx.signature).toBeUndefined();
+		expect(tx.publicKey).toBeUndefined();
 		expect(tx.to).toBeUndefined();
 		expect(tx.value).toBe(uint8ArrayToBigInt(uInt8ArrayZero));
 		expect(tx.data).toEqual(uInt8ArrayZero);

@@ -110,8 +110,8 @@ const baseTxValues = {
 	gasLimit: generateBigIntLikeValues(100000),
 	nonce: generateBigIntLikeValues(0),
 	to: generateAddressLikeValues('Q0000000000000000000000000000000000000000'),
-	publicKey: generateBigIntLikeValues(100),
 	signature: generateBigIntLikeValues(100),
+	publicKey: generateBigIntLikeValues(100),
 	value: generateBigIntLikeValues(10),
 };
 

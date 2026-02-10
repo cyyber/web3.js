@@ -73,7 +73,7 @@ export class FeeMarketEIP1559Transaction extends BaseTransaction<FeeMarketEIP155
 	 * Instantiate a transaction from a data dictionary.
 	 *
 	 * Format: { chainId, nonce, maxPriorityFeePerGas, maxFeePerGas, gasLimit, to, value, data,
-	 * accessList, publicKey, signature, descriptor }
+	 * accessList, descriptor, extraParams, signature, publicKey }
 	 *
 	 * Notes:
 	 * - `chainId` will be set automatically if not provided
@@ -87,7 +87,7 @@ export class FeeMarketEIP1559Transaction extends BaseTransaction<FeeMarketEIP155
 	 * Instantiate a transaction from the serialized tx.
 	 *
 	 * Format: `0x02 || rlp([chainId, nonce, maxPriorityFeePerGas, maxFeePerGas, gasLimit, to, value, data,
-	 * accessList, publicKey, signature, descriptor ])`
+	 * accessList, descriptor, extraParams, signature, publicKey ])`
 	 */
 	public static fromSerializedTx(serialized: Uint8Array, opts: TxOptions = {}) {
 		if (!uint8ArrayEquals(serialized.subarray(0, 1), TRANSACTION_TYPE_UINT8ARRAY)) {
@@ -110,12 +110,12 @@ export class FeeMarketEIP1559Transaction extends BaseTransaction<FeeMarketEIP155
 	 * Create a transaction from a values array.
 	 *
 	 * Format: `[chainId, nonce, maxPriorityFeePerGas, maxFeePerGas, gasLimit, to, value, data,
-	 * accessList, publicKey, signature, descriptor]`
+	 * accessList, descriptor, extraParams, signature, publicKey ]`
 	 */
 	public static fromValuesArray(values: FeeMarketEIP1559ValuesArray, opts: TxOptions = {}) {
-		if (values.length !== 9 && values.length !== 12) {
+		if (values.length !== 9 && values.length !== 13) {
 			throw new Error(
-				'Invalid EIP-1559 transaction. Only expecting 9 values (for unsigned tx) or 12 values (for signed tx).',
+				'Invalid EIP-1559 transaction. Only expecting 9 values (for unsigned tx) or 13 values (for signed tx).',
 			);
 		}
 
@@ -129,9 +129,10 @@ export class FeeMarketEIP1559Transaction extends BaseTransaction<FeeMarketEIP155
 			value,
 			data,
 			accessList,
-			publicKey,
-			signature,
 			descriptor,
+			extraParams,
+			signature,
+			publicKey,
 		] = values;
 
 		this._validateNotArray({ chainId });
@@ -154,9 +155,10 @@ export class FeeMarketEIP1559Transaction extends BaseTransaction<FeeMarketEIP155
 				value,
 				data,
 				accessList: accessList ?? [],
-				publicKey,
-				signature,
 				descriptor,
+				extraParams,
+				signature,
+				publicKey,
 			},
 			opts,
 		);
@@ -274,9 +276,10 @@ export class FeeMarketEIP1559Transaction extends BaseTransaction<FeeMarketEIP155
 			bigIntToUnpaddedUint8Array(this.value),
 			this.data,
 			this.accessList,
-			this.publicKey !== undefined ? this.publicKey : Uint8Array.from([]),
-			this.signature !== undefined ? this.signature : Uint8Array.from([]),
 			this.descriptor !== undefined ? this.descriptor : Uint8Array.from([]),
+			this.extraParams !== undefined ? this.extraParams : Uint8Array.from([]),
+			this.signature !== undefined ? this.signature : Uint8Array.from([]),
+			this.publicKey !== undefined ? this.publicKey : Uint8Array.from([]),
 		];
 	}
 
@@ -284,7 +287,7 @@ export class FeeMarketEIP1559Transaction extends BaseTransaction<FeeMarketEIP155
 	 * Returns the serialized encoding of the EIP-1559 transaction.
 	 *
 	 * Format: `0x02 || rlp([chainId, nonce, maxPriorityFeePerGas, maxFeePerGas, gasLimit, to, value, data,
-	 * accessList, publickey, signature, descriptor])`
+	 * accessList, descriptor, extraParams, signature, publickey ])`
 	 *
 	 * Note that in contrast to the legacy tx serialization format this is not
 	 * valid RLP any more due to the raw tx type preceding and concatenated to
@@ -308,9 +311,10 @@ export class FeeMarketEIP1559Transaction extends BaseTransaction<FeeMarketEIP155
 	 *
 	 * @param hashMessage - Return hashed message if set to true (default: true)
 	 */
-	public getMessageToSign(descriptor: Uint8Array, hashMessage = true): Uint8Array {
+	public getMessageToSign(descriptor: Uint8Array, extraParams: Uint8Array, hashMessage = true): Uint8Array {
 		const base = this.raw().slice(0, 9);
 		base.push(descriptor);
+		base.push(extraParams);
 		const message = uint8ArrayConcat(TRANSACTION_TYPE_UINT8ARRAY, RLP.encode(base));
 		if (hashMessage) {
 			return keccak256(message);
@@ -345,7 +349,8 @@ export class FeeMarketEIP1559Transaction extends BaseTransaction<FeeMarketEIP155
 	 */
 	public getMessageToVerifySignature(): Uint8Array {
 		const descriptor = this.descriptor !== undefined ? this.descriptor : Uint8Array.from([]);
-		return this.getMessageToSign(descriptor);
+		const extraParams = this.extraParams !== undefined ? this.extraParams : Uint8Array.from([]);
+		return this.getMessageToSign(descriptor, extraParams);
 	}
 
 	/**
@@ -360,7 +365,7 @@ export class FeeMarketEIP1559Transaction extends BaseTransaction<FeeMarketEIP155
 		return this.publicKey!;
 	}
 
-	public _processSignaturePublicKeyAndDescriptor(signature: Uint8Array, publicKey: Uint8Array, descriptor: Uint8Array) {
+	public _processAuthValues(descriptor: Uint8Array, extraParams: Uint8Array, signature: Uint8Array, publicKey: Uint8Array) {
 		const opts = { ...this.txOptions, common: this.common };
 
 		return FeeMarketEIP1559Transaction.fromTxData(
@@ -374,9 +379,10 @@ export class FeeMarketEIP1559Transaction extends BaseTransaction<FeeMarketEIP155
 				value: this.value,
 				data: this.data,
 				accessList: this.accessList,
-				publicKey,
-				signature,
 				descriptor,
+				extraParams,
+				signature,
+				publicKey,
 			},
 			opts,
 		);
@@ -398,9 +404,10 @@ export class FeeMarketEIP1559Transaction extends BaseTransaction<FeeMarketEIP155
 			value: bigIntToHex(this.value),
 			data: bytesToHex(this.data),
 			accessList: accessListJSON,
-			publicKey: this.publicKey !== undefined ? bytesToHex(this.publicKey) : undefined,
-			signature: this.signature !== undefined ? bytesToHex(this.signature) : undefined,
 			descriptor: this.descriptor !== undefined ? bytesToHex(this.descriptor) : undefined,
+			extraParams: this.extraParams !== undefined ? bytesToHex(this.extraParams) : undefined,
+			signature: this.signature !== undefined ? bytesToHex(this.signature) : undefined,
+			publicKey: this.publicKey !== undefined ? bytesToHex(this.publicKey) : undefined,
 		};
 	}
 

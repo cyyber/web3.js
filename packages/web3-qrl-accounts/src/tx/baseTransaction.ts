@@ -54,9 +54,10 @@ export abstract class BaseTransaction<TransactionObject> {
 	public readonly value: bigint;
 	public readonly data: Uint8Array;
 
-	public readonly publicKey?: Uint8Array;
-	public readonly signature?: Uint8Array;
 	public readonly descriptor?: Uint8Array;
+	public readonly extraParams?: Uint8Array;
+	public readonly signature?: Uint8Array;
+	public readonly publicKey?: Uint8Array;
 
 	public readonly common!: Common;
 
@@ -86,7 +87,7 @@ export abstract class BaseTransaction<TransactionObject> {
 	protected DEFAULT_HARDFORK: string | Hardfork = Hardfork.Shanghai;
 
 	public constructor(txData: FeeMarketEIP1559TxData, opts: TxOptions) {
-		const { nonce, gasLimit, to, value, data, publicKey, signature, descriptor, type } = txData;
+		const { nonce, gasLimit, to, value, data, descriptor, extraParams, signature, publicKey, type } = txData;
 		this._type = Number(uint8ArrayToBigInt(toUint8Array(type)));
 
 		this.txOptions = opts;
@@ -106,9 +107,10 @@ export abstract class BaseTransaction<TransactionObject> {
 			toB = toUint8Array(to);
 		}
 
+		const descriptorB = toUint8Array(descriptor === '' ? '0x' : descriptor);
+		const extraParamsB = toUint8Array(extraParams === '' ? '0x' : extraParams);
 		const signatureB = toUint8Array(signature === '' ? '0x' : signature);
 		const publicKeyB = toUint8Array(publicKey === '' ? '0x' : publicKey);
-		const descriptorB = toUint8Array(descriptor === '' ? '0x' : descriptor);
 
 		this.nonce = uint8ArrayToBigInt(toUint8Array(nonce === '' ? '0x' : nonce));
 		this.gasLimit = uint8ArrayToBigInt(toUint8Array(gasLimit === '' ? '0x' : gasLimit));
@@ -116,9 +118,10 @@ export abstract class BaseTransaction<TransactionObject> {
 		this.value = uint8ArrayToBigInt(toUint8Array(value === '' ? '0x' : value));
 		this.data = toUint8Array(data === '' ? '0x' : data);
 
+		this.descriptor = descriptorB.length > 0 ? descriptorB : undefined;
+		this.extraParams = extraParamsB.length > 0 ? extraParamsB : undefined;
 		this.signature = signatureB.length > 0 ? signatureB : undefined;
 		this.publicKey = publicKeyB.length > 0 ? publicKeyB : undefined;
-		this.descriptor = descriptorB.length > 0 ? descriptorB : undefined;
 		
 		this._validateCannotExceedMaxInteger({ value: this.value });
 
@@ -236,16 +239,19 @@ export abstract class BaseTransaction<TransactionObject> {
 	//
 	// Note: do not use code docs here since VS Studio is then not able to detect the
 	// comments from the inherited methods
-	public abstract getMessageToSign(descriptor: Uint8Array, hashMessage: false): Uint8Array | Uint8Array[];
-	public abstract getMessageToSign(descriptor: Uint8Array, hashMessage?: true): Uint8Array;
+	public abstract getMessageToSign(descriptor: Uint8Array, extraParams: Uint8Array, hashMessage: false): Uint8Array | Uint8Array[];
+	public abstract getMessageToSign(descriptor: Uint8Array, extraParams: Uint8Array, hashMessage?: true): Uint8Array;
 
 	public abstract hash(): Uint8Array;
 
 	public abstract getMessageToVerifySignature(): Uint8Array;
 
 	public isSigned(): boolean {
-		const { publicKey, signature, descriptor } = this;
-		if (signature === undefined || publicKey === undefined || descriptor === undefined) {
+		const { descriptor, signature, publicKey } = this;
+		if (descriptor === undefined || 
+			signature === undefined || 
+			publicKey === undefined
+		) {
 			return false;
 		}
 		return true;
@@ -256,7 +262,7 @@ export abstract class BaseTransaction<TransactionObject> {
 	 */
 	public verifySignature(): boolean {
 		const msgHash = this.getMessageToVerifySignature();
-		const { publicKey, signature, descriptor } = this;
+		const { descriptor, signature, publicKey } = this;
 		
 		try {
 			const desc = Descriptor.from(descriptor!);
@@ -275,7 +281,7 @@ export abstract class BaseTransaction<TransactionObject> {
 	 * Returns the sender's address
 	 */
 	public getSenderAddress(): Address {
-		const { publicKey, descriptor } = this;
+		const { descriptor, publicKey } = this;
 		return new Address(Address.publicKeyAndDescriptorToAddress(publicKey!, descriptor!));
 	}
 
@@ -301,9 +307,10 @@ export abstract class BaseTransaction<TransactionObject> {
 
 		const wallet = newWalletFromExtendedSeed(seed);
 		const descBytes = wallet.getDescriptor().toBytes();
-		const msgHash = this.getMessageToSign(descBytes, true);
+		const extraParamsBytes = Uint8Array.from([]);
+		const msgHash = this.getMessageToSign(descBytes, extraParamsBytes, true);
 		const signature = wallet.sign(msgHash);
-		const tx = this._processSignaturePublicKeyAndDescriptor(signature, wallet.getPK(), descBytes);
+		const tx = this._processAuthValues(descBytes, extraParamsBytes, signature, wallet.getPK());
 
 		return tx;
 	}
@@ -314,10 +321,11 @@ export abstract class BaseTransaction<TransactionObject> {
 	public abstract toJSON(): JsonTx;
 
 	// Accept the signature and public key values from the `sign` method, and convert this into a TransactionObject
-	protected abstract _processSignaturePublicKeyAndDescriptor(
+	protected abstract _processAuthValues(
+		descriptor: Uint8Array,
+		extraParams: Uint8Array,
 		signature: Uint8Array,
 		publicKey: Uint8Array,
-		descriptor: Uint8Array,
 	): TransactionObject;
 
 	/**

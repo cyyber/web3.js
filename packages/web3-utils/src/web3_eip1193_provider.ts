@@ -37,6 +37,12 @@ export abstract class Eip1193Provider<
 	private _chainId: HexString = '';
 	private _accounts: HexString[] = [];
 
+	protected _emitError(error: unknown): void {
+		if (this._eventEmitter.listenerCount('error') > 0) {
+			this._eventEmitter.emit('error', error);
+		}
+	}
+
 	private async _getChainId(): Promise<HexString> {
 		const data = await (this as Web3BaseProvider<API>).request<
 			Web3APIMethod<API>,
@@ -69,10 +75,7 @@ export abstract class Eip1193Provider<
 						this._eventEmitter.emit('chainChanged', this._chainId);
 					}
 				})
-				.catch(err => {
-					// todo: add error handler
-					console.error(err);
-				}),
+				.catch(err => this._emitError(err)),
 
 			this._getAccounts()
 				.then(accounts => {
@@ -86,22 +89,14 @@ export abstract class Eip1193Provider<
 						this._onAccountsChanged();
 					}
 				})
-				.catch(err => {
-					// todo: add error handler
-					// eslint-disable-next-line no-console
-					console.error(err);
-				}),
+				.catch(err => this._emitError(err)),
 		])
 			.then(() =>
 				this._eventEmitter.emit('connect', {
 					chainId: this._chainId,
 				} as ProviderConnectInfo),
 			)
-			.catch(err => {
-				// todo: add error handler
-				// eslint-disable-next-line no-console
-				console.error(err);
-			});
+			.catch(err => this._emitError(err));
 	}
 
 	// todo this must be ProvideRpcError with a message too

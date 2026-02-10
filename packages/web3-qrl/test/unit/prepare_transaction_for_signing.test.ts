@@ -34,7 +34,7 @@ describe('prepareTransactionForSigning', () => {
 
 	describe('should return an web3-utils/tx instance with expected properties', () => {
 		it.each(validTransactions)(
-			'mockBlock: %s\nexpectedTransaction: %s\nexpectedSeed: %s\nexpectedAddress: %s\nexpectedRlpEncodedTransaction: %s\nexpectedTransactionHash: %s\nexpectedMessageToSign: %s\nexpectedPublicKey: %s\nexpectedSignature: %s\nexpectedDescriptor: %s',
+			'mockBlock: %s\nexpectedTransaction: %s\nexpectedSeed: %s\nexpectedAddress: %s\nexpectedRlpEncodedTransaction: %s\nexpectedTransactionHash: %s\nexpectedMessageToSign: %s\nnexpectedDescriptor: %s\nexpectedExtraParams: %s\nexpectedSignature: %s\nexpectedPublicKey: %s',
 			async (
 				mockBlock,
 				expectedTransaction,
@@ -43,9 +43,10 @@ describe('prepareTransactionForSigning', () => {
 				expectedRlpEncodedTransaction,
 				expectedTransactionHash,
 				expectedMessageToSign,
-				expectedPublicKey,
-				expectedSignature,
 				expectedDescriptor,
+				expectedExtraParams,
+				expectedSignature,
+				expectedPublicKey,
 			) => {
 				// (i.e. requestManager, blockNumber, hydrated params), but that doesn't matter for the test
 				jest.spyOn(qrlRpcMethods, 'estimateGas').mockImplementation(
@@ -82,22 +83,27 @@ describe('prepareTransactionForSigning', () => {
 
 				// should be able to obtain expectedMessageToSign
 				const desc = signedTransaction.descriptor !== undefined ? signedTransaction.descriptor : Uint8Array.from([]);
-				const messageToSign = bytesToHex(signedTransaction.getMessageToSign(desc));
+				const eparams = signedTransaction.extraParams !== undefined ? signedTransaction.extraParams : Uint8Array.from([]);
+				const messageToSign = bytesToHex(signedTransaction.getMessageToSign(desc, eparams));
 				expect(messageToSign).toBe(expectedMessageToSign);
 
 				// should have expected public key, signature and descriptor
-				const publicKey = !isNullish(signedTransaction.publicKey)
-					? bytesToHex(signedTransaction.publicKey)
+				const descriptor = !isNullish(signedTransaction.descriptor)
+					? bytesToHex(signedTransaction.descriptor)
+					: '';
+				const extraParams = !isNullish(signedTransaction.extraParams)
+					? bytesToHex(signedTransaction.extraParams)
 					: '';
 				const signature = !isNullish(signedTransaction.signature)
 					? bytesToHex(signedTransaction.signature)
 					: '';
-				const descriptor = !isNullish(signedTransaction.descriptor)
-					? bytesToHex(signedTransaction.descriptor)
+				const publicKey = !isNullish(signedTransaction.publicKey)
+					? bytesToHex(signedTransaction.publicKey)
 					: '';
-				expect(publicKey).toBe(expectedPublicKey);
-				expect(signature).toBe(expectedSignature);
 				expect(descriptor).toBe(expectedDescriptor);
+				expect(extraParams).toBe(expectedExtraParams);
+				expect(signature).toBe(expectedSignature);
+				expect(publicKey).toBe(expectedPublicKey);
 			},
 		);
 	});

@@ -27,7 +27,6 @@ import {
 	waitForSocketConnect,
 	isWs,
 	waitForCloseSocketConnection,
-	waitForEvent,
 } from '../fixtures/system_test_utils';
 
 describeIf(isWs && !isBrowser)('WebSocketProvider - reconnection', () => {
@@ -71,14 +70,14 @@ describeIf(isWs && !isBrowser)('WebSocketProvider - reconnection', () => {
 		it('should emit connect and disconnected events', async () => {
 			const server = await createProxy(18545, getSystemTestProviderUrl());
 			const web3Provider = new WebSocketProvider(server.path, {}, reconnectionOptions);
-			expect(!!(await waitForEvent(web3Provider, 'connect'))).toBe(true);
+			await waitForSocketConnect(web3Provider);
 			// @ts-expect-error set protected option
 			web3Provider._reconnectOptions = {
 				...reconnectionOptions,
 				autoReconnect: false,
 			};
 
-			const disconnectPromise = waitForEvent(web3Provider, 'disconnect');
+			const disconnectPromise = waitForCloseSocketConnection(web3Provider);
 			// @ts-expect-error read protected property
 			expect(web3Provider.isReconnecting).toBe(false);
 			await server.close();
@@ -89,15 +88,17 @@ describeIf(isWs && !isBrowser)('WebSocketProvider - reconnection', () => {
 		it('should connect, disconnect and reconnect', async () => {
 			const server = await createProxy(18546, getSystemTestProviderUrl());
 			const web3Provider = new WebSocketProvider(server.path, {}, reconnectionOptions);
-			expect(!!(await waitForEvent(web3Provider, 'connect'))).toBe(true);
-			web3Provider.disconnect(1002);
+			await waitForSocketConnect(web3Provider);
+			const closeEvent = waitForCloseSocketConnection(web3Provider);
 			await server.close();
-			const connectEvent = waitForEvent(web3Provider, 'connect');
+			await closeEvent;
+			const connectEvent = waitForSocketConnect(web3Provider);
 			const server2 = await createProxy(18546, getSystemTestProviderUrl());
 			expect(!!(await connectEvent)).toBe(true);
 
+			const disconnectEvent = waitForCloseSocketConnection(web3Provider);
 			web3Provider.disconnect();
-			await waitForEvent(web3Provider, 'disconnect');
+			await disconnectEvent;
 			await server2.close();
 		});
 		it('should connect, disconnect, try reconnect and reach max attempts', async () => {
@@ -111,7 +112,7 @@ describeIf(isWs && !isBrowser)('WebSocketProvider - reconnection', () => {
 					maxAttempts: 3,
 				},
 			);
-			expect(!!(await waitForEvent(web3Provider, 'connect'))).toBe(true);
+			await waitForSocketConnect(web3Provider);
 
 			// @ts-expect-error replace close handler
 			// eslint-disable-next-line @typescript-eslint/no-unused-vars

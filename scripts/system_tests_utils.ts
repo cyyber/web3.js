@@ -223,7 +223,7 @@ export const createAccountProvider = (context: Web3Context<QRLExecutionAPI>) => 
 };
 
 export const refillAccount = async (from: string, to: string, value: string | number) => {
-	const web3QRL = new Web3QRL(DEFAULT_SYSTEM_PROVIDER);
+	const web3QRL = new Web3QRL(getSystemTestProviderUrl());
 
 	await web3QRL.sendTransaction({
 		from,
@@ -239,7 +239,7 @@ export const createNewAccount = async (config?: {
 }): Promise<{ address: string; seed: string }> => {
 	const acc = config?.seed ? seedToAccount(config?.seed) : _createAccount();
 
-	const clientUrl = DEFAULT_SYSTEM_PROVIDER;
+	const clientUrl = getSystemTestProviderUrl();
 
 	if (config?.refill) {
 		const web3QRL = new Web3QRL(clientUrl);
@@ -345,43 +345,71 @@ export const createLocalAccount = async (web3: Web3) => {
 };
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-// eslint-disable-next-line arrow-body-style
-export const waitForSocketConnect = async (provider: SocketProvider<any, any, any>) => {
-	return new Promise<ProviderConnectInfo>(resolve => {
-		provider.on('connect', ((
+const socketWaitTimeoutMs = 5_000;
+const socketPollIntervalMs = 50;
+
+const waitForSocketStatus = async <ResultType>(
+	provider: SocketProvider<any, any, any>,
+	expectedStatus: 'connected' | 'disconnected',
+	eventName: 'connect' | 'disconnect',
+	defaultResult: ResultType,
+) => {
+	if (provider.getStatus() === expectedStatus) {
+		return defaultResult;
+	}
+
+	return new Promise<ResultType>((resolve, reject) => {
+		const eventHandler = ((
 			_error: Error | ProviderRpcError | undefined,
-			data: JsonRpcSubscriptionResult | JsonRpcNotification<ProviderConnectInfo> | undefined,
+			data?: JsonRpcSubscriptionResult | JsonRpcNotification<ResultType>,
 		) => {
-			resolve(data as unknown as ProviderConnectInfo);
-		}) as Web3ProviderEventCallback<ProviderConnectInfo>);
+			cleanup();
+			resolve((data as unknown as ResultType) ?? defaultResult);
+		}) as Web3ProviderEventCallback<ResultType>;
+
+		const cleanup = () => {
+			clearInterval(statusInterval);
+			clearTimeout(timeoutHandle);
+			provider.removeListener(eventName, eventHandler);
+		};
+
+		const statusInterval = setInterval(() => {
+			if (provider.getStatus() === expectedStatus) {
+				cleanup();
+				resolve(defaultResult);
+			}
+		}, socketPollIntervalMs);
+
+		const timeoutHandle = setTimeout(() => {
+			cleanup();
+			reject(new Error(`Timeout waiting for socket status "${expectedStatus}".`));
+		}, socketWaitTimeoutMs);
+
+		provider.on(eventName, eventHandler);
 	});
 };
 
-// eslint-disable-next-line arrow-body-style
-export const waitForSocketDisconnect = async (provider: SocketProvider<any, any, any>) => {
-	return new Promise<ProviderRpcError>(resolve => {
-		provider.on('disconnect', ((
-			_error: ProviderRpcError | Error | undefined,
-			data: JsonRpcSubscriptionResult | JsonRpcNotification<ProviderRpcError> | undefined,
-		) => {
-			resolve(data as unknown as ProviderRpcError);
-		}) as Web3ProviderEventCallback<ProviderRpcError>);
-	});
-};
+export const waitForSocketConnect = async (provider: SocketProvider<any, any, any>) =>
+	waitForSocketStatus(
+		provider,
+		'connected',
+		'connect',
+		{} as ProviderConnectInfo,
+	);
+
+export const waitForSocketDisconnect = async (provider: SocketProvider<any, any, any>) =>
+	waitForSocketStatus(
+		provider,
+		'disconnected',
+		'disconnect',
+		{ code: 1000, message: '' } as ProviderRpcError,
+	);
 
 export const waitForOpenSocketConnection = async (provider: SocketProvider<any, any, any>) =>
-	new Promise<ProviderConnectInfo>(resolve => {
-		provider.on('connect', ((_error, data) => {
-			resolve(data as unknown as ProviderConnectInfo);
-		}) as Web3ProviderEventCallback<ProviderConnectInfo>);
-	});
+	waitForSocketConnect(provider);
 
 export const waitForCloseSocketConnection = async (provider: SocketProvider<any, any, any>) =>
-	new Promise<ProviderRpcError>(resolve => {
-		provider.on('disconnect', ((_error, data) => {
-			resolve(data as unknown as ProviderRpcError);
-		}) as Web3ProviderEventCallback<ProviderRpcError>);
-	});
+	waitForSocketDisconnect(provider);
 
 export const waitForEvent = async (
 	web3Provider: SocketProvider<any, any, any>,
@@ -394,7 +422,7 @@ export const waitForEvent = async (
 	});
 
 export const sendFewSampleTxs = async (cnt = 1) => {
-	const web3 = new Web3(DEFAULT_SYSTEM_PROVIDER);
+	const web3 = new Web3(getSystemTestProviderUrl());
 	const fromAcc = await createLocalAccount(web3);
 	const toAcc = createAccount();
 	const res = [];

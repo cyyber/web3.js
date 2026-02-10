@@ -28,9 +28,10 @@ export interface TxData {
 	to: string;
 	value: string;
 
-	publicKey: string;
-	signature: string;
 	descriptor: string;
+	extraParams: string;
+	signature: string;
+	publicKey: string;
 }
 
 export type ForksData = {

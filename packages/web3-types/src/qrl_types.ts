@@ -23,6 +23,8 @@ export type HexString32Bytes = HexString;
 export type HexString16Bytes = HexString;
 // Hex encoded 8 bytes
 export type HexString8Bytes = HexString;
+// Hex encoded 3 bytes
+export type HexString3Bytes = HexString;
 // Hex encoded 1 byte
 export type HexStringSingleByte = HexString;
 // Hex encoded 1 byte
@@ -301,9 +303,10 @@ interface TransactionBase {
 	chainId?: Numbers;
 	networkId?: Numbers;
 	gasLimit?: Numbers;
-	publicKey?: Bytes;
-	signature?: Bytes;
 	descriptor?: Bytes;
+	extraParams?: Bytes;
+	signature?: Bytes;
+	publicKey?: Bytes;
 }
 
 export interface Transaction extends TransactionBase {

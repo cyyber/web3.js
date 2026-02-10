@@ -178,7 +178,11 @@ export const signTransaction = async (
 	// eslint-disable-next-line @typescript-eslint/require-await
 ): Promise<SignTransactionResult> => {
 	const signedTx = transaction.sign(hexToBytes(seed));
-	if (isNullish(signedTx.signature) || isNullish(signedTx.publicKey) || isNullish(signedTx.descriptor))
+	if (
+		isNullish(signedTx.descriptor) || 
+		isNullish(signedTx.signature) || 
+		isNullish(signedTx.publicKey)
+	)
 		throw new TransactionSigningError('Signer Error');
 
 	const validationErrors = signedTx.validate(true);
@@ -193,9 +197,10 @@ export const signTransaction = async (
 
 	const rawTx = bytesToHex(signedTx.serialize());
 	const txHash = sha3Raw(rawTx); // using keccak in web3-utils.sha3Raw instead of SHA3 (NIST Standard) as both are different
+	const extraParams = isNullish(signedTx.extraParams) ? Uint8Array.from([]) : signedTx.extraParams;
 
 	return {
-		messageHash: bytesToHex(signedTx.getMessageToSign(signedTx.descriptor, true)),
+		messageHash: bytesToHex(signedTx.getMessageToSign(signedTx.descriptor, extraParams, true)),
 		signature: bytesToHex(signedTx.signature),
 		rawTransaction: rawTx,
 		transactionHash: bytesToHex(txHash),

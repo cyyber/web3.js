@@ -119,6 +119,16 @@ export type TxData = {
 	data?: Uint8ArrayLike;
 
 	/**
+	 * Descriptor.
+	 */
+	descriptor?: Numbers | Uint8Array;
+
+	/**
+	 * Extra Params.
+	 */
+	extraParams?: Numbers | Uint8Array;
+
+	/**
 	 * Signature.
 	 */
 	signature?: Numbers | Uint8Array;
@@ -127,11 +137,6 @@ export type TxData = {
 	 * Public key.
 	 */
 	publicKey?: Numbers | Uint8Array;
-
-	/**
-	 * Descriptor.
-	 */
-	descriptor?: Numbers | Uint8Array;
 
 	/**
 	 * The transaction type
@@ -182,6 +187,7 @@ export type FeeMarketEIP1559ValuesArray = [
 	Uint8Array?,
 	Uint8Array?,
 	Uint8Array?,
+	Uint8Array?,
 ];
 
 type JsonAccessListItem = { address: string; storageKeys: string[] };
@@ -198,9 +204,10 @@ export interface JsonTx {
 	gasLimit?: string;
 	to?: string;
 	data?: string;
+	descriptor?: string;
+	extraParams?: string;
 	signature?: string;
 	publicKey?: string;
-	descriptor?: string;
 	value?: string;
 	chainId?: string;
 	accessList?: JsonAccessListItem[];

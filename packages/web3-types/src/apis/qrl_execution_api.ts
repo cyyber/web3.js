@@ -30,6 +30,7 @@ import {
 	TransactionReceiptBase,
 	BlockBase,
 	LogBase,
+	HexString3Bytes,
 } from '../qrl_types.js';
 import { HexString } from '../primitives_types.js';
 
@@ -69,9 +70,10 @@ export interface Transaction1559UnsignedAPI extends BaseTransactionAPI {
 }
 
 export interface Transaction1559SignedAPI extends Transaction1559UnsignedAPI {
-	readonly publicKey: HexStringBytes;
+	readonly descriptor: HexString3Bytes;
+	readonly extraParams: HexStringBytes;
 	readonly signature: HexStringBytes;
-	readonly descriptor: HexStringBytes;
+	readonly publicKey: HexStringBytes;	
 }
 
 // https://github.com/ethereum/execution-apis/blob/main/src/schemas/transaction.yaml#L144
