@@ -61,8 +61,7 @@ if [ "$KEEP_ENCLAVE" = false ]; then
   kurtosis enclave rm -f $ENCLAVE_NAME 2>/dev/null || true
 fi
 
-# kurtosis run --enclave $ENCLAVE_NAME github.com/theQRL/qrl-package@$QRL_PKG_VERSION --args-file $NETWORK_PARAMS_FILE
-kurtosis run --enclave $ENCLAVE_NAME /Users/ricardogeraldes/workspace/rgeraldes24/qrl-package --args-file $NETWORK_PARAMS_FILE
+kurtosis run --enclave $ENCLAVE_NAME github.com/theQRL/qrl-package@$QRL_PKG_VERSION --args-file $NETWORK_PARAMS_FILE
 
 echo "Started!"
 echo "Running clef setup..."
