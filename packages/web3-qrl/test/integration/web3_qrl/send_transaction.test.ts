@@ -180,7 +180,7 @@ describe('Web3QRL.sendTransaction', () => {
 		const transaction: Transaction = {
 			from: tempAcc.address,
 			to: 'Q0000000000000000000000000000000000000010',
-			data: '0x64edfbf0e2c706ba4a09595315c45355a341a576cc17f3a19f43ac1c02f814ee00000000',
+			data: '0x64edfbf0e2c706ba4a09595315c45355a341a576cc17f3a19f43ac1c02f814ee',
 			value: BigInt(0),
 			type: BigInt(2),
 		};
@@ -281,7 +281,7 @@ describe('Web3QRL.sendTransaction', () => {
 			const transaction: Transaction = {
 				from: tempAcc.address,
 				to: 'Q0000000000000000000000000000000000000010',
-				data: '0x64edfbf0e2c706ba4a09595315c45355a341a576cc17f3a19f43ac1c02f814ee00000000',
+				data: '0x64edfbf0e2c706ba4a09595315c45355a341a576cc17f3a19f43ac1c02f814ee',
 				value: BigInt(1),
 				type: BigInt(2),
 			};

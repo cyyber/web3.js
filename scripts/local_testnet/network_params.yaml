@@ -4,15 +4,13 @@ participants:
     el_extra_params:
       - "--gcmode=archive"
     cl_type: qrysm
-    # cl_image: qrledger/qrysm:beacon-chain-latest
-    cl_image: qrledger/qrysm-beacon
+    cl_image: qrledger/qrysm:beacon-chain-latest
     cl_extra_params:
       - "--min-sync-peers=0"
       - "--minimum-peers-per-subnet=0"
       - "--sync-from=head"
     vc_type: qrysm
-    # vc_image: qrledger/qrysm:validator-latest
-    vc_image: qrledger/qrysm-validator
+    vc_image: qrledger/qrysm:validator-latest
     count: 1
     use_remote_signer: true
     remote_signer_type: clef
