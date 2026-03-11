@@ -16,7 +16,7 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 // import { hexToBytes } from '@theqrl/web3-utils';
 import { Chain, Common, ConsensusAlgorithm, ConsensusType, Hardfork } from '../../../src/common';
-// import gzondGenesisKiln from '../../fixtures/common/gzond-genesis-kiln.json';
+// import gqrlGenesisKiln from '../../fixtures/common/gqrl-genesis-kiln.json';
 
 describe('[Common]: Hardfork logic', () => {
 	it('Hardfork access', () => {
@@ -244,7 +244,7 @@ describe('[Common]: Hardfork logic', () => {
 
 		// For kiln MergeForkIdTransition happens BEFORE Merge
 
-		c = Common.fromGzondGenesis(gzondGenesisKiln, {
+		c = Common.fromGqrlGenesis(gqrlGenesisKiln, {
 			chain: 'kiln',
 			mergeForkIdPostMerge: false,
 		});

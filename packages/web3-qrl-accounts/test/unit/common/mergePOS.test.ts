@@ -137,7 +137,7 @@ describe('[Common]: Merge/POS specific logic', () => {
 	});
 
 	it('should get the correct merge hardfork at genesis', async () => {
-		const c = Common.fromGzondGenesis(posExecGenesis, { chain: 'pos' });
+		const c = Common.fromGqrlGenesis(posExecGenesis, { chain: 'pos' });
 		expect(c.getHardforkByBlockNumber(0)).toEqual(Hardfork.Shanghai);
 		expect(c.getHardforkByBlockNumber(0, BigInt(0))).toEqual(Hardfork.Shanghai);
 	});

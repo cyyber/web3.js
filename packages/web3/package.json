@@ -56,8 +56,8 @@
 		"test:watch": "npm test -- --watch",
 		"test:unit": "jest --config=./test/unit/jest.config.js",
 		"test:integration": "jest --config=./test/integration/jest.config.js --forceExit",
-		"test:blackbox:gzond:http": "./scripts/black_box_test.sh gzond http",
-		"test:blackbox:gzond:ws": "./scripts/black_box_test.sh gzond ws"
+		"test:blackbox:gqrl:http": "./scripts/black_box_test.sh gqrl http",
+		"test:blackbox:gqrl:ws": "./scripts/black_box_test.sh gqrl ws"
 	},
 	"devDependencies": {
 		"@theqrl/eslint-config-base-web3": "^0.3.0",

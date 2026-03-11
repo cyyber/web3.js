@@ -25,7 +25,7 @@ import {
 	getSystemTestProvider,
 } from '../../fixtures/system_test_utils';
 
-describeIf(getSystemTestBackend() === 'gzond')('Web3QRL.createAccessList', () => {
+describeIf(getSystemTestBackend() === 'gqrl')('Web3QRL.createAccessList', () => {
 	let web3QRL: Web3QRL;
 	let greeterContractAddress: string;
 	let tempAcc: { address: string; seed: string };

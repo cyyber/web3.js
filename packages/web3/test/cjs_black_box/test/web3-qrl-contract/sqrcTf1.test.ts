@@ -33,8 +33,8 @@ import {
 // eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires
 const Web3 = require('@theqrl/web3').default;
 
-describeIf(getSystemTestBackend() === 'gzond')('Black Box Unit Tests - web3.qrl.Contract', () => {
-	describe('Gzond - SQRCTF1', () => {
+describeIf(getSystemTestBackend() === 'gqrl')('Black Box Unit Tests - web3.qrl.Contract', () => {
+	describe('Gqrl - SQRCTF1', () => {
 		let account;
 		let web3: typeof Web3;
 		let deployedContract: Contract<typeof SQRCTF1TokenAbi>;

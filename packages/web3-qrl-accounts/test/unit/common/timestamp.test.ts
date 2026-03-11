@@ -20,7 +20,7 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 // NOTE(rgeraldes24): unused for now
 describe.skip('[Common]: Timestamp Hardfork logic', () => {
 	it('shanghai-time', () => {
-		// const c = Common.fromGzondGenesis(timestampJson, {
+		// const c = Common.fromGqrlGenesis(timestampJson, {
 		// 	chain: 'withdrawals',
 		// });
 		// expect(c.getHardforkByBlockNumber(1, 0)).toEqual(Hardfork.Shanghai);

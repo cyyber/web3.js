@@ -61,7 +61,7 @@ describeIf(isWs)('Support of Basic Auth', () => {
 				'ascii',
 			);
 			const [username, password] = credentials.split(':');
-			if (username !== 'gzond' || password !== 'authpass') {
+			if (username !== 'gqrl' || password !== 'authpass') {
 				socket.emit('error');
 				socket.destroy();
 			}
@@ -73,7 +73,7 @@ describeIf(isWs)('Support of Basic Auth', () => {
 	});
 	beforeEach(() => {
 		webSocketProvider = new WebSocketProvider(
-			'ws://gzond:authpass@localhost:3000',
+			'ws://gqrl:authpass@localhost:3000',
 			{},
 			{ delay: 1, autoReconnect: false, maxAttempts: 1 },
 		);

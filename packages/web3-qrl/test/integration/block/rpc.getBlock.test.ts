@@ -139,11 +139,11 @@ describe('rpc with block', () => {
 		});
 	});
 
-	describeIf(getSystemTestBackend() === 'gzond')(
+	describeIf(getSystemTestBackend() === 'gqrl')(
 		'getBlock calls with POS tags in POA node',
 		() => {
 			it.each(['safe', 'finalized'])(
-				// only gzond throws this error
+				// only gqrl throws this error
 				'getBlock',
 				async blockTag => {
 					const request = await web3QRL.getBlock(blockTag);

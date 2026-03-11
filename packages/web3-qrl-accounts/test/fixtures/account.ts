@@ -137,7 +137,7 @@ export const invalidSeedtoAccountData: [any, Error][] = [
 ];
 
 export const validEncryptData: [[any, string | Uint8Array, CipherOptions], KeyStore][] = [
-	// Test taken from https://github.com/theQRL/go-zond/tree/main/accounts/keystore/testdata/v1_test_vector.json
+	// Test taken from https://github.com/theQRL/go-qrl/tree/main/accounts/keystore/testdata/v1_test_vector.json
 	[
 		[
 			'0x0100005dfdcad4f721fe41d1bdf632de24ba60ba7cfab9c9a79287fa007b6a0dec8200b1fa35d2575bb15bd44d59b8d878828b',

@@ -1303,7 +1303,7 @@ export class Web3QRL extends Web3Context<Web3QRLExecutionAPI, RegisteredSubscrip
 		return rpcMethodsWrappers.getProof(this, address, storageKeys, blockNumber, returnFormat);
 	}
 
-	// TODO Throwing an error with Gzond, but not Infura
+	// TODO Throwing an error with Gqrl, but not Infura
 	// TODO gasUsedRatio and reward not formatting
 	/**
 	 * @param blockCount Number of blocks in the requested range. Between `1` and `1024` blocks can be requested in a single query. Less than requested may be returned if not all blocks are available.
