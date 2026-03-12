@@ -63,7 +63,7 @@ describe('defaultTransactionBuilder', () => {
 		data: '0x',
 		nonce: expectedNonce,
 		chain: 'mainnet',
-		hardfork: 'shanghai',
+		hardfork: 'zond',
 		chainId: expectedChainId,
 		networkId: expectedNetworkId,
 		common: {
@@ -73,7 +73,7 @@ describe('defaultTransactionBuilder', () => {
 				chainId: expectedChainId,
 			},
 			baseChain: 'mainnet',
-			hardfork: 'shanghai',
+			hardfork: 'zond',
 		},
 	};
 	const mockBlockData = {
@@ -329,7 +329,7 @@ describe('defaultTransactionBuilder', () => {
 	});
 
 	describe('should populate hardfork', () => {
-		it('should populate with shanghai', async () => {
+		it('should populate with zond', async () => {
 			const input = { ...transaction };
 			delete input.hardfork;
 			delete input.common;
@@ -341,7 +341,7 @@ describe('defaultTransactionBuilder', () => {
 				web3Context,
 				fillGasPrice: true,
 			});
-			expect(result.hardfork).toBe('shanghai');
+			expect(result.hardfork).toBe('zond');
 		});
 
 		it('should use web3Context.defaultHardfork to populate', async () => {
@@ -363,7 +363,7 @@ describe('defaultTransactionBuilder', () => {
 
 		it('should use web3Context.defaultCommon to populate', async () => {
 			const baseChain: ValidChains = 'mainnet';
-			const hardfork: Hardfork = 'shanghai';
+			const hardfork: Hardfork = 'zond';
 			const customCommon = {
 				customChain: {
 					name: 'custom',
@@ -470,8 +470,8 @@ describe('defaultTransactionBuilder', () => {
 			delete input.accessList;
 			delete input.type;
 
-			input.hardfork = 'shanghai';
-			if (!isNullish(input.common)) input.common.hardfork = 'shanghai';
+			input.hardfork = 'zond';
+			if (!isNullish(input.common)) input.common.hardfork = 'zond';
 
 			const result = await defaultTransactionBuilder({
 				transaction: input,

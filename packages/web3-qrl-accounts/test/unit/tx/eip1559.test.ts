@@ -25,7 +25,7 @@ import { newMLDSA87Descriptor } from '@theqrl/wallet.js';
 
 const common = new Common({
 	chain: 1,
-	hardfork: Hardfork.Shanghai,
+	hardfork: Hardfork.Zond,
 });
 // @ts-expect-error set private property
 common._chainParams.chainId = 4;
@@ -150,7 +150,7 @@ describe('[FeeMarketEIP1559Transaction]', () => {
 		const txn = FeeMarketEIP1559Transaction.fromTxData(data, { common, freeze: false });
 		const newCommon = new Common({
 			chain: Chain.Mainnet,
-			hardfork: Hardfork.Shanghai,
+			hardfork: Hardfork.Zond,
 			qips: [2537],
 		});
 		expect(Object.isFrozen(newCommon)).not.toEqual(common);

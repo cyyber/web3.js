@@ -235,7 +235,7 @@ export type ValidChains = 'mainnet';
 // This list of hardforks is expected to be in order
 // keep this in mind when making changes to it
 export enum HardforksOrdered {
-	shanghai = 'shanghai',
+	zond = 'zond',
 }
 
 export type Hardfork = `${HardforksOrdered}`;

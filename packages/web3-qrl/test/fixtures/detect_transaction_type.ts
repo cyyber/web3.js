@@ -65,7 +65,7 @@ export const transactionType0x2: FormatType<Transaction, typeof QRL_DATA_FORMAT>
 				networkId: '0x42',
 				chainId: '0x42',
 			},
-			hardfork: 'shanghai',
+			hardfork: 'zond',
 		},
 	},
 	{
@@ -77,7 +77,7 @@ export const transactionType0x2: FormatType<Transaction, typeof QRL_DATA_FORMAT>
 		nonce: '0x4',
 		chainId: '0x1',
 		gasLimit: '0x5208',
-		hardfork: 'shanghai',
+		hardfork: 'zond',
 	},
 ];
 

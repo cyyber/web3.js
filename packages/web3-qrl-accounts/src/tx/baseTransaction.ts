@@ -84,7 +84,7 @@ export abstract class BaseTransaction<TransactionObject> {
 	 *
 	 * @hidden
 	 */
-	protected DEFAULT_HARDFORK: string | Hardfork = Hardfork.Shanghai;
+	protected DEFAULT_HARDFORK: string | Hardfork = Hardfork.Zond;
 
 	public constructor(txData: FeeMarketEIP1559TxData, opts: TxOptions) {
 		const { nonce, gasLimit, to, value, data, descriptor, extraParams, signature, publicKey, type } = txData;
@@ -125,7 +125,7 @@ export abstract class BaseTransaction<TransactionObject> {
 		
 		this._validateCannotExceedMaxInteger({ value: this.value });
 
-		// gzond limits gasLimit to 2^64-1
+		// gqrl limits gasLimit to 2^64-1
 		this._validateCannotExceedMaxInteger({ gasLimit: this.gasLimit }, 64);
 
 		// EIP-2681 limits nonce to 2^64-1 (cannot equal 2^64-1)

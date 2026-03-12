@@ -22,7 +22,7 @@ describe('[Common/Chains]: Initialization / Chain params', () => {
 		expect(c.chainName()).toBe('mainnet');
 		expect(c.chainId()).toEqual(BigInt(1));
 		expect(c.networkId()).toEqual(BigInt(1));
-		expect(c.hardfork()).toEqual(Hardfork.Shanghai);
+		expect(c.hardfork()).toEqual(Hardfork.Zond);
 		expect(c.hardfork()).toEqual(c.DEFAULT_HARDFORK);
 
 		c = new Common({ chain: 1 });
@@ -34,18 +34,18 @@ describe('[Common/Chains]: Initialization / Chain params', () => {
 		expect(c.chainName()).toBe('mainnet');
 		expect(c.chainId()).toEqual(BigInt(1));
 		expect(c.networkId()).toEqual(BigInt(1));
-		expect(c.hardfork()).toEqual(Hardfork.Shanghai);
+		expect(c.hardfork()).toEqual(Hardfork.Zond);
 		expect(c.hardfork()).toEqual(c.DEFAULT_HARDFORK);
 	});
 
 	it('Should initialize with chain and hardfork provided', () => {
-		const c = new Common({ chain: 'mainnet', hardfork: 'shanghai' });
-		expect(c.hardfork()).toBe('shanghai');
+		const c = new Common({ chain: 'mainnet', hardfork: 'zond' });
+		expect(c.hardfork()).toBe('zond');
 	});
 
 	it('Should initialize with chain and hardfork provided by Chain and Hardfork enums', () => {
-		const c = new Common({ chain: Chain.Mainnet, hardfork: Hardfork.Shanghai });
-		expect(c.hardfork()).toBe('shanghai');
+		const c = new Common({ chain: Chain.Mainnet, hardfork: Hardfork.Zond });
+		expect(c.hardfork()).toBe('zond');
 	});
 
 	it('Should handle initialization errors', () => {
@@ -63,7 +63,7 @@ describe('[Common/Chains]: Initialization / Chain params', () => {
 	});
 
 	it('Should provide correct access to chain parameters', () => {
-		const c = new Common({ chain: 'mainnet', hardfork: 'shanghai' });
+		const c = new Common({ chain: 'mainnet', hardfork: 'zond' });
 		// expect(c.hardforks()[3]['block']).toBe(2463000);
 		expect(c.hardforks()[0]['block']).toBe(0);
 		expect(c.consensusType()).toEqual(ConsensusType.ProofOfStake);

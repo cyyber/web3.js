@@ -50,7 +50,7 @@ describe('contract errors', () => {
 		contract.setProvider(getSystemTestProvider());
 	});
 
-	describeIf(getSystemTestBackend() === 'gzond')('Test EIP-838 Error Codes', () => {
+	describeIf(getSystemTestBackend() === 'gqrl')('Test EIP-838 Error Codes', () => {
 		it('Unauthorized', async () => {
 			let error: ContractExecutionError | undefined;
 			try {

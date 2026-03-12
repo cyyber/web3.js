@@ -707,7 +707,7 @@ describe('defaults', () => {
 		});
 		it('defaultHardfork', async () => {
 			// default
-			expect(web3QRL.defaultHardfork).toBe('shanghai');
+			expect(web3QRL.defaultHardfork).toBe('zond');
 
 			// after set
 			web3QRL.setConfig({
@@ -745,7 +745,7 @@ describe('defaults', () => {
 			// default
 			expect(web3QRL.defaultCommon).toBeUndefined();
 			const baseChain: ValidChains = 'mainnet';
-			const hardfork: Hardfork = 'shanghai';
+			const hardfork: Hardfork = 'zond';
 			const common = {
 				customChain: {
 					name: 'test',
@@ -841,7 +841,7 @@ describe('defaults', () => {
 					nonce: '0x4',
 					chainId: '0x1',
 					gasLimit: '0x5208',
-					hardfork: 'shanghai',
+					hardfork: 'zond',
 				},
 				qrl2,
 			);
@@ -858,7 +858,7 @@ describe('defaults', () => {
 					gasLimit: '0x5208',
 					common: {
 						customChain: { name: 'ropsten', networkId: '2', chainId: '0x1' },
-						hardfork: 'shanghai',
+						hardfork: 'zond',
 					},
 				},
 				qrl2,
@@ -898,7 +898,7 @@ describe('defaults', () => {
 					nonce: '0x4',
 					chainId: '0x1',
 					gasLimit: '0x5208',
-					hardfork: 'shanghai',
+					hardfork: 'zond',
 				},
 				qrl2,
 			);
@@ -916,7 +916,7 @@ describe('defaults', () => {
 					gasLimit: '0x5208',
 					common: {
 						customChain: { name: 'ropsten', networkId: '2', chainId: '0x1' },
-						hardfork: 'shanghai',
+						hardfork: 'zond',
 					},
 				},
 				qrl2,

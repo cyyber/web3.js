@@ -609,7 +609,7 @@ describe('Contract', () => {
 			expect(contract.defaultBlock).toStrictEqual(defaultBlock);
 
 			const defaultHardfork = 'constantinople';
-			expect(contract.defaultHardfork).toBe('shanghai');
+			expect(contract.defaultHardfork).toBe('zond');
 			contract.defaultHardfork = defaultHardfork;
 			expect(contract.defaultHardfork).toStrictEqual(defaultHardfork);
 

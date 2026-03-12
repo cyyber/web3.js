@@ -71,9 +71,9 @@ export interface ChainsConfig {
 
 interface BaseOpts {
 	/**
-	 * String identifier ('shanghai') for hardfork or {@link Hardfork} enum.
+	 * String identifier ('zond') for hardfork or {@link Hardfork} enum.
 	 *
-	 * Default: Hardfork.Shanghai
+	 * Default: Hardfork.Zond
 	 */
 	hardfork?: string | Hardfork;
 	/**
@@ -118,7 +118,7 @@ export interface CustomCommonOpts extends BaseOpts {
 	baseChain?: string | number | Chain | bigint;
 }
 
-export interface GzondConfigOpts extends BaseOpts {
+export interface GqrlConfigOpts extends BaseOpts {
 	chain?: string;
 	genesisHash?: Uint8Array;
 }

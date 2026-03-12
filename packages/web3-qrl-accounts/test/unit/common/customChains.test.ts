@@ -22,7 +22,7 @@ import * as testnet3 from '../../fixtures/common/testnet3.json';
 
 describe('[Common]: Custom chains', () => {
 	it('chain -> object: should provide correct access to private network chain parameters', () => {
-		const c = new Common({ chain: testnet, hardfork: Hardfork.Shanghai });
+		const c = new Common({ chain: testnet, hardfork: Hardfork.Zond });
 		expect(c.chainName()).toBe('testnet');
 		expect(c.chainId()).toEqual(BigInt(12345));
 		expect(c.networkId()).toEqual(BigInt(12345));
@@ -46,7 +46,7 @@ describe('[Common]: Custom chains', () => {
 
 		const customChainParams = { name: 'custom', chainId: 123, networkId: 678 };
 		const customChainCommon = Common.custom(customChainParams, {
-			hardfork: Hardfork.Shanghai,
+			hardfork: Hardfork.Zond,
 		});
 
 		// From custom chain params
@@ -60,7 +60,7 @@ describe('[Common]: Custom chains', () => {
 		expect(customChainCommon.hardforks()).toEqual(mainnetCommon.hardforks());
 
 		// Set only to this Common
-		expect(customChainCommon.hardfork()).toBe('shanghai');
+		expect(customChainCommon.hardfork()).toBe('zond');
 	});
 
 	// NOTE(rgeraldes24): custom chains tbd
@@ -102,7 +102,7 @@ describe('[Common]: Custom chains', () => {
 	it('customChains parameter: initialization', () => {
 		let c = new Common({
 			chain: Chain.Mainnet,
-			hardfork: Hardfork.Shanghai,
+			hardfork: Hardfork.Zond,
 			customChains: [testnet],
 		});
 		expect(c.chainName()).toBe('mainnet');
@@ -118,7 +118,7 @@ describe('[Common]: Custom chains', () => {
 
 		c = new Common({
 			chain: 'testnet',
-			hardfork: Hardfork.Shanghai,
+			hardfork: Hardfork.Zond,
 			customChains: [testnet],
 		});
 		expect(c.chainName()).toBe('testnet');
@@ -129,7 +129,7 @@ describe('[Common]: Custom chains', () => {
 		const customChains = [testnet, testnet2, testnet3];
 		c = new Common({
 			chain: 'testnet2',
-			hardfork: Hardfork.Shanghai,
+			hardfork: Hardfork.Zond,
 			customChains,
 		});
 		expect(c.chainName()).toBe('testnet2');

@@ -19,13 +19,13 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 
 // NOTE(rgeraldes24): unused for now
 describe.skip('[Common]: Timestamp Hardfork logic', () => {
-	it('shanghai-time', () => {
-		// const c = Common.fromGzondGenesis(timestampJson, {
+	it('zond-time', () => {
+		// const c = Common.fromGqrlGenesis(timestampJson, {
 		// 	chain: 'withdrawals',
 		// });
-		// expect(c.getHardforkByBlockNumber(1, 0)).toEqual(Hardfork.Shanghai);
-		// expect(c.getHardforkByBlockNumber(1, 1668699476)).toEqual(Hardfork.Shanghai);
-		// expect(c.getHardforkByBlockNumber(1, 1668699576)).toEqual(Hardfork.Shanghai);
+		// expect(c.getHardforkByBlockNumber(1, 0)).toEqual(Hardfork.Zond);
+		// expect(c.getHardforkByBlockNumber(1, 1668699476)).toEqual(Hardfork.Zond);
+		// expect(c.getHardforkByBlockNumber(1, 1668699576)).toEqual(Hardfork.Zond);
 	});
 
 	/*
@@ -42,7 +42,7 @@ describe.skip('[Common]: Timestamp Hardfork logic', () => {
 				forkHash: '0x4fb8a872',
 			},
 			{
-				name: 'shanghai',
+				name: 'zond',
 				// eslint-disable-next-line no-null/no-null
 				block: null,
 				timestamp: '1668000000',
@@ -64,9 +64,9 @@ describe.skip('[Common]: Timestamp Hardfork logic', () => {
 		c.setHardfork(Hardfork.MergeForkIdTransition);
 		expect(c.nextHardforkBlockOrTimestamp()).toEqual(BigInt(1668000000));
 
-		c.setHardfork(Hardfork.Shanghai);
+		c.setHardfork(Hardfork.Zond);
 		expect(c.forkHash()).toBe('0xc1fdf181');
-		expect(c.hardforkForForkHash('0xc1fdf181')?.name).toEqual(Hardfork.Shanghai);
+		expect(c.hardforkForForkHash('0xc1fdf181')?.name).toEqual(Hardfork.Zond);
 	});
 
 	it('setForkHashes', () => {
@@ -81,7 +81,7 @@ describe.skip('[Common]: Timestamp Hardfork logic', () => {
 				block: 18000000,
 			},
 			{
-				name: 'shanghai',
+				name: 'zond',
 				// eslint-disable-next-line no-null/no-null
 				block: null,
 				timestamp: '1668000000',
@@ -111,7 +111,7 @@ describe.skip('[Common]: Timestamp Hardfork logic', () => {
 			return acc;
 		}, 0);
 		expect(noForkHashes).toBe(0);
-		expect(c.forkHash(Hardfork.Shanghai)).toBe('0xc1fdf181');
+		expect(c.forkHash(Hardfork.Zond)).toBe('0xc1fdf181');
 	});
 	*/
 });

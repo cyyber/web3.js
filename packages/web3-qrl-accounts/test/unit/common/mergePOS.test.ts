@@ -25,16 +25,16 @@ describe('[Common]: Merge/POS specific logic', () => {
 		const customChains = [testnetPOS];
 		const c = new Common({
 			chain: 'testnetPOS',
-			hardfork: Hardfork.Shanghai,
+			hardfork: Hardfork.Zond,
 			customChains,
 		});
 
-		expect(c.getHardforkByBlockNumber(0)).toBe('shanghai');
-		expect(c.getHardforkByBlockNumber(14)).toBe('shanghai');
-		expect(c.getHardforkByBlockNumber(15, 5000)).toBe('shanghai');
-		expect(c.getHardforkByBlockNumber(15, 5001)).toBe('shanghai');
-		expect(c.getHardforkByBlockNumber(15, 4999)).toBe('shanghai');
-		expect(c.getHardforkByBlockNumber(12, 4999)).toBe('shanghai');
+		expect(c.getHardforkByBlockNumber(0)).toBe('zond');
+		expect(c.getHardforkByBlockNumber(14)).toBe('zond');
+		expect(c.getHardforkByBlockNumber(15, 5000)).toBe('zond');
+		expect(c.getHardforkByBlockNumber(15, 5001)).toBe('zond');
+		expect(c.getHardforkByBlockNumber(15, 4999)).toBe('zond');
+		expect(c.getHardforkByBlockNumber(12, 4999)).toBe('zond');
 	});
 
 	it('getHardforkByBlockNumber()', () => {
@@ -44,47 +44,47 @@ describe('[Common]: Merge/POS specific logic', () => {
 		const customChains = [testnetMergeWithBlockNumber];
 		const c = new Common({
 			chain: 'testnetPOS',
-			hardfork: Hardfork.Shanghai,
+			hardfork: Hardfork.Zond,
 			customChains,
 		});
 
-		expect(c.getHardforkByBlockNumber(0)).toBe('shanghai');
-		expect(c.getHardforkByBlockNumber(16)).toBe('shanghai');
-		expect(c.getHardforkByBlockNumber(16, 5000)).toBe('shanghai');
-		expect(c.getHardforkByBlockNumber(16, 5001)).toBe('shanghai');
-		expect(c.getHardforkByBlockNumber(12, 4999)).toBe('shanghai');
+		expect(c.getHardforkByBlockNumber(0)).toBe('zond');
+		expect(c.getHardforkByBlockNumber(16)).toBe('zond');
+		expect(c.getHardforkByBlockNumber(16, 5000)).toBe('zond');
+		expect(c.getHardforkByBlockNumber(16, 5001)).toBe('zond');
+		expect(c.getHardforkByBlockNumber(12, 4999)).toBe('zond');
 	});
 
 	it('getHardforkByBlockNumber()', () => {
 		const testnetMergeWithBlockNumber = JSON.parse(JSON.stringify(testnetPOS));
 		// Set Merge block to 15
 		// testnetMergeWithBlockNumber['hardforks'][8]['block'] = 16;
-		// Set Shanghai block to 18
+		// Set Zond block to 18
 		// testnetMergeWithBlockNumber['hardforks'][9]['block'] = 18;
 		const customChains = [testnetMergeWithBlockNumber];
 		const c = new Common({
 			chain: 'testnetPOS',
-			hardfork: Hardfork.Shanghai,
+			hardfork: Hardfork.Zond,
 			customChains,
 		});
 
-		expect(c.getHardforkByBlockNumber(18, 5001)).toBe('shanghai');
+		expect(c.getHardforkByBlockNumber(18, 5001)).toBe('zond');
 	});
 
 	it('setHardforkByBlockNumber()', () => {
 		const customChains = [testnetPOS];
 		const c = new Common({
 			chain: 'testnetPOS',
-			hardfork: Hardfork.Shanghai,
+			hardfork: Hardfork.Zond,
 			customChains,
 		});
 
-		expect(c.setHardforkByBlockNumber(0)).toBe('shanghai');
-		expect(c.setHardforkByBlockNumber(14)).toBe('shanghai');
-		expect(c.setHardforkByBlockNumber(15, 5000)).toBe('shanghai');
-		expect(c.setHardforkByBlockNumber(15, 5001)).toBe('shanghai');
-		expect(c.setHardforkByBlockNumber(15, 4999)).toBe('shanghai');
-		expect(c.setHardforkByBlockNumber(12, 4999)).toBe('shanghai');
+		expect(c.setHardforkByBlockNumber(0)).toBe('zond');
+		expect(c.setHardforkByBlockNumber(14)).toBe('zond');
+		expect(c.setHardforkByBlockNumber(15, 5000)).toBe('zond');
+		expect(c.setHardforkByBlockNumber(15, 5001)).toBe('zond');
+		expect(c.setHardforkByBlockNumber(15, 4999)).toBe('zond');
+		expect(c.setHardforkByBlockNumber(12, 4999)).toBe('zond');
 	});
 
 	it('setHardforkByBlockNumber()', () => {
@@ -94,38 +94,38 @@ describe('[Common]: Merge/POS specific logic', () => {
 		const customChains = [testnetMergeWithBlockNumber];
 		const c = new Common({
 			chain: 'testnetPOS',
-			hardfork: Hardfork.Shanghai,
+			hardfork: Hardfork.Zond,
 			customChains,
 		});
 
-		expect(c.setHardforkByBlockNumber(0)).toBe('shanghai');
-		expect(c.setHardforkByBlockNumber(16)).toBe('shanghai');
-		expect(c.setHardforkByBlockNumber(16, 5000)).toBe('shanghai');
-		expect(c.setHardforkByBlockNumber(16, 5001)).toBe('shanghai');
-		expect(c.setHardforkByBlockNumber(12, 4999)).toBe('shanghai');
+		expect(c.setHardforkByBlockNumber(0)).toBe('zond');
+		expect(c.setHardforkByBlockNumber(16)).toBe('zond');
+		expect(c.setHardforkByBlockNumber(16, 5000)).toBe('zond');
+		expect(c.setHardforkByBlockNumber(16, 5001)).toBe('zond');
+		expect(c.setHardforkByBlockNumber(12, 4999)).toBe('zond');
 	});
 
 	it('setHardforkByBlockNumber()', () => {
 		const testnetMergeWithBlockNumber = JSON.parse(JSON.stringify(testnetPOS));
 		// Set Merge block to 15
 		// testnetMergeWithBlockNumber['hardforks'][8]['block'] = 16;
-		// Set Shanghai block to 18
+		// Set Zond block to 18
 		// testnetMergeWithBlockNumber['hardforks'][9]['block'] = 18;
 		const customChains = [testnetMergeWithBlockNumber];
 		const c = new Common({
 			chain: 'testnetPOS',
-			hardfork: Hardfork.Shanghai,
+			hardfork: Hardfork.Zond,
 			customChains,
 		});
 
-		expect(c.setHardforkByBlockNumber(18, 5001)).toBe('shanghai');
+		expect(c.setHardforkByBlockNumber(18, 5001)).toBe('zond');
 	});
 
 	it('Pure POS testnet', () => {
 		const customChains = [testnetPOS];
-		const c = new Common({ chain: 'testnetPOS', hardfork: Hardfork.Shanghai, customChains });
+		const c = new Common({ chain: 'testnetPOS', hardfork: Hardfork.Zond, customChains });
 
-		expect(c.getHardforkByBlockNumber(5, 0)).toBe('shanghai');
+		expect(c.getHardforkByBlockNumber(5, 0)).toBe('zond');
 	});
 
 	it('Should fail setting invalid hardfork', () => {
@@ -137,9 +137,9 @@ describe('[Common]: Merge/POS specific logic', () => {
 	});
 
 	it('should get the correct merge hardfork at genesis', async () => {
-		const c = Common.fromGzondGenesis(posExecGenesis, { chain: 'pos' });
-		expect(c.getHardforkByBlockNumber(0)).toEqual(Hardfork.Shanghai);
-		expect(c.getHardforkByBlockNumber(0, BigInt(0))).toEqual(Hardfork.Shanghai);
+		const c = Common.fromGqrlGenesis(posExecGenesis, { chain: 'pos' });
+		expect(c.getHardforkByBlockNumber(0)).toEqual(Hardfork.Zond);
+		expect(c.getHardforkByBlockNumber(0, BigInt(0))).toEqual(Hardfork.Zond);
 	});
 
 	// NOTE(rgeraldes24): not valid atm

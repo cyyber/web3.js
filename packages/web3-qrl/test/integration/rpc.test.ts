@@ -87,7 +87,7 @@ describe('rpc', () => {
 	});
 
 	describe('methods', () => {
-		itIf(!['gzond'].includes(getSystemTestBackend()))('getProtocolVersion', async () => {
+		itIf(!['gqrl'].includes(getSystemTestBackend()))('getProtocolVersion', async () => {
 			const version = await web3QRL.getProtocolVersion();
 			// eslint-disable-next-line jest/no-standalone-expect
 			expect(parseInt(version, 16)).toBeGreaterThan(0);
@@ -276,7 +276,7 @@ describe('rpc', () => {
 			expect(res).toBeDefined();
 		});
 
-		itIf(!['gzond'].includes(getSystemTestBackend()))('requestAccounts', () => {
+		itIf(!['gqrl'].includes(getSystemTestBackend()))('requestAccounts', () => {
 			// const res = await web3QRL.requestAccounts();
 			// eslint-disable-next-line jest/no-standalone-expect
 			expect(true).toBe(true);

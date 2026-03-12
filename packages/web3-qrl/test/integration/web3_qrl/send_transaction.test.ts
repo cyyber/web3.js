@@ -426,7 +426,7 @@ describe('Web3QRL.sendTransaction', () => {
 
 			// TODO Confirmations are dependent on the next block being mined,
 			// this is manually triggering the next block to be created since both
-			// Gzond and Ganache wait for transaction before mining a block.
+			// Gqrl and Ganache wait for transaction before mining a block.
 			// This should be revisted to implement a better solution
 			await web3QRL.sendTransaction(transaction);
 
@@ -465,7 +465,7 @@ describe('Web3QRL.sendTransaction', () => {
 				name: 'TransactionRevertInstructionError',
 				code: 402,
 				reason:
-					getSystemTestBackend() === 'gzond'
+					getSystemTestBackend() === 'gqrl'
 						? 'err: intrinsic gas too low: have 1, want 21000 (supplied gas 1)'
 						: 'VM Exception while processing transaction: out of gas',
 			};
@@ -490,7 +490,7 @@ describe('Web3QRL.sendTransaction', () => {
 				message: 'Transaction has been reverted by the QRVM',
 				code: 402,
 				reason:
-					getSystemTestBackend() === 'gzond'
+					getSystemTestBackend() === 'gqrl'
 						? expect.stringContaining(
 								'err: insufficient funds for gas * price + value: address',
 						  )
@@ -518,7 +518,7 @@ describe('Web3QRL.sendTransaction', () => {
 				name: 'TransactionRevertInstructionError',
 				code: 402,
 				reason:
-					getSystemTestBackend() === 'gzond'
+					getSystemTestBackend() === 'gqrl'
 						? 'execution reverted: This is a send revert'
 						: 'VM Exception while processing transaction: revert This is a send revert',
 				signature: '0x08c379a0',
@@ -547,7 +547,7 @@ describe('Web3QRL.sendTransaction', () => {
 				name: 'TransactionRevertWithCustomError',
 				code: 438,
 				reason:
-					getSystemTestBackend() === 'gzond'
+					getSystemTestBackend() === 'gqrl'
 						? 'execution reverted'
 						: 'VM Exception while processing transaction: revert',
 				signature: '0x72090e4d',
@@ -578,7 +578,7 @@ describe('Web3QRL.sendTransaction', () => {
 				name: 'TransactionRevertWithCustomError',
 				code: 438,
 				reason:
-					getSystemTestBackend() === 'gzond'
+					getSystemTestBackend() === 'gqrl'
 						? 'execution reverted'
 						: 'VM Exception while processing transaction: revert',
 				signature: '0xc85bda60',
@@ -613,7 +613,7 @@ describe('Web3QRL.sendTransaction', () => {
 				name: 'TransactionRevertInstructionError',
 				code: 402,
 				reason:
-					getSystemTestBackend() === 'gzond'
+					getSystemTestBackend() === 'gqrl'
 						? 'execution reverted: This is a send revert'
 						: 'VM Exception while processing transaction: revert This is a send revert',
 				signature: '0x08c379a0',

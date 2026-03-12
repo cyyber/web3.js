@@ -49,11 +49,11 @@ const intToHex = function (i: number) {
 };
 
 /**
- * Converts Gzond genesis parameters to a `CommonOpts` object
- * @param json object representing the Gzond genesis file hardfork
+ * Converts Gqrl genesis parameters to a `CommonOpts` object
+ * @param json object representing the Gqrl genesis file hardfork
  * @returns genesis parameters in a `CommonOpts` compliant object
  */
-function parseGzondParams(json: any) {
+function parseGqrlParams(json: any) {
 	// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 	const {
 		name,
@@ -76,11 +76,11 @@ function parseGzondParams(json: any) {
 	// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 	const { chainId }: { chainId: number } = config;
 
-	// gzond is not strictly putting empty fields with a 0x prefix
+	// gqrl is not strictly putting empty fields with a 0x prefix
 	if (extraData === '') {
 		extraData = '0x';
 	}
-	// gzond may use number for timestamp
+	// gqrl may use number for timestamp
 	if (!isHexPrefixed(timestamp)) {
 		// eslint-disable-next-line radix
 		timestamp = intToHex(parseInt(timestamp));
@@ -93,7 +93,7 @@ function parseGzondParams(json: any) {
 		genesis: {
 			timestamp,
 			// eslint-disable-next-line radix
-			gasLimit: parseInt(gasLimit), // gzond gasLimit is an hex string while ours is a `number`
+			gasLimit: parseInt(gasLimit), // gqrl gasLimit is an hex string while ours is a `number`
 			// eslint-disable-next-line radix
 			extraData,
 			mixHash,
@@ -111,7 +111,7 @@ function parseGzondParams(json: any) {
 	};
 
 	const forkMap: { [key: string]: { name: string; isTimestamp?: boolean } } = {
-		// [Hardfork.Shanghai]: { name: 'shanghaiTime', isTimestamp: true },
+		// [Hardfork.Zond]: { name: 'zondTime', isTimestamp: true },
 	};
 
 	// forkMapRev is the map from config field name to Hardfork
@@ -162,27 +162,27 @@ function parseGzondParams(json: any) {
 
 	const latestHardfork = params.hardforks.length > 0 ? params.hardforks.slice(-1)[0] : undefined;
 	params.hardfork = latestHardfork?.name;
-	params.hardforks.unshift({ name: Hardfork.Shanghai, block: 0 });
+	params.hardforks.unshift({ name: Hardfork.Zond, block: 0 });
 
 	return params;
 }
 
 /**
- * Parses a genesis.json exported from Gzond into parameters for Common instance
- * @param json representing the Gzond genesis file
+ * Parses a genesis.json exported from Gqrl into parameters for Common instance
+ * @param json representing the Gqrl genesis file
  * @param name optional chain name
  * @returns parsed params
  */
-export function parseGzondGenesis(json: any, name?: string) {
+export function parseGqrlGenesis(json: any, name?: string) {
 	try {
 		if (['config', 'gasLimit', 'alloc'].some(field => !(field in json))) {
-			throw new Error('Invalid format, expected gzond genesis fields missing');
+			throw new Error('Invalid format, expected gqrl genesis fields missing');
 		}
 		if (name !== undefined) {
 			// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, no-param-reassign
 			json.name = name;
 		}
-		return parseGzondParams(json);
+		return parseGqrlParams(json);
 	} catch (e: any) {
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/restrict-template-expressions
 		throw new Error(`Error parsing parameters file: ${e.message}`);

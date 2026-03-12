@@ -1,6 +1,6 @@
 participants:
-  - el_type: gzond
-    el_image: qrledger/go-zond:stable
+  - el_type: gqrl
+    el_image: qrledger/go-qrl:stable
     el_extra_params:
       - "--gcmode=archive"
     cl_type: qrysm

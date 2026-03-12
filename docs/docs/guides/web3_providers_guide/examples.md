@@ -22,9 +22,9 @@ Before we get started, make sure you have a basic understanding of JavaScript an
 
     Alternatively, you can use **yarn** instead of **npm** by following the instructions here: [https://classic.yarnpkg.com/lang/en/docs/getting-started/](https://classic.yarnpkg.com/lang/en/docs/getting-started/).
 
-4. **Gzond** (Optional, used only at the IPC provider example)
+4. **Gqrl** (Optional, used only at the IPC provider example)
 
-    Gzond (go-zond) is a QRL execution client meaning it handles transactions, deployment and execution of smart contracts and contains an embedded computer known as the Quantum Resistant Virtual Machine. You can install it by following the instructions here: [https://geth.ethereum.org/docs/getting-started/installing-geth](https://geth.ethereum.org/docs/getting-started/installing-geth)
+    Gqrl (go-qrl) is a QRL execution client meaning it handles transactions, deployment and execution of smart contracts and contains an embedded computer known as the Quantum Resistant Virtual Machine. You can install it by following the instructions here: [https://geth.ethereum.org/docs/getting-started/installing-geth](https://geth.ethereum.org/docs/getting-started/installing-geth)
 
 ## Types of Providers
 
@@ -244,23 +244,23 @@ Unsubscribed from new block headers.
 
 The IPC Provider allows you to connect to a QRL node using Inter-Process Communication (IPC) in a Node.js environment. This provider is useful when you have a local QRL node running on your machine and want to interact with it using Node.js.
 
-In the following steps you will run `gzond` in development mode and you will run a piece of code that reads the QRL accounts and sends a transaction:
+In the following steps you will run `gqrl` in development mode and you will run a piece of code that reads the QRL accounts and sends a transaction:
 
 To connect to the QRL network using the IPC provider, follow these steps:
 
-1. Start a `gzond` node in development mode by opening a terminal window and navigating to the `gzond` executable file. Then, run the following command to create a development chain:
+1. Start a `gqrl` node in development mode by opening a terminal window and navigating to the `gqrl` executable file. Then, run the following command to create a development chain:
 
 ```bash
-gzond --dev --ipcpath <path>
+gqrl --dev --ipcpath <path>
 ```
 
 Make sure to replace `<path>` with the desired IPC path. For example:
 
 ```bash
-gzond --dev --ipcpath /Users/username/Library/QRL/Execution/gzond.ipc
+gqrl --dev --ipcpath /Users/username/Library/QRL/Execution/gqrl.ipc
 ```
 
-This will start a `gzond` node in development mode with IPC enabled and an IPC path specified. If the command is successful, the `gzond` node will be running, and you should see output similar to the following:
+This will start a `gqrl` node in development mode with IPC enabled and an IPC path specified. If the command is successful, the `gqrl` node will be running, and you should see output similar to the following:
 
 ```bash
 INFO [12-10|15:10:37.121] IPC endpoint opened		 	url=<path>
@@ -304,7 +304,7 @@ INFO [12-10|15:10:37.127] Mapped network port		  	proto=udp extport=0 intport=30
     			ipcProvider.supportsSubscriptions(),
     		);
 
-    		// Get the list of accounts in the connected node which is in this case: gzond in dev mode.
+    		// Get the list of accounts in the connected node which is in this case: gqrl in dev mode.
     		const accounts = await web3.qrl.getAccounts();
     		console.log('Accounts:', accounts);
 
@@ -323,7 +323,7 @@ INFO [12-10|15:10:37.127] Mapped network port		  	proto=udp extport=0 intport=30
     main();
     ```
 
-7. replace `<path>` with the `ipcPath` that you had specified, when starting the `gzond` node, in the first step.
+7. replace `<path>` with the `ipcPath` that you had specified, when starting the `gqrl` node, in the first step.
 
 8. Type `node web3-ipc-provider.js` in the command prompt or terminal window and press Enter. This will run your JavaScript file.
 
@@ -349,7 +349,7 @@ Transaction Receipt: {
 }
 ```
 
-Keep in mind that using IPC Provider with `gzond` in development mode in a production environment is not recommended as it can pose a security risk.
+Keep in mind that using IPC Provider with `gqrl` in development mode in a production environment is not recommended as it can pose a security risk.
 
 ### Third-party Providers (Compliant with EIP 1193)
 

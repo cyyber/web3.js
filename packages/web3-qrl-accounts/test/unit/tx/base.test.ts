@@ -25,13 +25,13 @@ import eip1559Fixtures from '../../fixtures/json/eip1559txs.json';
 
 const common = new Common({
 	chain: 1,
-	hardfork: Hardfork.Shanghai,
+	hardfork: Hardfork.Zond,
 });
 // @ts-expect-error set private property
 common._chainParams.chainId = 1;
 describe('[BaseTransaction]', () => {
 	// eslint-disable-next-line @typescript-eslint/no-shadow
-	const common = new Common({ chain: Chain.Mainnet, hardfork: Hardfork.Shanghai });
+	const common = new Common({ chain: Chain.Mainnet, hardfork: Hardfork.Zond });
 
 	const eip1559Txs: BaseTransaction<FeeMarketEIP1559Transaction>[] = [];
 	for (const tx of eip1559Fixtures) {
@@ -53,15 +53,15 @@ describe('[BaseTransaction]', () => {
 	it('Initialization', () => {
 		for (const txType of txTypes) {
 			let tx = txType.class.fromTxData({}, { common });
-			expect(tx.common.hardfork()).toBe('shanghai');
+			expect(tx.common.hardfork()).toBe('zond');
 			expect(Object.isFrozen(tx)).toBe(true);
 
 			const initCommon = new Common({
 				chain: Chain.Mainnet,
-				hardfork: Hardfork.Shanghai,
+				hardfork: Hardfork.Zond,
 			});
 			tx = txType.class.fromTxData({}, { common: initCommon });
-			expect(tx.common.hardfork()).toBe('shanghai');
+			expect(tx.common.hardfork()).toBe('zond');
 
 			// NOTE(rgeraldes24): not valid since we don't have multiple forks
 			// initCommon.setHardfork(Hardfork.Byzantium);

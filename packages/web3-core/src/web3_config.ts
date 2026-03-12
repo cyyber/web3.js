@@ -82,7 +82,7 @@ export abstract class Web3Config
 		contractDataInputFill: 'input',
 		defaultNetworkId: undefined,
 		defaultChain: 'mainnet',
-		defaultHardfork: 'shanghai',
+		defaultHardfork: 'zond',
 		// TODO - Check if there is a default Common
 		defaultCommon: undefined,
 		defaultTransactionType: '0x2',
@@ -373,9 +373,9 @@ export abstract class Web3Config
 	}
 
 	/**
-	 * Will return the default hardfork. Default is `shanghai`
+	 * Will return the default hardfork. Default is `zond`
 	 * The default hardfork property can be one of the following:
-	 * - 'shanghai'
+	 * - 'zond'
 	 *
 	 */
 	public get defaultHardfork() {
@@ -407,7 +407,7 @@ export abstract class Web3Config
 	 * 	- `networkId` - `number`: Network ID of the custom chain
 	 * 	- `chainId` - `number`: Chain ID of the custom chain
 	 * - `baseChain` - `string`: (optional) mainnet
-	 * - `hardfork` - `string`: (optional) shanghai
+	 * - `hardfork` - `string`: (optional) zond
 	 * Default is `undefined`.
 	 *
 	 */

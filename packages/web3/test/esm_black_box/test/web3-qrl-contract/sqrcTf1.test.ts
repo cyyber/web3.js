@@ -28,8 +28,8 @@ import {
 } from '../../../shared_fixtures/system_tests_utils';
 import { SQRCTF1TokenAbi, SQRCTF1TokenBytecode } from '../../../shared_fixtures/contracts/SQRCTF1Token';
 
-describeIf(getSystemTestBackend() === 'gzond')('Black Box Unit Tests - web3.qrl.Contract', () => {
-	describe('Gzond - SQRCTF1', () => {
+describeIf(getSystemTestBackend() === 'gqrl')('Black Box Unit Tests - web3.qrl.Contract', () => {
+	describe('Gqrl - SQRCTF1', () => {
 		let account;
 		let web3: Web3;
 		let deployedContract: Contract<typeof SQRCTF1TokenAbi>;

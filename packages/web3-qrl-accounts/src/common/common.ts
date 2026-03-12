@@ -19,7 +19,7 @@ import { EventEmitter } from 'events';
 import type { Numbers } from '@theqrl/web3-types';
 import { bytesToHex, hexToBytes, uint8ArrayConcat } from '@theqrl/web3-utils';
 import { TypeOutput } from './types.js';
-import { intToUint8Array, toType, parseGzondGenesis } from './utils.js';
+import { intToUint8Array, toType, parseGqrlGenesis } from './utils.js';
 import mainnet from './chains/mainnet.js';
 import { QIPs } from './qips/index.js';
 import type { ConsensusAlgorithm, ConsensusType } from './enums.js';
@@ -35,7 +35,7 @@ import type {
 	CommonOpts,
 	CustomCommonOpts,
 	GenesisBlockConfig,
-	GzondConfigOpts,
+	GqrlConfigOpts,
 	HardforkConfig,
 } from './types.js';
 
@@ -108,16 +108,16 @@ export class Common extends EventEmitter {
 	}
 
 	/**
-	 * Static method to load and set common from a gzond genesis json
-	 * @param genesisJson json of gzond configuration
+	 * Static method to load and set common from a gqrl genesis json
+	 * @param genesisJson json of gqrl configuration
 	 * @param { chain, qips, genesisHash, hardfork } to further configure the common instance
 	 * @returns Common
 	 */
-	public static fromGzondGenesis(
+	public static fromGqrlGenesis(
 		genesisJson: any,
-		{ chain, qips, genesisHash, hardfork }: GzondConfigOpts,
+		{ chain, qips, genesisHash, hardfork }: GqrlConfigOpts,
 	): Common {
-		const genesisParams = parseGzondGenesis(genesisJson, chain);
+		const genesisParams = parseGqrlGenesis(genesisJson, chain);
 		const common = new Common({
 			chain: genesisParams.name ?? 'custom',
 			customChains: [genesisParams],
@@ -168,7 +168,7 @@ export class Common extends EventEmitter {
 		super();
 		this._customChains = opts.customChains ?? [];
 		this._chainParams = this.setChain(opts.chain);
-		this.DEFAULT_HARDFORK = this._chainParams.defaultHardfork ?? Hardfork.Shanghai;
+		this.DEFAULT_HARDFORK = this._chainParams.defaultHardfork ?? Hardfork.Zond;
 		// Assign hardfork changes in the sequence of the applied hardforks
 		this.HARDFORK_CHANGES = this.hardforks().map(hf => [
 			hf.name as HardforkSpecKeys,

@@ -136,7 +136,7 @@ describe('Web3Context', () => {
 							chainId: 1337,
 						},
 						baseChain: 'mainnet',
-						hardfork: 'shanghai',
+						hardfork: 'zond',
 					},
 				},
 			});

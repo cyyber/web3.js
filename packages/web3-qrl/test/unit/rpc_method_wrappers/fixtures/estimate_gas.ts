@@ -29,7 +29,7 @@ const transaction: Transaction = {
 	data: '0x',
 	nonce: '0x4',
 	chain: 'mainnet',
-	hardfork: 'shanghai',
+	hardfork: 'zond',
 	chainId: '0x1',
 	gasLimit: '0x5208',
 	descriptor: '0x010000',
