@@ -71,9 +71,9 @@ export interface ChainsConfig {
 
 interface BaseOpts {
 	/**
-	 * String identifier ('shanghai') for hardfork or {@link Hardfork} enum.
+	 * String identifier ('zond') for hardfork or {@link Hardfork} enum.
 	 *
-	 * Default: Hardfork.Shanghai
+	 * Default: Hardfork.Zond
 	 */
 	hardfork?: string | Hardfork;
 	/**

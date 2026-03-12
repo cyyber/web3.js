@@ -33,7 +33,7 @@ const address = addressToBytes('Qe4d1cd51c8b113a12d6355e1bd39cce8998dabb0');
 
 const common = new Common({
 	chain: Chain.Mainnet,
-	hardfork: Hardfork.Shanghai,
+	hardfork: Hardfork.Zond,
 });
 
 const txTypes = [
@@ -303,9 +303,9 @@ describe('[FeeMarketEIP1559Transaction] -> EIP-2930 Compatibility', () => {
 			tx = txType.class.fromTxData({}, { common, freeze: false });
 			expect(tx.getDataFee()).toEqual(BigInt(0));
 
-			const mutableCommon = new Common({ chain: Chain.Mainnet, hardfork: Hardfork.Shanghai });
+			const mutableCommon = new Common({ chain: Chain.Mainnet, hardfork: Hardfork.Zond });
 			tx = txType.class.fromTxData({}, { common: mutableCommon });
-			tx.common.setHardfork(Hardfork.Shanghai);
+			tx.common.setHardfork(Hardfork.Zond);
 			expect(tx.getDataFee()).toEqual(BigInt(0));
 		}
 	});

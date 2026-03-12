@@ -1,5 +1,5 @@
 export default {
-	name: 'shanghai',
+	name: 'zond',
 	comment: 'Start of the QRL main chain',
 	url: '',
 	status: '',

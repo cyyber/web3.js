@@ -44,7 +44,7 @@ const common: Common = {
 		networkId: 1,
 		chainId: 1,
 	},
-	hardfork: 'shanghai',
+	hardfork: 'zond',
 };
 
 const accessList: AccessList = [

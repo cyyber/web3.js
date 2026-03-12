@@ -38,7 +38,7 @@ export const bytesAsHexStringTransaction: FormatType<
 	data: '0x',
 	nonce: BigInt(4),
 	chain: 'mainnet',
-	hardfork: 'shanghai',
+	hardfork: 'zond',
 	chainId: BigInt(1),
 	common: {
 		customChain: {
@@ -47,7 +47,7 @@ export const bytesAsHexStringTransaction: FormatType<
 			chainId: BigInt(66),
 		},
 		baseChain: 'mainnet',
-		hardfork: 'shanghai',
+		hardfork: 'zond',
 	},
 	gasLimit: BigInt('21000'),
 	descriptor: '0x010000',
@@ -72,7 +72,7 @@ export const bytesAsUint8ArrayTransaction: FormatType<
 	data: new Uint8Array(),
 	nonce: BigInt(4),
 	chain: 'mainnet',
-	hardfork: 'shanghai',
+	hardfork: 'zond',
 	chainId: BigInt(1),
 	common: {
 		customChain: {
@@ -81,7 +81,7 @@ export const bytesAsUint8ArrayTransaction: FormatType<
 			chainId: BigInt(66),
 		},
 		baseChain: 'mainnet',
-		hardfork: 'shanghai',
+		hardfork: 'zond',
 	},
 	gasLimit: BigInt('21000'),
 	descriptor: hexToBytes('0x010000'),
@@ -108,7 +108,7 @@ export const numbersAsHexStringTransaction: FormatType<
 	data: '0x',
 	nonce: '0x4',
 	chain: 'mainnet',
-	hardfork: 'shanghai',
+	hardfork: 'zond',
 	chainId: '0x1',
 	common: {
 		customChain: {
@@ -117,7 +117,7 @@ export const numbersAsHexStringTransaction: FormatType<
 			chainId: '0x42',
 		},
 		baseChain: 'mainnet',
-		hardfork: 'shanghai',
+		hardfork: 'zond',
 	},
 	gasLimit: '0x5208',
 	descriptor: '0x010000',
@@ -142,7 +142,7 @@ export const numbersAsNumberTransaction: FormatType<
 	data: '0x',
 	nonce: 4,
 	chain: 'mainnet',
-	hardfork: 'shanghai',
+	hardfork: 'zond',
 	chainId: 1,
 	common: {
 		customChain: {
@@ -151,7 +151,7 @@ export const numbersAsNumberTransaction: FormatType<
 			chainId: 66,
 		},
 		baseChain: 'mainnet',
-		hardfork: 'shanghai',
+		hardfork: 'zond',
 	},
 	gasLimit: 21000,
 	descriptor: '0x010000',
@@ -176,7 +176,7 @@ export const numbersAsStringTransaction: FormatType<
 	data: '0x',
 	nonce: '4',
 	chain: 'mainnet',
-	hardfork: 'shanghai',
+	hardfork: 'zond',
 	chainId: '1',
 	common: {
 		customChain: {
@@ -185,7 +185,7 @@ export const numbersAsStringTransaction: FormatType<
 			chainId: '66',
 		},
 		baseChain: 'mainnet',
-		hardfork: 'shanghai',
+		hardfork: 'zond',
 	},
 	gasLimit: '21000',
 	descriptor: '0x010000',
@@ -210,7 +210,7 @@ export const numbersAsBigIntTransaction: FormatType<
 	data: '0x',
 	nonce: BigInt(4),
 	chain: 'mainnet',
-	hardfork: 'shanghai',
+	hardfork: 'zond',
 	chainId: BigInt(1),
 	common: {
 		customChain: {
@@ -219,7 +219,7 @@ export const numbersAsBigIntTransaction: FormatType<
 			chainId: BigInt(66),
 		},
 		baseChain: 'mainnet',
-		hardfork: 'shanghai',
+		hardfork: 'zond',
 	},
 	gasLimit: BigInt(21000),
 	descriptor: '0x010000',

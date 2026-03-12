@@ -19,7 +19,7 @@ export enum Chain {
 }
 
 export enum Hardfork {
-	Shanghai = 'shanghai',
+	Zond = 'zond',
 }
 
 export enum ConsensusType {

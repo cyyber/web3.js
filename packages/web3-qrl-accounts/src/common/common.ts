@@ -168,7 +168,7 @@ export class Common extends EventEmitter {
 		super();
 		this._customChains = opts.customChains ?? [];
 		this._chainParams = this.setChain(opts.chain);
-		this.DEFAULT_HARDFORK = this._chainParams.defaultHardfork ?? Hardfork.Shanghai;
+		this.DEFAULT_HARDFORK = this._chainParams.defaultHardfork ?? Hardfork.Zond;
 		// Assign hardfork changes in the sequence of the applied hardforks
 		this.HARDFORK_CHANGES = this.hardforks().map(hf => [
 			hf.name as HardforkSpecKeys,

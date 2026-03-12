@@ -20,7 +20,7 @@ import { Chain, Common, ConsensusAlgorithm, ConsensusType, Hardfork } from '../.
 
 describe('[Common]: Hardfork logic', () => {
 	it('Hardfork access', () => {
-		const supportedHardforks = [Hardfork.Shanghai];
+		const supportedHardforks = [Hardfork.Zond];
 		let c;
 
 		for (const hardfork of supportedHardforks) {
@@ -32,13 +32,13 @@ describe('[Common]: Hardfork logic', () => {
 	it('getHardforkByBlockNumber() / setHardforkByBlockNumber()', () => {
 		const c = new Common({ chain: Chain.Mainnet });
 
-		expect(c.getHardforkByBlockNumber(0)).toEqual(Hardfork.Shanghai);
-		expect(c.getHardforkByBlockNumber(1149999)).toEqual(Hardfork.Shanghai);
-		expect(c.getHardforkByBlockNumber(999999999999)).toEqual(Hardfork.Shanghai);
+		expect(c.getHardforkByBlockNumber(0)).toEqual(Hardfork.Zond);
+		expect(c.getHardforkByBlockNumber(1149999)).toEqual(Hardfork.Zond);
+		expect(c.getHardforkByBlockNumber(999999999999)).toEqual(Hardfork.Zond);
 
-		expect(c.setHardforkByBlockNumber(0)).toEqual(Hardfork.Shanghai);
-		expect(c.setHardforkByBlockNumber(1149999)).toEqual(Hardfork.Shanghai);
-		expect(c.setHardforkByBlockNumber(999999999999)).toEqual(Hardfork.Shanghai);
+		expect(c.setHardforkByBlockNumber(0)).toEqual(Hardfork.Zond);
+		expect(c.setHardforkByBlockNumber(1149999)).toEqual(Hardfork.Zond);
+		expect(c.setHardforkByBlockNumber(999999999999)).toEqual(Hardfork.Zond);
 	});
 
 	// NOTE(rgeraldes24): enable/review upon a new fork
@@ -91,11 +91,11 @@ describe('[Common]: Hardfork logic', () => {
 		expect(c.hardforkBlock(Hardfork.Berlin)!).toEqual(BigInt(12244000));
 		expect(c.hardforkBlock(Hardfork.Berlin)!).toEqual(BigInt(12244000));
 
-		// developer note: when Shanghai is set,
+		// developer note: when Zond is set,
 		// update this test to next unscheduled hardfork.
-		expect(c.hardforkBlock(Hardfork.Shanghai)).toBeNull();
-		expect(c.hardforkBlock(Hardfork.Shanghai)).toBeNull();
-		expect(c.nextHardforkBlockOrTimestamp(Hardfork.Shanghai)).toBeNull();
+		expect(c.hardforkBlock(Hardfork.Zond)).toBeNull();
+		expect(c.hardforkBlock(Hardfork.Zond)).toBeNull();
+		expect(c.nextHardforkBlockOrTimestamp(Hardfork.Zond)).toBeNull();
 	});
 
 	it('nextHardforkBlockOrTimestamp()', () => {
@@ -192,10 +192,10 @@ describe('[Common]: Hardfork logic', () => {
 		);
 		expect(c.forkHash(Hardfork.SpuriousDragon, genesisHash)).toBe('0x3edd5b10');
 
-		c = new Common({ chain: Chain.Mainnet, hardfork: Hardfork.Shanghai });
-		// unschedule shanghai on it to test
+		c = new Common({ chain: Chain.Mainnet, hardfork: Hardfork.Zond });
+		// unschedule zond on it to test
 		c.hardforks()
-			.filter(hf => hf.name === Hardfork.Shanghai)
+			.filter(hf => hf.name === Hardfork.Zond)
 			// eslint-disable-next-line array-callback-return
 			.map(hf => {
 				// eslint-disable-next-line no-null/no-null, no-param-reassign
@@ -204,7 +204,7 @@ describe('[Common]: Hardfork logic', () => {
 				hf.timestamp = undefined;
 			});
 		expect(() => {
-			c.forkHash(Hardfork.Shanghai);
+			c.forkHash(Hardfork.Zond);
 		}).toThrow('No fork hash calculation possible');
 		expect(() => {
 			c.forkHash('thisHardforkDoesNotExist');
@@ -215,14 +215,14 @@ describe('[Common]: Hardfork logic', () => {
 		const c = new Common({ chain: Chain.Mainnet });
 
 		const res = c.hardforkForForkHash('0x3edd5b10')!;
-		expect(res.name).toEqual(Hardfork.Shanghai);
+		expect(res.name).toEqual(Hardfork.Zond);
 
 		expect(c.hardforkForForkHash('0x12345')).toBeNull();
 	});
 	*/
 
 	it('HF consensus updates', () => {
-		const c = new Common({ chain: Chain.Mainnet, hardfork: Hardfork.Shanghai });
+		const c = new Common({ chain: Chain.Mainnet, hardfork: Hardfork.Zond });
 		expect(c.consensusType()).toEqual(ConsensusType.ProofOfStake);
 		expect(c.consensusAlgorithm()).toEqual(ConsensusAlgorithm.Casper);
 		expect(c.consensusConfig()).toEqual({});

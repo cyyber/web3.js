@@ -21,7 +21,7 @@ import { FeeMarketEIP1559Transaction, TransactionFactory } from '../../../src';
 
 const common = new Common({
 	chain: Chain.Mainnet,
-	hardfork: Hardfork.Shanghai,
+	hardfork: Hardfork.Zond,
 });
 
 const seed = hexToBytes(
@@ -59,7 +59,7 @@ describe('[TransactionFactory]: Basic functions', () => {
 			/*
 			const unsupportedCommon = new Common({
 				chain: Chain.Mainnet,
-				hardfork: Hardfork.Shanghai,
+				hardfork: Hardfork.Zond,
 			});
 			expect(() => {
 				TransactionFactory.fromSerializedData(txType.unsigned.serialize(), {
@@ -94,7 +94,7 @@ describe('[TransactionFactory]: Basic functions', () => {
 
 	it('fromTxData() -> error cases', () => {
 		// NOTE(rgeraldes24): this part is not valid since we support tx types from the start
-		// const unsupportedCommon = new Common({ chain: Chain.Mainnet, hardfork: Hardfork.Shanghai });
+		// const unsupportedCommon = new Common({ chain: Chain.Mainnet, hardfork: Hardfork.Zond });
 		// expect(() => {
 		// 	TransactionFactory.fromTxData({ type: 1 }, { common: unsupportedCommon });
 		// }).toThrow();

@@ -55,7 +55,7 @@ export const chainSchema = {
 
 export const hardforkSchema = {
 	type: 'string',
-	enum: ['shanghai'],
+	enum: ['zond'],
 };
 
 export const customChainSchema = {

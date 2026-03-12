@@ -111,7 +111,7 @@ function parseGqrlParams(json: any) {
 	};
 
 	const forkMap: { [key: string]: { name: string; isTimestamp?: boolean } } = {
-		// [Hardfork.Shanghai]: { name: 'shanghaiTime', isTimestamp: true },
+		// [Hardfork.Zond]: { name: 'zondTime', isTimestamp: true },
 	};
 
 	// forkMapRev is the map from config field name to Hardfork
@@ -162,7 +162,7 @@ function parseGqrlParams(json: any) {
 
 	const latestHardfork = params.hardforks.length > 0 ? params.hardforks.slice(-1)[0] : undefined;
 	params.hardfork = latestHardfork?.name;
-	params.hardforks.unshift({ name: Hardfork.Shanghai, block: 0 });
+	params.hardforks.unshift({ name: Hardfork.Zond, block: 0 });
 
 	return params;
 }

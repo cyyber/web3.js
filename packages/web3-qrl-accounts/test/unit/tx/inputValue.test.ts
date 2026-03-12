@@ -128,7 +128,7 @@ const eip1559TxValues = {
 
 describe('[Transaction Input Values]', () => {
 	it('EIP-1559 Transaction Values', () => {
-		const common = new Common({ chain: Chain.Mainnet, hardfork: Hardfork.Shanghai });
+		const common = new Common({ chain: Chain.Mainnet, hardfork: Hardfork.Zond });
 		const options = {
 			...baseTxValues,
 			...accessListEip2930TxValues,

@@ -2,7 +2,7 @@ export default {
 	name: 'mainnet',
 	chainId: 1,
 	networkId: 1,
-	defaultHardfork: 'shanghai',
+	defaultHardfork: 'zond',
 	consensus: {
 		type: 'pos',
 		algorithm: 'casper',
@@ -16,7 +16,7 @@ export default {
 	},
 	hardforks: [
 		{
-			name: 'shanghai',
+			name: 'zond',
 			block: 0,
 			forkHash: null,
 		},
