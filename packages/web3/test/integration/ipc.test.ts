@@ -23,10 +23,10 @@ import {
 	closeOpenConnection,
 	waitForSocketConnect,
 } from '../shared_fixtures/system_tests_utils';
-import Web3, { ZondExecutionAPI, SupportedProviders } from '../../src/index';
+import Web3, { QRLExecutionAPI, SupportedProviders } from '../../src/index';
 
 describe('Web3 instance', () => {
-	let provider: SupportedProviders<ZondExecutionAPI> | string;
+	let provider: SupportedProviders<QRLExecutionAPI> | string;
 	let web3: Web3;
 
 	beforeAll(() => {

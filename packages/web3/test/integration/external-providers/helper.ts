@@ -19,29 +19,29 @@ import { SupportedProviders } from '@theqrl/web3-types';
 import Web3 from '../../../src/index';
 
 /**
- * Performs basic RPC calls (like `zond_accounts`, `zond_blockNumber` and `zond_sendTransaction`)
+ * Performs basic RPC calls (like `qrl_accounts`, `qrl_blockNumber` and `qrl_sendTransaction`)
  * @param provider - an instance of a compatible provider
  */
 export async function performBasicRpcCalls(provider: SupportedProviders) {
 	const web3 = new Web3(provider);
 
-	const accounts = await web3.zond.getAccounts();
+	const accounts = await web3.qrl.getAccounts();
 	expect(accounts).toBeDefined();
 	expect(accounts.length).toBeGreaterThan(0);
 
 	// get the last block number
-	const blockNumber0 = await web3.zond.getBlockNumber();
+	const blockNumber0 = await web3.qrl.getBlockNumber();
 	expect(typeof blockNumber0).toBe('bigint');
 
 	// send a transaction
-	const tx = await web3.zond.sendTransaction({
+	const tx = await web3.qrl.sendTransaction({
 		to: accounts[1],
 		from: accounts[0],
 		value: '1',
 	});
 	expect(tx.status).toBe(BigInt(1));
 
-	const blockNumber1 = await web3.zond.getBlockNumber();
+	const blockNumber1 = await web3.qrl.getBlockNumber();
 	expect(typeof blockNumber1).toBe('bigint');
 
 	// After sending a transaction, the blocknumber is supposed to be greater than or equal the block number before sending the transaction

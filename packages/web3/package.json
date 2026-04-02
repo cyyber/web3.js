@@ -4,7 +4,7 @@
 	"publishConfig": {
 		"access": "public"
 	},
-	"description": "Zond JavaScript API",
+	"description": "QRL JavaScript API",
 	"main": "./lib/commonjs/index.js",
 	"module": "./lib/esm/index.js",
 	"exports": {
@@ -23,7 +23,7 @@
 	"browser": "./dist/web3.min.js",
 	"license": "LGPL-3.0",
 	"keywords": [
-		"Zond",
+		"QRL",
 		"JavaScript",
 		"API"
 	],
@@ -56,8 +56,8 @@
 		"test:watch": "npm test -- --watch",
 		"test:unit": "jest --config=./test/unit/jest.config.js",
 		"test:integration": "jest --config=./test/integration/jest.config.js --forceExit",
-		"test:blackbox:gzond:http": "./scripts/black_box_test.sh gzond http",
-		"test:blackbox:gzond:ws": "./scripts/black_box_test.sh gzond ws"
+		"test:blackbox:gqrl:http": "./scripts/black_box_test.sh gqrl http",
+		"test:blackbox:gqrl:ws": "./scripts/black_box_test.sh gqrl ws"
 	},
 	"devDependencies": {
 		"@theqrl/eslint-config-base-web3": "^0.3.0",
@@ -87,12 +87,12 @@
 		"@theqrl/web3-types": "^0.3.3",
 		"@theqrl/web3-utils": "^0.3.3",
 		"@theqrl/web3-validator": "^0.3.3",
-		"@theqrl/web3-zond": "^0.3.3",
-		"@theqrl/web3-zond-abi": "^0.3.3",
-		"@theqrl/web3-zond-accounts": "^0.3.3",
-		"@theqrl/web3-zond-contract": "^0.3.3",
-		"@theqrl/web3-zond-ens": "^0.3.3",
-		"@theqrl/web3-zond-iban": "^0.3.3"
+		"@theqrl/web3-qrl": "^0.3.3",
+		"@theqrl/web3-qrl-abi": "^0.3.3",
+		"@theqrl/web3-qrl-accounts": "^0.3.3",
+		"@theqrl/web3-qrl-contract": "^0.3.3",
+		"@theqrl/web3-qrl-qrns": "^0.3.3",
+		"@theqrl/web3-qrl-iban": "^0.3.3"
 	},
 	"gitHead": "d4f3246946fec86d908a215b27568aa8faea88d7"
 }

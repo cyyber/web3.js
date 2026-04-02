@@ -57,7 +57,7 @@ describe(`${getSystemTestBackend()} tests - getTransactionCount`, () => {
 			],
 		}),
 	)('getTransactionCount', async ({ block }) => {
-		const result = await web3.zond.getTransactionCount(
+		const result = await web3.qrl.getTransactionCount(
 			getE2ETestAccountAddress(),
 			blockData[block],
 		);

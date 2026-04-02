@@ -7,7 +7,7 @@ sidebar_label: Add custom RPC methods
 
 #### Introduction
 
-Web3.js is a popular library for interacting with the Zond blockchain. It provides a set of APIs to interact with Zond nodes via JSON-RPC calls. For adding new JSON-RPC function calls to the library, you can do so using the plugin feature in web3.js. This allows you to extend the functionality of Web3.js and add support for new JSON-RPC methods.
+Web3.js is a popular library for interacting with the QRL blockchain. It provides a set of APIs to interact with QRL nodes via JSON-RPC calls. For adding new JSON-RPC function calls to the library, you can do so using the plugin feature in web3.js. This allows you to extend the functionality of Web3.js and add support for new JSON-RPC methods.
 
 :::caution
 `web3.extend()` is available in Web3 with some breaking changes. However it is recommended to use Web3 Plugin feature for extending web3 functionality if you are developing new feature.

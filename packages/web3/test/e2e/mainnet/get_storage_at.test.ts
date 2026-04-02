@@ -60,7 +60,7 @@ describe(`${getSystemTestBackend()} tests - getStorageAt`, () => {
 			],
 		}),
 	)('getStorageAt', async ({ storageSlot, block }) => {
-		const result = await web3.zond.getStorageAt(
+		const result = await web3.qrl.getStorageAt(
 			getE2ETestContractAddress(),
 			storageSlot,
 			mainnetBlockData[block],

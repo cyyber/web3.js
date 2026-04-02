@@ -1,7 +1,7 @@
 {
 	"name": "@theqrl/abi",
 	"version": "0.3.3",
-	"description": "Utilities and Classes for parsing, formatting and managing Zond ABIs.",
+	"description": "Utilities and Classes for parsing, formatting and managing QRL ABIs.",
 	"license": "MIT",
 	"main": "./lib/commonjs/index.js",
 	"module": "./lib/esm/index.js",

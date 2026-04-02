@@ -51,7 +51,7 @@
 		"@theqrl/web3-types": "^0.3.3",
 		"@theqrl/web3-utils": "^0.3.3",
 		"@theqrl/web3-validator": "^0.3.3",
-		"@theqrl/web3-zond-iban": "^0.3.3"
+		"@theqrl/web3-qrl-iban": "^0.3.3"
 	},
 	"optionalDependencies": {
 		"@theqrl/web3-providers-ipc": "^0.3.3"

@@ -15,7 +15,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 import {
-	ZondExecutionAPI,
+	QRLExecutionAPI,
 	HexString,
 	ProviderConnectInfo,
 	Web3APIMethod,
@@ -28,14 +28,20 @@ import { EIP1193ProviderRpcError } from '@theqrl/web3-errors';
 import { toPayload } from './json_rpc.js';
 
 /**
- * This is an abstract class, which extends {@link Web3BaseProvider} class. This class is used to implement a provider that adheres to the EIP-1193 standard for Zond providers.
+ * This is an abstract class, which extends {@link Web3BaseProvider} class. This class is used to implement a provider that adheres to the EIP-1193 standard for QRL providers.
  */
 export abstract class Eip1193Provider<
-	API extends Web3APISpec = ZondExecutionAPI,
+	API extends Web3APISpec = QRLExecutionAPI,
 > extends Web3BaseProvider<API> {
 	protected readonly _eventEmitter: EventEmitter = new EventEmitter();
 	private _chainId: HexString = '';
 	private _accounts: HexString[] = [];
+
+	protected _emitError(error: unknown): void {
+		if (this._eventEmitter.listenerCount('error') > 0) {
+			this._eventEmitter.emit('error', error);
+		}
+	}
 
 	private async _getChainId(): Promise<HexString> {
 		const data = await (this as Web3BaseProvider<API>).request<
@@ -43,7 +49,7 @@ export abstract class Eip1193Provider<
 			ResponseType
 		>(
 			toPayload({
-				method: 'zond_chainId',
+				method: 'qrl_chainId',
 				params: [],
 			}) as Web3APIPayload<API, Web3APIMethod<API>>,
 		);
@@ -53,7 +59,7 @@ export abstract class Eip1193Provider<
 	private async _getAccounts(): Promise<HexString[]> {
 		const data = await (this as Web3BaseProvider<API>).request<Web3APIMethod<API>, HexString[]>(
 			toPayload({
-				method: 'zond_accounts',
+				method: 'qrl_accounts',
 				params: [],
 			}) as Web3APIPayload<API, Web3APIMethod<API>>,
 		);
@@ -69,10 +75,7 @@ export abstract class Eip1193Provider<
 						this._eventEmitter.emit('chainChanged', this._chainId);
 					}
 				})
-				.catch(err => {
-					// todo: add error handler
-					console.error(err);
-				}),
+				.catch(err => this._emitError(err)),
 
 			this._getAccounts()
 				.then(accounts => {
@@ -86,22 +89,14 @@ export abstract class Eip1193Provider<
 						this._onAccountsChanged();
 					}
 				})
-				.catch(err => {
-					// todo: add error handler
-					// eslint-disable-next-line no-console
-					console.error(err);
-				}),
+				.catch(err => this._emitError(err)),
 		])
 			.then(() =>
 				this._eventEmitter.emit('connect', {
 					chainId: this._chainId,
 				} as ProviderConnectInfo),
 			)
-			.catch(err => {
-				// todo: add error handler
-				// eslint-disable-next-line no-console
-				console.error(err);
-			});
+			.catch(err => this._emitError(err));
 	}
 
 	// todo this must be ProvideRpcError with a message too

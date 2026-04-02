@@ -26,6 +26,7 @@ export const createProxy = async (
 	originWs: WebSocket;
 }> => {
 	const originWs = new WebSocket(origin);
+	const connectedClients = new Set<WebSocket>();
 
 	await new Promise(resolve => {
 		originWs.on('open', () => {
@@ -37,47 +38,55 @@ export const createProxy = async (
 		host: '127.0.0.1',
 		port,
 	});
-	// eslint-disable-next-line  @typescript-eslint/no-empty-function
-	let closeFunc = async () => {};
+	const closeSocket = async (socket: WebSocket) =>
+		new Promise(resolve => {
+			if (socket.readyState === WebSocket.CLOSED) {
+				resolve(true);
+				return;
+			}
+			const timeOut = setTimeout(() => {
+				resolve(true);
+			}, 2000);
+			socket.once('close', () => {
+				clearTimeout(timeOut);
+				resolve(true);
+			});
+			socket.terminate();
+		});
+
+	const closeServer = async () =>
+		new Promise(resolve => {
+			webSocketServer.close(() => resolve(true));
+		});
+
 	webSocketServer.on('connection', ws => {
+		connectedClients.add(ws);
 		ws.on('message', (d, isBinary) => {
 			originWs.send(d, { binary: isBinary });
 		});
-		originWs.on('message', (d, isBinary) => {
+		const onOriginMessage = (d: WebSocket.RawData, isBinary: boolean) => {
 			ws.send(d, { binary: isBinary });
-		});
-		closeFunc = async () => {
-			await new Promise(resolve => {
-				const timeOut = setTimeout(() => {
-					resolve(true);
-				}, 2000);
-				ws.on('close', () => {
-					ws.removeAllListeners();
-					clearTimeout(timeOut);
-					resolve(true);
-				});
-				ws.terminate();
-			});
-			await new Promise(resolve => {
-				const timeOut = setTimeout(() => {
-					resolve(true);
-				}, 2000);
-				originWs.on('close', () => {
-					clearTimeout(timeOut);
-					originWs.removeAllListeners();
-					resolve(true);
-				});
-
-				originWs.terminate();
-			});
-			webSocketServer.close();
 		};
+		originWs.on('message', onOriginMessage);
+		ws.on('close', () => {
+			connectedClients.delete(ws);
+			originWs.removeListener('message', onOriginMessage);
+			ws.removeAllListeners();
+		});
 	});
 
 	return {
 		path: `ws://127.0.0.1:${port}`,
 		server: webSocketServer,
 		originWs,
-		close: async () => closeFunc(),
+		close: async () => {
+			for (const socket of connectedClients) {
+				// eslint-disable-next-line no-await-in-loop
+				await closeSocket(socket);
+			}
+			originWs.removeAllListeners('message');
+			await closeSocket(originWs);
+			await closeServer();
+		},
 	};
 };

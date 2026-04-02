@@ -65,7 +65,7 @@ describe(`${getSystemTestBackend()} tests - getTransactionFromBlock`, () => {
 			transactionIndex: ['0x1', '1', 1, BigInt(1)],
 		}),
 	)('getTransactionFromBlock', async ({ block, transactionIndex }) => {
-		const result = await web3.zond.getTransactionFromBlock(blockData[block], transactionIndex);
+		const result = await web3.qrl.getTransactionFromBlock(blockData[block], transactionIndex);
 
 		if (blockData[block] === 'earliest') {
 			// eslint-disable-next-line no-null/no-null
@@ -90,10 +90,12 @@ describe(`${getSystemTestBackend()} tests - getTransactionFromBlock`, () => {
 				gas: expect.any(BigInt),
 				input: expect.any(String),
 				type: expect.any(BigInt),
-				publicKey: expect.any(String),
+				descriptor: expect.any(String),
+				extraParams: expect.any(String),
 				signature: expect.any(String),
+				publicKey: expect.any(String),
 				to: null,
-				value: '0x0'
+				value: '0x0',
 			});
 		}
 	});

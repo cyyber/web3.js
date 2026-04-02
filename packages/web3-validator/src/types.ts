@@ -19,8 +19,8 @@ import { AbiParameter } from '@theqrl/web3-types';
 import { ZodIssueBase } from 'zod';
 
 export type ValidInputTypes = Uint8Array | bigint | string | number | boolean;
-export type ZondBaseTypes = 'bool' | 'bytes' | 'string' | 'uint' | 'int' | 'address' | 'tuple';
-export type ZondBaseTypesWithMeta =
+export type QRLBaseTypes = 'bool' | 'bytes' | 'string' | 'uint' | 'int' | 'address' | 'tuple';
+export type QRLBaseTypesWithMeta =
 	| `string${string}`
 	| `string${string}[${number}]`
 	| `bytes${string}`
@@ -34,7 +34,7 @@ export type ZondBaseTypesWithMeta =
 	| `tuple[]`
 	| `tuple[${number}]`;
 
-export type ZondExtendedTypes =
+export type QRLExtendedTypes =
 	| 'hex'
 	| 'number'
 	| 'blockNumber'
@@ -44,7 +44,7 @@ export type ZondExtendedTypes =
 
 export type FullValidationSchema = ReadonlyArray<AbiParameter>;
 export type ShortValidationSchema = ReadonlyArray<
-	string | ZondBaseTypes | ZondExtendedTypes | ZondBaseTypesWithMeta | ShortValidationSchema
+	string | QRLBaseTypes | QRLExtendedTypes | QRLBaseTypesWithMeta | ShortValidationSchema
 >;
 export type ValidationSchemaInput = FullValidationSchema | ShortValidationSchema;
 

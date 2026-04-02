@@ -20,7 +20,7 @@ import {
 	BlockOutput,
 	DEFAULT_RETURN_FORMAT,
 	DataFormat,
-	ZondExecutionAPI,
+	QRLExecutionAPI,
 	JsonRpcSubscriptionResult,
 	JsonRpcSubscriptionResultOld,
 	JsonRpcNotification,
@@ -47,7 +47,7 @@ export abstract class Web3Subscription<
 	EventMap extends Web3EventMap,
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	ArgsType = any,
-	API extends Web3APISpec = ZondExecutionAPI,
+	API extends Web3APISpec = QRLExecutionAPI,
 	// The following generic type is just to define the type `CombinedEventMap` and use it inside the class
 	// 	it combines the user passed `EventMap` with the `CommonSubscriptionEvents`
 	//	However, this type definition could be refactored depending on the closure of
@@ -117,7 +117,7 @@ export abstract class Web3Subscription<
 
 	public async sendSubscriptionRequest(): Promise<string> {
 		this._id = await this._subscriptionManager.requestManager.send({
-			method: 'zond_subscribe',
+			method: 'qrl_subscribe',
 			params: this._buildSubscriptionParams(),
 		});
 
@@ -148,8 +148,8 @@ export abstract class Web3Subscription<
 
 	public async sendUnsubscribeRequest() {
 		await this._subscriptionManager.requestManager.send({
-			method: 'zond_unsubscribe',
-			params: [this.id] as Web3APIParams<API, 'zond_unsubscribe'>,
+			method: 'qrl_unsubscribe',
+			params: [this.id] as Web3APIParams<API, 'qrl_unsubscribe'>,
 		});
 		this._id = undefined;
 	}
@@ -168,7 +168,7 @@ export abstract class Web3Subscription<
 	}
 
 	// eslint-disable-next-line class-methods-use-this
-	protected _buildSubscriptionParams(): Web3APIParams<API, 'zond_subscribe'> {
+	protected _buildSubscriptionParams(): Web3APIParams<API, 'qrl_subscribe'> {
 		// This should be overridden in the subclass
 		throw new Error('Implement in the child class');
 	}

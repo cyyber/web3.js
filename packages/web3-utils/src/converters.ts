@@ -15,8 +15,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { keccak256 } from 'ethereum-cryptography/keccak.js';
-import { bytesToUtf8, utf8ToBytes } from 'ethereum-cryptography/utils.js';
+import { keccak256 } from 'qrl-cryptography/keccak.js';
+import { bytesToUtf8, utf8ToBytes } from 'qrl-cryptography/utils.js';
 import { Address, Bytes, HexString, Numbers, ValueTypes } from '@theqrl/web3-types';
 import {
 	isAddressString,
@@ -41,37 +41,30 @@ const expo10 = (expo: number) => base ** BigInt(expo);
 
 // Ref: https://ethdocs.org/en/latest/ether.html
 /** @internal */
-export const zondUnitMap = {
-	noether: BigInt('0'),
-	wei: BigInt(1),
-	kwei: expo10(3),
-	Kwei: expo10(3),
-	babbage: expo10(3),
-	femtoether: expo10(3),
-	mwei: expo10(6),
-	Mwei: expo10(6),
-	lovelace: expo10(6),
-	picoether: expo10(6),
-	gwei: expo10(9),
-	Gwei: expo10(9),
-	shannon: expo10(9),
-	nanoether: expo10(9),
+export const qrlUnitMap = {
+	noquanta: BigInt('0'),
+	planck: BigInt(1),
+	kplanck: expo10(3),
+	Kplanck: expo10(3),
+	mplanck: expo10(6),
+	Mplanck: expo10(6),
+	shor: expo10(9),
 	nano: expo10(9),
-	szabo: expo10(12),
-	microether: expo10(12),
+	kshor: expo10(12),
+	Kshor: expo10(12),
 	micro: expo10(12),
-	finney: expo10(15),
-	milliether: expo10(15),
+	mshor: expo10(15),
+	Mshor: expo10(15),
 	milli: expo10(15),
-	ether: expo10(18),
-	kether: expo10(21),
+	quanta: expo10(18),
+	kquanta: expo10(21),
 	grand: expo10(21),
-	mether: expo10(24),
-	gether: expo10(27),
-	tether: expo10(30),
+	mquanta: expo10(24),
+	gquanta: expo10(27),
+	tquanta: expo10(30),
 };
 
-export type EtherUnits = keyof typeof zondUnitMap;
+export type QRLUnits = keyof typeof qrlUnitMap;
 /**
  * Convert a value from bytes to Uint8Array
  * @param data - Data to be converted
@@ -145,13 +138,11 @@ export const hexToBytes = (bytes: HexString): Uint8Array => {
  *
  * @example
  * ```ts
- * console.log(web3.utils.addressToBytes('Z7465737474657374746573747465737474657374'));
+ * console.log(web3.utils.addressToBytes('Q7465737474657374746573747465737474657374'));
  * > Uint8Array(20) [ 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116 ]
  * ```
  */
-export const addressToBytes = (value: Address): Uint8Array => {
-	return bytesToUint8Array(addressToHex(value));
-};
+export const addressToBytes = (value: Address): Uint8Array => bytesToUint8Array(addressToHex(value));
 
 /**
  * Convert a hex string to an address string
@@ -161,12 +152,12 @@ export const addressToBytes = (value: Address): Uint8Array => {
  * @example
  * ```ts
  * console.log(web3.utils.hexToAddress('0x74657374123123131231231313a1231231112312'));
- * > "Z74657374123123131231231313a1231231112312"
+ * > "Q74657374123123131231231313a1231231112312"
  * ```
  */
 export const hexToAddress = (value: HexString): Address => {
 	validator.validate(['hex'], [value]);
-	return value.replace('0x', 'Z');
+	return value.replace('0x', 'Q');
 };
 
 /**
@@ -176,7 +167,7 @@ export const hexToAddress = (value: HexString): Address => {
  *
  * @example
  * ```ts
- * console.log(web3.utils.addressToHex('Z74657374123123131231231313a1231231112312'));
+ * console.log(web3.utils.addressToHex('Q74657374123123131231231313a1231231112312'));
  * > "0x74657374123123131231231313a1231231112312"
  * ```
  */
@@ -495,28 +486,25 @@ export const toBigInt = (value: unknown): bigint => {
 };
 
 /**
- * Takes a number of wei and converts it to any other ether unit.
- * @param number - The value in wei
+ * Takes a number of planck and converts it to any other qrl unit.
+ * @param number - The value in planck
  * @param unit - The unit to convert to
  * @returns - Returns the converted value in the given unit
  *
  * @example
  * ```ts
- * console.log(web3.utils.fromWei("1", "ether"));
+ * console.log(web3.utils.fromPlanck("1", "quanta"));
  * > 0.000000000000000001
- *
- * console.log(web3.utils.fromWei("1", "shannon"));
- * > 0.000000001
  * ```
  */
-export const fromWei = (number: Numbers, unit: EtherUnits): string => {
-	const denomination = zondUnitMap[unit];
+export const fromPlanck = (number: Numbers, unit: QRLUnits): string => {
+	const denomination = qrlUnitMap[unit];
 
 	if (!denomination) {
 		throw new InvalidUnitError(unit);
 	}
 
-	// value in wei would always be integer
+	// value in planck would always be integer
 	// 13456789, 1234
 	const value = String(toNumber(number));
 
@@ -554,23 +542,23 @@ export const fromWei = (number: Numbers, unit: EtherUnits): string => {
 };
 
 /**
- * Takes a number of a unit and converts it to wei.
+ * Takes a number of a unit and converts it to planck.
  *
  * @param number - The number to convert.
- * @param unit - {@link EtherUnits} The unit of the number passed.
- * @returns The number converted to wei.
+ * @param unit - {@link QRLUnits} The unit of the number passed.
+ * @returns The number converted to planck.
  *
  * @example
  * ```ts
- * console.log(web3.utils.toWei("0.001", "ether"));
- * > 1000000000000000 //(wei)
+ * console.log(web3.utils.toPlanck("0.001", "quanta"));
+ * > 1000000000000000 //(planck)
  * ```
  */
-// todo in 1.x unit defaults to 'ether'
-export const toWei = (number: Numbers, unit: EtherUnits): string => {
+// todo in 1.x unit defaults to 'quanta'
+export const toPlanck = (number: Numbers, unit: QRLUnits): string => {
 	validator.validate(['number'], [number]);
 
-	const denomination = zondUnitMap[unit];
+	const denomination = qrlUnitMap[unit];
 
 	if (!denomination) {
 		throw new InvalidUnitError(unit);
@@ -608,13 +596,13 @@ export const toWei = (number: Numbers, unit: EtherUnits): string => {
 };
 
 /**
- * Will convert an upper or lowercase Zond address to a checksum address.
+ * Will convert an upper or lowercase QRL address to a checksum address.
  * @param address - An address string
  * @returns	The checksum address
  * @example
  * ```ts
- * web3.utils.toChecksumAddress('Zc1912fee45d61c87cc5ea59dae31190fffff232d');
- * > "Zc1912fEE45d61C87Cc5EA59DaE31190FFFFf232d"
+ * web3.utils.toChecksumAddress('Qc1912fee45d61c87cc5ea59dae31190fffff232d');
+ * > "Qc1912fEE45d61C87Cc5EA59DaE31190FFFFf232d"
  * ```
  */
 export const toChecksumAddress = (address: Address): string => {
@@ -622,7 +610,7 @@ export const toChecksumAddress = (address: Address): string => {
 		throw new InvalidAddressError(address);
 	}
 
-	const lowerCaseAddress = address.toLowerCase().replace(/^z/i, '');
+	const lowerCaseAddress = address.toLowerCase().replace(/^q/i, '');
 
 	const hash = bytesToHex(keccak256(utf8ToBytes(lowerCaseAddress)));
 
@@ -632,7 +620,7 @@ export const toChecksumAddress = (address: Address): string => {
 	)
 		return ''; // // EIP-1052 if hash is equal to c5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470, keccak was given empty data
 
-	let checksumAddress = 'Z';
+	let checksumAddress = 'Q';
 
 	const addressHash = hash.replace(/^0x/i, '');
 

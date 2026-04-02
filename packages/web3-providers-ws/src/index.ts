@@ -18,7 +18,7 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 import { ClientRequestArgs } from 'http';
 import WebSocket, { ClientOptions, CloseEvent } from 'isomorphic-ws';
 import {
-	ZondExecutionAPI,
+	QRLExecutionAPI,
 	Web3APIMethod,
 	Web3APIPayload,
 	Web3APISpec,
@@ -67,7 +67,7 @@ export { ClientOptions } from 'isomorphic-ws';
  * ```
  */
 export default class WebSocketProvider<
-	API extends Web3APISpec = ZondExecutionAPI,
+	API extends Web3APISpec = QRLExecutionAPI,
 > extends SocketProvider<WebSocket.MessageEvent, WebSocket.CloseEvent, WebSocket.ErrorEvent, API> {
 	protected readonly _socketOptions?: ClientOptions | ClientRequestArgs;
 
@@ -141,7 +141,7 @@ export default class WebSocketProvider<
 	protected _addSocketListeners(): void {
 		this._socketConnection?.addEventListener('open', this._onOpenHandler);
 		this._socketConnection?.addEventListener('message', this._onMessageHandler);
-		this._socketConnection?.addEventListener('close', e => this._onCloseHandler(e));
+		this._socketConnection?.addEventListener('close', this._onCloseHandler);
 		this._socketConnection?.addEventListener('error', this._onErrorHandler);
 	}
 

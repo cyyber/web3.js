@@ -15,7 +15,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Contract } from '@theqrl/web3-zond-contract';
+import { Contract } from '@theqrl/web3-qrl-contract';
 import { ContractInitOptions } from '@theqrl/web3-types';
 import { Web3 } from '../../src/web3';
 
@@ -32,10 +32,10 @@ describe('Web3 object', () => {
 			httpProviderOptions: undefined,
 		});
 	});
-	describe('creating a Contract object with the constructor at Web3 -> zond.Contract', () => {
-		const Web3Contract = new Web3().zond.Contract;
+	describe('creating a Contract object with the constructor at Web3 -> qrl.Contract', () => {
+		const Web3Contract = new Web3().qrl.Contract;
 		const abi = [{ name: 'any', type: 'function' }];
-		const address = 'Z0000000000000000000000000000000000000000';
+		const address = 'Q0000000000000000000000000000000000000000';
 		const options = { gas: '100' };
 
 		it('should work when `address`=`undefined` and `options`=`undefined`', () => {

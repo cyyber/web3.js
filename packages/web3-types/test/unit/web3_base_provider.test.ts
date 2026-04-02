@@ -16,7 +16,7 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 import {
-	ZondExecutionAPI,
+	QRLExecutionAPI,
 	JsonRpcResponseWithResult,
 	Web3APIMethod,
 	Web3APIPayload,
@@ -28,10 +28,10 @@ import {
 class Web3ChildProvider extends Web3BaseProvider {
 	// eslint-disable-next-line class-methods-use-this
 	public async request<
-		Method extends Web3APIMethod<ZondExecutionAPI>,
-		ResultType = Web3APIReturnType<ZondExecutionAPI, Method> | unknown,
+		Method extends Web3APIMethod<QRLExecutionAPI>,
+		ResultType = Web3APIReturnType<QRLExecutionAPI, Method> | unknown,
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	>(_: Web3APIPayload<ZondExecutionAPI, Method>): Promise<JsonRpcResponseWithResult<ResultType>> {
+	>(_: Web3APIPayload<QRLExecutionAPI, Method>): Promise<JsonRpcResponseWithResult<ResultType>> {
 		return new Promise(resolve =>
 			// eslint-disable-next-line no-promise-executor-return
 			resolve({
@@ -46,12 +46,12 @@ class Web3ChildProvider extends Web3BaseProvider {
 describe('Web3BaseProvider', () => {
 	it('asEIP1193Provider will fix the returned result of the request method', async () => {
 		const childProvider = new Web3ChildProvider();
-		const returnValue = await childProvider.request({ method: 'zond_getBalance' });
+		const returnValue = await childProvider.request({ method: 'qrl_getBalance' });
 		expect(returnValue.result).toBe('result');
 
 		const eip1193CompatibleClass = childProvider.asEIP1193Provider();
 		const returnValue2 = await eip1193CompatibleClass.request({
-			method: 'zond_getBalance',
+			method: 'qrl_getBalance',
 		});
 		expect(returnValue2).toBe('result');
 	});

@@ -16,7 +16,13 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 import { FormatterError } from '@theqrl/web3-errors';
 import { Bytes, DataFormat, FMT_BYTES, FMT_NUMBER, FormatType } from '@theqrl/web3-types';
-import { isNullish, isObject, JsonSchema, utils, ValidationSchemaInput } from '@theqrl/web3-validator';
+import {
+	isNullish,
+	isObject,
+	JsonSchema,
+	utils,
+	ValidationSchemaInput,
+} from '@theqrl/web3-validator';
 import { bytesToUint8Array, bytesToHex, numberToHex, toBigInt } from './converters.js';
 import { mergeDeep } from './objects.js';
 import { padLeft } from './string_manipulation.js';
@@ -87,13 +93,13 @@ const findSchemaByDataPath = (
 /**
  * Converts a value depending on the format
  * @param value - value to convert
- * @param zondType - The type of the value to be parsed
+ * @param qrlType - The type of the value to be parsed
  * @param format - The format to be converted to
  * @returns - The value converted to the specified format
  */
-export const convertScalarValue = (value: unknown, zondType: string, format: DataFormat) => {
+export const convertScalarValue = (value: unknown, qrlType: string, format: DataFormat) => {
 	try {
-		const { baseType, baseTypeSize } = parseBaseType(zondType);
+		const { baseType, baseTypeSize } = parseBaseType(qrlType);
 		if (baseType === 'int' || baseType === 'uint') {
 			switch (format.number) {
 				case FMT_NUMBER.NUMBER:
@@ -290,7 +296,7 @@ export const format = <
 	}
 
 	// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-	const jsonSchema: JsonSchema = isObject(schema) ? schema : utils.zondAbiToJsonSchema(schema);
+	const jsonSchema: JsonSchema = isObject(schema) ? schema : utils.qrlAbiToJsonSchema(schema);
 
 	if (!jsonSchema.properties && !jsonSchema.items && !jsonSchema.format) {
 		throw new FormatterError('Invalid json schema for formatting');

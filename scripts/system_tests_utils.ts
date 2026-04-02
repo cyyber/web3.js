@@ -20,38 +20,38 @@ import { format, SocketProvider } from '@theqrl/web3-utils';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {
 	create as _createAccount,
-	//decrypt,
+	decrypt,
 	seedToAccount,
 	signTransaction,
-} from '@theqrl/web3-zond-accounts';
+} from '@theqrl/web3-qrl-accounts';
 
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { prepareTransactionForSigning, Web3Zond } from '@theqrl/web3-zond';
+import { prepareTransactionForSigning, Web3QRL } from '@theqrl/web3-qrl';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { Web3Context } from '@theqrl/web3-core';
 
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {
-	ZondExecutionAPI,
+	QRLExecutionAPI,
 	Bytes,
 	Web3BaseProvider,
 	Transaction,
-	//KeyStore,
+	KeyStore,
 	ProviderConnectInfo,
 	Web3ProviderEventCallback,
 	ProviderRpcError,
 	JsonRpcSubscriptionResult,
 	JsonRpcNotification,
-	ZOND_DATA_FORMAT,
+	QRL_DATA_FORMAT,
 	SupportedProviders,
 	Web3APISpec,
-	Web3ZondExecutionAPI,
+	Web3QRLExecutionAPI,
 } from '@theqrl/web3-types';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import Web3 from '@theqrl/web3';
 
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { NonPayableMethodObject } from '@theqrl/web3-zond-contract';
+import { NonPayableMethodObject } from '@theqrl/web3-qrl-contract';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import HttpProvider from '@theqrl/web3-providers-http';
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -73,7 +73,7 @@ export const DEFAULT_SYSTEM_ENGINE = 'node';
 export const getSystemTestProviderUrl = (): string =>
 	getEnvVar('WEB3_SYSTEM_TEST_PROVIDER') ?? DEFAULT_SYSTEM_PROVIDER;
 
-export const getSystemTestProvider = <API extends Web3APISpec = Web3ZondExecutionAPI>():
+export const getSystemTestProvider = <API extends Web3APISpec = Web3QRLExecutionAPI>():
 	| string
 	| SupportedProviders<API> => {
 	const url = getSystemTestProviderUrl();
@@ -172,11 +172,11 @@ export const closeOpenConnection = async (web3Context: Web3Context) => {
 	}
 };
 
-export const createAccountProvider = (context: Web3Context<ZondExecutionAPI>) => {
+export const createAccountProvider = (context: Web3Context<QRLExecutionAPI>) => {
 	const signTransactionWithContext = async (transaction: Transaction, seed: Bytes) => {
 		const tx = await prepareTransactionForSigning(transaction, context);
 
-		const seedBytes = format({ format: 'bytes' }, seed, ZOND_DATA_FORMAT);
+		const seedBytes = format({ format: 'bytes' }, seed, QRL_DATA_FORMAT);
 
 		return signTransaction(tx, seedBytes);
 	};
@@ -191,7 +191,6 @@ export const createAccountProvider = (context: Web3Context<ZondExecutionAPI>) =>
 		};
 	};
 
-	/*
 	const decryptWithContext = async (
 		keystore: string | KeyStore,
 		password: string,
@@ -205,7 +204,6 @@ export const createAccountProvider = (context: Web3Context<ZondExecutionAPI>) =>
 				signTransactionWithContext(transaction, account.seed),
 		};
 	};
-	*/
 
 	const createWithContext = () => {
 		const account = _createAccount();
@@ -220,14 +218,14 @@ export const createAccountProvider = (context: Web3Context<ZondExecutionAPI>) =>
 	return {
 		create: createWithContext,
 		seedToAccount: seedToAccountWithContext,
-		//decrypt: decryptWithContext,
+		decrypt: decryptWithContext,
 	};
 };
 
 export const refillAccount = async (from: string, to: string, value: string | number) => {
-	const web3Zond = new Web3Zond(DEFAULT_SYSTEM_PROVIDER);
+	const web3QRL = new Web3QRL(getSystemTestProviderUrl());
 
-	await web3Zond.sendTransaction({
+	await web3QRL.sendTransaction({
 		from,
 		to,
 		value,
@@ -241,17 +239,17 @@ export const createNewAccount = async (config?: {
 }): Promise<{ address: string; seed: string }> => {
 	const acc = config?.seed ? seedToAccount(config?.seed) : _createAccount();
 
-	const clientUrl = DEFAULT_SYSTEM_PROVIDER;
+	const clientUrl = getSystemTestProviderUrl();
 
 	if (config?.refill) {
-		const web3Zond = new Web3Zond(clientUrl);
+		const web3QRL = new Web3QRL(clientUrl);
 		if (!mainAcc) {
-			[mainAcc] = await web3Zond.getAccounts();
+			[mainAcc] = await web3QRL.getAccounts();
 		}
 		await refillAccount(mainAcc, acc.address, '10000000000000000000');
 	}
 
-	return { address: `Z${acc.address.slice(1).toLowerCase()}`, seed: acc.seed! };
+	return { address: `Q${acc.address.slice(1).toLowerCase()}`, seed: acc.seed };
 };
 let tempAccountList: { address: string; seed: string }[] = [];
 const walletsOnWorker = 20;
@@ -267,11 +265,7 @@ export const createTempAccount = async (
 		password?: string;
 	} = {},
 ): Promise<{ address: string; seed: string }> => {
-	if (
-		config.refill === false ||
-		config.seed ||
-		config.password
-	) {
+	if (config.refill === false || config.seed || config.password) {
 		return createNewAccount({
 			refill: config.refill ?? true,
 			seed: config.seed,
@@ -307,14 +301,10 @@ export const getSystemTestAccountsWithKeys = async (): Promise<
 export const getSystemTestAccounts = async (): Promise<string[]> =>
 	(await getSystemTestAccountsWithKeys()).map(a => a.address);
 
-export const signTxAndSendEIP1559 = async (
-	provider: unknown,
-	tx: Transaction,
-	seed: string,
-) => {
+export const signTxAndSendEIP1559 = async (provider: unknown, tx: Transaction, seed: string) => {
 	const web3 = new Web3(provider as Web3BaseProvider);
-	const acc = web3.zond.accounts.seedToAccount(seed);
-	web3.zond.wallet?.add(seed);
+	const acc = web3.qrl.accounts.seedToAccount(seed);
+	web3.qrl.wallet?.add(seed);
 
 	const txObj = {
 		...tx,
@@ -323,7 +313,7 @@ export const signTxAndSendEIP1559 = async (
 		from: acc.address,
 	};
 
-	return web3.zond.sendTransaction(txObj, undefined, { checkRevertBeforeSending: false });
+	return web3.qrl.sendTransaction(txObj, undefined, { checkRevertBeforeSending: false });
 };
 
 export const signAndSendContractMethodEIP1559 = async (
@@ -342,50 +332,84 @@ export const signAndSendContractMethodEIP1559 = async (
 	);
 
 export const createLocalAccount = async (web3: Web3) => {
-	const account = web3.zond.accounts.create();
-	await refillAccount((await createTempAccount()).address, account.address, '100000000000000000000');
-	web3.zond.accounts.wallet.add(account);
+	const account = web3.qrl.accounts.create();
+	await refillAccount(
+		(
+			await createTempAccount()
+		).address,
+		account.address,
+		'100000000000000000000',
+	);
+	web3.qrl.accounts.wallet.add(account);
 	return account;
 };
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-// eslint-disable-next-line arrow-body-style
-export const waitForSocketConnect = async (provider: SocketProvider<any, any, any>) => {
-	return new Promise<ProviderConnectInfo>(resolve => {
-		provider.on('connect', ((
+const socketWaitTimeoutMs = 5_000;
+const socketPollIntervalMs = 50;
+
+const waitForSocketStatus = async <ResultType>(
+	provider: SocketProvider<any, any, any>,
+	expectedStatus: 'connected' | 'disconnected',
+	eventName: 'connect' | 'disconnect',
+	defaultResult: ResultType,
+) => {
+	if (provider.getStatus() === expectedStatus) {
+		return defaultResult;
+	}
+
+	return new Promise<ResultType>((resolve, reject) => {
+		const eventHandler = ((
 			_error: Error | ProviderRpcError | undefined,
-			data: JsonRpcSubscriptionResult | JsonRpcNotification<ProviderConnectInfo> | undefined,
+			data?: JsonRpcSubscriptionResult | JsonRpcNotification<ResultType>,
 		) => {
-			resolve(data as unknown as ProviderConnectInfo);
-		}) as Web3ProviderEventCallback<ProviderConnectInfo>);
+			cleanup();
+			resolve((data as unknown as ResultType) ?? defaultResult);
+		}) as Web3ProviderEventCallback<ResultType>;
+
+		const cleanup = () => {
+			clearInterval(statusInterval);
+			clearTimeout(timeoutHandle);
+			provider.removeListener(eventName, eventHandler);
+		};
+
+		const statusInterval = setInterval(() => {
+			if (provider.getStatus() === expectedStatus) {
+				cleanup();
+				resolve(defaultResult);
+			}
+		}, socketPollIntervalMs);
+
+		const timeoutHandle = setTimeout(() => {
+			cleanup();
+			reject(new Error(`Timeout waiting for socket status "${expectedStatus}".`));
+		}, socketWaitTimeoutMs);
+
+		provider.on(eventName, eventHandler);
 	});
 };
 
-// eslint-disable-next-line arrow-body-style
-export const waitForSocketDisconnect = async (provider: SocketProvider<any, any, any>) => {
-	return new Promise<ProviderRpcError>(resolve => {
-		provider.on('disconnect', ((
-			_error: ProviderRpcError | Error | undefined,
-			data: JsonRpcSubscriptionResult | JsonRpcNotification<ProviderRpcError> | undefined,
-		) => {
-			resolve(data as unknown as ProviderRpcError);
-		}) as Web3ProviderEventCallback<ProviderRpcError>);
-	});
-};
+export const waitForSocketConnect = async (provider: SocketProvider<any, any, any>) =>
+	waitForSocketStatus(
+		provider,
+		'connected',
+		'connect',
+		{} as ProviderConnectInfo,
+	);
+
+export const waitForSocketDisconnect = async (provider: SocketProvider<any, any, any>) =>
+	waitForSocketStatus(
+		provider,
+		'disconnected',
+		'disconnect',
+		{ code: 1000, message: '' } as ProviderRpcError,
+	);
 
 export const waitForOpenSocketConnection = async (provider: SocketProvider<any, any, any>) =>
-	new Promise<ProviderConnectInfo>(resolve => {
-		provider.on('connect', ((_error, data) => {
-			resolve(data as unknown as ProviderConnectInfo);
-		}) as Web3ProviderEventCallback<ProviderConnectInfo>);
-	});
+	waitForSocketConnect(provider);
 
 export const waitForCloseSocketConnection = async (provider: SocketProvider<any, any, any>) =>
-	new Promise<ProviderRpcError>(resolve => {
-		provider.on('disconnect', ((_error, data) => {
-			resolve(data as unknown as ProviderRpcError);
-		}) as Web3ProviderEventCallback<ProviderRpcError>);
-	});
+	waitForSocketDisconnect(provider);
 
 export const waitForEvent = async (
 	web3Provider: SocketProvider<any, any, any>,
@@ -398,14 +422,14 @@ export const waitForEvent = async (
 	});
 
 export const sendFewSampleTxs = async (cnt = 1) => {
-	const web3 = new Web3(DEFAULT_SYSTEM_PROVIDER);
+	const web3 = new Web3(getSystemTestProviderUrl());
 	const fromAcc = await createLocalAccount(web3);
 	const toAcc = createAccount();
 	const res = [];
 	for (let i = 0; i < cnt; i += 1) {
 		res.push(
 			// eslint-disable-next-line no-await-in-loop
-			await web3.zond.sendTransaction({
+			await web3.qrl.sendTransaction({
 				to: toAcc.address,
 				value: '0x1',
 				from: fromAcc.address,

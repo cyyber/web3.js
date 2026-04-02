@@ -101,7 +101,7 @@ export class TransactionRevertInstructionError<
 		public data?: string,
 	) {
 		super(
-			`Transaction has been reverted by the ZVM${
+			`Transaction has been reverted by the QRVM${
 				receipt === undefined ? '' : `:\n ${BaseWeb3Error.convertToString(receipt)}`
 			}`,
 		);
@@ -177,7 +177,7 @@ export class TransactionRevertedWithoutReasonError<
 > extends TransactionError<ReceiptType> {
 	public constructor(receipt?: ReceiptType) {
 		super(
-			`Transaction has been reverted by the ZVM${
+			`Transaction has been reverted by the QRVM${
 				receipt === undefined ? '' : `:\n ${BaseWeb3Error.convertToString(receipt)}`
 			}`,
 			receipt,
@@ -329,9 +329,8 @@ export class MissingGasError extends InvalidValueError {
 	}) {
 		super(
 			`gas: ${value.gas ?? 'undefined'}, maxPriorityFeePerGas: ${
-				value.maxPriorityFeePerGas ?? 'undefined'}, maxFeePerGas: ${
-				value.maxFeePerGas ?? 'undefined'
-			}`,
+				value.maxPriorityFeePerGas ?? 'undefined'
+			}, maxFeePerGas: ${value.maxFeePerGas ?? 'undefined'}`,
 			'"gas" is missing',
 		);
 		this.innerError = new MissingGasInnerError();
@@ -342,10 +341,7 @@ export class InvalidGas extends InvalidValueError {
 	public code = ERR_TX_INVALID_LEGACY_GAS;
 
 	public constructor(value: { gas: Numbers | undefined }) {
-		super(
-			`gas: ${value.gas ?? 'undefined'}`,
-			'Gas is lower than 0',
-		);
+		super(`gas: ${value.gas ?? 'undefined'}`, 'Gas is lower than 0');
 	}
 }
 
@@ -416,7 +412,7 @@ export class TransactionSendTimeoutError extends BaseWeb3Error {
 
 	public constructor(value: { numberOfSeconds: number; transactionHash?: Bytes }) {
 		super(
-			`The connected Zond Node did not respond within ${
+			`The connected QRL Node did not respond within ${
 				value.numberOfSeconds
 			} seconds, please make sure your transaction was properly sent and you are connected to a healthy Node. Be aware that transaction might still be pending or mined!\n\tTransaction Hash: ${
 				value.transactionHash ? value.transactionHash.toString() : 'not available'
@@ -504,10 +500,7 @@ export class LocalWalletNotAvailableError extends InvalidValueError {
 export class InvalidPropertiesForTransactionTypeError extends BaseWeb3Error {
 	public code = ERR_TX_INVALID_PROPERTIES_FOR_TYPE;
 
-	public constructor(
-		validationError: Web3ValidationErrorObject[],
-		txType: '0x2',
-	) {
+	public constructor(validationError: Web3ValidationErrorObject[], txType: '0x2') {
 		const invalidPropertyNames: string[] = [];
 		validationError.forEach(error => invalidPropertyNames.push(error.keyword));
 		super(

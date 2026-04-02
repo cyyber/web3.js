@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: MIT
-// TODO(now.youtrack.cloud/issue/web3js-11)
-pragma hyperion 0.8.13;
+pragma hyperion >=0.0;
 
 contract NegativeNumbers {
 	int256 public storedNegativeNumber;

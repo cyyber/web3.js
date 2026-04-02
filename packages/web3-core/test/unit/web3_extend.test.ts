@@ -40,16 +40,16 @@ describe('Web3Context extend tests', () => {
 			methods: [
 				{
 					name: 'getL2Balance',
-					call: 'zond_getBalance',
+					call: 'qrl_getBalance',
 				},
 			],
 		});
 
-		await web3.L2Module.getL2Balance('Z5b43746580AAF00A69019fA59D9ed7d9c85dDd70', 'latest');
+		await web3.L2Module.getL2Balance('Q5b43746580AAF00A69019fA59D9ed7d9c85dDd70', 'latest');
 
 		expect(requestManagerSendSpy).toHaveBeenCalledWith({
-			method: 'zond_getBalance',
-			params: ['Z5b43746580AAF00A69019fA59D9ed7d9c85dDd70', 'latest'],
+			method: 'qrl_getBalance',
+			params: ['Q5b43746580AAF00A69019fA59D9ed7d9c85dDd70', 'latest'],
 		});
 	});
 
@@ -63,16 +63,16 @@ describe('Web3Context extend tests', () => {
 			methods: [
 				{
 					name: 'getL0Balance',
-					call: 'zond_getBalance',
+					call: 'qrl_getBalance',
 				},
 			],
 		});
 
-		await web3.getL0Balance('Z5b43746580AAF00A69019fA59D9ed7d9c85dDd70', 'latest');
+		await web3.getL0Balance('Q5b43746580AAF00A69019fA59D9ed7d9c85dDd70', 'latest');
 
 		expect(requestManagerSendSpy).toHaveBeenCalledWith({
-			method: 'zond_getBalance',
-			params: ['Z5b43746580AAF00A69019fA59D9ed7d9c85dDd70', 'latest'],
+			method: 'qrl_getBalance',
+			params: ['Q5b43746580AAF00A69019fA59D9ed7d9c85dDd70', 'latest'],
 		});
 	});
 });

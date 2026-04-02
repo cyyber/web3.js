@@ -17,7 +17,7 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 import {
 	ConnectionEvent,
 	Eip1193EventName,
-	ZondExecutionAPI,
+	QRLExecutionAPI,
 	JsonRpcBatchRequest,
 	JsonRpcBatchResponse,
 	JsonRpcId,
@@ -72,7 +72,7 @@ export abstract class SocketProvider<
 	MessageEvent,
 	CloseEvent,
 	ErrorEvent,
-	API extends Web3APISpec = ZondExecutionAPI,
+	API extends Web3APISpec = QRLExecutionAPI,
 > extends Eip1193Provider<API> {
 	protected isReconnecting: boolean;
 	protected readonly _socketPath: string;
@@ -344,7 +344,7 @@ export abstract class SocketProvider<
 		if (this.isReconnecting) {
 			this._reconnect();
 		} else {
-			this._eventEmitter.emit('error', event);
+			this._emitError(event);
 		}
 	}
 
@@ -386,8 +386,7 @@ export abstract class SocketProvider<
 			this.isReconnecting = false;
 			this._clearQueues();
 			this._removeSocketListeners();
-			this._eventEmitter.emit(
-				'error',
+			this._emitError(
 				new MaxAttemptsReachedOnReconnectingError(this._reconnectOptions.maxAttempts),
 			);
 		}
@@ -422,7 +421,7 @@ export abstract class SocketProvider<
 
 		const deferredPromise = new Web3DeferredPromise<JsonRpcResponseWithResult<ResultType>>();
 		deferredPromise.catch(error => {
-			this._eventEmitter.emit('error', error);
+			this._emitError(error);
 		});
 		const reqItem: SocketRequestItem<API, Method, JsonRpcResponseWithResult<ResultType>> = {
 			payload: request,
@@ -441,8 +440,9 @@ export abstract class SocketProvider<
 			this._sendToSocket(reqItem.payload);
 		} catch (error) {
 			this._sentRequestsQueue.delete(requestId);
-
-			this._eventEmitter.emit('error', error);
+			// Reject the request promise immediately when sending fails
+			// (e.g. when the socket is already disconnected).
+			deferredPromise.reject(error);
 		}
 
 		return deferredPromise;

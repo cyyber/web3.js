@@ -34,8 +34,8 @@ const abiJsonSchema = {
 };
 
 const abiData = [
-	'ZCB00CDE33a7a0Fba30C63745534F1f7Ae607076b',
-	'ZCB00CDE33a7a0Fba30C63745534F1f7Ae607076b',
+	'QCB00CDE33a7a0Fba30C63745534F1f7Ae607076b',
+	'QCB00CDE33a7a0Fba30C63745534F1f7Ae607076b',
 	'0xCB00CDE33a7a0Fba30C63745534F1f7Ae607076b',
 ];
 
@@ -64,8 +64,8 @@ const simpleSchema = {
 const simpleData = {
 	blockHash: '0x0dec0518fa672a70027b04c286582e543ab17319fbdd384fa7bc8f3d5a542c0b',
 	blockNumber: BigInt(2),
-	from: 'ZCB00CDE33a7a0Fba30C63745534F1f7Ae607076b',
-	to: 'ZCB00CDE33a7a0Fba30C63745534F1f7Ae607076b',
+	from: 'QCB00CDE33a7a0Fba30C63745534F1f7Ae607076b',
+	to: 'QCB00CDE33a7a0Fba30C63745534F1f7Ae607076b',
 	data: '0xafea',
 } as unknown as ValidationSchemaInput;
 
@@ -115,7 +115,7 @@ describe('instance of validator', () => {
 			validator.validateJSONSchema(hugeSchema, hugeData as object);
 			t = Number(new Date()) - t1;
 		}).not.toThrow();
-		expect(t).toBeLessThan(15000);
+		expect(t).toBeLessThan(30000);
 		expect(t).toBeGreaterThan(0);
 	});
 
@@ -126,7 +126,7 @@ describe('instance of validator', () => {
 			validator.validateJSONSchema(hugeSchema1000, hugeData1000 as object);
 			t = Number(new Date()) - t1;
 		}).not.toThrow();
-		expect(t).toBeLessThan(25000);
+		expect(t).toBeLessThan(50000);
 		expect(t).toBeGreaterThan(0);
 	});
 

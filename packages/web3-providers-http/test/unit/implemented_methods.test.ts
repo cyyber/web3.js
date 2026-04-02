@@ -21,7 +21,7 @@ import fetchMock from 'jest-fetch-mock';
 jest.setMock('cross-fetch', fetchMock);
 
 /* eslint-disable-next-line import/first */
-import { Web3APIPayload, ZondExecutionAPI } from '@theqrl/web3-types';
+import { Web3APIPayload, QRLExecutionAPI } from '@theqrl/web3-types';
 /* eslint-disable-next-line import/first */
 import { ResponseError } from '@theqrl/web3-errors';
 /* eslint-disable-next-line import/first */
@@ -33,9 +33,9 @@ describe('HttpProvider - implemented methods', () => {
 	const jsonRpcPayload = {
 		jsonrpc: '2.0',
 		id: 42,
-		method: 'zond_getBalance',
-		params: ['Z407d73d8a49eeb85d32cf465507dd71d507100c1', 'latest'],
-	} as Web3APIPayload<ZondExecutionAPI, 'zond_getBalance'>;
+		method: 'qrl_getBalance',
+		params: ['Q407d73d8a49eeb85d32cf465507dd71d507100c1', 'latest'],
+	} as Web3APIPayload<QRLExecutionAPI, 'qrl_getBalance'>;
 
 	let httpProvider: HttpProvider;
 

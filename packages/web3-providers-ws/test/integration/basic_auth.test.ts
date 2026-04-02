@@ -61,7 +61,7 @@ describeIf(isWs)('Support of Basic Auth', () => {
 				'ascii',
 			);
 			const [username, password] = credentials.split(':');
-			if (username !== 'gzond' || password !== 'authpass') {
+			if (username !== 'gqrl' || password !== 'authpass') {
 				socket.emit('error');
 				socket.destroy();
 			}
@@ -73,18 +73,17 @@ describeIf(isWs)('Support of Basic Auth', () => {
 	});
 	beforeEach(() => {
 		webSocketProvider = new WebSocketProvider(
-			'ws://gzond:authpass@localhost:3000',
+			'ws://gqrl:authpass@localhost:3000',
 			{},
 			{ delay: 1, autoReconnect: false, maxAttempts: 1 },
 		);
 	});
 	afterEach(async () => {
-		// make sure we try to close the connection after it is established
-		if (webSocketProvider.getStatus() === 'connecting') {
-			await waitForSocketConnect(webSocketProvider);
+		if (webSocketProvider.getStatus() !== 'disconnected') {
+			const closePromise = waitForCloseSocketConnection(webSocketProvider);
+			webSocketProvider.disconnect();
+			await closePromise;
 		}
-		webSocketProvider.disconnect();
-		await waitForCloseSocketConnection(webSocketProvider);
 	});
 	// eslint-disable-next-line jest/expect-expect
 	test('should connect with basic auth', async () => {

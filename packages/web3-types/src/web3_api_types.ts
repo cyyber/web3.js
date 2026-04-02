@@ -22,8 +22,8 @@ export interface ProviderMessage {
 	readonly data: unknown;
 }
 
-export interface ZondSubscription extends ProviderMessage {
-	readonly type: 'zond_subscription';
+export interface QRLSubscription extends ProviderMessage {
+	readonly type: 'qrl_subscription';
 	readonly data: {
 		readonly subscription: string;
 		readonly result: unknown;

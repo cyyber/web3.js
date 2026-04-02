@@ -15,7 +15,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 import { TransactionRevertInstructionError } from '@theqrl/web3-errors';
-import { Contract } from '@theqrl/web3-zond-contract';
+import { Contract } from '@theqrl/web3-qrl-contract';
 import WebSocketProvider from '@theqrl/web3-providers-ws';
 import Web3 from '../../src/index';
 import { BasicAbi, BasicBytecode } from '../shared_fixtures/build/Basic';
@@ -29,7 +29,7 @@ import {
 
 Error.stackTraceLimit = Infinity;
 
-describe('zond', () => {
+describe('qrl', () => {
 	let web3: Web3;
 	let accounts: string[] = [];
 	let clientUrl: string;
@@ -57,7 +57,7 @@ describe('zond', () => {
 		}
 
 		if (isWs) {
-			contract = new web3.zond.Contract(BasicAbi, undefined, {
+			contract = new web3.qrl.Contract(BasicAbi, undefined, {
 				provider: new WebSocketProvider(
 					clientUrl,
 					{},
@@ -65,7 +65,7 @@ describe('zond', () => {
 				),
 			});
 		} else {
-			contract = new web3.zond.Contract(BasicAbi, undefined, {
+			contract = new web3.qrl.Contract(BasicAbi, undefined, {
 				provider: clientUrl,
 			});
 		}
@@ -85,7 +85,7 @@ describe('zond', () => {
 	});
 
 	describe('handleRevert', () => {
-		// todo enable when figure out what happening in zond_call (doesn't throw error)
+		// todo enable when figure out what happening in qrl_call (doesn't throw error)
 		// eslint-disable-next-line jest/expect-expect
 		it('should get revert reason', async () => {
 			contract.handleRevert = true;
@@ -96,10 +96,10 @@ describe('zond', () => {
 			);
 		});
 
-		it('should get revert reason for zond tx', async () => {
-			web3.zond.handleRevert = true;
+		it('should get revert reason for qrl tx', async () => {
+			web3.qrl.handleRevert = true;
 			await expect(
-				web3.zond.sendTransaction({
+				web3.qrl.sendTransaction({
 					from: accounts[0],
 					gas: '0x3d0900',
 					maxFeePerGas: '0x3B9ACBF4',
@@ -109,8 +109,10 @@ describe('zond', () => {
 					to: undefined,
 					value: '0x0',
 					type: '0x2',
-					publicKey: '0x1ba80b16306d1de8ff809c00f67c305e8636326096aba282828d331aa2ec30a1',
+					descriptor: '0x010000',
+					extraParams: '0x',
 					signature: '0x39f77e0b68d5524826e4385ad4e1f01e748f32c177840184ae65d9592fdfe5c',
+					publicKey: '0x1ba80b16306d1de8ff809c00f67c305e8636326096aba282828d331aa2ec30a1',
 				}),
 			).rejects.toThrow(
 				new TransactionRevertInstructionError(
@@ -120,9 +122,9 @@ describe('zond', () => {
 		});
 
 		it('should execute transaction', async () => {
-			web3.zond.handleRevert = true;
+			web3.qrl.handleRevert = true;
 			await expect(
-				web3.zond.sendTransaction({
+				web3.qrl.sendTransaction({
 					from: accounts[0],
 					to: accounts[1],
 					gas: '0x76c0',

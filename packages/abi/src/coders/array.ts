@@ -1,236 +1,284 @@
-"use strict";
+/*
+This file is part of web3.js.
 
-import { Logger } from "@ethersproject/logger";
-import { version } from "../_version";
+web3.js is free software: you can redistribute it and/or modify
+it under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+web3.js is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License
+along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+import { Logger } from '@ethersproject/logger';
+import { version } from '../_version.js';
+
+import { Coder, Reader, Result, Writer } from './abstract-coder.js';
+import { AnonymousCoder } from './anonymous.js';
+
 const logger = new Logger(version);
 
-import { Coder, Reader, Result, Writer } from "./abstract-coder";
-import { AnonymousCoder } from "./anonymous";
+export function pack(
+	writer: Writer,
+	coders: ReadonlyArray<Coder>,
+	values: Array<any> | { [name: string]: any },
+): number {
+	let arrayValues: Array<any> = null;
 
-export function pack(writer: Writer, coders: ReadonlyArray<Coder>, values: Array<any> | { [ name: string ]: any }): number {
-    let arrayValues: Array<any> = null;
+	if (Array.isArray(values)) {
+		arrayValues = values;
+	} else if (values && typeof values === 'object') {
+		const unique: { [name: string]: boolean } = {};
 
-    if (Array.isArray(values)) {
-       arrayValues = values;
+		arrayValues = coders.map(coder => {
+			const name = coder.localName;
+			if (!name) {
+				logger.throwError(
+					'cannot encode object for signature with missing names',
+					Logger.errors.INVALID_ARGUMENT,
+					{
+						argument: 'values',
+						coder,
+						value: values,
+					},
+				);
+			}
 
-    } else if (values && typeof(values) === "object") {
-        let unique: { [ name: string ]: boolean } = { };
+			if (unique[name]) {
+				logger.throwError(
+					'cannot encode object for signature with duplicate names',
+					Logger.errors.INVALID_ARGUMENT,
+					{
+						argument: 'values',
+						coder,
+						value: values,
+					},
+				);
+			}
 
-        arrayValues = coders.map((coder) => {
-            const name = coder.localName;
-            if (!name) {
-                logger.throwError("cannot encode object for signature with missing names", Logger.errors.INVALID_ARGUMENT, {
-                    argument: "values",
-                    coder: coder,
-                    value: values
-                });
-            }
+			unique[name] = true;
 
-            if (unique[name]) {
-                logger.throwError("cannot encode object for signature with duplicate names", Logger.errors.INVALID_ARGUMENT, {
-                    argument: "values",
-                    coder: coder,
-                    value: values
-                });
-            }
+			return values[name];
+		});
+	} else {
+		logger.throwArgumentError('invalid tuple value', 'tuple', values);
+	}
 
-            unique[name] = true;
+	if (coders.length !== arrayValues.length) {
+		logger.throwArgumentError('types/value length mismatch', 'tuple', values);
+	}
 
-            return values[name];
-        });
+	const staticWriter = new Writer(writer.wordSize);
+	const dynamicWriter = new Writer(writer.wordSize);
 
-    } else {
-        logger.throwArgumentError("invalid tuple value", "tuple", values);
-    }
+	const updateFuncs: Array<(baseOffset: number) => void> = [];
+	coders.forEach((coder, index) => {
+		const value = arrayValues[index];
 
-    if (coders.length !== arrayValues.length) {
-        logger.throwArgumentError("types/value length mismatch", "tuple", values);
-    }
+		if (coder.dynamic) {
+			// Get current dynamic offset (for the future pointer)
+			const dynamicOffset = dynamicWriter.length;
 
-    let staticWriter = new Writer(writer.wordSize);
-    let dynamicWriter = new Writer(writer.wordSize);
+			// Encode the dynamic value into the dynamicWriter
+			coder.encode(dynamicWriter, value);
 
-    let updateFuncs: Array<(baseOffset: number) => void> = [];
-    coders.forEach((coder, index) => {
-        let value = arrayValues[index];
+			// Prepare to populate the correct offset once we are done
+			const updateFunc = staticWriter.writeUpdatableValue();
+			updateFuncs.push((baseOffset: number) => {
+				updateFunc(baseOffset + dynamicOffset);
+			});
+		} else {
+			coder.encode(staticWriter, value);
+		}
+	});
 
-        if (coder.dynamic) {
-            // Get current dynamic offset (for the future pointer)
-            let dynamicOffset = dynamicWriter.length;
+	// Backfill all the dynamic offsets, now that we know the static length
+	updateFuncs.forEach(func => {
+		func(staticWriter.length);
+	});
 
-            // Encode the dynamic value into the dynamicWriter
-            coder.encode(dynamicWriter, value);
-
-            // Prepare to populate the correct offset once we are done
-            let updateFunc = staticWriter.writeUpdatableValue();
-            updateFuncs.push((baseOffset: number) => {
-                updateFunc(baseOffset + dynamicOffset);
-            });
-
-        } else {
-            coder.encode(staticWriter, value);
-        }
-    });
-
-    // Backfill all the dynamic offsets, now that we know the static length
-    updateFuncs.forEach((func) => { func(staticWriter.length); });
-
-    let length = writer.appendWriter(staticWriter);
-    length += writer.appendWriter(dynamicWriter);
-    return length;
+	let length = writer.appendWriter(staticWriter);
+	length += writer.appendWriter(dynamicWriter);
+	return length;
 }
 
 export function unpack(reader: Reader, coders: Array<Coder>): Result {
-    let values: any = [];
+	const values: any = [];
 
-    // A reader anchored to this base
-    let baseReader = reader.subReader(0);
+	// A reader anchored to this base
+	const baseReader = reader.subReader(0);
 
-    coders.forEach((coder) => {
-        let value: any = null;
+	coders.forEach(coder => {
+		let value: any = null;
 
-        if (coder.dynamic) {
-            let offset = reader.readValue();
-            let offsetReader = baseReader.subReader(offset.toNumber());
-            try {
-                value = coder.decode(offsetReader);
-            } catch (error: any) {
-                // Cannot recover from this
-                if (error.code === Logger.errors.BUFFER_OVERRUN) { throw error; }
-                value = error;
-                value.baseType = coder.name;
-                value.name = coder.localName;
-                value.type = coder.type;
-            }
+		if (coder.dynamic) {
+			const offset = reader.readValue();
+			const offsetReader = baseReader.subReader(offset.toNumber());
+			try {
+				value = coder.decode(offsetReader);
+			} catch (error: any) {
+				// Cannot recover from this
+				if (error.code === Logger.errors.BUFFER_OVERRUN) {
+					throw error;
+				}
+				value = error;
+				value.baseType = coder.name;
+				value.name = coder.localName;
+				value.type = coder.type;
+			}
+		} else {
+			try {
+				value = coder.decode(reader);
+			} catch (error: any) {
+				// Cannot recover from this
+				if (error.code === Logger.errors.BUFFER_OVERRUN) {
+					throw error;
+				}
+				value = error;
+				value.baseType = coder.name;
+				value.name = coder.localName;
+				value.type = coder.type;
+			}
+		}
 
-        } else {
-            try {
-                value = coder.decode(reader);
-            } catch (error: any) {
-                // Cannot recover from this
-                if (error.code === Logger.errors.BUFFER_OVERRUN) { throw error; }
-                value = error;
-                value.baseType = coder.name;
-                value.name = coder.localName;
-                value.type = coder.type;
-            }
-        }
+		if (value != undefined) {
+			values.push(value);
+		}
+	});
 
-        if (value != undefined) {
-            values.push(value);
-        }
-    });
+	// We only output named properties for uniquely named coders
+	const uniqueNames = coders.reduce<{ [name: string]: number }>((accum, coder) => {
+		const name = coder.localName;
+		if (name) {
+			if (!accum[name]) {
+				accum[name] = 0;
+			}
+			accum[name]++;
+		}
+		return accum;
+	}, {});
 
-    // We only output named properties for uniquely named coders
-    const uniqueNames = coders.reduce((accum, coder) => {
-        const name = coder.localName;
-        if (name) {
-            if (!accum[name]) { accum[name] = 0; }
-            accum[name]++;
-        }
-        return accum;
-    }, <{ [ name: string ]: number }>{ });
+	// Add any named parameters (i.e. tuples)
+	coders.forEach((coder: Coder, index: number) => {
+		let name = coder.localName;
+		if (!name || uniqueNames[name] !== 1) {
+			return;
+		}
 
-    // Add any named parameters (i.e. tuples)
-    coders.forEach((coder: Coder, index: number) => {
-        let name = coder.localName;
-        if (!name || uniqueNames[name] !== 1) { return; }
+		if (name === 'length') {
+			name = '_length';
+		}
 
-        if (name === "length") { name = "_length"; }
+		if (values[name] != null) {
+			return;
+		}
 
-        if (values[name] != null) { return; }
+		const value = values[index];
 
-        const value = values[index];
+		if (value instanceof Error) {
+			Object.defineProperty(values, name, {
+				enumerable: true,
+				get: () => {
+					throw value;
+				},
+			});
+		} else {
+			values[name] = value;
+		}
+	});
 
-        if (value instanceof Error) {
-            Object.defineProperty(values, name, {
-                enumerable: true,
-                get: () => { throw value; }
-            });
-        } else {
-            values[name] = value;
-        }
-    });
+	for (let i = 0; i < values.length; i++) {
+		const value = values[i];
+		if (value instanceof Error) {
+			Object.defineProperty(values, i, {
+				enumerable: true,
+				get: () => {
+					throw value;
+				},
+			});
+		}
+	}
 
-    for (let i = 0; i < values.length; i++) {
-        const value = values[i];
-        if (value instanceof Error) {
-            Object.defineProperty(values, i, {
-                enumerable: true,
-                get: () => { throw value; }
-            });
-        }
-    }
-
-    return Object.freeze(values);
+	return Object.freeze(values);
 }
-
 
 export class ArrayCoder extends Coder {
-    readonly coder: Coder;
-    readonly length: number;
+	readonly coder: Coder;
+	readonly length: number;
 
-    constructor(coder: Coder, length: number, localName: string) {
-        const type = (coder.type + "[" + (length >= 0 ? length: "") + "]");
-        const dynamic = (length === -1 || coder.dynamic);
-        super("array", type, localName, dynamic);
+	constructor(coder: Coder, length: number, localName: string) {
+		const type = `${coder.type}[${length >= 0 ? length : ''}]`;
+		const dynamic = length === -1 || coder.dynamic;
+		super('array', type, localName, dynamic);
 
-        this.coder = coder;
-        this.length = length;
-    }
+		this.coder = coder;
+		this.length = length;
+	}
 
-    defaultValue(): Array<any> {
-        // Verifies the child coder is valid (even if the array is dynamic or 0-length)
-        const defaultChild = this.coder.defaultValue();
+	defaultValue(): Array<any> {
+		// Verifies the child coder is valid (even if the array is dynamic or 0-length)
+		const defaultChild = this.coder.defaultValue();
 
-        const result: Array<any> = [];
-        for (let i = 0; i < this.length; i++) {
-            result.push(defaultChild);
-        }
-        return result;
-    }
+		const result: Array<any> = [];
+		for (let i = 0; i < this.length; i++) {
+			result.push(defaultChild);
+		}
+		return result;
+	}
 
-    encode(writer: Writer, value: Array<any>): number {
-        if (!Array.isArray(value)) {
-            this._throwError("expected array value", value);
-        }
+	encode(writer: Writer, value: Array<any>): number {
+		if (!Array.isArray(value)) {
+			this._throwError('expected array value', value);
+		}
 
-        let count = this.length;
+		let count = this.length;
 
-        if (count === -1) {
-            count = value.length;
-            writer.writeValue(value.length);
-        }
+		if (count === -1) {
+			count = value.length;
+			writer.writeValue(value.length);
+		}
 
-        logger.checkArgumentCount(value.length, count, "coder array" + (this.localName? (" "+ this.localName): ""));
+		logger.checkArgumentCount(
+			value.length,
+			count,
+			`coder array${this.localName ? ` ${this.localName}` : ''}`,
+		);
 
-        let coders = [];
-        for (let i = 0; i < value.length; i++) { coders.push(this.coder); }
+		const coders = [];
+		for (let i = 0; i < value.length; i++) {
+			coders.push(this.coder);
+		}
 
-        return pack(writer, coders, value);
-    }
+		return pack(writer, coders, value);
+	}
 
-    decode(reader: Reader): any {
-        let count = this.length;
-        if (count === -1) {
-            count = reader.readValue().toNumber();
+	decode(reader: Reader): any {
+		let count = this.length;
+		if (count === -1) {
+			count = reader.readValue().toNumber();
 
-            // Check that there is *roughly* enough data to ensure
-            // stray random data is not being read as a length. Each
-            // slot requires at least 32 bytes for their value (or 32
-            // bytes as a link to the data). This could use a much
-            // tighter bound, but we are erroring on the side of safety.
-            if (count * 32 > reader._data.length) {
-                logger.throwError("insufficient data length", Logger.errors.BUFFER_OVERRUN, {
-                    length: reader._data.length,
-                    count: count
-                });
-            }
-        }
-        let coders = [];
-        for (let i = 0; i < count; i++) { coders.push(new AnonymousCoder(this.coder)); }
+			// Check that there is *roughly* enough data to ensure
+			// stray random data is not being read as a length. Each
+			// slot requires at least 32 bytes for their value (or 32
+			// bytes as a link to the data). This could use a much
+			// tighter bound, but we are erroring on the side of safety.
+			if (count * 32 > reader._data.length) {
+				logger.throwError('insufficient data length', Logger.errors.BUFFER_OVERRUN, {
+					length: reader._data.length,
+					count,
+				});
+			}
+		}
+		const coders = [];
+		for (let i = 0; i < count; i++) {
+			coders.push(new AnonymousCoder(this.coder));
+		}
 
-        return reader.coerce(this.name, unpack(reader, coders));
-    }
+		return reader.coerce(this.name, unpack(reader, coders));
+	}
 }
-

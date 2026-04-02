@@ -26,9 +26,9 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
-## Zond
+## QRL
 
-Zond project derivations and modifications are also MIT licensed:
+QRL project derivations and modifications are also MIT licensed:
 
 MIT License
 

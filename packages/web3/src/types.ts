@@ -16,7 +16,7 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { Bytes, Transaction } from '@theqrl/web3-types';
-import Zond from '@theqrl/web3-zond';
+import QRL from '@theqrl/web3-qrl';
 import {
 	decodeLog,
 	decodeParameter,
@@ -25,40 +25,40 @@ import {
 	encodeFunctionSignature,
 	encodeParameter,
 	encodeParameters,
-} from '@theqrl/web3-zond-abi';
+} from '@theqrl/web3-qrl-abi';
 import {
-	//encrypt,
+	encrypt,
 	hashMessage,
 	recoverTransaction,
 	sign,
 	signTransaction,
 	Wallet,
 	Web3Account,
-} from '@theqrl/web3-zond-accounts';
-import { Contract } from '@theqrl/web3-zond-contract';
-import { ENS } from '@theqrl/web3-zond-ens';
+} from '@theqrl/web3-qrl-accounts';
+import { Contract } from '@theqrl/web3-qrl-contract';
+import { QRNS } from '@theqrl/web3-qrl-qrns';
 import { Net } from '@theqrl/web3-net';
-import { Iban } from '@theqrl/web3-zond-iban';
+import { Iban } from '@theqrl/web3-qrl-iban';
 
 /**
- * The Zond interface for main web3 object. It provides extra methods in addition to `web3-zond` interface.
+ * The QRL interface for main web3 object. It provides extra methods in addition to `web3-qrl` interface.
  *
- * {@link web3_zond.Web3Zond} for details about the `Zond` interface.
+ * {@link web3_qrl.Web3QRL} for details about the `QRL` interface.
  */
-export interface Web3ZondInterface extends Zond {
+export interface Web3QRLInterface extends QRL {
 	/**
-	 * Extended [Contract](/api/web3-zond-contract/class/Contract) constructor for main `web3` object. See [Contract](/api/web3-zond-contract/class/Contract) for further details.
+	 * Extended [Contract](/api/web3-qrl-contract/class/Contract) constructor for main `web3` object. See [Contract](/api/web3-qrl-contract/class/Contract) for further details.
 	 *
-	 * You can use `.setProvider` on this constructor to set provider for **all the instances** of the contracts which were created by `web3.zond.Contract`.
+	 * You can use `.setProvider` on this constructor to set provider for **all the instances** of the contracts which were created by `web3.qrl.Contract`.
 	 *
 	 * ```ts
-	 * web3.zond.Contract.setProvider(myProvider)
+	 * web3.qrl.Contract.setProvider(myProvider)
 	 * ```
 	 */
 	Contract: typeof Contract;
 	Iban: typeof Iban;
 	net: Net;
-	ens: ENS;
+	qrns: QRNS;
 	abi: {
 		encodeEventSignature: typeof encodeFunctionSignature;
 		encodeFunctionCall: typeof encodeFunctionCall;
@@ -79,13 +79,12 @@ export interface Web3ZondInterface extends Zond {
 		recoverTransaction: typeof recoverTransaction;
 		hashMessage: typeof hashMessage;
 		sign: typeof sign;
-		// TODO(youtrack/theqrl/web3.js/3)
-		//encrypt: typeof encrypt;
-		// decrypt: (
-		// 	keystore: string,
-		// 	password: string,
-		// 	options?: Record<string, unknown>,
-		// ) => Promise<Web3Account>;
+		encrypt: typeof encrypt;
+		decrypt: (
+			keystore: string,
+			password: string,
+			options?: Record<string, unknown>,
+		) => Promise<Web3Account>;
 		wallet: Wallet;
 	};
 }

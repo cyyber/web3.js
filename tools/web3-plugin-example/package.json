@@ -13,7 +13,7 @@
 	"author": "The QRL Contributors",
 	"license": "LGPL-3.0",
 	"keywords": [
-		"Zond",
+		"QRL",
 		"JavaScript",
 		"API"
 	],
@@ -41,8 +41,8 @@
 		"@theqrl/web3-core": "^0.3.3",
 		"@theqrl/web3-types": "^0.3.3",
 		"@theqrl/web3-utils": "^0.3.3",
-		"@theqrl/web3-zond-abi": "^0.3.3",
-		"@theqrl/web3-zond-contract": "^0.3.3",
+		"@theqrl/web3-qrl-abi": "^0.3.3",
+		"@theqrl/web3-qrl-contract": "^0.3.3",
 		"@types/jest": "^28.1.6",
 		"@typescript-eslint/eslint-plugin": "^5.30.7",
 		"@typescript-eslint/parser": "^5.30.7",
@@ -59,8 +59,8 @@
 		"@theqrl/web3-core": "^0.1.0",
 		"@theqrl/web3-types": "^0.1.0",
 		"@theqrl/web3-utils": "^0.1.0",
-		"@theqrl/web3-zond-abi": "^0.1.0",
-		"@theqrl/web3-zond-contract": "^0.1.0"
+		"@theqrl/web3-qrl-abi": "^0.1.0",
+		"@theqrl/web3-qrl-contract": "^0.1.0"
 	},
 	"gitHead": "d4f3246946fec86d908a215b27568aa8faea88d7"
 }

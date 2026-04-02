@@ -28,10 +28,10 @@ For further information about `sideEffects` see [webpack docs](https://webpack.j
 
 4. Use the specific packages which you need,
 
-    For example, if you need `web.zond`:
+    For example, if you need `web.qrl`:
 
 ```ts
-import Web3Zond from '@theqrl/web3-zond';
+import Web3QRL from '@theqrl/web3-qrl';
 ```
 
 If you only need a few functions from `@theqrl/web3-utils`:

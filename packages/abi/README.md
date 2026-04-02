@@ -1,49 +1,44 @@
-Zond ABI Coder
-==================
+# QRL ABI Coder
 
 This sub-module is a fork of the [ethers project](https://github.com/ethers-io/ethers.js).
 
 It is responsible for encoding and decoding the Application Binary Interface (ABI)
-used by most Zond smart contracts to interoperate between other smart contracts and clients.
+used by most QRL smart contracts to interoperate between other smart contracts and clients.
 
 More information, can be inferred from the [ethers project documentation](https://docs.ethers.io/v5/api/utils/abi/).
 
-Importing
----------
+## Importing
 
 ```javascript
 const {
+	ConstructorFragment,
+	EventFragment,
+	Fragment,
+	FunctionFragment,
+	ParamType,
+	FormatTypes,
 
-    ConstructorFragment,
-    EventFragment,
-    Fragment,
-    FunctionFragment,
-    ParamType,
-    FormatTypes,
+	AbiCoder,
+	defaultAbiCoder,
 
-    AbiCoder,
-    defaultAbiCoder,
+	Interface,
+	Indexed,
 
-    Interface,
-    Indexed,
+	/////////////////////////
+	// Types
 
-    /////////////////////////
-    // Types
+	CoerceFunc,
+	JsonFragment,
+	JsonFragmentType,
 
-    CoerceFunc,
-    JsonFragment,
-    JsonFragmentType,
+	Result,
+	checkResultErrors,
 
-    Result,
-    checkResultErrors,
-
-    LogDescription,
-    TransactionDescription
-
-} = require("@theqrl/abi");
+	LogDescription,
+	TransactionDescription,
+} = require('@theqrl/abi');
 ```
 
-License
--------
+## License
 
 MIT License

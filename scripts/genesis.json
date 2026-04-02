@@ -1,7 +1,0 @@
-{
-	"config": {
-		"chainId": 4321
-	},
-	"alloc": {},
-	"gasLimit": "0x8880000"
-}
