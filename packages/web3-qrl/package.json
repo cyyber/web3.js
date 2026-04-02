@@ -64,7 +64,7 @@
 		"typescript": "^4.7.4"
 	},
 	"dependencies": {
-		"@theqrl/wallet.js": "file:../../../wallet.js",
+		"@theqrl/wallet.js": "^3.0.0",
 		"@theqrl/web3-core": "^0.3.3",
 		"@theqrl/web3-errors": "^0.3.3",
 		"@theqrl/web3-net": "^0.3.3",
