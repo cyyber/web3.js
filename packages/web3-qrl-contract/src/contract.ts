@@ -756,12 +756,13 @@ export class Contract<Abi extends ContractAbi>
 				  ) as AbiEventFragment & { signature: string });
 
 		if (!abi) {
-			throw new Web3ContractError(`Event ${eventName} not found.`);
+			throw new Web3ContractError(`Event ${String(eventName)} not found.`);
 		}
+		const eventOptions = (typeof options === 'object' && options !== null ? options : {}) as Filter;
 		const { fromBlock, toBlock, topics, address } = encodeEventABI(
 			this.options,
 			abi,
-			options ?? {},
+			eventOptions,
 		);
 		const logs = await getLogs(this, { fromBlock, toBlock, topics, address }, returnFormat);
 		const decodedLogs = logs.map(log =>
@@ -770,7 +771,7 @@ export class Contract<Abi extends ContractAbi>
 				: decodeEventABI(abi, log as LogsInput, this._jsonInterface, returnFormat),
 		);
 
-		const filter = options?.filter ?? {};
+		const filter = eventOptions?.filter ?? {};
 		const filterKeys = Object.keys(filter);
 
 		if (filterKeys.length > 0) {
@@ -837,11 +838,11 @@ export class Contract<Abi extends ContractAbi>
 
 				// make constant and payable backwards compatible
 				abi.constant =
-					abi.stateMutability === 'view' ??
-					abi.stateMutability === 'pure' ??
+					abi.stateMutability === 'view' ||
+					abi.stateMutability === 'pure' ||
 					abi.constant;
 
-				abi.payable = abi.stateMutability === 'payable' ?? abi.payable;
+				abi.payable = abi.stateMutability === 'payable' || abi.payable;
 				this._overloadedMethodAbis.set(abi.name, [
 					...(this._overloadedMethodAbis.get(abi.name) ?? []),
 					abi,

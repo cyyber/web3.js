@@ -18,8 +18,8 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 import {
 	decrypt as createDecipheriv,
 	encrypt as createCipheriv,
-} from 'qrl-cryptography/aes.js';
-import { argon2idSync } from 'qrl-cryptography/argon2id.js';
+} from '@theqrl/qrl-cryptography/aes.js';
+import { argon2idSync } from '@theqrl/qrl-cryptography/argon2id.js';
 import {
 	InvalidKdfError,
 	InvalidPasswordError,
@@ -179,8 +179,8 @@ export const signTransaction = async (
 ): Promise<SignTransactionResult> => {
 	const signedTx = transaction.sign(hexToBytes(seed));
 	if (
-		isNullish(signedTx.descriptor) || 
-		isNullish(signedTx.signature) || 
+		isNullish(signedTx.descriptor) ||
+		isNullish(signedTx.signature) ||
 		isNullish(signedTx.publicKey)
 	)
 		throw new TransactionSigningError('Signer Error');
@@ -239,7 +239,7 @@ export const recoverTransaction = (rawTransaction: HexString): Address => {
  * Encrypt using argon2id options
  * ```ts
  * encrypt(
- *   '0xcea755979937e2dc6137c0e51ba0d1eb2a44920cefffb1a860cf194ea7d23d694045fd2c8a72ec5aecf1e7e5bb591ff2', 
+ *   '0xcea755979937e2dc6137c0e51ba0d1eb2a44920cefffb1a860cf194ea7d23d694045fd2c8a72ec5aecf1e7e5bb591ff2',
  *    '123',
  *    {
  *      m: 8192,
@@ -511,7 +511,7 @@ export const decrypt = async (
 	} else {
 		throw new InvalidKdfError();
 	}
-	
+
 	const seed = await createDecipheriv(
 		hexToBytes(json.crypto.ciphertext),
 		derivedKey,
