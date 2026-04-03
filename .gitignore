@@ -33,7 +33,7 @@ tmp
 .vscode
 lib/
 dist/
-tsconfig.tsbuildinfo
+*.tsbuildinfo
 
 # Unsupported lock files
 package-lock.json

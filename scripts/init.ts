@@ -17,6 +17,6 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 import { existsSync, writeFileSync, readFileSync } from 'fs';
 
 if (!existsSync('.secrets.json')) {
-	const data = readFileSync('templates/.secrets.json.tmpl');
+	const data = readFileSync('templates/.secrets.json.tmpl', 'utf-8');
 	writeFileSync('.secrets.json', data);
 }

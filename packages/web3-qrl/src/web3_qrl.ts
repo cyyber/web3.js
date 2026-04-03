@@ -1497,8 +1497,8 @@ export class Web3QRL extends Web3Context<Web3QRLExecutionAPI, RegisteredSubscrip
 			subscription instanceof LogsSubscription &&
 			name === 'logs' &&
 			typeof args === 'object' &&
-			!isNullish(args.fromBlock) &&
-			Number.isFinite(Number(args.fromBlock))
+			!isNullish((args as any).fromBlock) &&
+			Number.isFinite(Number((args as any).fromBlock))
 		) {
 			setImmediate(() => {
 				this.getPastLogs(args)

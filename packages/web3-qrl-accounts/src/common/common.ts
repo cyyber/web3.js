@@ -700,7 +700,7 @@ export class Common extends EventEmitter {
 	 * @returns Fork hash as hex string
 	 */
 	public _calcForkHash(hardfork: string | Hardfork, genesisHash: Uint8Array) {
-		let hfUint8Array = new Uint8Array();
+		let hfUint8Array: Uint8Array = new Uint8Array();
 		let prevBlockOrTime = 0;
 		for (const hf of this.hardforks()) {
 			const { block, timestamp } = hf;
