@@ -23,7 +23,7 @@ export class Address {
 	public readonly buf: Uint8Array;
 
 	public constructor(buf: Uint8Array) {
-		if (buf.length !== 20) {
+		if (buf.length !== 48) {
 			throw new Error('Invalid address length');
 		}
 		this.buf = buf;
@@ -33,7 +33,7 @@ export class Address {
 	 * Returns the zero address.
 	 */
 	public static zero(): Address {
-		return new Address(zeros(20));
+		return new Address(zeros(48));
 	}
 
 	/**
