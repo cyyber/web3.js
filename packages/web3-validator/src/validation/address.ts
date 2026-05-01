@@ -23,13 +23,13 @@ import { uint8ArrayToHexString } from '../utils.js';
  * Checks the checksum of a given address. Will also return false on non-checksum addresses.
  */
 export const checkAddressCheckSum = (data: string): boolean => {
-	if (!/^Q[0-9a-f]{40}$/i.test(data)) return false;
+	if (!/^Q[0-9a-f]{96}$/i.test(data)) return false;
 	const address = data.slice(1);
 	const updatedData = utf8ToBytes(address.toLowerCase());
 
 	const addressHash = uint8ArrayToHexString(keccak256(updatedData)).slice(2);
 
-	for (let i = 0; i < 40; i += 1) {
+	for (let i = 0; i < 96; i += 1) {
 		// the nth letter should be uppercase if the nth digit of casemap is 1
 		if (
 			(parseInt(addressHash[i], 16) > 7 && address[i].toUpperCase() !== address[i]) ||
@@ -50,11 +50,11 @@ export const isAddressString = (value: string, checkChecksum = true) => {
 	}
 
 	// check if it has the basic requirements of an address
-	if (!/^Q[0-9a-f]{40}$/i.test(value)) {
+	if (!/^Q[0-9a-f]{96}$/i.test(value)) {
 		return false;
 	}
 	// If it's ALL lowercase or ALL upppercase
-	if (/^Q[0-9a-f]{40}$/.test(value) || /^Q[0-9A-F]{40}$/.test(value)) {
+	if (/^Q[0-9a-f]{96}$/.test(value) || /^Q[0-9A-F]{96}$/.test(value)) {
 		return true;
 		// Otherwise check each case
 	}
