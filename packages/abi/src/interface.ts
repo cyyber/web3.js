@@ -574,7 +574,7 @@ export class Interface {
 			if (param.type === 'address') {
 				this._abiCoder.encode(['address'], [value]);
 			}
-			return hexZeroPad(hexlify(value), 32);
+			return hexZeroPad(hexlify(value), 64);
 		};
 
 		values.forEach((value, index) => {

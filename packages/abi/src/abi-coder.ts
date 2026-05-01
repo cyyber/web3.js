@@ -99,7 +99,7 @@ export class AbiCoder {
 	}
 
 	_getWordSize(): number {
-		return 32;
+		return 64;
 	}
 
 	_getReader(data: Uint8Array, allowLoose?: boolean): Reader {

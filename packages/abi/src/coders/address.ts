@@ -27,7 +27,7 @@ export class AddressCoder extends Coder {
 	}
 
 	defaultValue(): string {
-		return 'Q0000000000000000000000000000000000000000';
+		return 'Q000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000';
 	}
 
 	encode(writer: Writer, value: string): number {
@@ -40,6 +40,6 @@ export class AddressCoder extends Coder {
 	}
 
 	decode(reader: Reader): any {
-		return hexToAddress(getAddress(hexZeroPad(reader.readValue().toHexString(), 20)));
+		return hexToAddress(getAddress(hexZeroPad(reader.readValue().toHexString(), 48)));
 	}
 }
