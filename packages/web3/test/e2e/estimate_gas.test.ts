@@ -28,7 +28,7 @@ describe(`${getSystemTestBackend()} tests - estimateGas`, () => {
 	const blockData = mainnetBlockData;
 	const simpleQRLTransaction: Transaction = {
 		from: getE2ETestAccountAddress(),
-		to: 'Q0000000000000000000000000000000000000000',
+		to: 'Q000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000',
 		value: '0x1',
 	};
 	const expectedSimpleQRLTransactionGas = 21000;

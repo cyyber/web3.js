@@ -110,7 +110,7 @@ describe('IPCProvider', () => {
 					jsonrpc: '2.0',
 					id: 42,
 					method: 'qrl_getBalance',
-					params: ['Q407d73d8a49eeb85d32cf465507dd71d507100c1', 'latest'],
+					params: ['Q00000000000000000000000000000000000000000000000000000000407d73d8a49eeb85d32cf465507dd71d507100c1', 'latest'],
 				}),
 			).rejects.toThrow('Connection not open');
 		});

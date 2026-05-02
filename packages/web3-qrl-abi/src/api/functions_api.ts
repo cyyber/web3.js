@@ -119,7 +119,7 @@ export const encodeFunctionSignature = (functionName: string | AbiFunctionFragme
  *     stateMutability: "view",
  *     type: "function",
  *   },
- *   ["Q1234567890123456789012345678901234567890"]
+ *   ["Q000000000000000000000000000000000000000000000000000000001234567890123456789012345678901234567890"]
  * );
  *
  * console.log(sig);

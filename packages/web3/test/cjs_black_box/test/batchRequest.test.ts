@@ -39,12 +39,12 @@ describe('CJS - Black Box Unit Tests - web3.BatchRequest', () => {
 		const request1 = {
 			id: 42,
 			method: 'qrl_getBalance',
-			params: ['Q4242000000000000000000000000000000000000', 'latest'],
+			params: ['Q000000000000000000000000000000000000000000000000000000004242000000000000000000000000000000000000', 'latest'],
 		};
 		const request2 = {
 			id: 24,
 			method: 'qrl_getBalance',
-			params: ['Q2424000000000000000000000000000000000000', 'latest'],
+			params: ['Q000000000000000000000000000000000000000000000000000000002424000000000000000000000000000000000000', 'latest'],
 		};
 
 		const batch = new web3.BatchRequest();
