@@ -265,7 +265,7 @@ export class Iban {
 	 *
 	 * @example
 	 * ```ts
-	 * web3.qrl.Iban.fromAddress("Q00c5496aEe77C1bA1f0854206A26DdA82a81D6D8");
+	 * web3.qrl.Iban.fromAddress("Q0000000000000000000000000000000000000000000000000000000000c5496aEe77C1bA1f0854206A26DdA82a81D6D8");
 	 * > Iban {_iban: "XE7338O073KYGTWWZN0F2WZ0R8PX5ZPPZS"}
 	 * ```
 	 */
@@ -292,7 +292,7 @@ export class Iban {
 	 * @example
 	 * ```ts
 	 * web3.qrl.Iban.toAddress("XE7338O073KYGTWWZN0F2WZ0R8PX5ZPPZS");
-	 * > "Q00c5496aEe77C1bA1f0854206A26DdA82a81D6D8"
+	 * > "Q0000000000000000000000000000000000000000000000000000000000c5496aEe77C1bA1f0854206A26DdA82a81D6D8"
 	 * ```
 	 */
 	public static toAddress = (iban: string): HexString => {
@@ -312,7 +312,7 @@ export class Iban {
 	 * ```ts
 	 * const iban = new web3.qrl.Iban("XE7338O073KYGTWWZN0F2WZ0R8PX5ZPPZS");
 	 * iban.toAddress();
-	 * > "Q00c5496aEe77C1bA1f0854206A26DdA82a81D6D8"
+	 * > "Q0000000000000000000000000000000000000000000000000000000000c5496aEe77C1bA1f0854206A26DdA82a81D6D8"
 	 * ```
 	 */
 	public toAddress = (): HexString => {
@@ -334,7 +334,7 @@ export class Iban {
 	 *
 	 * @example
 	 * ```ts
-	 * web3.qrl.Iban.toIban("Q00c5496aEe77C1bA1f0854206A26DdA82a81D6D8");
+	 * web3.qrl.Iban.toIban("Q0000000000000000000000000000000000000000000000000000000000c5496aEe77C1bA1f0854206A26DdA82a81D6D8");
 	 * > "XE7338O073KYGTWWZN0F2WZ0R8PX5ZPPZS"
 	 * ```
 	 */

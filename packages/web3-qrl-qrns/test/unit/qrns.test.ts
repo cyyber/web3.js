@@ -45,7 +45,7 @@ const { getId } = require('@theqrl/web3-net');
 describe('qrns', () => {
 	let object: Web3ContextObject;
 	let resolverContract: Contract<typeof PublicResolverAbi>;
-	const mockAddress = 'Q0000000000000000000000000000000000000000';
+	const mockAddress = 'Q000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000';
 	const QRNS_NAME = 'web3js.qrl';
 	let qrns: QRNS;
 

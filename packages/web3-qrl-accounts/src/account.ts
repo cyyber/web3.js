@@ -154,7 +154,7 @@ export const sign = (data: string, seed: Bytes): SignResult => {
  * Signing an eip 1559 transaction
  * ```ts
  * signTransaction({
- *	to: 'QF0109fC8DF283027b6285cc889F5aA624EaC1F55',
+ *	to: 'Q00000000000000000000000000000000000000000000000000000000F0109fC8DF283027b6285cc889F5aA624EaC1F55',
  *	maxPriorityFeePerGas: '0x3B9ACA00',
  *	maxFeePerGas: '0xB2D05E00',
  *	gasLimit: '0x6A4012',
@@ -214,7 +214,7 @@ export const signTransaction = async (
  * @returns The QRL address used to sign this transaction
  * ```ts
  * recoverTransaction('0xf869808504e3b29200831e848094f0109fc8df283027b6285cc889f5aa624eac1f55843b9aca008025a0c9cf86333bcb065d140032ecaab5d9281bde80f21b9687b3e94161de42d51895a0727a108a0b8d101465414033c3f705a9c7b826e596766046ee1183dbc8aeaa68');
- * > "Q2c7536E3605D9C16a7a3D7b1898e529396a65c23"
+ * > "Q000000000000000000000000000000000000000000000000000000002c7536E3605D9C16a7a3D7b1898e529396a65c23"
  * ```
  */
 export const recoverTransaction = (rawTransaction: HexString): Address => {
@@ -251,7 +251,7 @@ export const recoverTransaction = (rawTransaction: HexString): Address => {
  * {
  *   version: 1,
  *   id: '1b1dd3e2-ee6f-49c6-8a9b-a4722046582e',
- *   address: 'Qcfec0cbee560cbd6ed89580204af71448f1fb8c5',
+ *   address: 'Q00000000000000000000000000000000000000000000000000000000cfec0cbee560cbd6ed89580204af71448f1fb8c5',
  *   crypto: {
  *     ciphertext: '02383d4ea331fdf518651aa638d77f36de002f6b2cb340712c2957b68f927234a9c87f776e40b61227aca366bd4b7056046dfdddee29df22290939a1e96f5be5',
  *     cipherparams: { iv: 'bfb43120ae00e9de110f8325' },
@@ -389,7 +389,7 @@ export const parseAndValidateSeed = (data: Bytes, ignoreLength?: boolean): Uint8
  * seedToAccount("0x010000cea755979937e2dc6137c0e51ba0d1eb2a44920cefffb1a860cf194ea7d23d694045fd2c8a72ec5aecf1e7e5bb591ff2");
  * >
  * {
- *   address: 'QcfEC0CbEe560cbD6ED89580204AF71448F1fb8c5',
+ *   address: 'Q00000000000000000000000000000000000000000000000000000000cfEC0CbEe560cbD6ED89580204AF71448F1fb8c5',
  *   seed: '0x010000cea755979937e2dc6137c0e51ba0d1eb2a44920cefffb1a860cf194ea7d23d694045fd2c8a72ec5aecf1e7e5bb591ff2',
  *   signTransaction: [Function: signTransaction],
  *   sign: [Function: sign],
@@ -423,7 +423,7 @@ export const seedToAccount = (seed: Bytes): Web3Account => {
  * ```ts
  * web3.qrl.accounts.create();
  * {
- * address: 'QcfEC0CbEe560cbD6ED89580204AF71448F1fb8c5',
+ * address: 'Q00000000000000000000000000000000000000000000000000000000cfEC0CbEe560cbD6ED89580204AF71448F1fb8c5',
  * seed: '0x010000cea755979937e2dc6137c0e51ba0d1eb2a44920cefffb1a860cf194ea7d23d694045fd2c8a72ec5aecf1e7e5bb591ff2',
  * signTransaction: [Function: signTransaction],
  * sign: [Function: sign],
@@ -451,7 +451,7 @@ export const create = (): Web3Account => {
  * decrypt({
  *   version: 1,
  *   id: '1b1dd3e2-ee6f-49c6-8a9b-a4722046582e',
- *   address: 'Qcfec0cbee560cbd6ed89580204af71448f1fb8c5',
+ *   address: 'Q00000000000000000000000000000000000000000000000000000000cfec0cbee560cbd6ed89580204af71448f1fb8c5',
  *   crypto: {
  *     ciphertext: '02383d4ea331fdf518651aa638d77f36de002f6b2cb340712c2957b68f927234a9c87f776e40b61227aca366bd4b7056046dfdddee29df22290939a1e96f5be5',
  *     cipherparams: { iv: 'bfb43120ae00e9de110f8325' },
@@ -468,7 +468,7 @@ export const create = (): Web3Account => {
  * }, '123').then((res) => console.log(util.inspect(res, { depth: null })));
  * >
  * {
- *   address: 'QcfEC0CbEe560cbD6ED89580204AF71448F1fb8c5',
+ *   address: 'Q00000000000000000000000000000000000000000000000000000000cfEC0CbEe560cbD6ED89580204AF71448F1fb8c5',
  *   seed: '0x010000cea755979937e2dc6137c0e51ba0d1eb2a44920cefffb1a860cf194ea7d23d694045fd2c8a72ec5aecf1e7e5bb591ff2',
  *   signTransaction: [Function: signTransaction],
  *   sign: [Function: sign],

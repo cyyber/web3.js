@@ -23,7 +23,7 @@ import { namehash } from '../../src/utils';
 describe('registry', () => {
 	let object: Web3ContextObject;
 	let registry: Registry;
-	const mockAddress = 'Q0000000000000000000000000000000000000000';
+	const mockAddress = 'Q000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000';
 	const QRNS_NAME = 'web3js.qrl';
 
 	beforeAll(() => {

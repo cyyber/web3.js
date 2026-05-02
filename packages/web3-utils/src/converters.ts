@@ -138,7 +138,7 @@ export const hexToBytes = (bytes: HexString): Uint8Array => {
  *
  * @example
  * ```ts
- * console.log(web3.utils.addressToBytes('Q7465737474657374746573747465737474657374'));
+ * console.log(web3.utils.addressToBytes('Q000000000000000000000000000000000000000000000000000000007465737474657374746573747465737474657374'));
  * > Uint8Array(20) [ 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116 ]
  * ```
  */
@@ -152,7 +152,7 @@ export const addressToBytes = (value: Address): Uint8Array => bytesToUint8Array(
  * @example
  * ```ts
  * console.log(web3.utils.hexToAddress('0x74657374123123131231231313a1231231112312'));
- * > "Q74657374123123131231231313a1231231112312"
+ * > "Q0000000000000000000000000000000000000000000000000000000074657374123123131231231313a1231231112312"
  * ```
  */
 export const hexToAddress = (value: HexString): Address => {
@@ -167,7 +167,7 @@ export const hexToAddress = (value: HexString): Address => {
  *
  * @example
  * ```ts
- * console.log(web3.utils.addressToHex('Q74657374123123131231231313a1231231112312'));
+ * console.log(web3.utils.addressToHex('Q0000000000000000000000000000000000000000000000000000000074657374123123131231231313a1231231112312'));
  * > "0x74657374123123131231231313a1231231112312"
  * ```
  */
@@ -601,8 +601,8 @@ export const toPlanck = (number: Numbers, unit: QRLUnits): string => {
  * @returns	The checksum address
  * @example
  * ```ts
- * web3.utils.toChecksumAddress('Qc1912fee45d61c87cc5ea59dae31190fffff232d');
- * > "Qc1912fEE45d61C87Cc5EA59DaE31190FFFFf232d"
+ * web3.utils.toChecksumAddress('Q00000000000000000000000000000000000000000000000000000000c1912fee45d61c87cc5ea59dae31190fffff232d');
+ * > "Q00000000000000000000000000000000000000000000000000000000c1912fEE45d61C87Cc5EA59DaE31190FFFFf232d"
  * ```
  */
 export const toChecksumAddress = (address: Address): string => {

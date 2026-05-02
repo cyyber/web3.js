@@ -30,7 +30,7 @@ describe('resolver', () => {
 	let registry: Registry;
 	let resolver: Resolver;
 	let contract: Contract<typeof PublicResolverAbi>;
-	const mockAddress = 'Q0000000000000000000000000000000000000000';
+	const mockAddress = 'Q000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000';
 	const QRNS_NAME = 'web3js.qrl';
 
 	beforeAll(() => {
