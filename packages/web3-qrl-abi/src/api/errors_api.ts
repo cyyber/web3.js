@@ -33,7 +33,10 @@ export const encodeErrorSignature = (functionName: string | AbiErrorFragment): s
 	if (functionName && (typeof functionName === 'function' || typeof functionName === 'object')) {
 		name = jsonInterfaceMethodToString(functionName);
 	} else {
-		name = functionName;
+		// At this point typeof functionName === 'string' (the previous early
+		// return rules out the `falsy` and `non-string non-object` cases),
+		// but the union type isn't narrowed by the `||` guard. Assert.
+		name = functionName as string;
 	}
 
 	return sha3Raw(name);

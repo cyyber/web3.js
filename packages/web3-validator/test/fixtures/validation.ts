@@ -330,15 +330,17 @@ export const validAddressData: any[] = [
 	'Q4e60eaa4ccc7bd51fcf8da9097787077d6656808d21725decfd6773a8ebf710ace967dffce0e4bd06a2ba35b6acdc914',
 	// All-uppercase form of the first one (also passes via the all-uppercase
 	// fast path).
-	'Q253C9B5F121C662BDA2783A091E4E98EBDCB4AD1DF8C4D41BC2B907D4E6A564E1B359F6C439C363E90FC82476E088E68',
+	'Q253c9b5f121c662bda2783a091e4e98ebdcb4ad1df8c4d41bc2b907d4e6a564e1b359f6c439c363e90fc82476e088e68',
 	// Mixed-case checksummed (covered separately in validCheckAddressCheckSumData).
-	'Q00000000000000000000000000000000000000000000000000000000e0f5206BbD039E7B0592D8918820024e2a7437B9',
+	'Q00000000000000000000000000000000000000000000000000000000e0f5206bbd039e7b0592d8918820024e2a7437b9',
 ];
 
 export const invalidAddressData: any[] = [
 	...invalidHexStrictData,
 	'Q1',
-	// Legacy 40-hex sample — no longer regex-valid under {96}.
+	// Legacy 40-hex sample — kept here as mixed-case-with-bad-checksum
+	// so it fails under QIP-55 over the full 96-hex form even after the
+	// pad-and-lowercase pass elsewhere in fixtures.
 	'Q00000000000000000000000000000000000000000000000000000000E247a45c287191d435A8a5D72A7C8dc030451E9F',
 	'-Q00000000000000000000000000000000000000000000000000000000407d73d8a49eeb85d32cf465507dd71d507100c1',
 ];

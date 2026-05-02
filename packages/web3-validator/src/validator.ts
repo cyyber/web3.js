@@ -101,7 +101,10 @@ export class Validator {
 	public validate(schema: JsonSchema, data: Json, options?: { silent?: boolean }) {
 		const zod = convertToZod(schema);
 		const result = zod.safeParse(data);
-		if (!result.success) {
+		// Narrow via in-operator (TS in this project's pinned ts-jest version
+		// doesn't always narrow zod's SafeParseReturnType union from the
+		// `!result.success` discriminant alone).
+		if (!result.success && 'error' in result) {
 			const errors = this.convertErrors(result.error?.issues ?? []);
 			if (errors) {
 				if (options?.silent) {

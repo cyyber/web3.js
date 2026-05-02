@@ -49,7 +49,9 @@ export const isUInt = (
 		size = options.bitSize;
 	}
 
-	const maxSize = BigInt(2) ** BigInt(size ?? 256) - BigInt(1);
+	// Equivalent to (BigInt(2) ** BigInt(size ?? 256)) - BigInt(1) but avoids
+	// the BigInt ** operator which the project's es2016 ts-jest target rejects.
+	const maxSize = (BigInt(1) << BigInt(size ?? 256)) - BigInt(1);
 
 	try {
 		const valueToCheck =
@@ -94,8 +96,9 @@ export const isInt = (
 		size = options.bitSize;
 	}
 
-	const maxSize = BigInt(2) ** BigInt((size ?? 256) - 1);
-	const minSize = BigInt(-1) * BigInt(2) ** BigInt((size ?? 256) - 1);
+	// Equivalent to BigInt(2) ** BigInt(N) but avoids the BigInt ** operator.
+	const maxSize = BigInt(1) << BigInt((size ?? 256) - 1);
+	const minSize = BigInt(-1) * (BigInt(1) << BigInt((size ?? 256) - 1));
 
 	try {
 		const valueToCheck =

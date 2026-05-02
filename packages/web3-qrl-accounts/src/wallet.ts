@@ -91,14 +91,14 @@ export class Wallet<
 	 * web3.qrl.accounts.wallet.create(2)
 	 * > Wallet(2) [
 	 *   {
-	 *     address: 'Q00000000000000000000000000000000000000000000000000000000de38310a42B751AE57d30cFFF4a0A3c52A442fCE',
+	 *     address: 'Q00000000000000000000000000000000000000000000000000000000de38310a42b751ae57d30cfff4a0a3c52a442fce',
 	 *     seed: '0x6422c9d28efdcbee93c1d32a5fc6fd6fa081b985487885296cf8c9bbb5872600',
 	 *     signTransaction: [Function: signTransaction],
 	 *     sign: [Function: sign],
 	 *     encrypt: [Function: encrypt]
 	 *   },
 	 *   {
-	 *     address: 'Q00000000000000000000000000000000000000000000000000000000766BF755246d924B1d017Fdb5390f38a60166691',
+	 *     address: 'Q00000000000000000000000000000000000000000000000000000000766bf755246d924b1d017fdb5390f38a60166691',
 	 *     seed: '0x756530f13c0eb636ebdda655335f5dea9921e3362e2e588b0ad59e556f7751f0',
 	 *     signTransaction: [Function: signTransaction],
 	 *     sign: [Function: sign],
@@ -137,7 +137,7 @@ export class Wallet<
 	 * web3.qrl.accounts.wallet.add('0xbce9b59981303e76c4878b1a6d7b088ec6b9dd5c966b7d5f54d7a749ff683387');
 	 * > Wallet(1) [
 	 *   {
-	 *     address: 'Q0000000000000000000000000000000000000000000000000000000085D70633b90e03e0276B98880286D0D055685ed7',
+	 *     address: 'Q0000000000000000000000000000000000000000000000000000000085d70633b90e03e0276b98880286d0d055685ed7',
 	 *     seed: '0xbce9b59981303e76c4878b1a6d7b088ec6b9dd5c966b7d5f54d7a749ff683387',
 	 *     signTransaction: [Function: signTransaction],
 	 *     sign: [Function: sign],
@@ -197,7 +197,7 @@ export class Wallet<
 	 * ```ts
 	 * web3.qrl.accounts.wallet.add('0xbce9b59981303e76c4878b1a6d7b088ec6b9dd5c966b7d5f54d7a749ff683387');
 	 *
-	 * web3.qrl.accounts.wallet.remove('Q0000000000000000000000000000000000000000000000000000000085D70633b90e03e0276B98880286D0D055685ed7');
+	 * web3.qrl.accounts.wallet.remove('Q0000000000000000000000000000000000000000000000000000000085d70633b90e03e0276b98880286d0d055685ed7');
 	 * > true
 	 * web3.qrl.accounts.wallet
 	 * > Wallet(0) [
@@ -331,7 +331,7 @@ export class Wallet<
 	 * >
 	 * Wallet(1) [
 	 *   {
-	 *     address: 'Q0000000000000000000000000000000000000000000000000000000020FD3c13848A14e2EC61A53492140c26034E3FD6',
+	 *     address: 'Q0000000000000000000000000000000000000000000000000000000020fd3c13848a14e2ec61a53492140c26034e3fd6',
 	 *     seed: '0x1a3bbb0aa289420ef915059a093cfed7e92990043b01ba8b5407a56aafae5507576781603015f6db7d33920a4947a261',
 	 *     signTransaction: [Function: signTransaction],
 	 *     sign: [Function: sign],

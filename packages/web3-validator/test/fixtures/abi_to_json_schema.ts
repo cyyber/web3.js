@@ -59,7 +59,7 @@ export const abiToJsonSchemaCases: AbiToJsonSchemaCase[] = [
 		abi: {
 			fullSchema: [{ name: 'a', type: 'address' }],
 			shortSchema: ['address'],
-			data: ['Q00000000000000000000000000000000000000000000000000000000CB00CDE33a7a0Fba30C63745534F1f7Ae607076b'],
+			data: ['Q00000000000000000000000000000000000000000000000000000000cb00cde33a7a0fba30c63745534f1f7ae607076b'],
 		},
 		json: {
 			fullSchema: {
@@ -74,7 +74,7 @@ export const abiToJsonSchemaCases: AbiToJsonSchemaCase[] = [
 				minItems: 1,
 				maxItems: 1,
 			},
-			data: ['Q00000000000000000000000000000000000000000000000000000000CB00CDE33a7a0Fba30C63745534F1f7Ae607076b'],
+			data: ['Q00000000000000000000000000000000000000000000000000000000cb00cde33a7a0fba30c63745534f1f7ae607076b'],
 		},
 	},
 	{
@@ -1145,7 +1145,7 @@ export const abiToJsonSchemaCases: AbiToJsonSchemaCase[] = [
 			data: [
 				[
 					'Rick Sanchez',
-					'Q00000000000000000000000000000000000000000000000000000000CB00CDE33a7a0Fba30C63745534F1f7Ae607076b',
+					'Q00000000000000000000000000000000000000000000000000000000cb00cde33a7a0fba30c63745534f1f7ae607076b',
 					['rick.c137@citadel.cfc', '+1 (555) 314-1593'],
 				],
 			],
@@ -1208,7 +1208,7 @@ export const abiToJsonSchemaCases: AbiToJsonSchemaCase[] = [
 			data: [
 				{
 					name: 'Rick Sanchez',
-					addr: 'Q00000000000000000000000000000000000000000000000000000000CB00CDE33a7a0Fba30C63745534F1f7Ae607076b',
+					addr: 'Q00000000000000000000000000000000000000000000000000000000cb00cde33a7a0fba30c63745534f1f7ae607076b',
 					contact: {
 						email: 'rick.c137@citadel.cfc',
 						phone: '+1 (555) 314-1593',
@@ -1243,7 +1243,7 @@ export const abiToJsonSchemaCases: AbiToJsonSchemaCase[] = [
 			data: [
 				[
 					'Rick Sanchez',
-					'Q00000000000000000000000000000000000000000000000000000000CB00CDE33a7a0Fba30C63745534F1f7Ae607076b',
+					'Q00000000000000000000000000000000000000000000000000000000cb00cde33a7a0fba30c63745534f1f7ae607076b',
 					['rick.c137@citadel.cfc', '+1 (555) 314-1593'],
 				],
 			],
@@ -1306,7 +1306,7 @@ export const abiToJsonSchemaCases: AbiToJsonSchemaCase[] = [
 			data: [
 				{
 					name: 'Rick Sanchez',
-					addr: 'Q00000000000000000000000000000000000000000000000000000000CB00CDE33a7a0Fba30C63745534F1f7Ae607076b',
+					addr: 'Q00000000000000000000000000000000000000000000000000000000cb00cde33a7a0fba30c63745534f1f7ae607076b',
 					contact: {
 						email: 'rick.c137@citadel.cfc',
 						phone: '+1 (555) 314-1593',

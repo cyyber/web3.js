@@ -72,7 +72,7 @@ import { EventLog, ContractAbiWithSignature } from './types.js';
  *   transactionHash: '0x7f9fade1c0d57a7af66ab4ead79fade1c0d57a7af66ab4ead7c2c2eb7b11a91385',
  *   blockHash: '0xfd43ade1c09fade1c0d57a7af66ab4ead7c2c2eb7b11a91ffdd57a7af66ab4ead7',
  *   blockNumber: 1234,
- *   address: 'Q00000000000000000000000000000000000000000000000000000000de0B295669a9FD93d5F28D9Ec85E40f4cb697BAe'
+ *   address: 'Q00000000000000000000000000000000000000000000000000000000de0b295669a9fd93d5f28d9ec85e40f4cb697bae'
  * }
  * ```
  */

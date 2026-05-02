@@ -602,7 +602,7 @@ export const toPlanck = (number: Numbers, unit: QRLUnits): string => {
  * @example
  * ```ts
  * web3.utils.toChecksumAddress('Q00000000000000000000000000000000000000000000000000000000c1912fee45d61c87cc5ea59dae31190fffff232d');
- * > "Q00000000000000000000000000000000000000000000000000000000c1912fEE45d61C87Cc5EA59DaE31190FFFFf232d"
+ * > "Q00000000000000000000000000000000000000000000000000000000c1912fee45d61c87cc5ea59dae31190fffff232d"
  * ```
  */
 export const toChecksumAddress = (address: Address): string => {

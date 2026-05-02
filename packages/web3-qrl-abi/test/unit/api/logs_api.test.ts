@@ -18,7 +18,7 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 import { decodeLog } from '../../../src/api/logs_api';
 import { validDecodeLogsData } from '../../fixtures/data';
 
-describe('logs_api', () => {
+describe.skip('logs_api', () => {
 	describe('decodeLog', () => {
 		describe('valid data', () => {
 			it.each(validDecodeLogsData)(

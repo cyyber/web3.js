@@ -202,7 +202,7 @@ export class Contract<Abi extends ContractAbi>
 	 * > {
 	 *     address: 'Q000000000000000000000000000000000000000000000000000000001234567890123456789012345678901234567891',
 	 *     jsonInterface: [...],
-	 *     from: 'Q00000000000000000000000000000000000000000000000000000000de0B295669a9FD93d5F28D9Ec85E40f4cb697BAe',
+	 *     from: 'Q00000000000000000000000000000000000000000000000000000000de0b295669a9fd93d5f28d9ec85e40f4cb697bae',
 	 *     maxFeePerGas: '10000000000000',
 	 * 	   maxPriorityFeePerGas: '0',
 	 *     gas: 1000000
@@ -258,7 +258,7 @@ export class Contract<Abi extends ContractAbi>
 	 * @returns - The contract instance with all its methods and events.
 	 *
 	 * ```ts title="Example"
-	 * var myContract = new web3.qrl.Contract([...], 'Q00000000000000000000000000000000000000000000000000000000de0B295669a9FD93d5F28D9Ec85E40f4cb697BAe', {
+	 * var myContract = new web3.qrl.Contract([...], 'Q00000000000000000000000000000000000000000000000000000000de0b295669a9fd93d5f28d9ec85e40f4cb697bae', {
 	 *   from: 'Q000000000000000000000000000000000000000000000000000000001234567890123456789012345678901234567891', // default from address
 	 *   maxFeePerGas: '20000000000' // default max fee per gas in planck, 20 shor in this case
 	 * });
@@ -268,7 +268,7 @@ export class Contract<Abi extends ContractAbi>
 	 *
 	 * ```ts title="Example"
 	 * const myContractAbi = [....] as const; // ABI definitions
-	 * const myContract = new web3.qrl.Contract(myContractAbi, 'Q00000000000000000000000000000000000000000000000000000000de0B295669a9FD93d5F28D9Ec85E40f4cb697BAe');
+	 * const myContract = new web3.qrl.Contract(myContractAbi, 'Q00000000000000000000000000000000000000000000000000000000de0b295669a9fd93d5f28d9ec85e40f4cb697bae');
 	 * ```
 	 */
 	public constructor(
@@ -446,13 +446,13 @@ export class Contract<Abi extends ContractAbi>
 	 *
 	 * ```ts
 	 * // calling a method
-	 * const result = await myContract.methods.myMethod(123).call({from: 'Q00000000000000000000000000000000000000000000000000000000de0B295669a9FD93d5F28D9Ec85E40f4cb697BAe'});
+	 * const result = await myContract.methods.myMethod(123).call({from: 'Q00000000000000000000000000000000000000000000000000000000de0b295669a9fd93d5f28d9ec85e40f4cb697bae'});
 	 *
 	 * // or sending and using a promise
-	 * const receipt = await myContract.methods.myMethod(123).send({from: 'Q00000000000000000000000000000000000000000000000000000000de0B295669a9FD93d5F28D9Ec85E40f4cb697BAe'});
+	 * const receipt = await myContract.methods.myMethod(123).send({from: 'Q00000000000000000000000000000000000000000000000000000000de0b295669a9fd93d5f28d9ec85e40f4cb697bae'});
 	 *
 	 * // or sending and using the events
-	 * const sendObject = myContract.methods.myMethod(123).send({from: 'Q00000000000000000000000000000000000000000000000000000000de0B295669a9FD93d5F28D9Ec85E40f4cb697BAe'});
+	 * const sendObject = myContract.methods.myMethod(123).send({from: 'Q00000000000000000000000000000000000000000000000000000000de0b295669a9fd93d5f28d9ec85e40f4cb697bae'});
 	 * sendObject.on('transactionHash', function(hash){
 	 *   ...
 	 * });
@@ -699,7 +699,7 @@ export class Contract<Abi extends ContractAbi>
 	 *   transactionHash: '0x7f9fade1c0d57a7af66ab4ead79fade1c0d57a7af66ab4ead7c2c2eb7b11a91385',
 	 *   blockHash: '0xfd43ade1c09fade1c0d57a7af66ab4ead7c2c2eb7b11a91ffdd57a7af66ab4ead7',
 	 *   blockNumber: 1234,
-	 *   address: 'Q00000000000000000000000000000000000000000000000000000000de0B295669a9FD93d5F28D9Ec85E40f4cb697BAe'
+	 *   address: 'Q00000000000000000000000000000000000000000000000000000000de0b295669a9fd93d5f28d9ec85e40f4cb697bae'
 	 * },{
 	 *   ...
 	 * }]

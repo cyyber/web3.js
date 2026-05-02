@@ -1,8 +1,30 @@
 {
-	"extends": "../tsconfig.cjs.json",
 	"compilerOptions": {
+		"resolveJsonModule": true,
+		"forceConsistentCasingInFileNames": true,
+		"target": "es2020",
+		"lib": ["es2020", "dom"],
+		"moduleResolution": "node",
+		"newLine": "lf",
+		"noFallthroughCasesInSwitch": true,
+		"noImplicitReturns": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"pretty": true,
+		"removeComments": false,
+		"sourceMap": true,
+		"strict": true,
+		"strictNullChecks": true,
+		"esModuleInterop": true,
+		"outDir": "./lib/commonjs",
 		"declaration": false,
-		"declarationMap": false
+		"declarationMap": false,
+		"module": "commonjs"
 	},
-	"include": ["./**/*", "../node_modules/jest-extended/types/**/*.ts", "../index.d.ts"]
+	"include": [
+		"./**/*",
+		"../package.json",
+		"../node_modules/jest-extended/types/**/*.ts",
+		"../index.d.ts"
+	]
 }

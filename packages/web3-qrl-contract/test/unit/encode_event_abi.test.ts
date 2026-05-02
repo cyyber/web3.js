@@ -18,7 +18,7 @@ import { AbiEventFragment } from '@theqrl/web3-types';
 import { ContractOptions, encodeEventABI } from '../../src';
 
 const contractOptions: ContractOptions = {
-	address: 'Q00000000000000000000000000000000000000000000000000000000de0B295669a9FD93d5F28D9Ec85E40f4cb697BAe',
+	address: 'Q00000000000000000000000000000000000000000000000000000000de0b295669a9fd93d5f28d9ec85e40f4cb697bae',
 } as ContractOptions;
 const abiEventFragment: AbiEventFragment & { signature: string } = {
 	anonymous: false,
@@ -197,7 +197,7 @@ describe('encodeEventAbi', () => {
 				null,
 				// eslint-disable-next-line no-null/no-null
 				null,
-				'0x0000000000000000000000000000000000000000000000000000000000000001',
+				'0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001',
 			],
 			address: 'Q00000000000000000000000000000000000000000000000000000000de0b295669a9fd93d5f28d9ec85e40f4cb697bae',
 		});

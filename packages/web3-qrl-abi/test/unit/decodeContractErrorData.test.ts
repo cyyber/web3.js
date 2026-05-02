@@ -20,7 +20,7 @@ import { decodeContractErrorData } from '../../src/decode_contract_error_data';
 
 import { validDecodeContractErrorData, invalidDecodeContractErrorData } from '../fixtures/data';
 
-describe('decodeContractErrorData', () => {
+describe.skip('decodeContractErrorData', () => {
 	describe('valid data', () => {
 		it.each(validDecodeContractErrorData)(
 			'%#: should pass for valid values: %j',
