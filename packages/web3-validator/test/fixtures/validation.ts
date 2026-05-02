@@ -300,39 +300,47 @@ export const invalidStringNumbers: ValidInputTypes[] = [
 	new Uint8Array([0x97, 0x98, 0x99]),
 	new Uint8Array(hexToBytes('abcd')),
 ];
+// Post-migration (48-byte address) checksum samples, copied from the
+// hyperion smtCheckerTests fixtures where hypc has already produced the
+// QIP-55 checksummed form. Each is the right-aligned padding of a known
+// 20-byte ETH-era address (56 leading zeros + original 40 hex), with the
+// case re-derived per QIP-55 over the full 96-char form.
 export const validCheckAddressCheckSumData: any[] = [
-	'Qc1912fEE45d61C87Cc5EA59DaE31190FFFFf232d',
-	'Q52908400098527886E0F7030069857D2E4169EE7',
-	'Q8617E340B3D01FA5F11F306F4090FD50E238070D',
-	'Q27b1fdb04752bbc536007a920d24acb045561c26',
-	'Q5aAeb6053F3E94C9b9A09f33669435E7Ef1BeAed',
-	'QfB6916095ca1df60bB79Ce92cE3Ea74c37c5d359',
-	'QdbF03B407c01E7cD3CBea99509d93f8DDDC8C6FB',
-	'QD1220A0cf47c7B9Be7A2E6BA89F429762e7b9aDb',
+	'Q00000000000000000000000000000000000000000000000000000000e0f5206BbD039E7B0592D8918820024e2a7437B9',
+	'Q00000000000000000000000000000000000000000000000000000000C0FfeE254729296a45a3885639AC7e10f9D54979',
+	'Q00000000000000000000000000000000000000000000000000000000999999CF1046e68e36e1aa2e0E07105EDdD1f08E',
 ];
 
 export const invalidCheckAddressCheckSumData: any[] = [
-	'Qc1912fee45d61c87cc5ea59dae31190fffff232d',
-	'Qd1220a0cf47c7b9be7a2e6ba89f429762e7b9adb',
-	'QD1220A0CF47C7B9BE7A2E6BA89F429762E7B9ADB',
+	// Same addresses as validCheckAddressCheckSumData but force-lowercased,
+	// so the per-nibble case mask comparison fails on every uppercase nibble.
+	'Q00000000000000000000000000000000000000000000000000000000e0f5206bbd039e7b0592d8918820024e2a7437b9',
+	'Q00000000000000000000000000000000000000000000000000000000c0ffee254729296a45a3885639ac7e10f9d54979',
+	'Q00000000000000000000000000000000000000000000000000000000999999cf1046e68e36e1aa2e0e07105eddd1f08e',
 	'1234',
 	'0xa1b2',
 ];
 
 export const validAddressData: any[] = [
-	'Qc6d9d2cd449a754c494264e1809c50e34d64562b',
-	'QE247A45c287191d435A8a5D72A7C8dc030451E9F',
-	'Qe247a45c287191d435a8a5d72a7c8dc030451e9f',
-	'QE247A45C287191D435A8A5D72A7C8DC030451E9F',
-	'QE247A45C287191D435A8A5D72A7C8DC030451E9F',
-	'Q72fdb1c1ddd4c67804f42b93de95cf6a8c51d2d1',
+	// All-lowercase 48B addresses derived from genesis_constants.star via
+	// ML-DSA-87 KeyGen (same as derived-addresses.txt). The all-lowercase
+	// rule lets the validator skip the per-nibble checksum loop entirely.
+	'Q253c9b5f121c662bda2783a091e4e98ebdcb4ad1df8c4d41bc2b907d4e6a564e1b359f6c439c363e90fc82476e088e68',
+	'Q7c3fd0d50f654719ebb6ecbdef27bb426974ed7b36f39554cd1cb48c2180f7bac1500596fefcc79121ab91a883f292fb',
+	'Q4e60eaa4ccc7bd51fcf8da9097787077d6656808d21725decfd6773a8ebf710ace967dffce0e4bd06a2ba35b6acdc914',
+	// All-uppercase form of the first one (also passes via the all-uppercase
+	// fast path).
+	'Q253C9B5F121C662BDA2783A091E4E98EBDCB4AD1DF8C4D41BC2B907D4E6A564E1B359F6C439C363E90FC82476E088E68',
+	// Mixed-case checksummed (covered separately in validCheckAddressCheckSumData).
+	'Q00000000000000000000000000000000000000000000000000000000e0f5206BbD039E7B0592D8918820024e2a7437B9',
 ];
 
 export const invalidAddressData: any[] = [
 	...invalidHexStrictData,
 	'Q1',
-	'QE247a45c287191d435A8a5D72A7C8dc030451E9F', // Invalid checksum
-	'-Q407d73d8a49eeb85d32cf465507dd71d507100c1',
+	// Legacy 40-hex sample — no longer regex-valid under {96}.
+	'QE247a45c287191d435A8a5D72A7C8dc030451E9F',
+	'-Q00000000000000000000000000000000000000000000000000000000407d73d8a49eeb85d32cf465507dd71d507100c1',
 ];
 
 export const validBloomData: any[] = [
@@ -782,6 +790,12 @@ export const validNotBaseTypeData: { dataType: string; data: any }[] = [
 ];
 
 export const validAddressDataWithHex: [string, string][] = [
-	['Qdec0518fa672a70027b04c286582e543ab17319f', '0xdec0518fa672a70027b04c286582e543ab17319f'],
-	['Qd115bffabbdd893a6f7cea402e7338643ced44a6', '0xd115bffabbdd893a6f7cea402e7338643ced44a6'],
+	[
+		'Q253c9b5f121c662bda2783a091e4e98ebdcb4ad1df8c4d41bc2b907d4e6a564e1b359f6c439c363e90fc82476e088e68',
+		'0x253c9b5f121c662bda2783a091e4e98ebdcb4ad1df8c4d41bc2b907d4e6a564e1b359f6c439c363e90fc82476e088e68',
+	],
+	[
+		'Q7c3fd0d50f654719ebb6ecbdef27bb426974ed7b36f39554cd1cb48c2180f7bac1500596fefcc79121ab91a883f292fb',
+		'0x7c3fd0d50f654719ebb6ecbdef27bb426974ed7b36f39554cd1cb48c2180f7bac1500596fefcc79121ab91a883f292fb',
+	],
 ];
