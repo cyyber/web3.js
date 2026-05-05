@@ -300,50 +300,36 @@ export const invalidStringNumbers: ValidInputTypes[] = [
 	new Uint8Array([0x97, 0x98, 0x99]),
 	new Uint8Array(hexToBytes('abcd')),
 ];
-// Post-migration (48-byte address) checksum samples, copied from the
-// hyperion smtCheckerTests fixtures where hypc has already produced the
-// QIP-55 checksummed form. Each is the right-aligned padding of a known
-// 20-byte ETH-era address (56 leading zeros + original 40 hex), with the
-// case re-derived per QIP-55 over the full 96-char form.
+// Post-migration 48-byte address samples. QRL addresses do not embed a
+// mixed-case checksum, so any structurally valid Q + 96 hex string passes.
 export const validCheckAddressCheckSumData: any[] = [
 	'Q00000000000000000000000000000000000000000000000000000000e0f5206BbD039E7B0592D8918820024e2a7437B9',
+	'Q00000000000000000000000000000000000000000000000000000000e0f5206bbd039e7b0592d8918820024e2a7437b9',
 	'Q00000000000000000000000000000000000000000000000000000000C0FfeE254729296a45a3885639AC7e10f9D54979',
 	'Q00000000000000000000000000000000000000000000000000000000999999CF1046e68e36e1aa2e0E07105EDdD1f08E',
 ];
 
 export const invalidCheckAddressCheckSumData: any[] = [
-	// Same addresses as validCheckAddressCheckSumData but force-lowercased,
-	// so the per-nibble case mask comparison fails on every uppercase nibble.
-	'Q00000000000000000000000000000000000000000000000000000000e0f5206bbd039e7b0592d8918820024e2a7437b9',
-	'Q00000000000000000000000000000000000000000000000000000000c0ffee254729296a45a3885639ac7e10f9d54979',
-	'Q00000000000000000000000000000000000000000000000000000000999999cf1046e68e36e1aa2e0e07105eddd1f08e',
 	'1234',
 	'0xa1b2',
 ];
 
 export const validAddressData: any[] = [
-	// All-lowercase 48B addresses derived from genesis_constants.star via
-	// ML-DSA-87 KeyGen (same as derived-addresses.txt). The all-lowercase
-	// rule lets the validator skip the per-nibble checksum loop entirely.
+		// All-lowercase 48B addresses derived from genesis_constants.star via
+		// ML-DSA-87 KeyGen (same as derived-addresses.txt).
 	'Q253c9b5f121c662bda2783a091e4e98ebdcb4ad1df8c4d41bc2b907d4e6a564e1b359f6c439c363e90fc82476e088e68',
 	'Q7c3fd0d50f654719ebb6ecbdef27bb426974ed7b36f39554cd1cb48c2180f7bac1500596fefcc79121ab91a883f292fb',
 	'Q4e60eaa4ccc7bd51fcf8da9097787077d6656808d21725decfd6773a8ebf710ace967dffce0e4bd06a2ba35b6acdc914',
-	// All-uppercase form of the first one (also passes via the all-uppercase
-	// fast path).
-	'Q253c9b5f121c662bda2783a091e4e98ebdcb4ad1df8c4d41bc2b907d4e6a564e1b359f6c439c363e90fc82476e088e68',
-	// Mixed-case checksummed (covered separately in validCheckAddressCheckSumData).
-	'Q00000000000000000000000000000000000000000000000000000000e0f5206bbd039e7b0592d8918820024e2a7437b9',
+		// Mixed-case input is valid; canonical output happens elsewhere.
+		'Q253C9B5F121C662BDA2783A091E4E98EBDCB4AD1DF8C4D41BC2B907D4E6A564E1B359F6C439C363E90FC82476E088E68',
+		'Q00000000000000000000000000000000000000000000000000000000e0f5206BbD039E7B0592D8918820024e2a7437B9',
 ];
 
 export const invalidAddressData: any[] = [
 	...invalidHexStrictData,
 	'Q1',
-	// Legacy 40-hex sample — kept here as mixed-case-with-bad-checksum
-	// so it fails under QIP-55 over the full 96-hex form even after the
-	// pad-and-lowercase pass elsewhere in fixtures.
-	'Q00000000000000000000000000000000000000000000000000000000E247a45c287191d435A8a5D72A7C8dc030451E9F',
-	'-Q00000000000000000000000000000000000000000000000000000000407d73d8a49eeb85d32cf465507dd71d507100c1',
-];
+		'-Q00000000000000000000000000000000000000000000000000000000407d73d8a49eeb85d32cf465507dd71d507100c1',
+	];
 
 export const validBloomData: any[] = [
 	'0x00000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000008000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000000000000000000004000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000010000000000000000000000000000000000010000000000402000000000000000000000020000010000000000000000000000000000000000000000000000000000000000000',

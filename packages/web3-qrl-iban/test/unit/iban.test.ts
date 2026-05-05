@@ -71,9 +71,8 @@ describe('iban', () => {
 
 	describe('fromAddress (disabled for 48B)', () => {
 		it('throws migration message for a valid 48B address', () => {
-			// Use a known-good all-lowercase 48B address (passes the all-lowercase
-			// fast path in isAddressString without needing a re-derived QIP-55
-			// checksum). Verifies the disabled-method throw fires after format
+				// Use a known-good all-lowercase 48B address. Verifies the
+				// disabled-method throw fires after format
 			// validation succeeds.
 			const lowercaseValid =
 				'Q253c9b5f121c662bda2783a091e4e98ebdcb4ad1df8c4d41bc2b907d4e6a564e1b359f6c439c363e90fc82476e088e68';

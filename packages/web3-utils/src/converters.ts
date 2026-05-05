@@ -15,8 +15,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { keccak256 } from '@theqrl/qrl-cryptography/keccak.js';
-import { bytesToUtf8, utf8ToBytes } from '@theqrl/qrl-cryptography/utils.js';
+import { bytesToUtf8 } from '@theqrl/qrl-cryptography/utils.js';
 import { Address, Bytes, HexString, Numbers, ValueTypes } from '@theqrl/web3-types';
 import {
 	isAddressString,
@@ -157,7 +156,7 @@ export const addressToBytes = (value: Address): Uint8Array => bytesToUint8Array(
  */
 export const hexToAddress = (value: HexString): Address => {
 	validator.validate(['hex'], [value]);
-	return value.replace('0x', 'Q');
+	return value.toLowerCase().replace(/^0x/i, 'Q');
 };
 
 /**
@@ -596,9 +595,9 @@ export const toPlanck = (number: Numbers, unit: QRLUnits): string => {
 };
 
 /**
- * Will convert an upper or lowercase QRL address to a checksum address.
+ * Will convert an upper or lowercase QRL address to the canonical lowercase address.
  * @param address - An address string
- * @returns	The checksum address
+ * @returns	The canonical address
  * @example
  * ```ts
  * web3.utils.toChecksumAddress('Q00000000000000000000000000000000000000000000000000000000c1912fee45d61c87cc5ea59dae31190fffff232d');
@@ -610,27 +609,5 @@ export const toChecksumAddress = (address: Address): string => {
 		throw new InvalidAddressError(address);
 	}
 
-	const lowerCaseAddress = address.toLowerCase().replace(/^q/i, '');
-
-	const hash = bytesToHex(keccak256(utf8ToBytes(lowerCaseAddress)));
-
-	if (
-		isNullish(hash) ||
-		hash === '0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470'
-	)
-		return ''; // // EIP-1052 if hash is equal to c5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470, keccak was given empty data
-
-	let checksumAddress = 'Q';
-
-	const addressHash = hash.replace(/^0x/i, '');
-
-	for (let i = 0; i < lowerCaseAddress.length; i += 1) {
-		// If ith character is 8 to f then make it uppercase
-		if (parseInt(addressHash[i], 16) > 7) {
-			checksumAddress += lowerCaseAddress[i].toUpperCase();
-		} else {
-			checksumAddress += lowerCaseAddress[i];
-		}
-	}
-	return checksumAddress;
+	return `Q${address.toLowerCase().replace(/^q/i, '')}`;
 };
