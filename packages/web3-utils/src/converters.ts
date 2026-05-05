@@ -21,7 +21,6 @@ import {
 	isAddressString,
 	isHex,
 	isHexStrict,
-	isNullish,
 	isInt,
 	utils as validatorUtils,
 	validator,
