@@ -112,7 +112,7 @@ const wrongBloom = bloomForUserAddress(A0);
 });
 console.log('// (malformed inputs)');
 console.log(`\t['${wrongBloom}', 'QH1'],`);
-console.log(`\t['${wrongBloom}', 'Q98afe7a8d28bbc88dcf41f8e06d97c74958a47dc'],  // legacy 40-hex => regex fails`);
+console.log(`\t['${wrongBloom}', 'Q0000000000000000000000000000000000000000000000000000000098afe7a8d28bbc88dcf41f8e06d97c74958a47dc'],  // legacy 40-hex => regex fails`);
 
 console.log('\n// ===== validContractAddressInBloomData =====');
 [A0, A1, A2].forEach(a => {

@@ -390,8 +390,8 @@ export const addressToHexValidData: [QPrefixedHexString, HexString][] = [
 export const invalidAddressData: [any, string][] = [
 	['Q1', 'value "Q1" at "/0" must pass "address" validation'],
 	[
-		'-Q407d73d8a49eeb85d32cf465507dd71d507100c1',
-		'value "-Q407d73d8a49eeb85d32cf465507dd71d507100c1" at "/0" must pass "address" validation',
+		'-Q00000000000000000000000000000000000000000000000000000000407d73d8a49eeb85d32cf465507dd71d507100c1',
+		'value "-Q00000000000000000000000000000000000000000000000000000000407d73d8a49eeb85d32cf465507dd71d507100c1" at "/0" must pass "address" validation',
 	],
 ];
 

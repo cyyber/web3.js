@@ -33,7 +33,7 @@ export const invalidIbanToAddressData: [string, Error][] = [
 
 export const invalidAddressData: [string][] = [
 	['Q1'],
-	['-Q407d73d8a49eeb85d32cf465507dd71d507100c1'],
+	['-Q00000000000000000000000000000000000000000000000000000000407d73d8a49eeb85d32cf465507dd71d507100c1'],
 ];
 
 export const validFromBbanData: [string, string][] = [['ETHXREGGAVOFYORK', 'XE81ETHXREGGAVOFYORK']];

@@ -32,16 +32,16 @@ describe('ContractMethodWrappersPlugin', () => {
 		web3.registerPlugin(
 			new ContractMethodWrappersPlugin(
 				SQRCTF1TokenAbi,
-				'QdAC17F958D2ee523a2206206994597C13D831ec7',
+				'Q00000000000000000000000000000000000000000000000000000000dAC17F958D2ee523a2206206994597C13D831ec7',
 			),
 		);
 		expect(web3.contractMethodWrappersPlugin).toBeDefined();
 	});
 
 	describe('methods', () => {
-		const contractAddress = 'QdAC17F958D2ee523a2206206994597C13D831ec7';
-		const sender = 'Q8da5e39ec14b57fb9bcd9aa2b4500e909119795d';
-		const recipient = 'Q4f641def1e7845caab95ac717c80416082430d0d';
+		const contractAddress = 'Q00000000000000000000000000000000000000000000000000000000dAC17F958D2ee523a2206206994597C13D831ec7';
+		const sender = 'Q000000000000000000000000000000000000000000000000000000008da5e39ec14b57fb9bcd9aa2b4500e909119795d';
+		const recipient = 'Q000000000000000000000000000000000000000000000000000000004f641def1e7845caab95ac717c80416082430d0d';
 		const amount = BigInt(42);
 		const expectedSenderBalance =
 			'0x0000000000000000000000000000000000000000000000000000000000000280';
@@ -73,7 +73,7 @@ describe('ContractMethodWrappersPlugin', () => {
 				params: [
 					expect.objectContaining({
 						input: '0x70a082310000000000000000000000008da5e39ec14b57fb9bcd9aa2b4500e909119795d',
-						to: 'QdAC17F958D2ee523a2206206994597C13D831ec7',
+						to: 'Q00000000000000000000000000000000000000000000000000000000dAC17F958D2ee523a2206206994597C13D831ec7',
 					}),
 					'latest',
 				],
