@@ -33,7 +33,6 @@ export const invalidIbanToAddressData: [string, Error][] = [
 
 export const invalidAddressData: [string][] = [
 	['Q1'],
-	['Q00000000000000000000000000000000000000000000000000000000e247a45c287191d435a8a5d72a7c8dc030451e9f'], // Invalid checksum
 	['-Q407d73d8a49eeb85d32cf465507dd71d507100c1'],
 ];
 

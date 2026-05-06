@@ -137,7 +137,7 @@ export const hexToBytes = (bytes: HexString): Uint8Array => {
  * @example
  * ```ts
  * console.log(web3.utils.addressToBytes('Q000000000000000000000000000000000000000000000000000000007465737474657374746573747465737474657374'));
- * > Uint8Array(20) [ 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116 ]
+ * > Uint8Array(48) [ ... ]
  * ```
  */
 export const addressToBytes = (value: Address): Uint8Array => bytesToUint8Array(addressToHex(value));
@@ -166,7 +166,7 @@ export const hexToAddress = (value: HexString): Address => {
  * @example
  * ```ts
  * console.log(web3.utils.addressToHex('Q0000000000000000000000000000000000000000000000000000000074657374123123131231231313a1231231112312'));
- * > "0x74657374123123131231231313a1231231112312"
+ * > "0x0000000000000000000000000000000000000000000000000000000074657374123123131231231313a1231231112312"
  * ```
  */
 export const addressToHex = (value: Address): HexString => {
