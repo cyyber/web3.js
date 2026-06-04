@@ -45,11 +45,11 @@ describe('Web3Context extend tests', () => {
 			],
 		});
 
-		await web3.L2Module.getL2Balance('Q5b43746580AAF00A69019fA59D9ed7d9c85dDd70', 'latest');
+		await web3.L2Module.getL2Balance('Q00000000000000000000000000000000000000000000000000000000000000000000000000000000000000005b43746580aaf00a69019fa59d9ed7d9c85ddd70', 'latest');
 
 		expect(requestManagerSendSpy).toHaveBeenCalledWith({
 			method: 'qrl_getBalance',
-			params: ['Q5b43746580AAF00A69019fA59D9ed7d9c85dDd70', 'latest'],
+			params: ['Q00000000000000000000000000000000000000000000000000000000000000000000000000000000000000005b43746580aaf00a69019fa59d9ed7d9c85ddd70', 'latest'],
 		});
 	});
 
@@ -68,11 +68,11 @@ describe('Web3Context extend tests', () => {
 			],
 		});
 
-		await web3.getL0Balance('Q5b43746580AAF00A69019fA59D9ed7d9c85dDd70', 'latest');
+		await web3.getL0Balance('Q00000000000000000000000000000000000000000000000000000000000000000000000000000000000000005b43746580aaf00a69019fa59d9ed7d9c85ddd70', 'latest');
 
 		expect(requestManagerSendSpy).toHaveBeenCalledWith({
 			method: 'qrl_getBalance',
-			params: ['Q5b43746580AAF00A69019fA59D9ed7d9c85dDd70', 'latest'],
+			params: ['Q00000000000000000000000000000000000000000000000000000000000000000000000000000000000000005b43746580aaf00a69019fa59d9ed7d9c85ddd70', 'latest'],
 		});
 	});
 });

@@ -16,7 +16,7 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { Web3Validator } from '../../src/web3_validator';
-import type { Json, JsonSchema, ValidationSchemaInput } from '../../src/types';
+import { Json, JsonSchema, ValidationSchemaInput } from '../..';
 
 const abi = [
 	{ indexed: true, internalType: 'address', name: 'from', type: 'address' },
@@ -34,8 +34,8 @@ const abiJsonSchema = {
 };
 
 const abiData = [
-	'QCB00CDE33a7a0Fba30C63745534F1f7Ae607076b',
-	'QCB00CDE33a7a0Fba30C63745534F1f7Ae607076b',
+	'Qd5812f6cf4a0f645aa620cd57319a0ed649dd8f5519a9dde7770ae5b0e49e547985f35eb972a2a07041561aa39c65a3991478f9b1e6749e05277dcf58a9a8b72',
+	'Qd5812f6cf4a0f645aa620cd57319a0ed649dd8f5519a9dde7770ae5b0e49e547985f35eb972a2a07041561aa39c65a3991478f9b1e6749e05277dcf58a9a8b72',
 	'0xCB00CDE33a7a0Fba30C63745534F1f7Ae607076b',
 ];
 
@@ -64,8 +64,8 @@ const simpleSchema = {
 const simpleData = {
 	blockHash: '0x0dec0518fa672a70027b04c286582e543ab17319fbdd384fa7bc8f3d5a542c0b',
 	blockNumber: BigInt(2),
-	from: 'QCB00CDE33a7a0Fba30C63745534F1f7Ae607076b',
-	to: 'QCB00CDE33a7a0Fba30C63745534F1f7Ae607076b',
+	from: 'Qd5812f6cf4a0f645aa620cd57319a0ed649dd8f5519a9dde7770ae5b0e49e547985f35eb972a2a07041561aa39c65a3991478f9b1e6749e05277dcf58a9a8b72',
+	to: 'Qd5812f6cf4a0f645aa620cd57319a0ed649dd8f5519a9dde7770ae5b0e49e547985f35eb972a2a07041561aa39c65a3991478f9b1e6749e05277dcf58a9a8b72',
 	data: '0xafea',
 } as unknown as ValidationSchemaInput;
 

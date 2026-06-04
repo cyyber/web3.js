@@ -273,7 +273,7 @@ export abstract class BaseTransaction<TransactionObject> {
 			const desc = descriptorFromBytes(descriptor!);
 			switch (desc.type()) {
 			  case qrlWalletType.ML_DSA_87:
-			    return verifyMLDSA87Signature(signature!, msgHash, publicKey!);
+			    return verifyMLDSA87Signature(signature!, msgHash, publicKey!, desc);
 			  default:
 			    return false;
 			}

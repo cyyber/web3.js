@@ -19,17 +19,21 @@ import {
 	hexToBytes,
 	uint8ArrayEquals,
 	uint8ArrayConcat,
-	addressToBytes,
 } from '@theqrl/web3-utils';
 import { FeeMarketEIP1559Transaction } from '../../../src';
 import { Chain, Common, Hardfork /* , uint8ArrayToBigInt */ } from '../../../src/common';
+import {
+	addressFromPublicKeyAndDescriptor,
+	newMLDSA87WalletFromExtendedSeed,
+} from '../../../src/qrl_wallet';
 
 import type { AccessList } from '../../../src';
 
 const seed = hexToBytes(
 	'0x010000ec3077d539c7b333e596b9e6c0b5f5952d26469ab9a60d1fd54c329ef9959593850a2daf60369e434a7c55939f99e149',
 );
-const address = addressToBytes('Qe4d1cd51c8b113a12d6355e1bd39cce8998dabb0');
+const wallet = newMLDSA87WalletFromExtendedSeed(seed);
+const address = addressFromPublicKeyAndDescriptor(wallet.getPK(), wallet.getDescriptor());
 
 const common = new Common({
 	chain: Chain.Mainnet,
@@ -44,7 +48,7 @@ const txTypes = [
 	},
 ];
 
-const validAddress = hexToBytes('01'.repeat(20));
+const validAddress = hexToBytes('01'.repeat(64));
 const validSlot = hexToBytes('01'.repeat(32));
 const chainId = BigInt(1);
 
@@ -155,7 +159,7 @@ describe('[FeeMarketEIP1559Transaction] -> EIP-2930 Compatibility', () => {
 					hexToBytes('c0'),
 				);
 				txType.class.fromSerializedTx(serialized, {});
-			}).toThrow('values (for unsigned tx)');
+			}).toThrow('values (for unsigned tx with descriptor+extraParams)');
 		}
 	});
 
@@ -205,7 +209,7 @@ describe('[FeeMarketEIP1559Transaction] -> EIP-2930 Compatibility', () => {
 		for (const txType of txTypes) {
 			let accessList: any[] = [
 				[
-					hexToBytes('01'.repeat(21)), // Address of 21 bytes instead of 20
+					hexToBytes('01'.repeat(63)), // Address of 63 bytes instead of 64
 					[],
 				],
 			];

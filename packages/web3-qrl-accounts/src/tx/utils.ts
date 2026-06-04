@@ -19,6 +19,7 @@ import { bytesToHex, toHex } from '@theqrl/web3-utils';
 import { setLengthLeft, toUint8Array } from '../common/utils.js';
 import type { AccessList, AccessListUint8Array, AccessListItem } from './types.js';
 import { isAccessList } from './types.js';
+import { ADDRESS_BYTES } from './constants.js';
 
 import type { Common } from '../common/common.js';
 
@@ -92,8 +93,10 @@ export const verifyAccessList = (accessList: AccessListUint8Array) => {
 				'Access list item cannot have 3 elements. It can only have an address, and an array of storage slots.',
 			);
 		}
-		if (address.length !== 20) {
-			throw new Error('Invalid EIP-2930 transaction: address length should be 20 bytes');
+		if (address.length !== ADDRESS_BYTES) {
+			throw new Error(
+				`Invalid EIP-2930 transaction: address length should be ${ADDRESS_BYTES} bytes`,
+			);
 		}
 		// eslint-disable-next-line @typescript-eslint/prefer-for-of
 		for (let storageSlot = 0; storageSlot < storageSlots.length; storageSlot += 1) {
@@ -118,7 +121,7 @@ export const getAccessListJSON = (
 		const item: any = accessList[index];
 		const JSONItem: { address: HexString; storageKeys: HexString[] } = {
 			// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/consistent-type-assertions
-			address: bytesToHex(setLengthLeft(<Uint8Array>item[0], 20)),
+			address: bytesToHex(setLengthLeft(<Uint8Array>item[0], ADDRESS_BYTES)),
 			storageKeys: [],
 		};
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/prefer-optional-chain

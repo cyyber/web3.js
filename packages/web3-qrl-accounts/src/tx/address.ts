@@ -18,12 +18,13 @@ import { bytesToHex, hexToAddress, uint8ArrayEquals } from '@theqrl/web3-utils';
 import { assertIsUint8Array, zeros } from '../common/utils.js';
 import { CryptoPublicKeyBytes } from '../qrl_crypto.js';
 import { addressFromPublicKeyAndDescriptor, descriptorFromBytes } from '../qrl_wallet.js';
+import { ADDRESS_BYTES } from './constants.js';
 
 export class Address {
 	public readonly buf: Uint8Array;
 
 	public constructor(buf: Uint8Array) {
-		if (buf.length !== 20) {
+		if (buf.length !== ADDRESS_BYTES) {
 			throw new Error('Invalid address length');
 		}
 		this.buf = buf;
@@ -33,7 +34,7 @@ export class Address {
 	 * Returns the zero address.
 	 */
 	public static zero(): Address {
-		return new Address(zeros(20));
+		return new Address(zeros(ADDRESS_BYTES));
 	}
 
 	/**

@@ -21,10 +21,10 @@ import {
 	MLDSA87 as ExternalMLDSA87,
 	Seed as ExternalSeed,
 	WalletType as ExternalWalletType,
-	getAddressFromPKAndDescriptor as createAddressFromPublicKeyAndDescriptor,
 	newMLDSA87Descriptor as createMLDSA87Descriptor,
 	newWalletFromExtendedSeed as createWalletFromExtendedSeed,
 } from '@theqrl/wallet.js';
+import { shake256 } from 'js-sha3';
 
 export type QrlDescriptor = {
 	type(): number;
@@ -59,7 +59,12 @@ const ExtendedSeed = ExternalExtendedSeed as unknown as {
 };
 
 const MLDSA87 = ExternalMLDSA87 as unknown as {
-	verify(signature: Uint8Array, message: Uint8Array, pk: Uint8Array): boolean;
+	verify(
+		signature: Uint8Array,
+		message: Uint8Array,
+		pk: Uint8Array,
+		descriptor: QrlDescriptor,
+	): boolean;
 };
 
 const Seed = ExternalSeed as unknown as {
@@ -76,16 +81,16 @@ const typedCreateWalletFromExtendedSeed = createWalletFromExtendedSeed as unknow
 
 const typedCreateMLDSA87Descriptor = createMLDSA87Descriptor as unknown as () => QrlDescriptor;
 
-const typedCreateAddressFromPublicKeyAndDescriptor =
-	createAddressFromPublicKeyAndDescriptor as unknown as (
-		publicKey: Uint8Array,
-		descriptor: QrlDescriptor,
-	) => Uint8Array;
-
 export const addressFromPublicKeyAndDescriptor = (
 	publicKey: Uint8Array,
 	descriptor: QrlDescriptor,
-): Uint8Array => typedCreateAddressFromPublicKeyAndDescriptor(publicKey, descriptor);
+): Uint8Array => {
+	const descriptorBytes = descriptor.toBytes();
+	const input = new Uint8Array(descriptorBytes.length + publicKey.length);
+	input.set(descriptorBytes);
+	input.set(publicKey, descriptorBytes.length);
+	return new Uint8Array(shake256.array(input, 512));
+};
 
 export const newMLDSA87WalletFromExtendedSeed = (extendedSeed: ExtendedSeedInput): MLDSA87Wallet =>
 	typedCreateWalletFromExtendedSeed(extendedSeed);
@@ -107,4 +112,5 @@ export const verifyMLDSA87Signature = (
 	signature: Uint8Array,
 	message: Uint8Array,
 	publicKey: Uint8Array,
-): boolean => MLDSA87.verify(signature, message, publicKey);
+	descriptor: QrlDescriptor,
+): boolean => MLDSA87.verify(signature, message, publicKey, descriptor);

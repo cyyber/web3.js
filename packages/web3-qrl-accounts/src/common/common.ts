@@ -14,7 +14,7 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
-import pkg from 'crc-32';
+import { buf as crc32Uint8Array } from 'crc-32';
 import { EventEmitter } from 'events';
 import type { Numbers } from '@theqrl/web3-types';
 import { bytesToHex, hexToBytes, uint8ArrayConcat } from '@theqrl/web3-utils';
@@ -38,8 +38,6 @@ import type {
 	GqrlConfigOpts,
 	HardforkConfig,
 } from './types.js';
-
-const { buf: crc32Uint8Array } = pkg;
 
 type HardforkSpecKeys = keyof typeof HARDFORK_SPECS;
 type HardforkSpecValues = typeof HARDFORK_SPECS[HardforkSpecKeys];

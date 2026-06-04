@@ -53,7 +53,7 @@ export class QRNS extends Web3Context<QRLExecutionAPI & Web3NetAPI> {
 	 * @example
 	 * ```ts
 	 * const qrns = new QRNS(
-	 * 	"Q00000000000C2E074eC69A0dFb2997BA6C7d2e1e",
+	 * 	"Q000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c2e074ec69a0dfb2997ba6c7d2e1e",
 	 * 	"http://localhost:8545"
 	 * );
 	 *
@@ -84,7 +84,7 @@ export class QRNS extends Web3Context<QRLExecutionAPI & Web3NetAPI> {
 	 * const resolver = await qrns.getResolver('resolver');
 	 *
 	 * console.log(resolver.options.address);
-	 * > 'Q1234567890123456789012345678901234567890'
+	 * > 'Q00000000000000000000000000000000000000000000000000000000000000000000000000000000000000001234567890123456789012345678901234567890'
 	 * ```
 	 */
 	public async getResolver(name: string): Promise<Contract<typeof PublicResolverAbi>> {
@@ -138,7 +138,7 @@ export class QRNS extends Web3Context<QRLExecutionAPI & Web3NetAPI> {
 	 * ```ts
 	 * const address = await web3.qrl.qrns.getAddress('qrl.qrns');
 	 * console.log(address);
-	 * > 'QfB6916095ca1df60bB79Ce92cE3Ea74c37c5d359'
+	 * > 'Q0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000fb6916095ca1df60bb79ce92ce3ea74c37c5d359'
 	 * ```
 	 */
 	public async getAddress(QRNSName: string, coinType = 60) {
@@ -187,7 +187,7 @@ export class QRNS extends Web3Context<QRLExecutionAPI & Web3NetAPI> {
 	 * @example
 	 * ```ts
 	 * console.log(await web3.qrl.qrns.checkNetwork());
-	 * > 'Q00000000000C2E074eC69A0dFb2997BA6C7d2e1e'
+	 * > 'Q000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c2e074ec69a0dfb2997ba6c7d2e1e'
 	 * ```
 	 */
 	public async checkNetwork() {

@@ -59,7 +59,7 @@ export const abiToJsonSchemaCases: AbiToJsonSchemaCase[] = [
 		abi: {
 			fullSchema: [{ name: 'a', type: 'address' }],
 			shortSchema: ['address'],
-			data: ['QCB00CDE33a7a0Fba30C63745534F1f7Ae607076b'],
+			data: ['Qd5812f6cf4a0f645aa620cd57319a0ed649dd8f5519a9dde7770ae5b0e49e547985f35eb972a2a07041561aa39c65a3991478f9b1e6749e05277dcf58a9a8b72'],
 		},
 		json: {
 			fullSchema: {
@@ -74,7 +74,7 @@ export const abiToJsonSchemaCases: AbiToJsonSchemaCase[] = [
 				minItems: 1,
 				maxItems: 1,
 			},
-			data: ['QCB00CDE33a7a0Fba30C63745534F1f7Ae607076b'],
+			data: ['Qd5812f6cf4a0f645aa620cd57319a0ed649dd8f5519a9dde7770ae5b0e49e547985f35eb972a2a07041561aa39c65a3991478f9b1e6749e05277dcf58a9a8b72'],
 		},
 	},
 	{
@@ -1145,7 +1145,7 @@ export const abiToJsonSchemaCases: AbiToJsonSchemaCase[] = [
 			data: [
 				[
 					'Rick Sanchez',
-					'QCB00CDE33a7a0Fba30C63745534F1f7Ae607076b',
+					'Qd5812f6cf4a0f645aa620cd57319a0ed649dd8f5519a9dde7770ae5b0e49e547985f35eb972a2a07041561aa39c65a3991478f9b1e6749e05277dcf58a9a8b72',
 					['rick.c137@citadel.cfc', '+1 (555) 314-1593'],
 				],
 			],
@@ -1208,7 +1208,7 @@ export const abiToJsonSchemaCases: AbiToJsonSchemaCase[] = [
 			data: [
 				{
 					name: 'Rick Sanchez',
-					addr: 'QCB00CDE33a7a0Fba30C63745534F1f7Ae607076b',
+					addr: 'Qd5812f6cf4a0f645aa620cd57319a0ed649dd8f5519a9dde7770ae5b0e49e547985f35eb972a2a07041561aa39c65a3991478f9b1e6749e05277dcf58a9a8b72',
 					contact: {
 						email: 'rick.c137@citadel.cfc',
 						phone: '+1 (555) 314-1593',
@@ -1243,7 +1243,7 @@ export const abiToJsonSchemaCases: AbiToJsonSchemaCase[] = [
 			data: [
 				[
 					'Rick Sanchez',
-					'QCB00CDE33a7a0Fba30C63745534F1f7Ae607076b',
+					'Qd5812f6cf4a0f645aa620cd57319a0ed649dd8f5519a9dde7770ae5b0e49e547985f35eb972a2a07041561aa39c65a3991478f9b1e6749e05277dcf58a9a8b72',
 					['rick.c137@citadel.cfc', '+1 (555) 314-1593'],
 				],
 			],
@@ -1306,7 +1306,7 @@ export const abiToJsonSchemaCases: AbiToJsonSchemaCase[] = [
 			data: [
 				{
 					name: 'Rick Sanchez',
-					addr: 'QCB00CDE33a7a0Fba30C63745534F1f7Ae607076b',
+					addr: 'Qd5812f6cf4a0f645aa620cd57319a0ed649dd8f5519a9dde7770ae5b0e49e547985f35eb972a2a07041561aa39c65a3991478f9b1e6749e05277dcf58a9a8b72',
 					contact: {
 						email: 'rick.c137@citadel.cfc',
 						phone: '+1 (555) 314-1593',

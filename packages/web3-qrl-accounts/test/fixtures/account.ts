@@ -35,7 +35,7 @@ export const validSeedtoAccountData: [any, any][] = [
 			ignoreLength: false,
 		},
 		{
-			address: 'Qa467D314bbb1e36687ffC9B277d3E163787E5964',
+			address: 'Qa467d314bbb1e36687ffc9b277d3e163787e59641390075162bdd080e28ddf6ca810e1ea17308d3bec9300f85df4f3de54c647b4f7f02e0c9821478ac20491a1',
 			seed: '0x010000034da61fe50c659a3285549dc395571e2bf6891c462c041e3c6b9061fc73eb3687d03f940e5e65d582019ef10ce1327f',
 			sign,
 			signTransaction,
@@ -48,7 +48,7 @@ export const validSeedtoAccountData: [any, any][] = [
 				'0x0100007fc43a2ccb557f900d4ca924c187b4438a7f8185b8edbfbabdd26b87f125594495268f55ceac9c9eb23efaab76b0d4c5',
 		},
 		{
-			address: 'Q50D1766d3113D213131a20d97CcC89190Ef68ea3',
+			address: 'Q50d1766d3113d213131a20d97ccc89190ef68ea3e34f6e797a402c2e18119f718f05898f2f47100b37375795f56b6f16b7a1f358f833c49dc4ddd64c3fddb052',
 			seed: '0x0100007fc43a2ccb557f900d4ca924c187b4438a7f8185b8edbfbabdd26b87f125594495268f55ceac9c9eb23efaab76b0d4c5',
 			sign,
 			signTransaction,
@@ -62,7 +62,7 @@ export const validSeedtoAccountData: [any, any][] = [
 			ignoreLength: true,
 		},
 		{
-			address: 'Q68ED7f1481bb2cDa83a0a0D55F1f54c3a6EAeF4e',
+			address: 'Q68ed7f1481bb2cda83a0a0d55f1f54c3a6eaef4e45c93d7925b42537c61057b7a0f42e1627beafc0a2de9d1437183e49c47fa79274cc640d051adbae9d9ada12',
 			seed: '0x010000c902ea9bbf1dd51aaa2ee9bed126aba921f6a6afac9cf09a21f3d915b057bace6787a894a71d1d103992aca0a6a4250c',
 			sign,
 			signTransaction,
@@ -75,7 +75,7 @@ export const signatureRecoverData: [string, any][] = [
 	[
 		'Some long text with integers 1233 and special characters and unicode \u1234 as well.',
 		{
-			address: 'Q20Ab9b8384f91B69839FDC0b16856eAeb508d551',
+			address: 'Q000000000000000000000000000000000000000000000000000000000000000000000000000000000000000020ab9b8384f91b69839fdc0b16856eaeb508d551',
 			seed: '0x01000077eda0d9c08a5a7134c79973c8fa16a1191f21c29a85f4d913b8d1289d0d1c3944d63d11d7e1c35a51925216de64e052',
 			data: 'Some long text with integers 1233 and special characters and unicode \u1234 as well.',
 			signature:
@@ -85,7 +85,7 @@ export const signatureRecoverData: [string, any][] = [
 	[
 		'Some data',
 		{
-			address: 'Q205f2Cd3c4B65a999Fabb5496D78c896d141B018',
+			address: 'Q0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000205f2cd3c4b65a999fabb5496d78c896d141b018',
 			seed: '0x010000ef3a996efd6133a749a1cb9a15e7679adf68d240d9eaba3349e679969068e5f83ed6f1f7506eeb0d87e2d94f8ebcd914',
 			data: 'Some data',
 			signature:
@@ -95,7 +95,7 @@ export const signatureRecoverData: [string, any][] = [
 	[
 		'Some data!%$$%&@*',
 		{
-			address: 'Q20fE39238877509b60DF7e2958bdBc6f88398F1a',
+			address: 'Q000000000000000000000000000000000000000000000000000000000000000000000000000000000000000020fe39238877509b60df7e2958bdbc6f88398f1a',
 			seed: '0x0100006ca868b6b469e210b079f6742d2e149b6db46f4ed416c11f5d9636e1bd7f35f14d5b5daa84f0a69e54052bcff1897ba2',
 			data: 'Some data!%$$%&@*',
 			signature:
@@ -105,7 +105,7 @@ export const signatureRecoverData: [string, any][] = [
 	[
 		'102',
 		{
-			address: 'Q20f3531Ff6BdBbED17F5DB48d1129f5395011b79',
+			address: 'Q000000000000000000000000000000000000000000000000000000000000000000000000000000000000000020f3531ff6bdbbed17f5db48d1129f5395011b79',
 			seed: '0x0100007815f4ef272b06985c8089e2c28ff8076fdfa9feed8cefdcecbfbee3d0b52cbddc59fdb1226b95292464567b9fca978e',
 			data: '102',
 			signature:
@@ -119,7 +119,7 @@ export const transactionsTestData: [FeeMarketEIP1559TxData][] = [
 		// 'Tx1559'
 		{
 			type: 2,
-			to: 'QF0109fC8DF283027b6285cc889F5aA624EaC1F55',
+			to: 'Q0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000f0109fc8df283027b6285cc889f5aa624eac1f55',
 			maxPriorityFeePerGas: '0x3B9ACA00',
 			maxFeePerGas: '0xB2D05E00',
 			gasLimit: '0x6A4012',
@@ -154,7 +154,7 @@ export const validEncryptData: [[any, string | Uint8Array, CipherOptions], KeySt
 		],
 		{
 			version: 1,
-			address: 'Q5f279a4668d52e544a5fdf0c6212236c693e7b76',
+			address: 'Q5f279a4668d52e544a5fdf0c6212236c693e7b760377adc0754066a409c30effd2472bf229ea506ea693c01386b8a2b73c22d7e375e20e1ce8d104dade60ff2a',
 			crypto: {
 				ciphertext: 'c42ac873cf649cf61970f0ec1b382d25495a77ed4865f1366cfa10b2560514b0b618ea6e2c83c1473baf619897c9495b8e97e4c16e0cc5c92c00d2c3f3940d2e40a460',
 				cipherparams: { iv: 'f59185068e4cbe729dd0000c' },
@@ -230,7 +230,7 @@ export const invalidKeyStore: [[any, string]][] = [
 			{
 				// invalid kdf
 				version: 1,
-				address: 'Q5f279a4668d52e544a5fdf0c6212236c693e7b76',
+				address: 'Q5f279a4668d52e544a5fdf0c6212236c693e7b760377adc0754066a409c30effd2472bf229ea506ea693c01386b8a2b73c22d7e375e20e1ce8d104dade60ff2a',
 				crypto: {
 					ciphertext: 'f833f12f6cb57f6961fb34bbf4ff5019c9fd70e1ab98bf0f1ba164f1b4bc773e853f973b708a4ec1b5e1148de96437ac5fc75da87c6b7293628e9d45b4bc2ab7',
 					cipherparams: { iv: 'f59185068e4cbe729dd0000c' },
@@ -275,7 +275,7 @@ export const invalidDecryptData: [[any, string], InvalidKdfError | string][] = [
 			{
 				// invalid kdf
 				version: 1,
-				address: 'Q5f279a4668d52e544a5fdf0c6212236c693e7b76',
+				address: 'Q5f279a4668d52e544a5fdf0c6212236c693e7b760377adc0754066a409c30effd2472bf229ea506ea693c01386b8a2b73c22d7e375e20e1ce8d104dade60ff2a',
 				crypto: {
 					ciphertext: 'c42ac873cf649cf61970f0ec1b382d25495a77ed4865f1366cfa10b2560514b0b618ea6e2c83c1473baf619897c9495b8e97e4c16e0cc5c92c00d2c3f3940d2e40a460',
 					cipherparams: { iv: 'f59185068e4cbe729dd0000c' },
@@ -300,7 +300,7 @@ export const invalidDecryptData: [[any, string], InvalidKdfError | string][] = [
 			{
 				// wrong password
 				version: 1,
-				address: 'Q5f279a4668d52e544a5fdf0c6212236c693e7b76',
+				address: 'Q5f279a4668d52e544a5fdf0c6212236c693e7b760377adc0754066a409c30effd2472bf229ea506ea693c01386b8a2b73c22d7e375e20e1ce8d104dade60ff2a',
 				crypto: {
 					ciphertext: 'c42ac873cf649cf61970f0ec1b382d25495a77ed4865f1366cfa10b2560514b0b618ea6e2c83c1473baf619897c9495b8e97e4c16e0cc5c92c00d2c3f3940d2e40a460',
 					cipherparams: { iv: 'f59185068e4cbe729dd0000c' },

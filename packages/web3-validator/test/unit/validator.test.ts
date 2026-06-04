@@ -68,7 +68,7 @@ describe('instance of validator', () => {
 		}
 	});
 	it('formats call', () => {
-		expect(formats.address('Q7ab80aeb6bb488b7f6c41c58e83ef248eb39c882')).toBe(true);
+		expect(formats.address('Qd5812f6cf4a0f645aa620cd57319a0ed649dd8f5519a9dde7770ae5b0e49e547985f35eb972a2a07041561aa39c65a3991478f9b1e6749e05277dcf58a9a8b72')).toBe(true);
 		expect(formats.address('Q7ab80aeb6bb488b7f6c41c58e83ef248eb39c88')).toBe(false);
 
 		expect(formats.bloom(`0x${'0'.repeat(512)}`)).toBe(true);

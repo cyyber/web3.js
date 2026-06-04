@@ -15,11 +15,14 @@ You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { getAddress } from '@ethersproject/address';
 import { hexZeroPad } from '@ethersproject/bytes';
 import { hexToAddress, addressToHex } from '@theqrl/web3-utils';
 
 import { Coder, Reader, Writer } from './abstract-coder.js';
+
+// Q + 128 hex chars; addressToHex returns "0x" + 128 hex chars.
+const ADDRESS_BYTES = 64;
+const ADDRESS_HEX_LENGTH = 2 + ADDRESS_BYTES * 2;
 
 export class AddressCoder extends Coder {
 	constructor(localName: string) {
@@ -27,19 +30,30 @@ export class AddressCoder extends Coder {
 	}
 
 	defaultValue(): string {
-		return 'Q0000000000000000000000000000000000000000';
+		return `Q${'0'.repeat(ADDRESS_BYTES * 2)}`;
 	}
 
 	encode(writer: Writer, value: string): number {
+		// addressToHex validates that `value` is a well-formed 64-byte Q-prefixed
+		// address and returns the same bytes as a 0x-prefixed hex string. We
+		// deliberately do NOT route through `@ethersproject/address.getAddress`:
+		// ethers' validator hard-codes the 20-byte ETH layout and rejects 64-byte
+		// post-quantum addresses with "invalid address (version=address/5.7.0)".
+		let hex: string;
 		try {
-			value = getAddress(addressToHex(value));
+			hex = addressToHex(value);
 		} catch (error: any) {
 			this._throwError(error.message, value);
+			throw error; // unreachable; satisfies the type checker
 		}
-		return writer.writeValue(value);
+		if (hex.length !== ADDRESS_HEX_LENGTH) {
+			this._throwError(`invalid 64-byte address (got ${(hex.length - 2) / 2} bytes)`, value);
+		}
+		// A 64-byte QRL address fills one full VM word.
+		return writer.writeValue(hex);
 	}
 
 	decode(reader: Reader): any {
-		return hexToAddress(getAddress(hexZeroPad(reader.readValue().toHexString(), 20)));
+		return hexToAddress(hexZeroPad(reader.readValue().toHexString(), ADDRESS_BYTES));
 	}
 }

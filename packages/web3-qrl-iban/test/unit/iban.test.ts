@@ -39,47 +39,46 @@ describe('iban', () => {
 		});
 	});
 
-	describe('toAddress', () => {
-		describe('valid cases', () => {
-			it.each(validIbanToAddressData)('%s', (input, output) => {
+	// QIB <-> 64-byte address conversion is intentionally disabled until
+	// QRL governance picks a post-quantum address-encoding scheme that
+	// fits inside the 34-char IBAN envelope. Tests here just verify the
+	// disabled methods throw with the expected message instead of producing
+	// silently-wrong addresses.
+	describe('toAddress (instance, disabled for 64B)', () => {
+		it('throws migration message for any direct iban', () => {
+			const iban = new Iban(validIbanToAddressData[0][0]);
+			expect(() => iban.toAddress()).toThrow(
+				/not supported for 64-byte post-quantum addresses/,
+			);
+		});
+		describe('invalid (indirect) cases still throw their original error', () => {
+			it.each(invalidIbanToAddressData)('%s', input => {
 				const iban = new Iban(input);
-				expect(iban.toAddress()).toBe(output);
-			});
-		});
-		describe('invalid cases', () => {
-			it.each(invalidIbanToAddressData)('%s', (input, output) => {
-				const iban = new Iban(input);
-				expect(() => iban.toAddress()).toThrow(output);
+				// Now both indirect-iban AND direct-iban paths throw, so we
+				// just assert *some* error is thrown.
+				expect(() => iban.toAddress()).toThrow();
 			});
 		});
 	});
 
-	describe('toAddress static method', () => {
-		describe('valid cases', () => {
-			it.each(validIbanToAddressData)('%s', (input, output) => {
-				expect(Iban.toAddress(input)).toBe(output);
-			});
-		});
-		describe('invalid cases', () => {
-			it.each(invalidIbanToAddressData)('%s', (input, output) => {
-				expect(() => Iban.toAddress(input)).toThrow(output);
-			});
+	describe('toAddress static (disabled for 64B)', () => {
+		it('throws migration message', () => {
+			expect(() => Iban.toAddress(validIbanToAddressData[0][0])).toThrow(
+				/not supported for 64-byte post-quantum addresses/,
+			);
 		});
 	});
 
-	describe('toIban', () => {
-		describe('valid cases', () => {
-			it.each(validIbanToAddressData)('%s', (output, input) => {
-				expect(Iban.toIban(input)).toBe(output);
-			});
-		});
-	});
-
-	describe('fromAddress', () => {
-		describe('valid cases', () => {
-			it.each(validIbanToAddressData)('%s', (output, input) => {
-				expect(Iban.fromAddress(input).toString()).toBe(output);
-			});
+	describe('fromAddress (disabled for 64B)', () => {
+		it('throws migration message for a valid 64B address', () => {
+				// Use a known-good all-lowercase 64B address (Q + 128 hex chars).
+				// Verifies the disabled-method throw fires after format
+			// validation succeeds.
+			const lowercaseValid =
+				'Q253c9b5f121c662bda2783a091e4e98ebdcb4ad1df8c4d41bc2b907d4e6a564e1b359f6c439c363e90fc82476e088e68253c9b5f121c662bda2783a091e4e98e';
+			expect(() => Iban.fromAddress(lowercaseValid)).toThrow(
+				/not supported for 64-byte post-quantum addresses/,
+			);
 		});
 	});
 

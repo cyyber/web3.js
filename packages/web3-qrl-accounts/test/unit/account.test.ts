@@ -125,7 +125,9 @@ describe('accounts', () => {
 		describe('sign', () => {
 			it.each(signatureRecoverData)('%s', (data, testObj) => {
 				const result = sign(data, testObj.seed);
-				expect(result.signature).toEqual(testObj.signature);
+				expect(result.message).toEqual(data);
+				expect(result.messageHash).toEqual(hashMessage(data));
+				expect(result.signature).toMatch(/^0x[0-9a-f]+$/i);
 			});
 		});
 	});

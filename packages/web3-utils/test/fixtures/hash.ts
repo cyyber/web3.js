@@ -128,8 +128,13 @@ export const hyperionSha3Data: [TypedObject[] | TypedObjectAbbreviated[], string
 		'0x661136a4267dba9ccdf6bfddb7c00e714de936674c4bdb065a531cf1cb15c7fc',
 	],
 	[
-		[{ type: 'address', value: 'Q407D73d8a49eeb85D32Cf465507dd71d507100c1' }],
-		'0x4e8ebbefa452077428f93c9520d3edd60594ff452a29ac7d2ccc11d47f3ab95b',
+		[
+			{
+				type: 'address',
+				value: 'Q0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000407d73d8a49eeb85d32cf465507dd71d507100c1',
+			},
+		],
+		'0x7366780612997ea07d07e3470e2d4b5909f14f30b404671e990440b99adc5762',
 	],
 	[
 		[{ t: 'bytes32', v: '0x407D73d8a49eeb85D32Cf465507dd71d507100c1' }],
@@ -139,9 +144,12 @@ export const hyperionSha3Data: [TypedObject[] | TypedObjectAbbreviated[], string
 		[
 			{ t: 'string', v: 'Hello!%' },
 			{ t: 'int8', v: -23 },
-			{ t: 'address', v: 'Q85F43D8a49eeB85d32Cf465507DD71d507100C1d' },
+			{
+				t: 'address',
+				v: 'Q000000000000000000000000000000000000000000000000000000000000000000000000000000000000000085f43d8a49eeb85d32cf465507dd71d507100c1d',
+			},
 		],
-		'0xa13b31627c1ed7aaded5aecec71baf02fe123797fffd45e662eac8e06fbe4955',
+		'0x2ec0c1383940c11780c7a9dcddc33ff42280dd5e0a31cef11c0cc5fd01c2bd99',
 	],
 	[
 		[{ t: 'int256', v: '32309054545061485574011236401' }],
@@ -193,8 +201,13 @@ export const encodePackData: [TypedObject[] | TypedObjectAbbreviated[], any][] =
 	],
 	[[{ type: 'string', value: '' }], '0x'],
 	[
-		[{ type: 'address', value: 'Qc1912fee45d61c87cc5ea59dae31190fffff232d' }],
-		'0xc1912fee45d61c87cc5ea59dae31190fffff232d',
+		[
+			{
+				type: 'address',
+				value: 'Q0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c1912fee45d61c87cc5ea59dae31190fffff232d',
+			},
+		],
+		'0x0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c1912fee45d61c87cc5ea59dae31190fffff232d',
 	],
 	[[{ type: 'bool', value: true }], '0x01'],
 	[[{ type: 'bool', value: false }], '0x00'],
@@ -219,8 +232,13 @@ export const encodePackData: [TypedObject[] | TypedObjectAbbreviated[], any][] =
 		'0x44555ffffffffdd2222222222222244445565535220000000000000000000000',
 	],
 	[
-		[{ v: 'Q407D73d8a49eeb85D32Cf465507dd71d507100c1', t: 'address' }],
-		'0x407d73d8a49eeb85d32cf465507dd71d507100c1',
+		[
+			{
+				v: 'Q0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000407d73d8a49eeb85d32cf465507dd71d507100c1',
+				t: 'address',
+			},
+		],
+		'0x0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000407d73d8a49eeb85d32cf465507dd71d507100c1',
 	],
 	[
 		[{ v: '0x407D73d8a49eeb85D32Cf465507dd71d507100c1', t: 'bytes' }],

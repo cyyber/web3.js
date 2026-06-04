@@ -433,7 +433,7 @@ export const addressToHex = (value: string): string => {
 	if (!isAddressString(value)) {
 		throw new Error('Invalid address string');
 	}
-	return value.replace('Q', '0x');
+	return value.toLowerCase().replace(/^q/i, '0x');
 };
 
 /**
