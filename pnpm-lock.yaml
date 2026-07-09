@@ -337,9 +337,6 @@ importers:
       '@theqrl/web3-qrl-contract':
         specifier: workspace:^
         version: link:../web3-qrl-contract
-      '@theqrl/web3-qrl-iban':
-        specifier: workspace:^
-        version: link:../web3-qrl-iban
       '@theqrl/web3-qrl-qrns':
         specifier: workspace:^
         version: link:../web3-qrl-qrns
@@ -410,9 +407,6 @@ importers:
       '@theqrl/web3-providers-ws':
         specifier: workspace:^
         version: link:../web3-providers-ws
-      '@theqrl/web3-qrl-iban':
-        specifier: workspace:^
-        version: link:../web3-qrl-iban
       '@theqrl/web3-types':
         specifier: workspace:^
         version: link:../web3-types
@@ -970,55 +964,6 @@ importers:
       '@theqrl/web3-qrl-accounts':
         specifier: workspace:^
         version: link:../web3-qrl-accounts
-      '@types/jest':
-        specifier: 30.0.0
-        version: 30.0.0
-      '@typescript-eslint/eslint-plugin':
-        specifier: 8.59.4
-        version: 8.59.4(@typescript-eslint/parser@8.59.4(eslint@10.4.0(jiti@1.21.7))(typescript@6.0.3))(eslint@10.4.0(jiti@1.21.7))(typescript@6.0.3)
-      '@typescript-eslint/parser':
-        specifier: 8.59.4
-        version: 8.59.4(eslint@10.4.0(jiti@1.21.7))(typescript@6.0.3)
-      eslint:
-        specifier: 10.4.0
-        version: 10.4.0(jiti@1.21.7)
-      eslint-config-prettier:
-        specifier: 10.1.8
-        version: 10.1.8(eslint@10.4.0(jiti@1.21.7))
-      jest:
-        specifier: 30.4.2
-        version: 30.4.2(@types/node@25.9.1)(ts-node@10.9.2(@types/node@25.9.1)(typescript@6.0.3))
-      jest-extended:
-        specifier: 7.0.0
-        version: 7.0.0(jest@30.4.2(@types/node@25.9.1)(ts-node@10.9.2(@types/node@25.9.1)(typescript@6.0.3)))(typescript@6.0.3)
-      prettier:
-        specifier: 3.8.3
-        version: 3.8.3
-      ts-jest:
-        specifier: 29.4.11
-        version: 29.4.11(@babel/core@7.29.7)(@jest/transform@30.4.1)(@jest/types@30.4.1)(babel-jest@30.4.1(@babel/core@7.29.7))(jest-util@30.4.1)(jest@30.4.2(@types/node@25.9.1)(ts-node@10.9.2(@types/node@25.9.1)(typescript@6.0.3)))(typescript@6.0.3)
-      typescript:
-        specifier: 6.0.3
-        version: 6.0.3
-
-  packages/web3-qrl-iban:
-    dependencies:
-      '@theqrl/web3-errors':
-        specifier: workspace:^
-        version: link:../web3-errors
-      '@theqrl/web3-types':
-        specifier: workspace:^
-        version: link:../web3-types
-      '@theqrl/web3-utils':
-        specifier: workspace:^
-        version: link:../web3-utils
-      '@theqrl/web3-validator':
-        specifier: workspace:^
-        version: link:../web3-validator
-    devDependencies:
-      '@theqrl/eslint-config-base-web3':
-        specifier: workspace:^
-        version: link:../../tools/eslint-config-base-web3
       '@types/jest':
         specifier: 30.0.0
         version: 30.0.0
