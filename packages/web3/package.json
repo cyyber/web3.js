@@ -88,7 +88,6 @@
 		"@theqrl/web3-qrl-abi": "workspace:^",
 		"@theqrl/web3-qrl-accounts": "workspace:^",
 		"@theqrl/web3-qrl-contract": "workspace:^",
-		"@theqrl/web3-qrl-iban": "workspace:^",
 		"@theqrl/web3-qrl-qrns": "workspace:^",
 		"@theqrl/web3-rpc-methods": "workspace:^",
 		"@theqrl/web3-types": "workspace:^",

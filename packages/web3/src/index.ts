@@ -330,7 +330,6 @@ export { Web3 };
 export { Web3Context, Web3PluginBase, Web3QRLPluginBase } from '@theqrl/web3-core';
 export { Web3QRL } from '@theqrl/web3-qrl';
 export { Contract } from '@theqrl/web3-qrl-contract';
-export { Iban } from '@theqrl/web3-qrl-iban';
 export { Net } from '@theqrl/web3-net';
 export { HttpProvider } from '@theqrl/web3-providers-http';
 export { WebSocketProvider } from '@theqrl/web3-providers-ws';
