@@ -15,7 +15,13 @@ You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AbiEventFragment, LogsInput, HexString, Topic, DataFormat } from '@theqrl/web3-types';
+import {
+	AbiEventFragment,
+	LogsInput,
+	HexString,
+	TopicFilter,
+	DataFormat,
+} from '@theqrl/web3-types';
 import { Web3RequestManager, Web3Subscription, Web3SubscriptionManager } from '@theqrl/web3-core';
 // eslint-disable-next-line import/no-cycle
 import { decodeEventABI } from './encoding.js';
@@ -82,7 +88,7 @@ export class LogsSubscription extends Web3Subscription<
 		changed: EventLog & { removed: true };
 	},
 	// eslint-disable-next-line @typescript-eslint/ban-types
-	{ address?: HexString; topics?: (Topic | Topic[] | null)[]; abi: AbiEventFragment }
+	{ address?: HexString; topics?: TopicFilter[]; abi: AbiEventFragment }
 > {
 	/**
 	 * Address of tye contract
@@ -93,7 +99,7 @@ export class LogsSubscription extends Web3Subscription<
 	 * The list of topics subscribed
 	 */
 	// eslint-disable-next-line @typescript-eslint/ban-types
-	public readonly topics?: (Topic | Topic[] | null)[];
+	public readonly topics?: TopicFilter[];
 
 	/**
 	 * The {@doclink glossary/json_interface | JSON Interface} of the event.
@@ -106,7 +112,7 @@ export class LogsSubscription extends Web3Subscription<
 		args: {
 			address?: HexString;
 			// eslint-disable-next-line @typescript-eslint/ban-types
-			topics?: (Topic | Topic[] | null)[];
+			topics?: TopicFilter[];
 			abi: AbiEventFragment & { signature: HexString };
 			jsonInterface: ContractAbiWithSignature;
 		},
@@ -116,7 +122,7 @@ export class LogsSubscription extends Web3Subscription<
 		args: {
 			address?: HexString;
 			// eslint-disable-next-line @typescript-eslint/ban-types
-			topics?: (Topic | Topic[] | null)[];
+			topics?: TopicFilter[];
 			abi: AbiEventFragment & { signature: HexString };
 			jsonInterface: ContractAbiWithSignature;
 		},

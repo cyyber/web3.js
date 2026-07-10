@@ -17,6 +17,11 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 
 import { Filter } from '@theqrl/web3-types';
 
+const validTopic =
+	'0xd5812f6cf4a0f645aa620cd57319a0ed649dd8f5519a9dde7770ae5b0e49e547985f35eb972a2a07041561aa39c65a3991478f9b1e6749e05277dcf58a9a8b72';
+const secondValidTopic =
+	'0xbe95a82d87a6cb9c7ff4c64e0c15bb1dff20b1d77e6b571b28ad4736f2a2a3e5857e8c225d6d61399b15beef3b196936e490ed6e234374c4887cbbe86c13b1ba';
+
 /**
  * Array consists of:
  * - Test title
@@ -45,7 +50,8 @@ export const testData: TestData[] = [
 		'filter = address',
 		[
 			{
-				address: 'Q000000000000000000000000000000000000000000000000000000000000000000000000000000000000000098afe7a8d28bbc88dcf41f8e06d97c74958a47dc',
+				address:
+					'Q000000000000000000000000000000000000000000000000000000000000000000000000000000000000000098afe7a8d28bbc88dcf41f8e06d97c74958a47dc',
 			},
 		],
 	],
@@ -65,14 +71,11 @@ export const testData: TestData[] = [
 		[
 			{
 				topics: [
-					'0x000000000000000000000000a94f5374fce5edbc8e2a8697c15331677e6ebf0b',
+					validTopic,
 					// Using "null" value intentionally for validation
 					// eslint-disable-next-line no-null/no-null
 					null,
-					[
-						'0x000000000000000000000000a94f5374fce5edbc8e2a8697c15331677e6ebf0b',
-						'0x0000000000000000000000000aff3454fce5edbc8cca8697c15331677e6ebccc',
-					],
+					[validTopic, secondValidTopic],
 				],
 			},
 		],
@@ -88,14 +91,11 @@ export const testData: TestData[] = [
 					'Q0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000dfd5293d8e347dfe59e90efd55b2956a1343963d',
 				],
 				topics: [
-					'0x000000000000000000000000a94f5374fce5edbc8e2a8697c15331677e6ebf0b',
+					validTopic,
 					// Using "null" value intentionally for validation
 					// eslint-disable-next-line no-null/no-null
 					null,
-					[
-						'0x000000000000000000000000a94f5374fce5edbc8e2a8697c15331677e6ebf0b',
-						'0x0000000000000000000000000aff3454fce5edbc8cca8697c15331677e6ebccc',
-					],
+					[validTopic, secondValidTopic],
 				],
 			},
 		],

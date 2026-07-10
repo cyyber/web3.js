@@ -19,6 +19,8 @@ import { Bytes, HexString, QPrefixedHexString, Numbers } from './primitives_type
 export type ValueTypes = 'address' | 'bool' | 'string' | 'int256' | 'uint256' | 'bytes' | 'bigint';
 // Hex encoded 32 bytes
 export type HexString32Bytes = HexString;
+// Hex encoded 64 bytes
+export type HexString64Bytes = HexString;
 // Hex encoded 16 bytes
 export type HexString16Bytes = HexString;
 // Hex encoded 8 bytes
@@ -38,8 +40,9 @@ export type Uint256 = HexString;
 // Q-prefixed hex encoded address
 export type Address = QPrefixedHexString;
 
-// https://github.com/ethereum/execution-apis/blob/main/src/schemas/filter.json#L59
-export type Topic = HexString32Bytes;
+// Hex encoded 64-byte VM log topic
+export type Topic = HexString64Bytes;
+export type TopicFilter = Topic | null | (Topic | null)[];
 
 export type TransactionHash = HexString;
 export enum BlockTags {
@@ -100,7 +103,7 @@ export interface LogsInput {
 	readonly blockNumber?: HexString;
 	readonly transactionIndex?: HexString;
 	readonly address: QPrefixedHexString;
-	readonly topics: HexString[];
+	readonly topics: Topic[];
 	readonly data: HexString;
 }
 export interface LogsOutput {
@@ -112,7 +115,7 @@ export interface LogsOutput {
 	readonly blockHash?: HexString32Bytes;
 	readonly blockNumber?: Numbers;
 	readonly address: string;
-	readonly topics: HexString[];
+	readonly topics: Topic[];
 	readonly data: HexString;
 }
 
@@ -215,7 +218,7 @@ export interface Filter {
 	readonly blockHash?: Address;
 	// Using "null" type intentionally to match specifications
 	// eslint-disable-next-line @typescript-eslint/ban-types
-	readonly topics?: (null | Topic | Topic[])[];
+	readonly topics?: TopicFilter[];
 	readonly filter?: FilterOption;
 }
 

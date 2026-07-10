@@ -32,6 +32,7 @@ const formatNames = [
 	'int',
 	'number',
 	'string',
+	'topic',
 ];
 
 describe('instance of validator', () => {
@@ -58,12 +59,11 @@ describe('instance of validator', () => {
 		for (const f of formatNames) {
 			expect(typeof formats[f]).toBe('function');
 		}
-		for (let i = 3; i <= 8; i += 1) {
-			const bitSize = 2 ** i;
+		for (let bitSize = 8; bitSize <= 512; bitSize += 8) {
 			expect(typeof formats[`int${bitSize}`]).toBe('function');
 			expect(typeof formats[`uint${bitSize}`]).toBe('function');
 		}
-		for (let size = 1; size <= 32; size += 1) {
+		for (let size = 1; size <= 64; size += 1) {
 			expect(typeof formats[`bytes${size}`]).toBe('function');
 		}
 	});
@@ -88,6 +88,8 @@ describe('instance of validator', () => {
 
 		expect(formats.string('1')).toBe(true);
 		expect(formats.string(1)).toBe(false);
+		expect(formats.topic(`0x${'ab'.repeat(64)}`)).toBe(true);
+		expect(formats.topic(`0x${'ab'.repeat(32)}`)).toBe(false);
 
 		expect(formats.hex('0x1')).toBe(true);
 		expect(formats.hex('1')).toBe(false);
@@ -111,14 +113,13 @@ describe('instance of validator', () => {
 		expect(formats.filter({ fromBlock: 'latest' })).toBe(true);
 		expect(formats.filter({ fromBlock2: 'latest' })).toBe(false);
 
-		for (let i = 3; i <= 8; i += 1) {
-			const bitSize = 2 ** i;
+		for (let bitSize = 8; bitSize <= 512; bitSize += 8) {
 			expect(formats[`int${bitSize}`](1)).toBe(true);
 			expect(formats[`int${bitSize}`](1.1)).toBe(false);
 			expect(formats[`uint${bitSize}`](1)).toBe(true);
 			expect(formats[`uint${bitSize}`](-1)).toBe(false);
 		}
-		for (let size = 1; size <= 32; size += 1) {
+		for (let size = 1; size <= 64; size += 1) {
 			const value = `0x${'aa'.repeat(size)}`;
 			expect(formats[`bytes${size}`](value)).toBe(true);
 			expect(formats[`bytes${size}`](-1)).toBe(false);

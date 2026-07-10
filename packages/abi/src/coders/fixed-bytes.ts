@@ -30,10 +30,7 @@ export class FixedBytesCoder extends Coder {
 	}
 
 	defaultValue(): string {
-		return '0x0000000000000000000000000000000000000000000000000000000000000000'.substring(
-			0,
-			2 + this.size * 2,
-		);
+		return hexlify(new Uint8Array(this.size));
 	}
 
 	encode(writer: Writer, value: BytesLike): number {
@@ -45,6 +42,10 @@ export class FixedBytesCoder extends Coder {
 	}
 
 	decode(reader: Reader): any {
-		return reader.coerce(this.name, hexlify(reader.readBytes(this.size)));
+		const word = reader.readBytes(reader.wordSize);
+		if (word.slice(this.size).some(byte => byte !== 0)) {
+			this._throwError('non-zero padding bytes', hexlify(word));
+		}
+		return reader.coerce(this.name, hexlify(word.slice(0, this.size)));
 	}
 }

@@ -16,12 +16,38 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { HexString, AbiParameter, DecodedParams } from '@theqrl/web3-types';
-import { decodeParameter, decodeParametersWith } from './parameters_api.js';
+import { AbiError } from '@theqrl/web3-errors';
+import { decodeParameter, decodeParametersWith, encodeParameter } from './parameters_api.js';
 
-const STATIC_TYPES = ['bool', 'string', 'int', 'uint', 'address', 'fixed', 'ufixed'];
+const STATIC_TYPES = ['bool', 'int', 'uint', 'address', 'fixed', 'ufixed'];
 
-const _decodeParameter = (inputType: string, clonedTopic: string) =>
-	inputType === 'string' ? clonedTopic : decodeParameter(inputType, clonedTopic);
+const isStaticIndexedType = (input: AbiParameter): boolean =>
+	!input.type.includes('[') &&
+	!input.type.startsWith('tuple') &&
+	(STATIC_TYPES.some(type => input.type.startsWith(type)) || /^bytes\d+$/.test(input.type));
+
+const decodeTopic = (input: AbiParameter, topic: string): unknown => {
+	if (!/^0x[0-9a-f]{128}$/i.test(topic)) {
+		throw new AbiError(
+			`Invalid indexed topic for "${input.name ?? input.type}": expected 64 bytes.`,
+		);
+	}
+	if (!isStaticIndexedType(input)) {
+		if (topic.slice(66) !== '0'.repeat(64)) {
+			throw new AbiError(
+				`Non-canonical indexed hash topic for "${input.name ?? input.type}".`,
+			);
+		}
+		return topic.toLowerCase();
+	}
+
+	const decoded = decodeParameter(input.type, topic);
+	const canonical = encodeParameter(input.type, decoded);
+	if (canonical.toLowerCase() !== topic.toLowerCase()) {
+		throw new AbiError(`Non-canonical indexed topic for "${input.name ?? input.type}".`);
+	}
+	return decoded;
+};
 
 /**
  * Decodes ABI-encoded log data and indexed topic data.
@@ -88,13 +114,15 @@ export const decodeLog = <ReturnType extends DecodedParams>(
 		? decodeParametersWith(Object.values(nonIndexedInputs), data, true)
 		: { __length__: 0 };
 
-	// If topics are more than indexed inputs, that means first topic is the event signature
-	const offset = clonedTopics.length - Object.keys(indexedInputs).length;
+	const indexedInputValues = Object.values(indexedInputs);
+	if (clonedTopics.length !== indexedInputValues.length) {
+		throw new AbiError(
+			`Indexed topic count mismatch: expected ${indexedInputValues.length}, got ${clonedTopics.length}.`,
+		);
+	}
 
-	const decodedIndexedInputs = Object.values(indexedInputs).map((input, index) =>
-		STATIC_TYPES.some(s => input.type.startsWith(s))
-			? _decodeParameter(input.type, clonedTopics[index + offset])
-			: clonedTopics[index + offset],
+	const decodedIndexedInputs = indexedInputValues.map((input, index) =>
+		decodeTopic(input, clonedTopics[index]),
 	);
 
 	const returnValues: DecodedParams = { __length__: 0 };

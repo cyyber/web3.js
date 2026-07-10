@@ -35,6 +35,8 @@ import {
 	ContractAbi,
 	HexString32Bytes,
 	Uint,
+	Topic,
+	TopicFilter,
 } from '@theqrl/web3-types';
 // eslint-disable-next-line import/no-cycle
 import { LogsSubscription } from './log_subscription.js';
@@ -45,7 +47,7 @@ export type PayableTxOptions = PayableCallOptions;
 export type ContractAbiWithSignature = ReadonlyArray<AbiFragment & { signature: HexString }>;
 
 export interface EventLog {
-	readonly event: string;
+	readonly event?: string;
 	readonly id?: string;
 	readonly logIndex?: bigint | number | string;
 	readonly transactionIndex?: bigint | number | string;
@@ -53,11 +55,11 @@ export interface EventLog {
 	readonly blockHash?: HexString32Bytes;
 	readonly blockNumber?: bigint | number | string;
 	readonly address: string;
-	readonly topics: HexString[];
+	readonly topics: Topic[];
 	readonly data: HexString;
-	readonly raw?: { data: string; topics: unknown[] };
+	readonly raw?: { data: string; topics: Topic[] };
 	readonly returnValues: Record<string, unknown>;
-	readonly signature?: HexString;
+	readonly signature?: Topic;
 }
 
 export interface ContractEventOptions {
@@ -72,7 +74,7 @@ export interface ContractEventOptions {
 	/**
 	 * This allows to manually set the topics for the event filter. If given the filter property and event signature, (topic[0]) will not be set automatically. Each topic can also be a nested array of topics that behaves as `or` operation between the given nested topics.
 	 */
-	topics?: string[];
+	topics?: TopicFilter[];
 }
 
 export interface ContractOptions {

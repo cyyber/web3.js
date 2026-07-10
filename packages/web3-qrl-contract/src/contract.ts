@@ -175,7 +175,7 @@ export type ContractEventsInterface<
 export type ContractEventEmitterInterface<Abi extends ContractAbi> = {
 	[EventAbi in FilterAbis<
 		Abi,
-		AbiFunctionFragment & { type: 'event' }
+		AbiEventFragment & { type: 'event' }
 	> as EventAbi['name']]: ContractEvent<EventAbi>['Inputs'];
 };
 

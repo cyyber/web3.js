@@ -22,7 +22,7 @@ import {
 	Address,
 	BlockNumberOrTag,
 	HexString,
-	Topic,
+	TopicFilter,
 	BlockHeaderOutput,
 	LogsOutput,
 } from '@theqrl/web3-types';
@@ -46,7 +46,7 @@ export class LogsSubscription extends Web3Subscription<
 	{
 		readonly fromBlock?: BlockNumberOrTag;
 		readonly address?: Address | Address[];
-		readonly topics?: Topic[];
+		readonly topics?: TopicFilter[];
 	}
 > {
 	protected _buildSubscriptionParams() {

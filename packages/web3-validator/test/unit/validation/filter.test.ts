@@ -15,7 +15,9 @@ You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { Filter } from '@theqrl/web3-types';
 import { isTopic, isTopicInBloom } from '../../../src/validation/topic';
+import { isFilterObject } from '../../../src/validation/filter';
 import {
 	invalidTopicData,
 	invalidTopicInBloomData,
@@ -51,6 +53,29 @@ describe('validation', () => {
 					expect(isTopicInBloom(bloom, topic)).toBeFalsy();
 				});
 			});
+		});
+	});
+
+	describe('VM64 topic filter limits', () => {
+		const topic = `0x${'ab'.repeat(64)}`;
+
+		it('accepts null inside an OR topic list', () => {
+			// eslint-disable-next-line no-null/no-null
+			expect(isFilterObject({ topics: [[topic, null]] })).toBe(true);
+		});
+
+		it('rejects more than four topic positions', () => {
+			expect(isFilterObject({ topics: [topic, topic, topic, topic, topic] })).toBe(false);
+		});
+
+		it('rejects more than 1000 alternatives at one position', () => {
+			expect(isFilterObject({ topics: [Array.from({ length: 1001 }, () => topic)] })).toBe(
+				false,
+			);
+		});
+
+		it('rejects a non-array topics value without throwing', () => {
+			expect(isFilterObject({ topics: '0x' } as unknown as Filter)).toBe(false);
 		});
 	});
 });

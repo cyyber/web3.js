@@ -21,6 +21,9 @@ import { isBlockNumberOrTag } from './block.js';
 import { isNullish } from './object.js';
 import { isTopic } from './topic.js';
 
+const MAX_TOPIC_POSITIONS = 4;
+const MAX_SUB_TOPICS = 1000;
+
 /**
  * First we check if all properties in the provided value are expected,
  * then because all Filter properties are optional, we check if the expected properties
@@ -57,12 +60,18 @@ export const isFilterObject = (value: Filter) => {
 	}
 
 	if (!isNullish(value.topics)) {
+		if (!Array.isArray(value.topics)) return false;
+		if (value.topics.length > MAX_TOPIC_POSITIONS) return false;
+
 		if (
 			!value.topics.every(topic => {
 				if (isNullish(topic)) return true;
 
 				if (Array.isArray(topic)) {
-					return topic.every(nestedTopic => isTopic(nestedTopic));
+					return (
+						topic.length <= MAX_SUB_TOPICS &&
+						topic.every(nestedTopic => isNullish(nestedTopic) || isTopic(nestedTopic))
+					);
 				}
 
 				if (isTopic(topic)) return true;

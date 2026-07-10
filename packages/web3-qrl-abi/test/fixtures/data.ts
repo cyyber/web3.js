@@ -351,6 +351,36 @@ export const invalidErrorSignatures: { input: any; output: string }[] = [
 	{ input: undefined, output: 'Invalid parameter value in encodeErrorSignature' },
 ];
 
+const rickAddress =
+	'Q0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000cb00cde33a7a0fba30c63745534f1f7ae607076b';
+const userTupleAbi = {
+	components: [
+		{ internalType: 'string', name: 'name', type: 'string' },
+		{ internalType: 'address', name: 'addr', type: 'address' },
+		{
+			components: [
+				{ internalType: 'string', name: 'email', type: 'string' },
+				{ internalType: 'string', name: 'phone', type: 'string' },
+			],
+			internalType: 'struct ABIV2UserDirectory.Contact',
+			name: 'contact',
+			type: 'tuple',
+		},
+	],
+	indexed: false,
+	internalType: 'struct ABIV2UserDirectory.User',
+	name: 'user',
+	type: 'tuple',
+};
+const userTupleValue = {
+	name: 'Rick Sanchez',
+	addr: rickAddress,
+	contact: {
+		email: 'rick.c137@citadel.cfc',
+		phone: '+1 (555) 314-1593',
+	},
+};
+
 export const validDecodeLogsData: {
 	input: { abi: any; data: any; topics: any };
 	output: Record<string, unknown>;
@@ -373,11 +403,8 @@ export const validDecodeLogsData: {
 					indexed: true,
 				},
 			],
-			data: '0x0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000748656c6c6f252100000000000000000000000000000000000000000000000000',
-			topics: [
-				'0x000000000000000000000000000000000000000000000000000000000000f310',
-				'0x0000000000000000000000000000000000000000000000000000000000000010',
-			],
+			data: encodeParameters(['string'], ['Hello%!']),
+			topics: [encodeParameters(['uint256'], ['62224']), encodeParameters(['uint8'], ['16'])],
 		},
 		output: {
 			'0': 'Hello%!',
@@ -411,15 +438,18 @@ export const validDecodeLogsData: {
 				},
 			],
 			topics: [],
-			data: '0x0000000000000000000000000000000000000000000000000000000000000080000000000000000000000000000000000000000000000000000000000000000c00000000000000000000000000000000000000000000000000000000000000c0000000000000000000000000000000000000000000000000000000000000007d0000000000000000000000000000000000000000000000000000000000000002307800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000016200000000000000000000000000000000000000000000000000000000000000',
+			data: encodeParameters(
+				['string', 'uint8', 'string', 'uint256'],
+				['a', '12', 'b', '125'],
+			),
 		},
 		output: {
-			'0': '0x',
+			'0': 'a',
 			'1': '12',
 			'2': 'b',
 			'3': '125',
 			__length__: 4,
-			myString: '0x',
+			myString: 'a',
 			myNum: '12',
 			largerNumber: '125',
 			str: 'b',
@@ -445,11 +475,20 @@ export const validDecodeLogsData: {
 				},
 			],
 			topics: [
-				'0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef',
-				'0x0000000000000000000000006e599da0bff7a6598ac1224e4985430bf16458a4',
-				'0x0000000000000000000000006f1df96865d09d21e8f3f9a7fba3b17a11c7c53c',
+				encodeParameters(
+					['address'],
+					[
+						'Q00000000000000000000000000000000000000000000000000000000000000000000000000000000000000006e599da0bff7a6598ac1224e4985430bf16458a4',
+					],
+				),
+				encodeParameters(
+					['address'],
+					[
+						'Q00000000000000000000000000000000000000000000000000000000000000000000000000000000000000006f1df96865d09d21e8f3f9a7fba3b17a11c7c53c',
+					],
+				),
 			],
-			data: '0x00000000000000000000000000000000000000000000000000000000000186a0',
+			data: encodeParameters(['uint256'], ['100000']),
 		},
 		output: {
 			'0': 'Q00000000000000000000000000000000000000000000000000000000000000000000000000000000000000006e599da0bff7a6598ac1224e4985430bf16458a4',
@@ -465,28 +504,10 @@ export const validDecodeLogsData: {
 		input: {
 			abi: [
 				{ indexed: true, internalType: 'address', name: 'addr', type: 'address' },
-				{
-					components: [
-						{ internalType: 'string', name: 'name', type: 'string' },
-						{ internalType: 'address', name: 'addr', type: 'address' },
-						{
-							components: [
-								{ internalType: 'string', name: 'email', type: 'string' },
-								{ internalType: 'string', name: 'phone', type: 'string' },
-							],
-							internalType: 'struct ABIV2UserDirectory.Contact',
-							name: 'contact',
-							type: 'tuple',
-						},
-					],
-					indexed: false,
-					internalType: 'struct ABIV2UserDirectory.User',
-					name: 'user',
-					type: 'tuple',
-				},
+				userTupleAbi,
 			],
-			data: '0x00000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000060000000000000000000000000cb00cde33a7a0fba30c63745534f1f7ae607076b00000000000000000000000000000000000000000000000000000000000000a0000000000000000000000000000000000000000000000000000000000000000c5269636b2053616e6368657a00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000008000000000000000000000000000000000000000000000000000000000000000157269636b2e63313337406369746164656c2e636663000000000000000000000000000000000000000000000000000000000000000000000000000000000000112b31202835353529203331342d31353933000000000000000000000000000000',
-			topics: ['0x000000000000000000000000cb00cde33a7a0fba30c63745534f1f7ae607076b'],
+			data: encodeParameters([userTupleAbi], [userTupleValue]),
+			topics: [encodeParameters(['address'], [rickAddress])],
 		},
 		output: {
 			'0': 'Q0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000cb00cde33a7a0fba30c63745534f1f7ae607076b',

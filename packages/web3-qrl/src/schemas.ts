@@ -407,7 +407,7 @@ export const logSchema = {
 		topics: {
 			type: 'array',
 			items: {
-				format: 'bytes32',
+				format: 'topic',
 			},
 		},
 	},

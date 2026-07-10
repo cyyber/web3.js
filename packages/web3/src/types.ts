@@ -21,6 +21,7 @@ import {
 	decodeLog,
 	decodeParameter,
 	decodeParameters,
+	encodeEventSignature,
 	encodeFunctionCall,
 	encodeFunctionSignature,
 	encodeParameter,
@@ -58,7 +59,7 @@ export interface Web3QRLInterface extends QRL {
 	net: Net;
 	qrns: QRNS;
 	abi: {
-		encodeEventSignature: typeof encodeFunctionSignature;
+		encodeEventSignature: typeof encodeEventSignature;
 		encodeFunctionCall: typeof encodeFunctionCall;
 		encodeFunctionSignature: typeof encodeFunctionSignature;
 		encodeParameter: typeof encodeParameter;

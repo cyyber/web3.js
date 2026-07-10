@@ -45,6 +45,21 @@ describe('Web3QRL subscribe and clear subscriptions', () => {
 		expect(logs).toStrictEqual(dummyLogs);
 	});
 
+	it('validates log subscription topics before dispatch', async () => {
+		const requestManager = { send: jest.fn(), on: jest.fn(), provider: { on: jest.fn() } };
+		const subManager = new Web3SubscriptionManager(requestManager as any, undefined as any);
+		jest.spyOn(subManager, 'subscribe');
+		web3QRL = new Web3QRL({
+			provider: { on: jest.fn() } as unknown as Web3BaseProvider,
+			subscriptionManager: subManager,
+		});
+
+		await expect(
+			web3QRL.subscribe('logs', { topics: [`0x${'ab'.repeat(32)}`] }),
+		).rejects.toThrow();
+		expect(subManager.subscribe).not.toHaveBeenCalled();
+	});
+
 	it('should call `_processSubscriptionResult` when the logs are of type LogsSubscription and the `fromBlock` is provided', async () => {
 		const requestManager = { send: jest.fn(), on: jest.fn(), provider: { on: jest.fn() } };
 		const subManager = new Web3SubscriptionManager(requestManager as any, undefined as any);
