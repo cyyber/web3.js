@@ -29,7 +29,6 @@ import {
 	TransactionReceipt,
 } from '@theqrl/web3-types';
 import { RevertReason, RevertReasonWithCustomError } from '../types.js';
-// eslint-disable-next-line import/no-cycle
 import { getRevertReason, parseTransactionError } from './get_revert_reason.js';
 
 export async function getTransactionError<ReturnFormat extends DataFormat>(

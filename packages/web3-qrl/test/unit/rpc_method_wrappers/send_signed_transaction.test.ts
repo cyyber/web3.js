@@ -18,6 +18,8 @@ import { Web3Context } from '@theqrl/web3-core';
 import { format } from '@theqrl/web3-utils';
 import { DEFAULT_RETURN_FORMAT, Web3QRLExecutionAPI } from '@theqrl/web3-types';
 import { qrlRpcMethods } from '@theqrl/web3-rpc-methods';
+import { TransactionFactory } from '@theqrl/web3-qrl-accounts';
+import { InvalidResponseError } from '@theqrl/web3-errors';
 
 import { sendSignedTransaction } from '../../../src/rpc_method_wrappers';
 import * as WaitForTransactionReceipt from '../../../src/utils/wait_for_transaction_receipt';
@@ -266,4 +268,185 @@ describe('sendTransaction', () => {
 			);
 		},
 	);
+
+	// Regression harness for audit finding C2: the pre-flight formatting and
+	// signed-transaction deserialization used to run outside the executor's
+	// try/catch, so a failure there produced an unhandled rejection and a
+	// PromiEvent that never settled.
+	describe('pre-flight failures (audit finding C2)', () => {
+		const NOT_SETTLED = Symbol('NOT_SETTLED');
+
+		// A valid, decodable signed transaction - these tests inject the failure.
+		const validSignedTransaction = testData[0][1];
+
+		// Races the PromiEvent against a bounded sentinel, so "never settles" fails
+		// the assertion rather than silently blocking until the jest timeout.
+		const settleWithin = async (start: () => Promise<unknown>, ms = 250) => {
+			let timer: ReturnType<typeof setTimeout> | undefined;
+			try {
+				return await Promise.race([
+					start().then(
+						value => ({ status: 'fulfilled' as const, value, reason: undefined }),
+						(reason: unknown) => ({
+							status: 'rejected' as const,
+							value: undefined,
+							reason,
+						}),
+					),
+					new Promise<typeof NOT_SETTLED>(resolve => {
+						timer = setTimeout(() => resolve(NOT_SETTLED), ms);
+					}),
+				]);
+			} finally {
+				if (timer !== undefined) clearTimeout(timer);
+			}
+		};
+
+		const countErrorEmits = (emitSpy: jest.SpyInstance) =>
+			emitSpy.mock.calls.filter(call => call[0] === 'error').length;
+
+		// Lets any would-be unhandled rejection reach the process handler.
+		const flushMacrotasks = async () => {
+			for (let i = 0; i < 3; i += 1) {
+				// eslint-disable-next-line no-await-in-loop
+				await new Promise(resolve => {
+					setImmediate(resolve);
+				});
+			}
+		};
+
+		let unhandledRejections: unknown[];
+		const onUnhandledRejection = (reason: unknown) => unhandledRejections.push(reason);
+
+		beforeEach(() => {
+			unhandledRejections = [];
+			process.on('unhandledRejection', onUnhandledRejection);
+		});
+
+		afterEach(() => {
+			process.off('unhandledRejection', onUnhandledRejection);
+		});
+
+		// Not valid hex - fails in `format` before deserialization is reached.
+		const unformattableTransaction = '0xZZ';
+		// Valid hex, but not a decodable signed transaction.
+		const undeserializableTransaction = '0xdeadbeef';
+
+		it('rejects (rather than hanging) when the pre-flight formatting throws', async () => {
+			const outcome = await settleWithin(async () =>
+				sendSignedTransaction(
+					web3Context,
+					unformattableTransaction,
+					DEFAULT_RETURN_FORMAT,
+				),
+			);
+
+			expect(outcome).not.toBe(NOT_SETTLED);
+			expect(outcome).toMatchObject({ status: 'rejected' });
+			expect((outcome as { reason: unknown }).reason).toBeInstanceOf(Error);
+		});
+
+		it('rejects (rather than hanging) when the deserialization throws', async () => {
+			const outcome = await settleWithin(async () =>
+				sendSignedTransaction(
+					web3Context,
+					undeserializableTransaction,
+					DEFAULT_RETURN_FORMAT,
+				),
+			);
+
+			expect(outcome).not.toBe(NOT_SETTLED);
+			expect(outcome).toMatchObject({ status: 'rejected' });
+			expect((outcome as { reason: unknown }).reason).toBeInstanceOf(Error);
+		});
+
+		it('rejects without emitting error for an unclassified deserialization failure', async () => {
+			// The Promise rejection is authoritative; the error event is supplementary
+			// and gated on the same typed-error classification used elsewhere.
+			const promiEvent = sendSignedTransaction(
+				web3Context,
+				undeserializableTransaction,
+				DEFAULT_RETURN_FORMAT,
+			);
+			const emitSpy = jest.spyOn(promiEvent, 'emit');
+			const errorListener = jest.fn();
+			promiEvent.on('error', errorListener);
+
+			const outcome = await settleWithin(async () => promiEvent);
+			await flushMacrotasks();
+
+			expect(outcome).not.toBe(NOT_SETTLED);
+			expect(outcome).toMatchObject({ status: 'rejected' });
+			expect(errorListener).not.toHaveBeenCalled();
+			expect(countErrorEmits(emitSpy)).toBe(0);
+		});
+
+		it('emits exactly one error event for a classified deserialization failure when subscribed', async () => {
+			const error = new InvalidResponseError({
+				jsonrpc: '2.0',
+				id: 1,
+				error: { code: -32000, message: 'deserialization failed' },
+			});
+			jest.spyOn(TransactionFactory, 'fromSerializedData').mockImplementation(() => {
+				throw error;
+			});
+
+			const promiEvent = sendSignedTransaction(
+				web3Context,
+				validSignedTransaction,
+				DEFAULT_RETURN_FORMAT,
+			);
+			const emitSpy = jest.spyOn(promiEvent, 'emit');
+			const errorListener = jest.fn();
+			promiEvent.on('error', errorListener);
+
+			const outcome = await settleWithin(async () => promiEvent);
+			await flushMacrotasks();
+
+			expect(outcome).not.toBe(NOT_SETTLED);
+			expect((outcome as { reason: unknown }).reason).toBe(error);
+			expect(errorListener).toHaveBeenCalledTimes(1);
+			expect(errorListener).toHaveBeenCalledWith(error);
+			expect(countErrorEmits(emitSpy)).toBe(1);
+		});
+
+		it('emits no error event for a classified deserialization failure when not subscribed', async () => {
+			const error = new InvalidResponseError({
+				jsonrpc: '2.0',
+				id: 1,
+				error: { code: -32000, message: 'deserialization failed' },
+			});
+			jest.spyOn(TransactionFactory, 'fromSerializedData').mockImplementation(() => {
+				throw error;
+			});
+
+			const promiEvent = sendSignedTransaction(
+				web3Context,
+				validSignedTransaction,
+				DEFAULT_RETURN_FORMAT,
+			);
+			const emitSpy = jest.spyOn(promiEvent, 'emit');
+
+			const outcome = await settleWithin(async () => promiEvent);
+			await flushMacrotasks();
+
+			expect(outcome).not.toBe(NOT_SETTLED);
+			expect((outcome as { reason: unknown }).reason).toBe(error);
+			expect(countErrorEmits(emitSpy)).toBe(0);
+		});
+
+		it('reports no unhandledRejection for a pre-flight failure', async () => {
+			// The caller's `await` is the only consumer; nothing else may leak.
+			await expect(
+				sendSignedTransaction(
+					web3Context,
+					undeserializableTransaction,
+					DEFAULT_RETURN_FORMAT,
+				),
+			).rejects.toThrow();
+			await flushMacrotasks();
+
+			expect(unhandledRejections).toStrictEqual([]);
+		});
+	});
 });

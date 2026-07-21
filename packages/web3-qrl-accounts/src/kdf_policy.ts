@@ -16,7 +16,7 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 export const ARGON2ID_BOUNDS = {
-	m: { min: 4096, max: 1_048_576 },
+	m: { min: 19456, max: 1_048_576 },
 	t: { min: 2, max: 50 },
 	p: { min: 1, max: 16 },
 	dklen: { min: 16, max: 64 },

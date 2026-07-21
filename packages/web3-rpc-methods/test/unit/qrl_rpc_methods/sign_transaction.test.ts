@@ -29,7 +29,6 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 // along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 // */
 import { Web3RequestManager } from '@theqrl/web3-core';
-import { validator } from '@theqrl/web3-validator';
 
 import { qrlRpcMethods } from '../../../src/index';
 import { testData } from './fixtures/sign_transaction';
@@ -54,16 +53,6 @@ describe('signTransaction', () => {
 				method: 'qrl_signTransaction',
 				params: inputParameters,
 			});
-		},
-	);
-
-	// TODO Validation for signTransaction method not implemented
-	it.skip.each(testData)(
-		'should call validator.validate with expected params\n Title: %s\n Input parameters: %s',
-		async (_, inputParameters) => {
-			const validatorSpy = jest.spyOn(validator, 'validate');
-			await qrlRpcMethods.signTransaction(requestManager, ...inputParameters);
-			expect(validatorSpy).toHaveBeenCalledWith([''], inputParameters);
 		},
 	);
 });

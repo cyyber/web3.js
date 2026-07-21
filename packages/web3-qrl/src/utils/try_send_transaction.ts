@@ -19,7 +19,6 @@ import { QRLExecutionAPI, Bytes } from '@theqrl/web3-types';
 import { AsyncFunction, rejectIfTimeout } from '@theqrl/web3-utils';
 import { TransactionSendTimeoutError } from '@theqrl/web3-errors';
 
-// eslint-disable-next-line import/no-cycle
 import { rejectIfBlockTimeout } from './reject_if_block_timeout.js';
 
 /**

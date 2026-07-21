@@ -270,6 +270,30 @@ const legacyNullRestriction = {
 	'@typescript-eslint/no-restricted-types': 'off',
 };
 
+// Type-safety rules that are `warn` repo-wide. For a small set of
+// security-relevant packages whose production sources are already CLEAN of these
+// warnings (verified with `pnpm run lint:budget` / eslint), we escalate them to
+// `error` so a regression cannot slip in as just another warning. Scope is
+// `src/**` only: test files keep the relaxed `warn`/`off` treatment.
+const escalatedTypeSafetyRules = {
+	'@typescript-eslint/no-explicit-any': 'error',
+	'@typescript-eslint/no-misused-promises': 'error',
+	'@typescript-eslint/no-unsafe-argument': 'error',
+	'@typescript-eslint/no-unsafe-assignment': 'error',
+	'@typescript-eslint/no-unsafe-call': 'error',
+	'@typescript-eslint/no-unsafe-member-access': 'error',
+	'@typescript-eslint/no-unsafe-return': 'error',
+};
+
+// The provider packages are the repository's untrusted-input boundary: they read
+// and parse HTTP / WebSocket / IPC JSON-RPC responses. Their production sources
+// currently carry ZERO of the rules above, so we hold that line at `error`.
+const typeSafetyStrictPackages = [
+	'packages/web3-providers-http',
+	'packages/web3-providers-ipc',
+	'packages/web3-providers-ws',
+];
+
 function existingProjects(rootDir, patterns) {
 	return patterns
 		.map(pattern => path.join(rootDir, pattern))
@@ -404,6 +428,16 @@ function createWeb3Config({ rootDir }) {
 			},
 			rules: testTypeScriptRules,
 		},
+		// Escalation overrides come last so they win for the matched sources.
+		// They target `src/**` only, so they never overlap the test overrides
+		// above.
+		...typeSafetyStrictPackages.map(pkg => ({
+			files: [`${pkg}/src/**/*.ts`],
+			plugins: {
+				'@typescript-eslint': tsPlugin,
+			},
+			rules: escalatedTypeSafetyRules,
+		})),
 	];
 }
 

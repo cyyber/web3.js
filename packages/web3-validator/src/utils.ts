@@ -30,7 +30,17 @@ import { Web3ValidatorError } from './errors.js';
 // eslint-disable-next-line import/no-cycle
 import { isAddressString } from './validation/address.js';
 
-const extraTypes = ['hex', 'number', 'blockNumber', 'blockNumberOrTag', 'filter', 'bloom'];
+// Format names that are not ABI types. A name must appear here as well as in `formats.ts`,
+// otherwise `convertEthType` rejects it as an unknown data type before the format ever runs.
+const extraTypes = [
+	'hex',
+	'number',
+	'blockNumber',
+	'blockNumberOrTag',
+	'filter',
+	'bloom',
+	'eip712TypedData',
+];
 
 export const parseBaseType = <T = typeof VALID_QRL_BASE_TYPES[number]>(
 	type: string,
@@ -208,71 +218,47 @@ export const abiSchemaToJsonSchema = (
 
 		const { baseType, isArray, arraySizes } = parseBaseType(abiType);
 
-		let childSchema: JsonSchema;
-		let lastSchema = schema;
-		for (let i = arraySizes.length - 1; i > 0; i -= 1) {
-			childSchema = {
-				type: 'array',
-				items: [],
-				maxItems: arraySizes[i],
-				minItems: arraySizes[i],
-			};
+		// Schema for the element type, i.e. the ABI type with every array
+		// dimension stripped off (`uint` for `uint[2][3]`, the tuple for `tuple[3][5]`).
+		let elementSchema: JsonSchema;
 
-			if (arraySizes[i] < 0) {
-				delete childSchema.maxItems;
-				delete childSchema.minItems;
+		if (baseType === 'tuple') {
+			elementSchema = abiSchemaToJsonSchema(abiComponents, abiName);
+
+			// For a bare tuple the `$id` belongs on the tuple itself. For an array of
+			// tuples it belongs on the outermost array, and is set after wrapping below.
+			if (!isArray) {
+				elementSchema.$id = abiName;
 			}
-
-			lastSchema.items = childSchema;
-			lastSchema = childSchema;
-		}
-
-		if (baseType === 'tuple' && !isArray) {
-			const nestedTuple = abiSchemaToJsonSchema(abiComponents, abiName);
-			nestedTuple.$id = abiName;
-			(lastSchema.items as JsonSchema[]).push(nestedTuple);
-		} else if (baseType === 'tuple' && isArray) {
-			const arraySize = arraySizes[0];
-			const item: JsonSchema = {
-				$id: abiName,
-				type: 'array',
-				items: abiSchemaToJsonSchema(abiComponents, abiName),
-				maxItems: arraySize,
-				minItems: arraySize,
-			};
-
-			if (arraySize < 0) {
-				delete item.maxItems;
-				delete item.minItems;
-			}
-
-			(lastSchema.items as JsonSchema[]).push(item);
 		} else if (isArray) {
-			const arraySize = arraySizes[0];
-			const item: JsonSchema = {
-				type: 'array',
-				$id: abiName,
-				items: convertEthType(String(baseType)),
-				minItems: arraySize,
-				maxItems: arraySize,
-			};
-
-			if (arraySize < 0) {
-				delete item.maxItems;
-				delete item.minItems;
-			}
-
-			(lastSchema.items as JsonSchema[]).push(item);
-		} else if (Array.isArray(lastSchema.items)) {
-			// Array of non-tuple items
-			lastSchema.items.push({ $id: abiName, ...convertEthType(abiType) });
+			elementSchema = convertEthType(String(baseType));
 		} else {
-			// Nested object
-			((lastSchema.items as JsonSchema).items as JsonSchema[]).push({
-				$id: abiName,
-				...convertEthType(abiType),
-			});
+			elementSchema = { $id: abiName, ...convertEthType(abiType) };
 		}
+
+		if (!isArray) {
+			(schema.items as JsonSchema[]).push(elementSchema);
+			continue;
+		}
+
+		// `arraySizes` is in declaration order, left to right. Solidity reverses the
+		// usual notation: `T[k][n]` is an array of `n` elements of type `T[k]`, so the
+		// *rightmost* size is the outermost dimension and `arraySizes[0]` is the
+		// innermost one. Wrap the element schema from the inside out so each declared
+		// size lands on the nesting level it actually constrains.
+		let arraySchema: JsonSchema = elementSchema;
+		for (const arraySize of arraySizes) {
+			arraySchema = { type: 'array', items: arraySchema };
+
+			// A dynamic dimension (`T[]`, parsed as -1) carries no size constraint.
+			if (arraySize >= 0) {
+				arraySchema.minItems = arraySize;
+				arraySchema.maxItems = arraySize;
+			}
+		}
+
+		arraySchema.$id = abiName;
+		(schema.items as JsonSchema[]).push(arraySchema);
 	}
 
 	return schema;
@@ -494,6 +480,9 @@ export function hexToUint8Array(hex: string): Uint8Array {
 	}
 	if (value.length % 2 !== 0) {
 		throw new InvalidBytesError(`hex string has odd length: ${hex}`);
+	}
+	if (!/^[0-9a-f]*$/i.test(value)) {
+		throw new InvalidBytesError(`Invalid hex string: ${hex}`);
 	}
 	const bytes = new Uint8Array(Math.ceil(value.length / 2));
 	for (let i = 0; i < bytes.length; i += 1) {

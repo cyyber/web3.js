@@ -14,8 +14,48 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
-describe('abi', () => {
-	it('loads the test harness', () => {
-		expect(true).toBe(true);
+import {
+	AbiCoder,
+	ConstructorFragment,
+	ErrorFragment,
+	EventFragment,
+	FormatTypes,
+	Fragment,
+	FunctionFragment,
+	ParamType,
+	checkResultErrors,
+	defaultAbiCoder,
+} from '../../src/index.js';
+
+describe('@theqrl/abi public surface', () => {
+	it('exports the coder entry points', () => {
+		expect(typeof AbiCoder).toBe('function');
+		expect(defaultAbiCoder).toBeInstanceOf(AbiCoder);
+		expect(typeof checkResultErrors).toBe('function');
+	});
+
+	it('exports the fragment types', () => {
+		expect(typeof Fragment).toBe('function');
+		expect(typeof ConstructorFragment).toBe('function');
+		expect(typeof ErrorFragment).toBe('function');
+		expect(typeof EventFragment).toBe('function');
+		expect(typeof FunctionFragment).toBe('function');
+		expect(typeof ParamType).toBe('function');
+	});
+
+	it('exports the format types', () => {
+		expect(FormatTypes).toEqual({
+			sighash: 'sighash',
+			minimal: 'minimal',
+			full: 'full',
+			json: 'json',
+		});
+		expect(Object.isFrozen(FormatTypes)).toBe(true);
+	});
+
+	it('encodes and decodes through the public entry point', () => {
+		const address = `Q${'ab'.repeat(64)}`;
+		const encoded = defaultAbiCoder.encode(['address', 'uint8'], [address, 7]);
+		expect(defaultAbiCoder.decode(['address', 'uint8'], encoded)).toEqual([address, 7]);
 	});
 });

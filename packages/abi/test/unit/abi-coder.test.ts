@@ -1,0 +1,451 @@
+/*
+This file is part of web3.js.
+
+web3.js is free software: you can redistribute it and/or modify
+it under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+web3.js is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License
+along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+import { BigNumber } from '@ethersproject/bignumber';
+
+import { AbiCoder, defaultAbiCoder } from '../../src/abi-coder.js';
+import { ParamType } from '../../src/fragments.js';
+
+// One 64-byte word for every type. Heads are 64 bytes; offsets are measured in
+// bytes from the start of the head block; tails are 64-byte aligned.
+const WORD = 64;
+
+const zeros = (n: number) => '00'.repeat(n);
+/** A 64-byte word holding `n`, right-aligned (the encoding for numbers/offsets). */
+const word = (n: number | string) => {
+	const hex = typeof n === 'number' ? n.toString(16) : n;
+	const body = hex.length % 2 ? `0${hex}` : hex;
+	return `${'0'.repeat(WORD * 2 - body.length)}${body}`;
+};
+/** A 64-byte word holding `hex`, left-aligned (the encoding for byte data). */
+const bytesWord = (hex: string) => `${hex}${'0'.repeat(WORD * 2 - hex.length)}`;
+
+const ADDR_A = `Q${'ab'.repeat(64)}`;
+const ADDR_B = `Q${'0'.repeat(127)}1`;
+const ADDR_ZERO = `Q${'0'.repeat(128)}`;
+
+describe('AbiCoder', () => {
+	describe('word size', () => {
+		it('uses a 64-byte word', () => {
+			expect(new AbiCoder()._getWordSize()).toBe(64);
+			expect(new AbiCoder()._getWriter().wordSize).toBe(64);
+			expect(new AbiCoder()._getReader(new Uint8Array(0)).wordSize).toBe(64);
+		});
+
+		it('exposes a shared default instance', () => {
+			expect(defaultAbiCoder).toBeInstanceOf(AbiCoder);
+			expect(defaultAbiCoder.coerceFunc).toBeNull();
+		});
+	});
+
+	describe('encode: static types', () => {
+		it('encodes uint256 right-aligned in one word', () => {
+			expect(defaultAbiCoder.encode(['uint256'], [1])).toBe(`0x${word(1)}`);
+			expect(defaultAbiCoder.encode(['uint256'], [1])).toHaveLength(2 + WORD * 2);
+		});
+
+		it('encodes uint8 in a full 64-byte word, not a byte', () => {
+			expect(defaultAbiCoder.encode(['uint8'], [255])).toBe(`0x${word(0xff)}`);
+		});
+
+		it('encodes bool as 1 and 0', () => {
+			expect(defaultAbiCoder.encode(['bool'], [true])).toBe(`0x${word(1)}`);
+			expect(defaultAbiCoder.encode(['bool'], [false])).toBe(`0x${word(0)}`);
+		});
+
+		it('encodes a negative int256 as sign-extended twos-complement across the word', () => {
+			// -1 in twos-complement over a 64-byte word is all-ones.
+			expect(defaultAbiCoder.encode(['int256'], [-1])).toBe(`0x${'ff'.repeat(WORD)}`);
+		});
+
+		it('encodes bytes32 left-aligned in one word', () => {
+			const value = `0x${'ab'.repeat(32)}`;
+			expect(defaultAbiCoder.encode(['bytes32'], [value])).toBe(
+				`0x${bytesWord('ab'.repeat(32))}`,
+			);
+		});
+
+		it('encodes address as its 64 bytes verbatim', () => {
+			expect(defaultAbiCoder.encode(['address'], [ADDR_A])).toBe(`0x${'ab'.repeat(64)}`);
+		});
+
+		it('encodes several static types as consecutive words', () => {
+			expect(
+				defaultAbiCoder.encode(['uint256', 'bool', 'address'], [7, true, ADDR_ZERO]),
+			).toBe(`0x${word(7)}${word(1)}${word(0)}`);
+		});
+	});
+
+	describe('encode: dynamic types', () => {
+		it('encodes bytes as offset, length, then right-padded data', () => {
+			// head: one word holding the offset (64, since the head block is one word)
+			// tail: length word (2) + the data left-aligned in one word
+			expect(defaultAbiCoder.encode(['bytes'], ['0x1234'])).toBe(
+				`0x${word(64)}${word(2)}${bytesWord('1234')}`,
+			);
+		});
+
+		it('encodes empty bytes as offset and a zero length, with no data word', () => {
+			expect(defaultAbiCoder.encode(['bytes'], ['0x'])).toBe(`0x${word(64)}${word(0)}`);
+		});
+
+		it('encodes a 65-byte payload across two data words', () => {
+			const data = 'aa'.repeat(65);
+			expect(defaultAbiCoder.encode(['bytes'], [`0x${data}`])).toBe(
+				`0x${word(64)}${word(65)}${data}${zeros(63)}`,
+			);
+		});
+
+		it('encodes string as its UTF-8 byte length and left-aligned bytes', () => {
+			// "abc" is 0x616263, 3 bytes.
+			expect(defaultAbiCoder.encode(['string'], ['abc'])).toBe(
+				`0x${word(64)}${word(3)}${bytesWord('616263')}`,
+			);
+		});
+
+		it('measures string length in UTF-8 bytes, not code points', () => {
+			// U+00E9 is 2 bytes in UTF-8 (0xc3 0xa9).
+			expect(defaultAbiCoder.encode(['string'], ['é'])).toBe(
+				`0x${word(64)}${word(2)}${bytesWord('c3a9')}`,
+			);
+		});
+
+		it('offsets past the whole head block when a static type precedes a dynamic one', () => {
+			// head = uint256 word + offset word = 128 bytes, so the offset is 128.
+			expect(defaultAbiCoder.encode(['uint256', 'bytes'], [1, '0x12'])).toBe(
+				`0x${word(1)}${word(128)}${word(1)}${bytesWord('12')}`,
+			);
+		});
+
+		it('gives each dynamic value its own offset into a shared tail', () => {
+			// head = two offset words = 128 bytes.
+			// first tail: len + data = 128 bytes, so the second offset is 128 + 128 = 256.
+			expect(defaultAbiCoder.encode(['bytes', 'bytes'], ['0x11', '0x22'])).toBe(
+				`0x${word(128)}${word(256)}${word(1)}${bytesWord('11')}${word(1)}${bytesWord('22')}`,
+			);
+		});
+	});
+
+	describe('encode: arrays', () => {
+		it('encodes a fixed-length static array inline with no offset', () => {
+			expect(defaultAbiCoder.encode(['uint256[2]'], [[1, 2]])).toBe(`0x${word(1)}${word(2)}`);
+		});
+
+		it('encodes a dynamic array as offset, count, then elements', () => {
+			expect(defaultAbiCoder.encode(['uint256[]'], [[1, 2]])).toBe(
+				`0x${word(64)}${word(2)}${word(1)}${word(2)}`,
+			);
+		});
+
+		it('encodes an empty dynamic array as offset and a zero count', () => {
+			expect(defaultAbiCoder.encode(['uint256[]'], [[]])).toBe(`0x${word(64)}${word(0)}`);
+		});
+
+		it('encodes a fixed-length address array as consecutive 64-byte words', () => {
+			expect(defaultAbiCoder.encode(['address[2]'], [[ADDR_A, ADDR_ZERO]])).toBe(
+				`0x${'ab'.repeat(64)}${word(0)}`,
+			);
+		});
+
+		it('rejects a fixed-length array of the wrong size', () => {
+			expect(() => defaultAbiCoder.encode(['uint256[2]'], [[1, 2, 3]])).toThrow();
+			expect(() => defaultAbiCoder.encode(['uint256[2]'], [[1]])).toThrow();
+		});
+
+		it('rejects a non-array value for an array type', () => {
+			expect(() => defaultAbiCoder.encode(['uint256[]'], ['nope' as any])).toThrow();
+		});
+	});
+
+	describe('encode: tuples', () => {
+		it('encodes a static tuple inline', () => {
+			expect(defaultAbiCoder.encode(['tuple(uint256,bool)'], [[1, true]])).toBe(
+				`0x${word(1)}${word(1)}`,
+			);
+		});
+
+		it('encodes a dynamic tuple behind an offset', () => {
+			// tuple(bytes) is dynamic: outer offset 64, then inner head offset 64,
+			// then the inner tail.
+			expect(defaultAbiCoder.encode(['tuple(bytes)'], [['0x12']])).toBe(
+				`0x${word(64)}${word(64)}${word(1)}${bytesWord('12')}`,
+			);
+		});
+
+		it('accepts an object for a named tuple', () => {
+			const byArray = defaultAbiCoder.encode(['tuple(uint256 a, bool b)'], [[1, true]]);
+			const byObject = defaultAbiCoder.encode(
+				['tuple(uint256 a, bool b)'],
+				[{ a: 1, b: true }],
+			);
+			expect(byObject).toBe(byArray);
+		});
+
+		it('rejects an object for an unnamed tuple', () => {
+			expect(() =>
+				defaultAbiCoder.encode(['tuple(uint256,bool)'], [{ a: 1, b: true }]),
+			).toThrow(/missing names/);
+		});
+	});
+
+	describe('encode: argument checking', () => {
+		it('rejects a types/values length mismatch', () => {
+			expect(() => defaultAbiCoder.encode(['uint256', 'bool'], [1])).toThrow(
+				/length mismatch/,
+			);
+			expect(() => defaultAbiCoder.encode(['uint256'], [1, true])).toThrow(/length mismatch/);
+		});
+
+		it('encodes nothing for no types', () => {
+			expect(defaultAbiCoder.encode([], [])).toBe('0x');
+		});
+	});
+
+	describe('round-trip', () => {
+		it.each<[string, any]>([
+			['uint256', BigNumber.from('0x0123456789abcdef')],
+			['uint8', 255],
+			['int256', BigNumber.from(-1)],
+			['int64', BigNumber.from('-9223372036854775808')],
+			['bool', true],
+			['bool', false],
+			['bytes32', `0x${'ab'.repeat(32)}`],
+			['bytes1', '0xff'],
+			['address', ADDR_A],
+			['address', ADDR_B],
+			['address', ADDR_ZERO],
+			['bytes', '0x'],
+			['bytes', '0x1234'],
+			['bytes', `0x${'aa'.repeat(200)}`],
+			['string', ''],
+			['string', 'hello world'],
+			['string', 'café ☃ 🚀'],
+		])('round-trips %s', (type, value) => {
+			const encoded = defaultAbiCoder.encode([type], [value]);
+			const [decoded] = defaultAbiCoder.decode([type], encoded);
+			// Normalise BigNumber to its hex form so numeric and non-numeric types
+			// can share one unconditional assertion.
+			const normalise = (v: any) => (BigNumber.isBigNumber(v) ? v.toHexString() : v);
+			expect(normalise(decoded)).toEqual(normalise(value));
+		});
+
+		it('round-trips a fixed-length array', () => {
+			const [decoded] = defaultAbiCoder.decode(
+				['uint8[3]'],
+				defaultAbiCoder.encode(['uint8[3]'], [[1, 2, 3]]),
+			);
+			expect(Array.from(decoded)).toEqual([1, 2, 3]);
+		});
+
+		it('round-trips a dynamic array', () => {
+			const [decoded] = defaultAbiCoder.decode(
+				['uint8[]'],
+				defaultAbiCoder.encode(['uint8[]'], [[1, 2, 3]]),
+			);
+			expect(Array.from(decoded)).toEqual([1, 2, 3]);
+		});
+
+		it('round-trips an empty dynamic array', () => {
+			const [decoded] = defaultAbiCoder.decode(
+				['uint8[]'],
+				defaultAbiCoder.encode(['uint8[]'], [[]]),
+			);
+			expect(Array.from(decoded)).toEqual([]);
+		});
+
+		it('round-trips an address array', () => {
+			const [decoded] = defaultAbiCoder.decode(
+				['address[]'],
+				defaultAbiCoder.encode(['address[]'], [[ADDR_A, ADDR_B, ADDR_ZERO]]),
+			);
+			expect(Array.from(decoded)).toEqual([ADDR_A, ADDR_B, ADDR_ZERO]);
+		});
+
+		it('round-trips a dynamic array of dynamic values', () => {
+			const [decoded] = defaultAbiCoder.decode(
+				['string[]'],
+				defaultAbiCoder.encode(['string[]'], [['a', 'bb', 'ccc']]),
+			);
+			expect(Array.from(decoded)).toEqual(['a', 'bb', 'ccc']);
+		});
+
+		it('round-trips a nested array', () => {
+			const value = [
+				[1, 2],
+				[3, 4],
+			];
+			const [decoded] = defaultAbiCoder.decode(
+				['uint8[2][2]'],
+				defaultAbiCoder.encode(['uint8[2][2]'], [value]),
+			);
+			expect(decoded.map((row: any) => Array.from(row))).toEqual(value);
+		});
+
+		it('round-trips a static tuple with named access', () => {
+			const encoded = defaultAbiCoder.encode(['tuple(uint8 a, bool b)'], [{ a: 5, b: true }]);
+			const [decoded] = defaultAbiCoder.decode(['tuple(uint8 a, bool b)'], encoded);
+			expect(decoded.a).toBe(5);
+			expect(decoded.b).toBe(true);
+			expect(Array.from(decoded)).toEqual([5, true]);
+		});
+
+		it('round-trips a mixed static/dynamic tuple', () => {
+			const type = 'tuple(address to, uint256 value, bytes data)';
+			const value = { to: ADDR_A, value: BigNumber.from(1000), data: '0xdeadbeef' };
+			const [decoded] = defaultAbiCoder.decode(
+				[type],
+				defaultAbiCoder.encode([type], [value]),
+			);
+			expect(decoded.to).toBe(ADDR_A);
+			expect(decoded.value.eq(1000)).toBe(true);
+			expect(decoded.data).toBe('0xdeadbeef');
+		});
+
+		it('round-trips an array of tuples', () => {
+			const type = 'tuple(address to, uint8 n)[]';
+			const value = [
+				{ to: ADDR_A, n: 1 },
+				{ to: ADDR_B, n: 2 },
+			];
+			const [decoded] = defaultAbiCoder.decode(
+				[type],
+				defaultAbiCoder.encode([type], [value]),
+			);
+			expect(decoded).toHaveLength(2);
+			expect(decoded[0].to).toBe(ADDR_A);
+			expect(decoded[1].n).toBe(2);
+		});
+
+		it('round-trips a deeply nested tuple', () => {
+			const type = 'tuple(tuple(uint8 x, string s) inner, address[] addrs)';
+			const value = {
+				inner: { x: 9, s: 'deep' },
+				addrs: [ADDR_ZERO, ADDR_A],
+			};
+			const [decoded] = defaultAbiCoder.decode(
+				[type],
+				defaultAbiCoder.encode([type], [value]),
+			);
+			expect(decoded.inner.x).toBe(9);
+			expect(decoded.inner.s).toBe('deep');
+			expect(Array.from(decoded.addrs)).toEqual([ADDR_ZERO, ADDR_A]);
+		});
+
+		it('round-trips a multi-argument mixed signature', () => {
+			const types = ['address', 'uint256', 'bytes', 'bool', 'string'];
+			const values = [ADDR_A, BigNumber.from('0xdeadbeef'), '0x0102', false, 'ok'];
+			const decoded = defaultAbiCoder.decode(types, defaultAbiCoder.encode(types, values));
+			expect(decoded[0]).toBe(ADDR_A);
+			expect(decoded[1].eq('0xdeadbeef')).toBe(true);
+			expect(decoded[2]).toBe('0x0102');
+			expect(decoded[3]).toBe(false);
+			expect(decoded[4]).toBe('ok');
+		});
+	});
+
+	describe('decode', () => {
+		it('returns a frozen result', () => {
+			const decoded = defaultAbiCoder.decode(['uint8'], `0x${word(1)}`);
+			expect(Object.isFrozen(decoded)).toBe(true);
+		});
+
+		it('throws when the data is truncated', () => {
+			expect(() => defaultAbiCoder.decode(['uint256'], `0x${zeros(32)}`)).toThrow(
+				/out-of-bounds/,
+			);
+		});
+
+		it('throws when a dynamic array length exceeds the available data', () => {
+			// offset word -> a count of 2^32, far beyond the buffer.
+			expect(() =>
+				defaultAbiCoder.decode(['uint256[]'], `0x${word(64)}${word(0x100000000)}`),
+			).toThrow(/insufficient data length/);
+		});
+
+		it('accepts a Uint8Array as well as a hex string', () => {
+			const encoded = defaultAbiCoder.encode(['uint8'], [42]);
+			const bytes = Uint8Array.from(
+				(encoded.slice(2).match(/../g) as string[]).map(b => parseInt(b, 16)),
+			);
+			expect(defaultAbiCoder.decode(['uint8'], bytes)[0]).toBe(42);
+		});
+	});
+
+	describe('coerceFunc', () => {
+		it('is applied to decoded values', () => {
+			const coerceFunc = jest.fn((_type: string, value: any) => value);
+			const coder = new AbiCoder(coerceFunc);
+			coder.decode(['uint8'], `0x${word(1)}`);
+			expect(coerceFunc).toHaveBeenCalled();
+		});
+	});
+
+	describe('getDefaultValue', () => {
+		it('produces the zero value for each type', () => {
+			const defaults = defaultAbiCoder.getDefaultValue([
+				'uint256',
+				'bool',
+				'address',
+				'bytes',
+				'string',
+			]);
+			expect(defaults[0]).toBe(0);
+			expect(defaults[1]).toBe(false);
+			expect(defaults[2]).toBe(ADDR_ZERO);
+			expect(defaults[3]).toBe('0x');
+			expect(defaults[4]).toBe('');
+		});
+
+		it('produces an empty array for a dynamic array and a filled one for a fixed array', () => {
+			expect(Array.from(defaultAbiCoder.getDefaultValue(['uint8[]'])[0])).toEqual([]);
+			expect(Array.from(defaultAbiCoder.getDefaultValue(['uint8[3]'])[0])).toEqual([0, 0, 0]);
+		});
+	});
+
+	describe('_getCoder validation', () => {
+		it.each(['uint0', 'uint257', 'uint7', 'int0', 'int257', 'int9'])(
+			'rejects the invalid numeric type %s',
+			type => {
+				expect(() => defaultAbiCoder._getCoder(ParamType.from(type))).toThrow(/bit length/);
+			},
+		);
+
+		it.each(['uint8', 'uint256', 'int8', 'int256', 'uint', 'int'])(
+			'accepts the valid numeric type %s',
+			type => {
+				expect(() => defaultAbiCoder._getCoder(ParamType.from(type))).not.toThrow();
+			},
+		);
+
+		it('defaults a bare uint/int to 256 bits', () => {
+			expect(defaultAbiCoder._getCoder(ParamType.from('uint')).name).toBe('uint256');
+			expect(defaultAbiCoder._getCoder(ParamType.from('int')).name).toBe('int256');
+		});
+
+		it.each(['bytes0', 'bytes33', 'bytes64'])('rejects the invalid type %s', type => {
+			expect(() => defaultAbiCoder._getCoder(ParamType.from(type))).toThrow(
+				/invalid bytes length/,
+			);
+		});
+
+		it('rejects an unknown type', () => {
+			expect(() => defaultAbiCoder._getCoder(ParamType.from('nonsense'))).toThrow(
+				/invalid type/,
+			);
+		});
+	});
+});

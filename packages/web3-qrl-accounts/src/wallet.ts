@@ -217,18 +217,34 @@ export class Wallet<
 			if (isNullish(index)) {
 				return false;
 			}
-			this._addressMap.delete(addressOrIndex.toLowerCase());
 			this.splice(index, 1);
+			this._rebuildAddressMap();
 
 			return true;
 		}
 
 		if (this[addressOrIndex]) {
 			this.splice(addressOrIndex, 1);
+			this._rebuildAddressMap();
 			return true;
 		}
 
 		return false;
+	}
+
+	/**
+	 * Rebuilds the address-to-index map from the current array contents.
+	 * Must be called after any operation (e.g. splice) that shifts account
+	 * indices, so that lookups by address keep resolving to the right account.
+	 */
+	private _rebuildAddressMap(): void {
+		this._addressMap.clear();
+		for (let i = 0; i < this.length; i += 1) {
+			const account = this[i];
+			if (!isNullish(account)) {
+				this._addressMap.set(account.address.toLowerCase(), i);
+			}
+		}
 	}
 
 	/**

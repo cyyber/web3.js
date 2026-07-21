@@ -162,10 +162,18 @@ export async function sign(
 	});
 }
 
-// TODO - Validation should be:
-// isTransactionWithSender(transaction)
-// ? validateTransactionWithSender(transaction)
-// : validateTransactionWithSender(transaction, true) with true being a isPartial flag
+/**
+ * Asks the connected provider to sign a transaction. This is a low-level wrapper that
+ * deliberately does **not** validate the transaction object — it forwards it as given.
+ *
+ * Providers may accept extension fields this library cannot enumerate, so a strict schema here
+ * would reject legitimate provider-specific input. Validating the transaction is therefore the
+ * caller's (or the provider's) responsibility.
+ *
+ * The local-signing path does not rely on this: `prepare_transaction_for_signing`
+ * (@theqrl/web3-qrl) enforces validation at the wallet boundary, asserting that the requested
+ * `from` matches the address derived from the signing seed.
+ */
 export async function signTransaction(
 	requestManager: Web3RequestManager,
 	transaction: TransactionWithSenderAPI | Partial<TransactionWithSenderAPI>,
@@ -176,10 +184,18 @@ export async function signTransaction(
 	});
 }
 
-// TODO - Validation should be:
-// isTransactionWithSender(transaction)
-// ? validateTransactionWithSender(transaction)
-// : validateTransactionWithSender(transaction, true) with true being a isPartial flag
+/**
+ * Asks the connected provider to sign and broadcast a transaction. This is a low-level wrapper
+ * that deliberately does **not** validate the transaction object — it forwards it as given.
+ *
+ * Providers may accept extension fields this library cannot enumerate, so a strict schema here
+ * would reject legitimate provider-specific input. Validating the transaction is therefore the
+ * caller's (or the provider's) responsibility.
+ *
+ * The local-signing path does not rely on this: `prepare_transaction_for_signing`
+ * (@theqrl/web3-qrl) enforces validation at the wallet boundary, asserting that the requested
+ * `from` matches the address derived from the signing seed.
+ */
 export async function sendTransaction(
 	requestManager: Web3RequestManager,
 	transaction: TransactionWithSenderAPI | Partial<TransactionWithSenderAPI>,
@@ -202,13 +218,20 @@ export async function sendRawTransaction(
 	});
 }
 
-// TODO - validate transaction
+/**
+ * Executes a call against the connected node without creating a transaction.
+ *
+ * The block identifier is validated, but the transaction object deliberately is **not** — it is
+ * forwarded as given. Providers may accept extension fields this library cannot enumerate, so a
+ * strict schema here would reject legitimate provider-specific input. Validating the transaction
+ * is the caller's (or the provider's) responsibility; the local-signing path enforces validation
+ * separately, at the wallet boundary (`prepare_transaction_for_signing` in @theqrl/web3-qrl).
+ */
 export async function call(
 	requestManager: Web3RequestManager,
 	transaction: TransactionCallAPI,
 	blockNumber: BlockNumberOrTag,
 ) {
-	// validateTransactionCall(transaction);
 	validator.validate(['blockNumberOrTag'], [blockNumber]);
 
 	return requestManager.send({
@@ -217,7 +240,15 @@ export async function call(
 	});
 }
 
-// TODO Not sure how to best validate Partial<TransactionWithSender>
+/**
+ * Estimates the gas a transaction would consume.
+ *
+ * The block identifier is validated, but the transaction object deliberately is **not** — it is
+ * forwarded as given. Providers may accept extension fields this library cannot enumerate, so a
+ * strict schema here would reject legitimate provider-specific input. Validating the transaction
+ * is the caller's (or the provider's) responsibility; the local-signing path enforces validation
+ * separately, at the wallet boundary (`prepare_transaction_for_signing` in @theqrl/web3-qrl).
+ */
 export async function estimateGas(
 	requestManager: Web3RequestManager,
 	transaction: Partial<TransactionWithSenderAPI>,
@@ -447,6 +478,15 @@ export async function getNodeInfo(requestManager: Web3RequestManager<Web3QRLExec
 	});
 }
 
+/**
+ * Creates an access list for a transaction.
+ *
+ * The block identifier is validated, but the transaction object deliberately is **not** — it is
+ * forwarded as given. Providers may accept extension fields this library cannot enumerate, so a
+ * strict schema here would reject legitimate provider-specific input. Validating the transaction
+ * is the caller's (or the provider's) responsibility; the local-signing path enforces validation
+ * separately, at the wallet boundary (`prepare_transaction_for_signing` in @theqrl/web3-qrl).
+ */
 export async function createAccessList(
 	requestManager: Web3RequestManager,
 	transaction: TransactionWithSenderAPI | Partial<TransactionWithSenderAPI>,
@@ -460,17 +500,26 @@ export async function createAccessList(
 	});
 }
 
+/**
+ * Sends EIP-712 typed data to the connected **wallet** provider to be signed. Typed-data signing
+ * is a wallet capability, not a node one — gqrl does not implement it (as geth does not; it lives
+ * in clef). The QRL web3 wallet extension answers `qrl_signTypedData_v4` and signs locally.
+ *
+ * There is no legacy suffix-less variant: no QRL wallet or node implements `qrl_signTypedData`.
+ */
 export async function signTypedData(
 	requestManager: Web3RequestManager,
 	address: Address,
 	typedData: Eip712TypedData,
-	useLegacy = false,
 ): Promise<string> {
-	// TODO Add validation for typedData
-	validator.validate(['address'], [address]);
+	// The `eip712TypedData` format mirrors `getEncodedEip712Data` (@theqrl/web3-qrl-abi) — the
+	// encoder this library and the wallet share — rather than any node-side implementation,
+	// because a wallet provider answers this request and encodes with that same function.
+	// Without it, a malformed request fails inside the wallet's encoder with an opaque TypeError.
+	validator.validate(['address', 'eip712TypedData'], [address, typedData]);
 
 	return requestManager.send({
-		method: `qrl_signTypedData${useLegacy ? '' : '_v4'}`,
+		method: 'qrl_signTypedData_v4',
 		params: [address, typedData],
 	});
 }

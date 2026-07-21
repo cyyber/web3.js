@@ -1,4 +1,4 @@
-﻿/*
+/*
 This file is part of web3.js.
 
 web3.js is free software: you can redistribute it and/or modify
@@ -15,7 +15,29 @@ You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-export interface HttpProviderOptions {
-	providerOptions: RequestInit;
-	maxResponseBytes?: number;
+import { ProviderBoundsOptions, RequestBoundsOptions } from '@theqrl/web3-utils';
+
+/**
+ * Constructor options for `HttpProvider`.
+ *
+ * The transport bounds (`connectionTimeout`, `requestTimeout`, `maxResponseBytes`) come
+ * from {@link ProviderBoundsOptions} so that the HTTP and socket providers share option
+ * names, defaults and validation. Every bound is optional and defaults to a finite value;
+ * there is deliberately no way to express "no timeout".
+ */
+export interface HttpProviderOptions extends ProviderBoundsOptions {
+	/**
+	 * Extra `fetch` options merged into every request. Note that `method`, `body` and
+	 * `Content-Type` are always set by the provider, and `signal` is composed with the
+	 * provider's own deadline rather than used directly.
+	 */
+	providerOptions?: RequestInit;
 }
+
+/**
+ * Per-request options accepted by `HttpProvider.request`.
+ *
+ * `signal` is taken from {@link RequestBoundsOptions} rather than `RequestInit` so that a
+ * caller signal is always composed with (never replaces) the request deadline.
+ */
+export type HttpRequestOptions = Omit<RequestInit, 'signal'> & RequestBoundsOptions;

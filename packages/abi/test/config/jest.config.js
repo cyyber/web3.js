@@ -18,6 +18,9 @@ module.exports = {
 	rootDir: '../..',
 	testMatch: ['<rootDir>/test/**/?(*.)+(spec|test).+(ts|tsx|js)'],
 	setupFilesAfterEnv: ['<rootDir>/test/config/setup.js'],
+	moduleNameMapper: {
+		'^(\\.{1,2}/.*)\\.js$': '$1',
+	},
 	transform: {
 		'^.+\\.(ts|tsx)$': ['ts-jest', { tsconfig: './test/tsconfig.json' }],
 	},

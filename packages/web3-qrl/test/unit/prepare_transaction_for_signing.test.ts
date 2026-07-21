@@ -23,6 +23,7 @@ import { FeeMarketEIP1559Transaction } from '@theqrl/web3-qrl-accounts';
 import { qrlRpcMethods } from '@theqrl/web3-rpc-methods';
 
 import { bytesToHex, hexToBytes } from '@theqrl/web3-utils';
+import { TransactionSigningError } from '@theqrl/web3-errors';
 import { prepareTransactionForSigning } from '../../src/utils/prepare_transaction_for_signing';
 import { validTransactions } from '../fixtures/prepare_transaction_for_signing';
 
@@ -99,5 +100,26 @@ describe('prepareTransactionForSigning', () => {
 				expect(extraParams).toBe(expectedExtraParams);
 			},
 		);
+	});
+
+	describe('from / signer seed consistency', () => {
+		it('throws when the supplied "from" does not match the address derived from the seed', async () => {
+			const [, expectedTransaction, expectedSeed] = validTransactions[0];
+
+			// A valid QRL address that is NOT the address derived from expectedSeed.
+			const mismatchedFrom =
+				'Q5f279a4668d52e544a5fdf0c6212236c693e7b760377adc0754066a409c30effd2472bf229ea506ea693c01386b8a2b73c22d7e375e20e1ce8d104dade60ff2a';
+
+			// The assertion runs before any RPC/transaction building, so no mocks
+			// are required — it must reject up front.
+			await expect(
+				prepareTransactionForSigning(
+					{ ...expectedTransaction, from: mismatchedFrom },
+					web3Context,
+					expectedSeed,
+					true,
+				),
+			).rejects.toThrow(TransactionSigningError);
+		});
 	});
 });

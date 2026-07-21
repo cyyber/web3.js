@@ -15,7 +15,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { toUtf8Bytes, toUtf8String } from '@ethersproject/strings';
+import { bytesToUtf8, utf8ToBytes } from '@theqrl/qrl-cryptography/utils.js';
 
 import { Reader, Writer } from './abstract-coder.js';
 import { DynamicBytesCoder } from './bytes.js';
@@ -30,10 +30,14 @@ export class StringCoder extends DynamicBytesCoder {
 	}
 
 	encode(writer: Writer, value: any): number {
-		return super.encode(writer, toUtf8Bytes(value));
+		return super.encode(writer, utf8ToBytes(value));
 	}
 
 	decode(reader: Reader): any {
-		return toUtf8String(super.decode(reader));
+		// `fatal: true` preserves ethers' `toUtf8String` throwing behaviour on
+		// invalid UTF-8. Silent U+FFFD replacement would let two distinct invalid
+		// byte sequences decode to the same string, a hash-collision hazard for a
+		// decoder feeding a signing library.
+		return bytesToUtf8(super.decode(reader), { fatal: true });
 	}
 }

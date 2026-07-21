@@ -23,7 +23,11 @@ import {
 	JsonRpcResponseWithError,
 } from '@theqrl/web3-types';
 import { BaseWeb3Error } from '../web3_error_base.js';
-import { ERR_INVALID_RESPONSE, ERR_RESPONSE } from '../error_codes.js';
+import {
+	ERR_INVALID_RESPONSE,
+	ERR_RESPONSE,
+	ERR_RESPONSE_TOO_LARGE,
+} from '../error_codes.js';
 
 // To avoid circular package dependency, copied to code here. If you update this please update same function in `json_rpc.ts`
 const isResponseWithError = <Error = unknown, Result = unknown>(
@@ -79,6 +83,34 @@ export class ResponseError<ErrorType = unknown, RequestType = unknown> extends B
 
 	public toJSON() {
 		return { ...super.toJSON(), data: this.data, request: this.request };
+	}
+}
+
+/**
+ * Thrown when a response exceeds the `maxResponseBytes` bound.
+ *
+ * This deliberately does not extend {@link ResponseError}: there is no JSON-RPC error
+ * payload to carry, because the response was refused before (or instead of) being
+ * parsed. `maxResponseBytes` is the configured limit; `receivedBytes` is the declared
+ * (`content-length`) or observed decoded size when known.
+ */
+export class ResponseTooLargeError extends BaseWeb3Error {
+	public code = ERR_RESPONSE_TOO_LARGE;
+
+	public constructor(public maxResponseBytes: number, public receivedBytes?: number) {
+		super(
+			`RESPONSE TOO LARGE: response ${
+				receivedBytes === undefined ? '' : `of ${receivedBytes} bytes `
+			}exceeds maxResponseBytes (${maxResponseBytes})`,
+		);
+	}
+
+	public toJSON() {
+		return {
+			...super.toJSON(),
+			maxResponseBytes: this.maxResponseBytes,
+			receivedBytes: this.receivedBytes,
+		};
 	}
 }
 

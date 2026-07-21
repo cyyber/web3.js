@@ -102,11 +102,275 @@ describe('web3-validator', () => {
 				).toBeUndefined();
 			});
 		});
-		describe('validateJsonSchema', () => {
-			it.each(abiToJsonSchemaCases.slice(0, 5))('should pass for valid data', abi => {
-				const jsonSchema = abi.json;
+
+		describe('fixed size arrays', () => {
+			it('should pass for exactly the declared number of items', () => {
+				expect(validator.validate(['uint256[3]'], [[1, 2, 3]])).toBeUndefined();
+			});
+
+			it('should raise error with fewer items than declared', () => {
+				expect(() => validator.validate(['uint256[3]'], [[1, 2]])).toThrow(
+					'must NOT have fewer than 3 items',
+				);
+			});
+
+			it('should raise error with more items than declared', () => {
+				expect(() => validator.validate(['uint256[3]'], [[1, 2, 3, 4]])).toThrow(
+					'must NOT have more than 3 items',
+				);
+			});
+
+			it('should not constrain the length of a dynamic array', () => {
+				expect(validator.validate(['uint256[]'], [[]])).toBeUndefined();
+				expect(validator.validate(['uint256[]'], [[1]])).toBeUndefined();
+				expect(validator.validate(['uint256[]'], [[1, 2, 3, 4, 5]])).toBeUndefined();
+			});
+
+			it('should enforce the declared size for a fixed size array of tuples', () => {
+				const abi = [
+					{
+						name: 'a',
+						type: 'tuple[2]',
+						components: [
+							{ name: 'a1', type: 'uint' },
+							{ name: 'a2', type: 'string' },
+						],
+					},
+				];
+
 				expect(
-					validator.validateJSONSchema(jsonSchema.fullSchema, jsonSchema.data),
+					validator.validate(abi, [
+						[
+							[1, 'a'],
+							[2, 'b'],
+						],
+					]),
+				).toBeUndefined();
+
+				expect(() => validator.validate(abi, [[[1, 'a']]])).toThrow(
+					'must NOT have fewer than 2 items',
+				);
+				expect(() =>
+					validator.validate(abi, [
+						[
+							[1, 'a'],
+							[2, 'b'],
+							[3, 'c'],
+						],
+					]),
+				).toThrow('must NOT have more than 2 items');
+			});
+
+			it('should not constrain the length of a dynamic array of tuples', () => {
+				const abi = [
+					{
+						name: 'a',
+						type: 'tuple[]',
+						components: [
+							{ name: 'a1', type: 'uint' },
+							{ name: 'a2', type: 'string' },
+						],
+					},
+				];
+
+				expect(validator.validate(abi, [[[1, 'a']]])).toBeUndefined();
+				expect(
+					validator.validate(abi, [
+						[
+							[1, 'a'],
+							[2, 'b'],
+							[3, 'c'],
+						],
+					]),
+				).toBeUndefined();
+			});
+
+			// `uint256[2][]` is a dynamic array of `uint256[2]`, so only the inner
+			// dimension of 2 is constrained.
+			it('should enforce the inner dimension of a nested array', () => {
+				expect(() => validator.validate(['uint256[2][]'], [[[1, 2, 3]]])).toThrow(
+					'must NOT have more than 2 items',
+				);
+				expect(() => validator.validate(['uint256[2][]'], [[[1]]])).toThrow(
+					'must NOT have fewer than 2 items',
+				);
+			});
+
+			it('should not constrain the inner dimension of a dynamic nested array', () => {
+				expect(validator.validate(['uint256[][]'], [[[1, 2, 3]]])).toBeUndefined();
+				expect(validator.validate(['uint256[2][]'], [[[1, 2]]])).toBeUndefined();
+			});
+		});
+
+		// Solidity reverses the usual array notation: `T[k][n]` is an array of `n`
+		// elements of type `T[k]`, so the rightmost size is the *outer* dimension.
+		// See https://docs.soliditylang.org/en/latest/types.html#arrays
+		describe('multi dimensional arrays', () => {
+			it('should pass for correctly shaped data', () => {
+				// 3 outer elements, each of 2 uints.
+				expect(
+					validator.validate(
+						['uint256[2][3]'],
+						[
+							[
+								[1, 1],
+								[2, 2],
+								[3, 3],
+							],
+						],
+					),
+				).toBeUndefined();
+			});
+
+			it('should raise error with fewer items than declared in the outer dimension', () => {
+				expect(() =>
+					validator.validate(
+						['uint256[2][3]'],
+						[
+							[
+								[1, 1],
+								[2, 2],
+							],
+						],
+					),
+				).toThrow('must NOT have fewer than 3 items');
+			});
+
+			it('should raise error with more items than declared in the outer dimension', () => {
+				expect(() =>
+					validator.validate(
+						['uint256[2][3]'],
+						[
+							[
+								[1, 1],
+								[2, 2],
+								[3, 3],
+								[4, 4],
+							],
+						],
+					),
+				).toThrow('must NOT have more than 3 items');
+			});
+
+			it('should raise error with the wrong number of items in the inner dimension', () => {
+				expect(() =>
+					validator.validate(
+						['uint256[2][3]'],
+						[
+							[
+								[1, 1, 1],
+								[2, 2, 2],
+								[3, 3, 3],
+							],
+						],
+					),
+				).toThrow('must NOT have more than 2 items');
+
+				expect(() =>
+					validator.validate(['uint256[2][3]'], [[[1], [2], [3]]]),
+				).toThrow('must NOT have fewer than 2 items');
+			});
+
+			// `uint256[][3]` is 3 elements of type `uint256[]`: outer fixed, inner free.
+			it('should enforce only the outer dimension of `T[][3]`', () => {
+				expect(
+					validator.validate(['uint256[][3]'], [[[1], [1, 2], [1, 2, 3]]]),
+				).toBeUndefined();
+
+				expect(() => validator.validate(['uint256[][3]'], [[[1], [1, 2]]])).toThrow(
+					'must NOT have fewer than 3 items',
+				);
+				expect(() =>
+					validator.validate(['uint256[][3]'], [[[1], [1, 2], [1, 2, 3], [1]]]),
+				).toThrow('must NOT have more than 3 items');
+			});
+
+			// `uint256[2][]` is a dynamic array of `uint256[2]`: outer free, inner fixed.
+			it('should enforce only the inner dimension of `T[2][]`', () => {
+				expect(validator.validate(['uint256[2][]'], [[]])).toBeUndefined();
+				expect(
+					validator.validate(
+						['uint256[2][]'],
+						[
+							[
+								[1, 1],
+								[2, 2],
+								[3, 3],
+								[4, 4],
+							],
+						],
+					),
+				).toBeUndefined();
+
+				expect(() =>
+					validator.validate(
+						['uint256[2][]'],
+						[
+							[
+								[1, 1],
+								[2, 2, 2],
+							],
+						],
+					),
+				).toThrow('must NOT have more than 2 items');
+			});
+
+			it('should enforce both dimensions of a nested array of tuples', () => {
+				const abi = [
+					{
+						name: 'a',
+						type: 'tuple[2][3]',
+						components: [
+							{ name: 'a1', type: 'uint' },
+							{ name: 'a2', type: 'string' },
+						],
+					},
+				];
+
+				const pair = [
+					[1, 'a'],
+					[2, 'b'],
+				];
+
+				expect(validator.validate(abi, [[pair, pair, pair]])).toBeUndefined();
+
+				// Outer dimension is 3.
+				expect(() => validator.validate(abi, [[pair, pair]])).toThrow(
+					'must NOT have fewer than 3 items',
+				);
+
+				// Inner dimension is 2.
+				expect(() =>
+					validator.validate(abi, [[[[1, 'a']], [[1, 'a']], [[1, 'a']]]]),
+				).toThrow('must NOT have fewer than 2 items');
+			});
+
+			it('should not confuse the argument count with an array dimension', () => {
+				// The argument list holds 2 arguments while the first argument declares an
+				// outer dimension of 3. Both constraints must be applied independently.
+				expect(
+					validator.validate(
+						['uint256[2][3]', 'bool'],
+						[
+							[
+								[1, 1],
+								[2, 2],
+								[3, 3],
+							],
+							true,
+						],
+					),
+				).toBeUndefined();
+			});
+		});
+		describe('validateJsonSchema', () => {
+			// The ABI-to-JSON schemas represent tuples as positional arrays (`z.tuple`),
+			// so valid data must be supplied in the ABI (array) form. `abi.data` is that
+			// form; `json.data` is the decoded *object* representation and is not a valid
+			// input for these array-based schemas.
+			it.each(abiToJsonSchemaCases)('should pass for valid data', testCase => {
+				expect(
+					validator.validateJSONSchema(testCase.json.fullSchema, testCase.abi.data),
 				).toBeUndefined();
 			});
 

@@ -1052,7 +1052,7 @@ export class Contract<Abi extends ContractAbi>
 		});
 
 		try {
-			return createAccessList(this, tx, block, DEFAULT_RETURN_FORMAT);
+			return await createAccessList(this, tx, block, DEFAULT_RETURN_FORMAT);
 		} catch (error: unknown) {
 			if (error instanceof ContractExecutionError) {
 				// this will parse the error data by trying to decode the ABI error inputs according to EIP-838

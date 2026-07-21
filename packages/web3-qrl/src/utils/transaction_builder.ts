@@ -30,7 +30,6 @@ import {
 	Numbers,
 	DataFormat,
 	DEFAULT_RETURN_FORMAT,
-	FormatType,
 	QRL_DATA_FORMAT,
 } from '@theqrl/web3-types';
 import { Web3Context } from '@theqrl/web3-core';
@@ -46,13 +45,20 @@ import {
 import { seedToAccount } from '@theqrl/web3-qrl-accounts';
 import { bytesToHex, format, toChecksumAddress } from '@theqrl/web3-utils';
 import { NUMBER_DATA_FORMAT } from '../constants.js';
-// eslint-disable-next-line import/no-cycle
-import { getChainId, getTransactionCount, estimateGas } from '../rpc_method_wrappers.js';
-import { detectTransactionType } from './detect_transaction_type.js';
+import {
+	getChainId,
+	getTransactionCount,
+	estimateGas,
+} from './rpc_method_wrappers_readers.js';
 import { transactionSchema } from '../schemas.js';
 import { InternalTransaction } from '../types.js';
-// eslint-disable-next-line import/no-cycle
 import { getTransactionGasPricing } from './get_transaction_gas_pricing.js';
+import { getTransactionType } from './get_transaction_type.js';
+
+// Re-exported for backward compatibility: `getTransactionType` previously lived
+// in this module. Its definition moved to `./get_transaction_type.js` to break
+// the `transaction_builder` <-> `get_transaction_gas_pricing` import cycle.
+export { getTransactionType } from './get_transaction_type.js';
 
 export const getTransactionFromOrToAttr = (
 	attr: 'from' | 'to',
@@ -110,19 +116,6 @@ export const getTransactionNonce = async <ReturnFormat extends DataFormat>(
 	}
 
 	return getTransactionCount(web3Context, address, web3Context.defaultBlock, returnFormat);
-};
-
-export const getTransactionType = (
-	transaction: FormatType<Transaction, typeof QRL_DATA_FORMAT>,
-	web3Context: Web3Context<QRLExecutionAPI>,
-) => {
-	const inferredType = detectTransactionType(transaction, web3Context);
-
-	if (!isNullish(inferredType)) return inferredType;
-	if (!isNullish(web3Context.defaultTransactionType))
-		return format({ format: 'uint' }, web3Context.defaultTransactionType, QRL_DATA_FORMAT);
-
-	return undefined;
 };
 
 // Keep in mind that the order the properties of populateTransaction get populated matters

@@ -37,7 +37,7 @@ describe('signTypedData', () => {
 		async (_, inputParameters) => {
 			await qrlRpcMethods.signTypedData(requestManager, ...inputParameters);
 			expect(requestManagerSendSpy).toHaveBeenCalledWith({
-				method: `qrl_signTypedData${inputParameters[2] ? '' : '_v4'}`,
+				method: 'qrl_signTypedData_v4',
 				params: [inputParameters[0], inputParameters[1]],
 			});
 		},
@@ -48,7 +48,10 @@ describe('signTypedData', () => {
 		async (_, inputParameters) => {
 			const validatorSpy = jest.spyOn(validator, 'validate');
 			await qrlRpcMethods.signTypedData(requestManager, ...inputParameters);
-			expect(validatorSpy).toHaveBeenCalledWith(['address'], [inputParameters[0]]);
+			expect(validatorSpy).toHaveBeenCalledWith(
+				['address', 'eip712TypedData'],
+				[inputParameters[0], inputParameters[1]],
+			);
 		},
 	);
 });

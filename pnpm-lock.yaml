@@ -9,9 +9,13 @@ overrides:
   undici@<6.27.0: 6.27.0
   undici@>=7.0.0 <7.28.0: 7.28.0
   fast-uri@<3.1.2: 3.1.2
+  brace-expansion@<1.1.16: 1.1.16
+  brace-expansion@>=2.0.0 <2.1.2: 2.1.2
+  brace-expansion@>=5.0.0 <5.0.7: 5.0.7
   shell-quote@<1.8.4: 1.9.0
   ws@>=7.0.0 <7.5.11: 7.5.11
   ws@>=8.0.0 <8.21.0: 8.21.0
+  adm-zip@<0.6.0: 0.6.0
   http-proxy-middleware@<2.0.10: 2.0.10
   http-proxy-middleware@>=4.0.0 <4.1.1: 4.2.0
   linkify-it@<5.0.1: 5.0.2
@@ -97,9 +101,6 @@ importers:
       '@theqrl/qrl-contracts':
         specifier: 0.1.0
         version: 0.1.0
-      '@types/minimatch':
-        specifier: 6.0.0
-        version: 6.0.0
       '@types/node':
         specifier: 25.9.1
         version: 25.9.1
@@ -251,9 +252,6 @@ importers:
 
   packages/abi:
     dependencies:
-      '@ethersproject/address':
-        specifier: 5.8.0
-        version: 5.8.0
       '@ethersproject/bignumber':
         specifier: 5.8.0
         version: 5.8.0
@@ -261,12 +259,6 @@ importers:
         specifier: 5.8.0
         version: 5.8.0
       '@ethersproject/constants':
-        specifier: 5.8.0
-        version: 5.8.0
-      '@ethersproject/hash':
-        specifier: 5.8.0
-        version: 5.8.0
-      '@ethersproject/keccak256':
         specifier: 5.8.0
         version: 5.8.0
       '@ethersproject/logger':
@@ -831,9 +823,6 @@ importers:
       crc-32:
         specifier: 1.2.2
         version: 1.2.2
-      sha3:
-        specifier: 2.1.4
-        version: 2.1.4
     devDependencies:
       '@humeris/espresso-shot':
         specifier: 4.0.0
@@ -4316,9 +4305,9 @@ packages:
     resolution: {integrity: sha512-4B/qKCfeE/ODUaAUpSwfzazo5x29WD4r3vXiWsB7I2mSDAihwEqKO+g8GELZUQSSAo5e1XTYh3ZVfLyxBc12nA==}
     engines: {node: '>= 10.0.0'}
 
-  adm-zip@0.4.16:
-    resolution: {integrity: sha512-TFi4HBKSGfIKsK5YCkKaaFG2m4PEDyViZmEwof3MTIgzimHLto6muaHVpbrljdIvIrFZzEq/p4nafOeLcYegrg==}
-    engines: {node: '>=0.3.0'}
+  adm-zip@0.6.0:
+    resolution: {integrity: sha512-XleryMhbuksdKtofnWZ9Sk+4CUTbms4Mb/EU32SZwToAyZ5RgVos/ki8n+yr0LWHOGKuakbXTuuYNHLQjhddgg==}
+    engines: {node: '>=14.0'}
 
   agent-base@6.0.2:
     resolution: {integrity: sha512-RZNwNclF7+MS/8bDg70amg32dyeZGZxiDuQmZxKLAlQjr3jGyLx+4Kkk58UO7D2QdgFIQCovuSuZESne6RG6XQ==}
@@ -4653,14 +4642,14 @@ packages:
     resolution: {integrity: sha512-2hCgjEmP8YLWQ130n2FerGv7rYpfBmnmp9Uy2Le1vge6X3gZIfSmEzP5QTDElFxcvVcXlEn8Aq6MU/PZygIOog==}
     engines: {node: '>=14.16'}
 
-  brace-expansion@1.1.14:
-    resolution: {integrity: sha512-MWPGfDxnyzKU7rNOW9SP/c50vi3xrmrua/+6hfPbCS2ABNWfx24vPidzvC7krjU/RTo235sV776ymlsMtGKj8g==}
+  brace-expansion@1.1.16:
+    resolution: {integrity: sha512-IDw48K2/2kRkg9LdJxurvq3lV3aBgq0REY89duEqFRthjlPdXHKMj7EnQOXVckxzgisinf3nHfrcE2FufFLXMw==}
 
-  brace-expansion@2.1.0:
-    resolution: {integrity: sha512-TN1kCZAgdgweJhWWpgKYrQaMNHcDULHkWwQIspdtjV4Y5aurRdZpjAqn6yX3FPqTA9ngHCc4hJxMAMgGfve85w==}
+  brace-expansion@2.1.2:
+    resolution: {integrity: sha512-w5JZcKgdhDOgOwm8H+KgbosopHMuGcl6qbulwjtz3SM7I7P3yW1eAjzMPLrIE+NQ9vjgANKHWeMHnrT0OXW1oA==}
 
-  brace-expansion@5.0.5:
-    resolution: {integrity: sha512-VZznLgtwhn+Mact9tfiwx64fA9erHH/MCXEUfB/0bX/6Fz6ny5EGTXYltMocqg4xFAQZtnO3DHWWXi8RiuN7cQ==}
+  brace-expansion@5.0.7:
+    resolution: {integrity: sha512-7oFy703dxfY3/NLxC1fh2SUCQ0H9rmAY+5EpDVfXjUTTs+HEwR2nYaqLv+GWcTsumwxPfiz6CzCNkwXwBUwqCA==}
     engines: {node: 18 || 20 || >=22}
 
   braces@3.0.3:
@@ -4773,8 +4762,8 @@ packages:
   caniuse-api@3.0.0:
     resolution: {integrity: sha512-bsTwuIg/BZZK/vreVTYYbSWoe2F+71P7K5QGEX+pT250DZbfU1MQ5prOKpPR+LL6uWKK3KMwMCAS74QB3Um1uw==}
 
-  caniuse-lite@1.0.30001791:
-    resolution: {integrity: sha512-yk0l/YSrOnFZk3UROpDLQD9+kC1l4meK/wed583AXrzoarMGJcbRi2Q4RaUYbKxYAsZ8sWmaSa/DsLmdBeI1vQ==}
+  caniuse-lite@1.0.30001805:
+    resolution: {integrity: sha512-52noaS3DubycKSXaU30TwPGIp+POyQSUVa5jBEq3vkRkY0kjyb3LQgvhU6WGyCcyXqVLWO0Cw0Q6BSdD0kUfVA==}
 
   ccount@2.0.1:
     resolution: {integrity: sha512-eyrF0jiFpY+3drT6383f1qhkbGsLSifNAjA61IUjZjmLCWjItY6LB9ft9YhoDgwfmclB2zhu51Lc7+95b8NRAg==}
@@ -5496,8 +5485,8 @@ packages:
   ee-first@1.1.1:
     resolution: {integrity: sha512-WMwm9LhRUo+WUaRN+vRuETqG89IgZphVSNkdFgeb6sS/E4OrDIN7t48CAewSHXc6C8lefD8KKfr5vY61brQlow==}
 
-  electron-to-chromium@1.5.349:
-    resolution: {integrity: sha512-QsWVGyRuY07Aqb234QytTfwd5d9AJlfNIQ5wIOl1L+PZDzI9d9+Fn0FRale/QYlFxt/bUnB0/nLd1jFPGxGK1A==}
+  electron-to-chromium@1.5.389:
+    resolution: {integrity: sha512-cEto7aeOqBfU1D+c5py5pE+ooscKE75JifxLBdFUZsqAxRS6y7kebtxAZvICszSl05gPjYHDTjY+lXpyGvpJbg==}
 
   elliptic@6.6.1:
     resolution: {integrity: sha512-RaddvvMatK2LJHqFJ+YA4WysVN5Ita9E35botqIYspQ4TkRAlCicdzKOjlyv/1Za5RyTNn7di//eEV0uTAfe3g==}
@@ -7760,8 +7749,9 @@ packages:
   node-int64@0.4.0:
     resolution: {integrity: sha512-O5lz91xSOeoXP6DulyHfllpq+Eg00MWitZIbtPfoSEvqIHdl5gfcY6hYzDWnj0qD5tz52PI08u9qUvSVeUBeHw==}
 
-  node-releases@2.0.38:
-    resolution: {integrity: sha512-3qT/88Y3FbH/Kx4szpQQ4HzUbVrHPKTLVpVocKiLfoYvw9XSGOX2FmD2d6DrXbVYyAQTF2HeF6My8jmzx7/CRw==}
+  node-releases@2.0.51:
+    resolution: {integrity: sha512-wRNIrw4DmVLKQlbgOMdkMx27Wrpzes2hh5Jtbi2bjPd+4wJstWIqP5A+lscnqbm0xxmT5Bpg8Lec5ItEBwx6BQ==}
+    engines: {node: '>=18'}
 
   nopt@1.0.10:
     resolution: {integrity: sha512-NWmpvLSqUrgrAC9HCuxEvb+PSloHpqVu+FqcO4eeF2h5qYRhA7ev6KvelyQAKtegUbC6RypJnlEOhd8vloNKYg==}
@@ -9198,9 +9188,6 @@ packages:
     resolution: {integrity: sha512-8LzC5+bvI45BjpfXU8V5fdU2mfeKiQe1D1gIMn7XUlF3OTUrpdJpPPH4EMAnF0DsHHdSZqCdSss5qCmJKuiO3w==}
     engines: {node: '>= 0.10'}
     hasBin: true
-
-  sha3@2.1.4:
-    resolution: {integrity: sha512-S8cNxbyb0UGUM2VhRD4Poe5N58gJnJsLJ5vC7FYWGUmGhcsj4++WaIOBFVDxlG0W3To6xBuiRh+i0Qp2oNCOtg==}
 
   shallow-clone@3.0.1:
     resolution: {integrity: sha512-/6KqX+GVUdqPuPPd2LxDDxzX6CAbjJehAAOKlNpqqUpAqPM6HeL8f+o3a+JsyGjn2lv0WY8UsTgUJjU9Ok55NA==}
@@ -14542,7 +14529,7 @@ snapshots:
 
   address@1.2.2: {}
 
-  adm-zip@0.4.16: {}
+  adm-zip@0.6.0: {}
 
   agent-base@6.0.2:
     dependencies:
@@ -14720,7 +14707,7 @@ snapshots:
   autoprefixer@10.5.0(postcss@8.5.13):
     dependencies:
       browserslist: 4.26.3
-      caniuse-lite: 1.0.30001791
+      caniuse-lite: 1.0.30001805
       fraction.js: 5.3.4
       picocolors: 1.1.1
       postcss: 8.5.13
@@ -14927,16 +14914,16 @@ snapshots:
       widest-line: 4.0.1
       wrap-ansi: 8.1.0
 
-  brace-expansion@1.1.14:
+  brace-expansion@1.1.16:
     dependencies:
       balanced-match: 1.0.2
       concat-map: 0.0.1
 
-  brace-expansion@2.1.0:
+  brace-expansion@2.1.2:
     dependencies:
       balanced-match: 1.0.2
 
-  brace-expansion@5.0.5:
+  brace-expansion@5.0.7:
     dependencies:
       balanced-match: 4.0.4
 
@@ -14960,9 +14947,9 @@ snapshots:
   browserslist@4.26.3:
     dependencies:
       baseline-browser-mapping: 2.8.9
-      caniuse-lite: 1.0.30001791
-      electron-to-chromium: 1.5.349
-      node-releases: 2.0.38
+      caniuse-lite: 1.0.30001805
+      electron-to-chromium: 1.5.389
+      node-releases: 2.0.51
       update-browserslist-db: 1.2.3(browserslist@4.26.3)
 
   bs-logger@0.2.6:
@@ -15069,11 +15056,11 @@ snapshots:
   caniuse-api@3.0.0:
     dependencies:
       browserslist: 4.26.3
-      caniuse-lite: 1.0.30001791
+      caniuse-lite: 1.0.30001805
       lodash.memoize: 4.1.2
       lodash.uniq: 4.5.0
 
-  caniuse-lite@1.0.30001791: {}
+  caniuse-lite@1.0.30001805: {}
 
   ccount@2.0.1: {}
 
@@ -15813,7 +15800,7 @@ snapshots:
 
   ee-first@1.1.1: {}
 
-  electron-to-chromium@1.5.349: {}
+  electron-to-chromium@1.5.389: {}
 
   elliptic@6.6.1:
     dependencies:
@@ -16690,7 +16677,7 @@ snapshots:
       '@sentry/node': 5.30.0
       '@types/bn.js': 5.2.0
       '@types/lru-cache': 5.1.1
-      adm-zip: 0.4.16
+      adm-zip: 0.6.0
       aggregate-error: 3.1.0
       ansi-escapes: 4.3.2
       boxen: 5.1.2
@@ -18713,19 +18700,19 @@ snapshots:
 
   minimatch@10.2.5:
     dependencies:
-      brace-expansion: 5.0.5
+      brace-expansion: 5.0.7
 
   minimatch@3.1.5:
     dependencies:
-      brace-expansion: 1.1.14
+      brace-expansion: 1.1.16
 
   minimatch@5.1.9:
     dependencies:
-      brace-expansion: 2.1.0
+      brace-expansion: 2.1.2
 
   minimatch@9.0.9:
     dependencies:
-      brace-expansion: 2.1.0
+      brace-expansion: 2.1.2
 
   minimist-options@4.1.0:
     dependencies:
@@ -18869,7 +18856,7 @@ snapshots:
 
   node-int64@0.4.0: {}
 
-  node-releases@2.0.38: {}
+  node-releases@2.0.51: {}
 
   nopt@1.0.10:
     dependencies:
@@ -20419,10 +20406,6 @@ snapshots:
       inherits: 2.0.4
       safe-buffer: 5.2.1
       to-buffer: 1.2.2
-
-  sha3@2.1.4:
-    dependencies:
-      buffer: 6.0.3
 
   shallow-clone@3.0.1:
     dependencies:

@@ -59,6 +59,12 @@ describe('utils', () => {
 					hexToUint8Array(input);
 				}).toThrow(new InvalidBytesError(`hex string has odd length: ${input}`));
 			});
+
+			it.each(['0xzz', '0xgg11'])('throws on non-hex characters: %s', (input: string) => {
+				expect(() => {
+					hexToUint8Array(input);
+				}).toThrow(new InvalidBytesError(`Invalid hex string: ${input}`));
+			});
 		});
 	});
 	describe('ethAbiToJsonSchema', () => {

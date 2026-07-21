@@ -6,6 +6,14 @@ module.exports = {
 
 	coverageDirectory: '.coverage/unit',
 	collectCoverageFrom: ['src/**'],
+	coverageThreshold: {
+		global: {
+			statements: 83,
+			branches: 76,
+			functions: 89,
+			lines: 83,
+		},
+	},
 	collectCoverage: true,
 	coverageReporters: [
 		[

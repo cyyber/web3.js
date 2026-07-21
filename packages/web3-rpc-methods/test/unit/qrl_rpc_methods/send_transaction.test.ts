@@ -29,7 +29,6 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 // along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 // */
 import { Web3RequestManager } from '@theqrl/web3-core';
-import { validator } from '@theqrl/web3-validator';
 
 import { qrlRpcMethods } from '../../../src/index';
 import { testData } from './fixtures/send_transaction';
@@ -54,16 +53,6 @@ describe('sendTransaction', () => {
 				method: 'qrl_sendTransaction',
 				params: inputParameters,
 			});
-		},
-	);
-
-	// TODO Validation for sendTransaction method not implemented
-	it.skip.each(testData)(
-		'should call validator.validate with expected params\n Title: %s\n Input parameters: %s',
-		async (_, inputParameters) => {
-			const validatorSpy = jest.spyOn(validator, 'validate');
-			await qrlRpcMethods.sendTransaction(requestManager, ...inputParameters);
-			expect(validatorSpy).toHaveBeenCalledWith([''], inputParameters);
 		},
 	);
 });

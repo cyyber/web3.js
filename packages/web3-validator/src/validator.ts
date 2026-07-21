@@ -53,7 +53,16 @@ const convertToZod = (schema: JsonSchema): ZodType => {
 			}
 			return z.tuple(arr as [ZodTypeAny, ...ZodTypeAny[]]);
 		}
-		return z.array(convertToZod(schema.items as JsonSchema));
+
+		// Enforce the declared size of fixed-length ABI arrays (`T[n]`).
+		// Dynamic arrays (`T[]`) carry no `minItems`/`maxItems` and stay unconstrained.
+		let zodArraySchema = z.array(convertToZod(schema.items as JsonSchema));
+		zodArraySchema =
+			typeof schema?.minItems === 'number' ? zodArraySchema.min(schema.minItems) : zodArraySchema;
+		zodArraySchema =
+			typeof schema?.maxItems === 'number' ? zodArraySchema.max(schema.maxItems) : zodArraySchema;
+
+		return zodArraySchema;
 	}
 
 	if (schema.oneOf && Array.isArray(schema.oneOf)) {

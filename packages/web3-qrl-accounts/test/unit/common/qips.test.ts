@@ -18,8 +18,8 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 // import { Chain, Common, Hardfork } from '../../../src/common';
 
 // NOTE(rgeraldes24): unused for now
-describe.skip('[Common/QIPs]: Initialization / Chain params', () => {
-	it.skip('Correct initialization', () => {
+describe('[Common/QIPs]: Initialization / Chain params', () => {
+	it('Correct initialization', () => {
 		// let qips = [2537, 2929];
 		// const c = new Common({ chain: Chain.Mainnet, qips });
 		// expect(c.qips()).toEqual(qips);

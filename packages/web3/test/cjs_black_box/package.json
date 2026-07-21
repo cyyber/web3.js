@@ -20,7 +20,7 @@
 		"@theqrl/web3-validator": "^0.1.0"
 	},
 	"engines": {
-		"node": ">=20"
+		"node": ">=20.19.0"
 	},
 	"packageManager": "pnpm@10.27.0"
 }

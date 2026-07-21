@@ -133,9 +133,9 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
  * #### Example: Remote QRL Node
  *
  * ```ts
- * // Using a remote node provider, like Alchemy (https://www.alchemyapi.io/supernode), is simple.
+ * // Using a remote QRL/Zond node provider is simple.
  * import Web3 from "@theqrl/web3";
- * let web3: Web3 = new Web3("https://eth-mainnet.alchemyapi.io/v2/your-api-key");
+ * let web3: Web3 = new Web3("https://mainnet.zond.theqrl.org");
  * ```
  *
  * ### providers

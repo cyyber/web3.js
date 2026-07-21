@@ -16,70 +16,30 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 import {
-	Descriptor as ExternalDescriptor,
-	ExtendedSeed as ExternalExtendedSeed,
-	MLDSA87 as ExternalMLDSA87,
-	Seed as ExternalSeed,
-	WalletType as ExternalWalletType,
+	Descriptor,
+	ExtendedSeed,
+	MLDSA87,
+	Seed,
+	WalletType,
 	newMLDSA87Descriptor as createMLDSA87Descriptor,
 	newWalletFromExtendedSeed as createWalletFromExtendedSeed,
 } from '@theqrl/wallet.js';
 import { shake256 } from '@theqrl/qrl-cryptography/keccak.js';
 
-export type QrlDescriptor = {
-	type(): number;
-	toBytes(): Uint8Array;
-};
-
-export type QrlSeed = {
-	toBytes(): Uint8Array;
-};
-
-export type QrlExtendedSeed = {
-	getDescriptor(): QrlDescriptor;
-	toBytes(): Uint8Array;
-};
-
-export type MLDSA87Wallet = {
-	getAddressStr(): string;
-	getDescriptor(): QrlDescriptor;
-	getExtendedSeed(): QrlExtendedSeed;
-	getPK(): Uint8Array;
-	sign(message: Uint8Array): Uint8Array;
-};
+/*
+ * These aliases re-export the upstream `@theqrl/wallet.js` types under the
+ * names this package already used. They are aliases, not structural
+ * re-declarations: the upstream classes carry private state, so a structural
+ * look-alike would not be assignable back into upstream APIs such as
+ * `MLDSA87.verify`. Aliasing keeps the compiler checking our integration
+ * against the real signing surface.
+ */
+export type QrlDescriptor = Descriptor;
+export type QrlSeed = Seed;
+export type QrlExtendedSeed = ExtendedSeed;
+export type MLDSA87Wallet = MLDSA87;
 
 type ExtendedSeedInput = QrlExtendedSeed | Uint8Array | string;
-
-const Descriptor = ExternalDescriptor as unknown as {
-	from(input: string | Uint8Array | Buffer | number[]): QrlDescriptor;
-};
-
-const ExtendedSeed = ExternalExtendedSeed as unknown as {
-	newExtendedSeed(desc: QrlDescriptor, seed: QrlSeed): QrlExtendedSeed;
-};
-
-const MLDSA87 = ExternalMLDSA87 as unknown as {
-	verify(
-		signature: Uint8Array,
-		message: Uint8Array,
-		pk: Uint8Array,
-		descriptor: QrlDescriptor,
-	): boolean;
-};
-
-const Seed = ExternalSeed as unknown as {
-	from(input: string | Uint8Array | Buffer | number[]): QrlSeed;
-};
-
-const WalletType = ExternalWalletType as unknown as {
-	ML_DSA_87: number;
-};
-
-const typedCreateWalletFromExtendedSeed = createWalletFromExtendedSeed as unknown as (
-	extendedSeed: ExtendedSeedInput,
-) => MLDSA87Wallet;
-
-const typedCreateMLDSA87Descriptor = createMLDSA87Descriptor as unknown as () => QrlDescriptor;
 
 export const addressFromPublicKeyAndDescriptor = (
 	publicKey: Uint8Array,
@@ -93,11 +53,11 @@ export const addressFromPublicKeyAndDescriptor = (
 };
 
 export const newMLDSA87WalletFromExtendedSeed = (extendedSeed: ExtendedSeedInput): MLDSA87Wallet =>
-	typedCreateWalletFromExtendedSeed(extendedSeed);
+	createWalletFromExtendedSeed(extendedSeed);
 
 export const descriptorFromBytes = (bytes: Uint8Array): QrlDescriptor => Descriptor.from(bytes);
 
-export const newMLDSA87Descriptor = (): QrlDescriptor => typedCreateMLDSA87Descriptor();
+export const newMLDSA87Descriptor = (): QrlDescriptor => createMLDSA87Descriptor();
 
 export const newQrlExtendedSeed = (descriptor: QrlDescriptor, seed: QrlSeed): QrlExtendedSeed =>
 	ExtendedSeed.newExtendedSeed(descriptor, seed);

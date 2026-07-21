@@ -22,7 +22,7 @@
 	"author": "The QRL Contributors",
 	"license": "LGPL-3.0",
 	"engines": {
-		"node": ">=20"
+		"node": ">=20.19.0"
 	},
 	"files": [
 		"lib/**/*",
@@ -55,8 +55,7 @@
 		"@theqrl/web3-types": "workspace:^",
 		"@theqrl/web3-utils": "workspace:^",
 		"@theqrl/web3-validator": "workspace:^",
-		"crc-32": "1.2.2",
-		"sha3": "2.1.4"
+		"crc-32": "1.2.2"
 	},
 	"devDependencies": {
 		"@humeris/espresso-shot": "4.0.0",

@@ -27,14 +27,7 @@ import {
 	ParamType,
 } from './fragments.js';
 import { AbiCoder, CoerceFunc, defaultAbiCoder } from './abi-coder.js';
-import {
-	checkResultErrors,
-	Indexed,
-	Interface,
-	LogDescription,
-	Result,
-	TransactionDescription,
-} from './interface.js';
+import { checkResultErrors, Result } from './coders/abstract-coder.js';
 
 export {
 	ConstructorFragment,
@@ -46,8 +39,6 @@ export {
 	FormatTypes,
 	AbiCoder,
 	defaultAbiCoder,
-	Interface,
-	Indexed,
 
 	/// //////////////////////
 	// Types
@@ -56,6 +47,4 @@ export {
 	JsonFragmentType,
 	Result,
 	checkResultErrors,
-	LogDescription,
-	TransactionDescription,
 };

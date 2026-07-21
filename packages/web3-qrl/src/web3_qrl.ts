@@ -1419,21 +1419,24 @@ export class Web3QRL extends Web3Context<Web3QRLExecutionAPI, RegisteredSubscrip
 	}
 
 	/**
-	 * This method sends EIP-712 typed data to the RPC provider to be signed.
+	 * This method sends EIP-712 typed data to the connected wallet provider to be signed.
+	 *
+	 * Typed-data signing is a **wallet** capability, not a node one: the request is answered by
+	 * a wallet provider (for example the QRL web3 wallet extension, which implements
+	 * `qrl_signTypedData_v4` and signs locally), not by a gqrl node. This mirrors Ethereum,
+	 * where `eth_signTypedData_v4` is implemented by wallets rather than by the node.
 	 *
 	 * @param address The address that corresponds with the private key used to sign the typed data.
 	 * @param typedData The EIP-712 typed data object.
-	 * @param useLegacy A boolean flag determining whether the RPC call uses the legacy method `qrl_signTypedData` or the newer method `qrl_signTypedData_v4`
 	 * @param returnFormat ({@link DataFormat} defaults to {@link DEFAULT_RETURN_FORMAT}) - Specifies how the signed typed data should be formatted.
 	 * @returns The signed typed data.
 	 */
 	public async signTypedData<ReturnFormat extends DataFormat = typeof DEFAULT_RETURN_FORMAT>(
 		address: Address,
 		typedData: Eip712TypedData,
-		useLegacy = false,
 		returnFormat: ReturnFormat = DEFAULT_RETURN_FORMAT as ReturnFormat,
 	) {
-		return rpcMethodsWrappers.signTypedData(this, address, typedData, useLegacy, returnFormat);
+		return rpcMethodsWrappers.signTypedData(this, address, typedData, returnFormat);
 	}
 
 	/**

@@ -45,16 +45,9 @@ export type Web3QRLExecutionAPI = QRLExecutionAPI & {
 	) => AccountObject;
 
 	// https://github.com/ethereum/EIPs/blob/master/EIPS/eip-712.md
-	qrl_signTypedData: (
-		address: Address,
-		typedData: Eip712TypedData,
-		useLegacy: true,
-	) => HexString256Bytes;
-
-	// https://github.com/ethereum/EIPs/blob/master/EIPS/eip-712.md
-	qrl_signTypedData_v4: (
-		address: Address,
-		typedData: Eip712TypedData,
-		useLegacy: false | undefined,
-	) => HexString256Bytes;
+	// Answered by a wallet provider (which signs locally), not by a gqrl node — the same way
+	// `eth_signTypedData_v4` is a wallet method on Ethereum rather than a node method.
+	// There is deliberately no suffix-less `qrl_signTypedData`: no QRL wallet or node
+	// implements it.
+	qrl_signTypedData_v4: (address: Address, typedData: Eip712TypedData) => HexString256Bytes;
 };

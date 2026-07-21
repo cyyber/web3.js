@@ -98,6 +98,58 @@ function checkTrackedForbiddenFiles() {
 	}
 }
 
+function checkTrackedFileContents() {
+	// Files that legitimately contain secret-shaped strings. Keep this list
+	// tight: everything here is documented, synthetic, throwaway test data.
+	const secretScanAllowlist = new Set([
+		// Auto-approved local-testnet seed accounts (documented test fixtures).
+		'scripts/accounts.json',
+	]);
+
+	// High-signal secret patterns only, to keep this pre-merge gate low-noise.
+	// A private-key header is a hard failure: it is exactly what would have
+	// caught a committed TLS key.
+	const secretPatterns = [
+		{
+			regex: /-----BEGIN (?:RSA |EC |OPENSSH |DSA |)PRIVATE KEY-----/,
+			describe: posixPath => `${posixPath} contains a private key header and must not be tracked`,
+		},
+		{
+			regex: /\bAKIA[0-9A-Z]{16}\b/,
+			describe: posixPath => `${posixPath} contains what looks like an AWS access key id`,
+		},
+		{
+			regex: /\bxox[baprs]-[0-9A-Za-z-]{10,}\b/,
+			describe: posixPath => `${posixPath} contains what looks like a Slack token`,
+		},
+	];
+
+	for (const relativePath of trackedFiles()) {
+		const posixPath = toPosix(relativePath);
+
+		if (secretScanAllowlist.has(posixPath)) continue;
+
+		let contents;
+		try {
+			contents = fs.readFileSync(path.join(root, relativePath));
+		} catch {
+			continue;
+		}
+
+		// Skip binary files: they will not hold copy-pasteable secrets and can
+		// produce spurious matches.
+		if (contents.includes(0)) continue;
+
+		const text = contents.toString('utf8');
+
+		for (const { regex, describe } of secretPatterns) {
+			if (regex.test(text)) {
+				fail(describe(posixPath));
+			}
+		}
+	}
+}
+
 function checkWorkspaceTree() {
 	walk('', (relativePath, entry) => {
 		const absolutePath = path.join(root, relativePath);
@@ -143,6 +195,7 @@ function checkWorkspaceTree() {
 }
 
 checkTrackedForbiddenFiles();
+checkTrackedFileContents();
 checkWorkspaceTree();
 
 if (failures.length > 0) {

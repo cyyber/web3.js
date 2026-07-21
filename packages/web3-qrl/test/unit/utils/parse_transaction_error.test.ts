@@ -59,6 +59,28 @@ describe('parseTransactionError', () => {
 		});
 	});
 
+	it('should not throw when innerError.data is not a string', () => {
+		// A malformed node response may set `data` to a non-string value (e.g. a number).
+		// `typeof 42 !== 'object'`, so Eip838ExecutionError stores it verbatim on
+		// `innerError.data`. The type guard should fall back to `undefined` instead of
+		// throwing a TypeError when `slice`/`substring` are called.
+		const numericDataError = new ContractExecutionError({
+			code: 3,
+			message: 'execution reverted',
+			data: 42 as unknown as string,
+		});
+
+		expect(() => parseTransactionError(numericDataError)).not.toThrow();
+		expect(parseTransactionError(numericDataError)).toStrictEqual({
+			reason: 'execution reverted',
+			signature: undefined,
+			data: undefined,
+		});
+
+		// Same guard applies on the custom-error (contractAbi) branch.
+		expect(() => parseTransactionError(numericDataError, SimpleRevertAbi)).not.toThrow();
+	});
+
 	it('should return object of type string', () => {
 		const error = new InvalidResponseError({
 			jsonrpc: '2.0',

@@ -20,8 +20,7 @@ import { rejectIfConditionAtInterval } from '@theqrl/web3-utils';
 
 import { TransactionBlockTimeoutError } from '@theqrl/web3-errors';
 import { NUMBER_DATA_FORMAT } from '../constants.js';
-// eslint-disable-next-line import/no-cycle
-import { getBlockNumber } from '../rpc_method_wrappers.js';
+import { getBlockNumber } from './rpc_method_wrappers_readers.js';
 import { NewHeadsSubscription } from '../web3_subscriptions.js';
 
 export interface ResourceCleaner {

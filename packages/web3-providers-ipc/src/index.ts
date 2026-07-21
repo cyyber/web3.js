@@ -17,7 +17,12 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 
 import { Socket, SocketConstructorOpts } from 'net';
 import { ConnectionNotOpenError, InvalidClientError } from '@theqrl/web3-errors';
-import { ReconnectOptions, SocketProvider, toUtf8 } from '@theqrl/web3-utils';
+import {
+	ReconnectOptions,
+	SocketProvider,
+	SocketProviderOptions,
+	toUtf8,
+} from '@theqrl/web3-utils';
 import {
 	QRLExecutionAPI,
 	Web3APIMethod,
@@ -74,6 +79,7 @@ export default class IpcProvider<API extends Web3APISpec = QRLExecutionAPI> exte
 	 * @param socketPath - The path to the IPC socket.
 	 * @param socketOptions - The options for the IPC socket connection.
 	 * @param reconnectOptions - The options for the socket reconnection {@link ReconnectOptions}
+	 * @param providerOptions - Timeout and queue bounds {@link SocketProviderOptions}
 	 */
 	// this constructor is to specify the type for `socketOptions` for a better intellisense.
 	// eslint-disable-next-line no-useless-constructor
@@ -81,8 +87,9 @@ export default class IpcProvider<API extends Web3APISpec = QRLExecutionAPI> exte
 		socketPath: string,
 		socketOptions?: SocketConstructorOpts,
 		reconnectOptions?: Partial<ReconnectOptions>,
+		providerOptions?: SocketProviderOptions,
 	) {
-		super(socketPath, socketOptions, reconnectOptions);
+		super(socketPath, socketOptions, reconnectOptions, providerOptions);
 	}
 
 	public getStatus(): Web3ProviderStatus {

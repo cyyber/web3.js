@@ -25,8 +25,9 @@ import {
 	QRL_DATA_FORMAT,
 } from '@theqrl/web3-types';
 import { Web3Context } from '@theqrl/web3-core';
-import { toNumber } from '@theqrl/web3-utils';
-import { TransactionFactory, TxOptions, Common } from '@theqrl/web3-qrl-accounts';
+import { toChecksumAddress, toNumber } from '@theqrl/web3-utils';
+import { TransactionFactory, TxOptions, Common, seedToAccount } from '@theqrl/web3-qrl-accounts';
+import { TransactionSigningError } from '@theqrl/web3-errors';
 import { isNullish } from '@theqrl/web3-validator';
 import { validateTransactionForSigning } from '../validation.js';
 import { formatTransaction } from './format_transaction.js';
@@ -124,6 +125,21 @@ export const prepareTransactionForSigning = async (
 	fillGasPrice = false,
 	fillGasLimit = true,
 ) => {
+	// If a 'from' address is supplied together with a signing seed, assert that
+	// 'from' matches the address derived from that seed. Otherwise the tx would
+	// be signed by the seed's key while claiming a different sender, and the
+	// mismatch would only surface (if at all) far downstream.
+	if (!isNullish(transaction.from) && !isNullish(seed)) {
+		const derivedAddress = seedToAccount(seed).address;
+		if (toChecksumAddress(String(transaction.from)) !== toChecksumAddress(derivedAddress)) {
+			throw new TransactionSigningError(
+				`Provided 'from' address (${String(
+					transaction.from,
+				)}) does not match the address derived from the signing seed (${derivedAddress}).`,
+			);
+		}
+	}
+
 	const populatedTransaction = (await transactionBuilder({
 		transaction,
 		web3Context,

@@ -17,6 +17,7 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 
 import { Address } from '@theqrl/web3-types';
 import { Web3ValidatorError, isAddressString } from '@theqrl/web3-validator';
+import { bytesToHex } from '@theqrl/web3-utils';
 import {
 	create,
 	decrypt,
@@ -129,13 +130,24 @@ describe('accounts', () => {
 				});
 				expect(result.version).toBe(output.version);
 				expect(result.address).toBe(output.address);
-				expect(result.crypto.ciphertext).toBe(output.crypto.ciphertext);
-				expect(result.crypto.cipherparams).toEqual(output.crypto.cipherparams);
+				// encrypt always generates a fresh random 12-byte IV
+				// so ciphertext/iv are non-deterministic and
+				// can't be asserted against fixed values. Assert the IV is a
+				// well-formed random 12-byte value instead...
+				expect(result.crypto.cipherparams.iv).toMatch(/^[0-9a-f]{24}$/);
 				expect(result.crypto.cipher).toEqual(output.crypto.cipher);
 				expect(result.crypto.kdf).toBe(output.crypto.kdf);
 				expect(result.crypto.kdfparams).toEqual(output.crypto.kdfparams);
 				expect(typeof result.version).toBe('number');
 				expect(typeof result.id).toBe('string');
+				// ...and prove correctness by round-tripping through decrypt.
+				const recovered = await decrypt(result, input[1]);
+				const expectedSeed =
+					typeof input[0] === 'string' ? input[0] : bytesToHex(input[0]);
+				expect(recovered.seed).toBe(expectedSeed);
+				// recovered.address is checksum-cased; the stored keystore
+				// address is lower-cased, so compare case-insensitively.
+				expect(recovered.address.toLowerCase()).toBe(output.address.toLowerCase());
 			});
 		});
 

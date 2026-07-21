@@ -46,6 +46,10 @@ export class AddressCoder extends Coder {
 			this._throwError(error.message, value);
 			throw error; // unreachable; satisfies the type checker
 		}
+		// Defensive post-condition, not the primary validator: `addressToHex` above already
+		// guarantees a 64-byte (130-char `0x`) result
+		// Kept to catch any future loosening of `addressToHex`'s
+		// contract before a wrong-length value reached the word writer.
 		if (hex.length !== ADDRESS_HEX_LENGTH) {
 			this._throwError(`invalid 64-byte address (got ${(hex.length - 2) / 2} bytes)`, value);
 		}

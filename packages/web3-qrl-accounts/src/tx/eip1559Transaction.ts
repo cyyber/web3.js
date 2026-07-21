@@ -137,6 +137,7 @@ export class FeeMarketEIP1559Transaction extends BaseTransaction<FeeMarketEIP155
 
 		this._validateNotArray({ chainId });
 		validateNoLeadingZeroes({
+			chainId,
 			nonce,
 			maxPriorityFeePerGas,
 			maxFeePerGas,

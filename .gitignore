@@ -6,6 +6,10 @@
 # Secrets
 .secrets.json
 
+# Ephemeral TLS fixtures generated for Firefox system tests
+templates/cypress/.cert/
+*.pem
+
 # Logs
 logs
 *.log

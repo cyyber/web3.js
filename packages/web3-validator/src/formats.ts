@@ -21,6 +21,7 @@ import { isBlockNumber, isBlockNumberOrTag, isBlockTag } from './validation/bloc
 import { isBloom } from './validation/bloom.js';
 import { isBoolean } from './validation/boolean.js';
 import { isBytes } from './validation/bytes.js';
+import { isEip712TypedData } from './validation/eip712.js';
 import { isFilterObject } from './validation/filter.js';
 import { isHexStrict, isString } from './validation/string.js';
 import { isNumber, isInt, isUInt } from './validation/numbers.js';
@@ -33,6 +34,7 @@ const formats: { [key: string]: (data: unknown) => boolean } = {
 	blockNumberOrTag: (data: unknown) => isBlockNumberOrTag(data as string | number | bigint),
 	bool: (data: unknown) => isBoolean(data as ValidInputTypes),
 	bytes: (data: unknown) => isBytes(data as ValidInputTypes | Uint8Array | number[]),
+	eip712TypedData: (data: unknown) => isEip712TypedData(data),
 	filter: (data: unknown) => isFilterObject(data as Filter),
 	hex: (data: unknown) => isHexStrict(data as ValidInputTypes),
 	uint: (data: unknown) => isUInt(data as ValidInputTypes),

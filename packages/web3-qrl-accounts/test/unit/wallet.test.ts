@@ -190,6 +190,49 @@ describe('Wallet', () => {
 			expect(wallet).toHaveLength(1);
 		});
 
+		it('should keep address map consistent after removing by address', () => {
+			const accountA = { address: 'address_A' } as never;
+			const accountB = { address: 'address_B' } as never;
+			const accountC = { address: 'address_C' } as never;
+			wallet.add(accountA);
+			wallet.add(accountB);
+			wallet.add(accountC);
+			expect(wallet).toHaveLength(3);
+
+			const result = wallet.remove('address_A');
+
+			expect(result).toBeTruthy();
+			expect(wallet).toHaveLength(2);
+			expect(wallet.get('address_A')).toBeUndefined();
+			expect(wallet.get('address_B')).toEqual(accountB);
+			expect(wallet.get('address_C')).toEqual(accountC);
+			// Lookup by address must resolve to the same object as lookup by index.
+			expect(wallet.get('address_B')).toBe(wallet.get(0));
+			expect(wallet.get('address_C')).toBe(wallet.get(1));
+		});
+
+		it('should keep address map consistent after removing middle account by index', () => {
+			const accountA = { address: 'address_A' } as never;
+			const accountB = { address: 'address_B' } as never;
+			const accountC = { address: 'address_C' } as never;
+			wallet.add(accountA);
+			wallet.add(accountB);
+			wallet.add(accountC);
+			expect(wallet).toHaveLength(3);
+
+			// Remove the middle account (accountB) by numeric index.
+			const result = wallet.remove(1);
+
+			expect(result).toBeTruthy();
+			expect(wallet).toHaveLength(2);
+			expect(wallet.get('address_B')).toBeUndefined();
+			expect(wallet.get('address_A')).toEqual(accountA);
+			expect(wallet.get('address_C')).toEqual(accountC);
+			// Lookup by address must resolve to the same object as lookup by index.
+			expect(wallet.get('address_A')).toBe(wallet.get(0));
+			expect(wallet.get('address_C')).toBe(wallet.get(1));
+		});
+
 		it('should remove account with the index', () => {
 			const account = { address: 'my_address' } as never;
 			wallet.add(account);

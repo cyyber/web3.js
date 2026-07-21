@@ -15,8 +15,10 @@ You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Address } from '@theqrl/web3-types';
+import { Address, KeyStore } from '@theqrl/web3-types';
 import { Web3ValidatorError, isAddressString } from '@theqrl/web3-validator';
+import { bytesToHex, hexToBytes } from '@theqrl/web3-utils';
+import { TransactionSigningError } from '@theqrl/web3-errors';
 import {
 	create,
 	decrypt,
@@ -113,6 +115,31 @@ describe('accounts', () => {
 			expect(address).toBeDefined();
 			expect(address).toEqual(account.address);
 		});
+
+		it('recoverTransaction rejects a tampered signature', async () => {
+			const account = create();
+			const txObj = { ...transactionsTestData[0][0], from: account.address };
+			const signedResult = await signTransaction(
+				TransactionFactory.fromTxData(txObj as unknown as TxData),
+				account.seed,
+			);
+
+			// A validly-signed raw tx returns the signer address.
+			expect(recoverTransaction(signedResult.rawTransaction)).toEqual(account.address);
+
+			// Re-decode and tamper the ML-DSA-87 signature while keeping the same
+			// public key. `signature` is a readonly reference but the underlying
+			// bytes are mutable.
+			const tx = TransactionFactory.fromSerializedData(
+				hexToBytes(signedResult.rawTransaction),
+			);
+			(tx.signature as Uint8Array)[0] ^= 0xff;
+			const tamperedRaw = bytesToHex(tx.serialize());
+
+			// getSenderAddress() would still derive the same address from the
+			// (unauthenticated) public key, but signature verification must fail.
+			expect(() => recoverTransaction(tamperedRaw)).toThrow(TransactionSigningError);
+		});
 	});
 
 	describe('Hash Message', () => {
@@ -140,13 +167,24 @@ describe('accounts', () => {
 				});
 				expect(result.version).toBe(output.version);
 				expect(result.address).toBe(output.address);
-				expect(result.crypto.ciphertext).toBe(output.crypto.ciphertext);
-				expect(result.crypto.cipherparams).toEqual(output.crypto.cipherparams);
+				// encrypt always generates a fresh random 12-byte IV
+				// so ciphertext/iv are non-deterministic and
+				// can't be asserted against fixed values. Assert the IV is a
+				// well-formed random 12-byte value instead...
+				expect(result.crypto.cipherparams.iv).toMatch(/^[0-9a-f]{24}$/);
 				expect(result.crypto.cipher).toEqual(output.crypto.cipher);
 				expect(result.crypto.kdf).toBe(output.crypto.kdf);
 				expect(result.crypto.kdfparams).toEqual(output.crypto.kdfparams);
 				expect(typeof result.version).toBe('number');
 				expect(typeof result.id).toBe('string');
+				// ...and prove correctness by round-tripping through decrypt.
+				const recovered = await decrypt(result, input[1]);
+				const expectedSeed =
+					typeof input[0] === 'string' ? input[0] : bytesToHex(input[0]);
+				expect(recovered.seed).toBe(expectedSeed);
+				// recovered.address is checksum-cased; the stored keystore
+				// address is lower-cased, so compare case-insensitively.
+				expect(recovered.address.toLowerCase()).toBe(output.address.toLowerCase());
 			});
 		});
 
@@ -154,6 +192,47 @@ describe('accounts', () => {
 			it.each(invalidEncryptData)('%s', async (input, output) => {
 				const result = encrypt(input[0], input[1], input[2]);
 				await expect(result).rejects.toThrow(output);
+			});
+		});
+
+		describe('random IV (finding C18a)', () => {
+			it('generates a fresh random IV on every call and ignores any caller-supplied iv', async () => {
+				const seed =
+					'0x0100005dfdcad4f721fe41d1bdf632de24ba60ba7cfab9c9a79287fa007b6a0dec8200b1fa35d2575bb15bd44d59b8d878828b';
+				const password = '1234567890';
+				// Keep salt (and cost params) fixed so the ONLY difference
+				// between the two keystores is the internally-generated IV.
+				// Also pass an `iv` via a loosely-typed options object to prove
+				// it is ignored, not honoured.
+				const options = {
+					t: 2,
+					m: 19456,
+					p: 1,
+					iv: hexToBytes('0xf59185068e4cbe729dd0000c'),
+					salt: hexToBytes(
+						'6140afd0defbcc3fe45d2166969adf5fb45479da880c6cc10d4510b5dfa9908b',
+					),
+				} as unknown as Parameters<typeof encrypt>[2];
+
+				const first = await encrypt(seed, password, options);
+				const second = await encrypt(seed, password, options);
+
+				// Different random IVs => different ciphertext.
+				expect(first.crypto.cipherparams.iv).not.toBe(
+					second.crypto.cipherparams.iv,
+				);
+				expect(first.crypto.ciphertext).not.toBe(second.crypto.ciphertext);
+				// The caller-supplied iv must have been ignored.
+				expect(first.crypto.cipherparams.iv).not.toBe('f59185068e4cbe729dd0000c');
+				expect(second.crypto.cipherparams.iv).not.toBe(
+					'f59185068e4cbe729dd0000c',
+				);
+
+				// Both keystores still decrypt back to the same seed.
+				const recoveredFirst = await decrypt(first, password);
+				const recoveredSecond = await decrypt(second, password);
+				expect(recoveredFirst.seed).toBe(seed);
+				expect(recoveredSecond.seed).toBe(seed);
 			});
 		});
 	});
@@ -182,6 +261,30 @@ describe('accounts', () => {
 			});
 		});
 
+		// Parity with go-qrl: the address label must match the address derived from the
+		// decrypted seed (finding C18b).
+		it('rejects a keystore whose address label does not match the decrypted key', async () => {
+			const seed = create().seed;
+			// Use the cheapest valid Argon2id cost (the ARGON2ID_BOUNDS floor) so the
+			// test exercises the address-binding logic without paying the production
+			// default's 256 MiB / t=8 KDF cost, which times out on CI runners.
+			const keystore = await encrypt(seed, 'test-password', {
+				m: 19456,
+				t: 2,
+				p: 1,
+			} as unknown as Parameters<typeof encrypt>[2]);
+			const tampered = {
+				...keystore,
+				address: `Q${'0'.repeat(128)}`,
+			};
+
+			await expect(decrypt(tampered, 'test-password')).rejects.toThrow(
+				/Keystore address does not match/,
+			);
+			// the untampered keystore still decrypts fine
+			await expect(decrypt(keystore, 'test-password')).resolves.toBeDefined();
+		});
+
 		describe('invalid cases', () => {
 			it.each(invalidDecryptData)('%s', async (input, output) => {
 				const result = decrypt(input[0], input[1]);
@@ -195,6 +298,37 @@ describe('accounts', () => {
 				const result = decrypt(input[0], input[1]);
 
 				await expect(result).rejects.toThrow(Web3ValidatorError);
+			});
+		});
+
+		describe('out-of-bounds Argon2id parameters', () => {
+			it('rejects a keystore whose kdfparams.m exceeds the allowed bound', async () => {
+				const keystore = {
+					version: 1,
+					address:
+						'Q5f279a4668d52e544a5fdf0c6212236c693e7b760377adc0754066a409c30effd2472bf229ea506ea693c01386b8a2b73c22d7e375e20e1ce8d104dade60ff2a',
+					crypto: {
+						ciphertext:
+							'c42ac873cf649cf61970f0ec1b382d25495a77ed4865f1366cfa10b2560514b0b618ea6e2c83c1473baf619897c9495b8e97e4c16e0cc5c92c00d2c3f3940d2e40a460',
+						cipherparams: { iv: 'f59185068e4cbe729dd0000c' },
+						cipher: 'aes-256-gcm',
+						kdf: 'argon2id',
+						kdfparams: {
+							// exceeds ARGON2ID_BOUNDS.m.max (1_048_576)
+							m: 2_097_152,
+							t: 8,
+							p: 1,
+							dklen: 32,
+							salt: '6140afd0defbcc3fe45d2166969adf5fb45479da880c6cc10d4510b5dfa9908b',
+						},
+					},
+					id: 'e59590d4-3ef3-4a8d-829e-790b83bbf4da7',
+				};
+
+				// Must be rejected by the bounds check before any key derivation.
+				await expect(
+					decrypt(keystore as unknown as KeyStore, '1234567890'),
+				).rejects.toThrow(/Argon2id m out of range/);
 			});
 		});
 	});

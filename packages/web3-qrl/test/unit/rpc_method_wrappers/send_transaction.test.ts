@@ -19,10 +19,12 @@ import { format } from '@theqrl/web3-utils';
 import { DEFAULT_RETURN_FORMAT, QRL_DATA_FORMAT, Web3QRLExecutionAPI } from '@theqrl/web3-types';
 import { isNullish } from '@theqrl/web3-validator';
 import { qrlRpcMethods } from '@theqrl/web3-rpc-methods';
+import { ContractExecutionError, InvalidResponseError } from '@theqrl/web3-errors';
 
 import { sendTransaction } from '../../../src/rpc_method_wrappers';
 import { formatTransaction } from '../../../src';
 import * as GetTransactionGasPricing from '../../../src/utils/get_transaction_gas_pricing';
+import * as GetTransactionError from '../../../src/utils/get_transaction_error';
 import * as WaitForTransactionReceipt from '../../../src/utils/wait_for_transaction_receipt';
 import * as WatchTransactionForConfirmations from '../../../src/utils/watch_transaction_for_confirmations';
 import {
@@ -301,4 +303,223 @@ describe('sendTransaction', () => {
 			);
 		},
 	);
+
+	// Regression harness for audit finding C2: pre-flight work (formatting, gas
+	// pricing) used to run outside the executor's try/catch, so a gas pricing
+	// failure produced an unhandled rejection and a PromiEvent that never settled.
+	describe('pre-flight failures (audit finding C2)', () => {
+		// A transaction with no gas pricing, so getTransactionGasPricing is reached.
+		const gasPricelessTransaction = {
+			from: 'Q0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000cfec0cbee560cbd6ed89580204af71448f1fb8c5',
+			to: 'Q0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000f02c1c8e6114b1dbe8937a39260b5b0a374432bb',
+			gas: '0xc350',
+			nonce: '0x15',
+			value: '0xf3dbb76162000',
+			type: '0x2',
+			chainId: '0x1',
+		};
+		const sendOptions = { checkRevertBeforeSending: false };
+
+		const NOT_SETTLED = Symbol('NOT_SETTLED');
+
+		// Races the PromiEvent against a bounded sentinel, so "never settles" fails
+		// the assertion rather than silently blocking until the jest timeout.
+		const settleWithin = async (start: () => Promise<unknown>, ms = 250) => {
+			let timer: ReturnType<typeof setTimeout> | undefined;
+			try {
+				return await Promise.race([
+					start().then(
+						value => ({ status: 'fulfilled' as const, value, reason: undefined }),
+						(reason: unknown) => ({
+							status: 'rejected' as const,
+							value: undefined,
+							reason,
+						}),
+					),
+					new Promise<typeof NOT_SETTLED>(resolve => {
+						timer = setTimeout(() => resolve(NOT_SETTLED), ms);
+					}),
+				]);
+			} finally {
+				if (timer !== undefined) clearTimeout(timer);
+			}
+		};
+
+		const countErrorEmits = (emitSpy: jest.SpyInstance) =>
+			emitSpy.mock.calls.filter(call => call[0] === 'error').length;
+
+		// Lets any would-be unhandled rejection reach the process handler.
+		const flushMacrotasks = async () => {
+			for (let i = 0; i < 3; i += 1) {
+				// eslint-disable-next-line no-await-in-loop
+				await new Promise(resolve => {
+					setImmediate(resolve);
+				});
+			}
+		};
+
+		let unhandledRejections: unknown[];
+		const onUnhandledRejection = (reason: unknown) => unhandledRejections.push(reason);
+
+		beforeEach(() => {
+			unhandledRejections = [];
+			process.on('unhandledRejection', onUnhandledRejection);
+		});
+
+		afterEach(() => {
+			process.off('unhandledRejection', onUnhandledRejection);
+		});
+
+		const gasPricingError = () =>
+			new InvalidResponseError({
+				jsonrpc: '2.0',
+				id: 1,
+				error: { code: -32000, message: 'gas pricing unavailable' },
+			});
+
+		it('rejects (rather than hanging) when getTransactionGasPricing rejects', async () => {
+			const error = gasPricingError();
+			jest.spyOn(GetTransactionGasPricing, 'getTransactionGasPricing').mockRejectedValue(
+				error,
+			);
+
+			const outcome = await settleWithin(async () =>
+				sendTransaction(
+					web3Context,
+					gasPricelessTransaction,
+					DEFAULT_RETURN_FORMAT,
+					sendOptions,
+				),
+			);
+
+			expect(outcome).not.toBe(NOT_SETTLED);
+			expect(outcome).toMatchObject({ status: 'rejected' });
+			expect((outcome as { reason: unknown }).reason).toBe(error);
+		});
+
+		it('emits exactly one error event for a gas pricing failure when subscribed', async () => {
+			const error = gasPricingError();
+			jest.spyOn(GetTransactionGasPricing, 'getTransactionGasPricing').mockRejectedValue(
+				error,
+			);
+
+			const promiEvent = sendTransaction(
+				web3Context,
+				gasPricelessTransaction,
+				DEFAULT_RETURN_FORMAT,
+				sendOptions,
+			);
+			const emitSpy = jest.spyOn(promiEvent, 'emit');
+			const errorListener = jest.fn();
+			promiEvent.on('error', errorListener);
+
+			const outcome = await settleWithin(async () => promiEvent);
+			await flushMacrotasks();
+
+			expect(outcome).not.toBe(NOT_SETTLED);
+			expect((outcome as { reason: unknown }).reason).toBe(error);
+			expect(errorListener).toHaveBeenCalledTimes(1);
+			expect(errorListener).toHaveBeenCalledWith(error);
+			expect(countErrorEmits(emitSpy)).toBe(1);
+		});
+
+		it('emits no error event for a gas pricing failure when not subscribed', async () => {
+			const error = gasPricingError();
+			jest.spyOn(GetTransactionGasPricing, 'getTransactionGasPricing').mockRejectedValue(
+				error,
+			);
+
+			const promiEvent = sendTransaction(
+				web3Context,
+				gasPricelessTransaction,
+				DEFAULT_RETURN_FORMAT,
+				sendOptions,
+			);
+			const emitSpy = jest.spyOn(promiEvent, 'emit');
+
+			const outcome = await settleWithin(async () => promiEvent);
+			await flushMacrotasks();
+
+			expect(outcome).not.toBe(NOT_SETTLED);
+			expect((outcome as { reason: unknown }).reason).toBe(error);
+			expect(countErrorEmits(emitSpy)).toBe(0);
+		});
+
+		it('rejects without emitting error for an unclassified gas pricing failure', async () => {
+			// The Promise rejection is authoritative; the error event is supplementary
+			// and gated on the same typed-error classification used elsewhere.
+			const error = new Error('boom');
+			jest.spyOn(GetTransactionGasPricing, 'getTransactionGasPricing').mockRejectedValue(
+				error,
+			);
+
+			const promiEvent = sendTransaction(
+				web3Context,
+				gasPricelessTransaction,
+				DEFAULT_RETURN_FORMAT,
+				sendOptions,
+			);
+			const emitSpy = jest.spyOn(promiEvent, 'emit');
+			const errorListener = jest.fn();
+			promiEvent.on('error', errorListener);
+
+			const outcome = await settleWithin(async () => promiEvent);
+			await flushMacrotasks();
+
+			expect(outcome).not.toBe(NOT_SETTLED);
+			expect((outcome as { reason: unknown }).reason).toBe(error);
+			expect(errorListener).not.toHaveBeenCalled();
+			expect(countErrorEmits(emitSpy)).toBe(0);
+		});
+
+		it('settles exactly once when the error normalization itself throws', async () => {
+			// Exercises the last-resort guard on the executor: the catch block calls
+			// getTransactionError, which can itself reject.
+			web3Context.handleRevert = true;
+			const normalizationError = new Error('getTransactionError failed');
+			jest.spyOn(GetTransactionGasPricing, 'getTransactionGasPricing').mockRejectedValue(
+				new ContractExecutionError({ code: -32000, message: 'execution reverted' }),
+			);
+			jest.spyOn(GetTransactionError, 'getTransactionError').mockRejectedValue(
+				normalizationError,
+			);
+
+			const promiEvent = sendTransaction(
+				web3Context,
+				gasPricelessTransaction,
+				DEFAULT_RETURN_FORMAT,
+				sendOptions,
+			);
+			const emitSpy = jest.spyOn(promiEvent, 'emit');
+			const errorListener = jest.fn();
+			promiEvent.on('error', errorListener);
+
+			const outcome = await settleWithin(async () => promiEvent);
+			await flushMacrotasks();
+			web3Context.handleRevert = false;
+
+			expect(outcome).not.toBe(NOT_SETTLED);
+			expect((outcome as { reason: unknown }).reason).toBe(normalizationError);
+			expect(countErrorEmits(emitSpy)).toBe(0);
+			expect(errorListener).not.toHaveBeenCalled();
+		});
+
+		it('reports no unhandledRejection for a gas pricing failure', async () => {
+			jest.spyOn(GetTransactionGasPricing, 'getTransactionGasPricing').mockRejectedValue(
+				gasPricingError(),
+			);
+
+			const promiEvent = sendTransaction(
+				web3Context,
+				gasPricelessTransaction,
+				DEFAULT_RETURN_FORMAT,
+				sendOptions,
+			);
+			// The caller's `await` is the only consumer; nothing else may leak.
+			await expect(promiEvent).rejects.toThrow('gas pricing unavailable');
+			await flushMacrotasks();
+
+			expect(unhandledRejections).toStrictEqual([]);
+		});
+	});
 });

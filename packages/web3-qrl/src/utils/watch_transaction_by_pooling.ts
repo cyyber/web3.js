@@ -57,7 +57,10 @@ export const watchTransactionByPolling = <
 	// in at least one block, so we start with 1
 	let confirmations = 1;
 	const intervalId = setInterval(() => {
-		(async () => {
+		// Attach error handling to the async work so that a failed block fetch does not
+		// turn into an unhandled promise rejection that loops forever. On a fatal error we
+		// stop the poller (clearInterval) and surface the error via the promiEvent.
+		void (async () => {
 			if (confirmations >= web3Context.transactionConfirmationBlocks)
 				clearInterval(intervalId);
 
@@ -81,6 +84,13 @@ export const watchTransactionByPolling = <
 					),
 				});
 			}
-		})() as unknown;
+		})().catch(error => {
+			// Stop polling on a fatal error to avoid an infinite loop of unhandled rejections.
+			clearInterval(intervalId);
+			transactionPromiEvent.emit(
+				'error',
+				error as Web3PromiEventEventTypeBase<ReturnFormat>['error'],
+			);
+		});
 	}, web3Context.transactionReceiptPollingInterval ?? web3Context.transactionPollingInterval);
 };

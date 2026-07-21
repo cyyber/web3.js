@@ -41,6 +41,8 @@ import {
 	RpcError,
 	ResourceUnavailableError,
 	ResponseError,
+	ProviderError,
+	ContractExecutionError,
 } from '@theqrl/web3-errors';
 import HttpProvider from '@theqrl/web3-providers-http';
 import WSProvider from '@theqrl/web3-providers-ws';
@@ -790,6 +792,211 @@ describe('Web3RequestManager', () => {
 				await expect(manager.send(request)).resolves.toBeNull();
 				expect(myProvider.request).toHaveBeenCalledTimes(1);
 				expect(myProvider.request).toHaveBeenCalledWith(payload);
+			});
+		});
+
+		describe('legacy send provider', () => {
+			it('should reject (not raise an uncaught exception) when provider returns a nullish response', async () => {
+				const manager = new Web3RequestManager();
+				// A provider that follows the legacy `send(payload, callback)` interface and
+				// invokes its callback asynchronously (as real providers do) with a nullish
+				// response. Previously the nullish branch used `throw`, which — from inside the
+				// async callback — became an uncaught exception and left the caller's Promise
+				// pending forever. It must now settle as a single rejected Promise.
+				const myProvider = {
+					send: jest.fn().mockImplementation((_payload, cb) => {
+						setImmediate(() => {
+							// Explicitly used for test case
+							// eslint-disable-next-line no-null/no-null
+							cb(undefined, null);
+						});
+					}),
+				} as any;
+
+				jest.spyOn(manager, 'provider', 'get').mockReturnValue(myProvider);
+
+				await expect(manager.send(request)).rejects.toThrow(
+					'Got a "nullish" response from provider.',
+				);
+				expect(myProvider.send).toHaveBeenCalledTimes(1);
+			});
+		});
+
+		// A provider (or any code on its path) can throw or reject with a value that is not
+		// a JSON-RPC response at all. Such a value used to be cast to `JsonRpcResponse` and
+		// processed as one, which mislabelled or entirely masked the real failure. It must
+		// now surface as the real error instead.
+		describe('provider throws a value that is not a JSON-RPC response', () => {
+			it('should surface the original Error when a web3 provider throws a TypeError', async () => {
+				jest.spyOn(utils, 'isWeb3Provider').mockReturnValue(true);
+
+				const manager = new Web3RequestManager();
+				const thrown = new TypeError('provider is not a function');
+				const myProvider = {
+					request: jest.fn().mockImplementation(async () => Promise.reject(thrown)),
+				} as any;
+
+				jest.spyOn(manager, 'provider', 'get').mockReturnValue(myProvider);
+
+				await expect(manager.send(request)).rejects.toThrow(thrown);
+				// The real error, not something wearing a JSON-RPC response's clothes.
+				await expect(manager.send(request)).rejects.toBeInstanceOf(TypeError);
+				await expect(manager.send(request)).rejects.not.toBeInstanceOf(ResponseError);
+			});
+
+			it('should reject with a ProviderError preserving the original when a web3 provider throws a string', async () => {
+				jest.spyOn(utils, 'isWeb3Provider').mockReturnValue(true);
+
+				const manager = new Web3RequestManager();
+				const myProvider = {
+					// Previously this string was cast to a response and reached
+					// `new ResponseError('boom', ...)`, which threw an unrelated
+					// "Cannot use 'in' operator" TypeError, masking the failure entirely.
+					request: jest.fn().mockImplementation(async () => Promise.reject('boom')),
+				} as any;
+
+				jest.spyOn(manager, 'provider', 'get').mockReturnValue(myProvider);
+
+				let err: any;
+				try {
+					await manager.send(request);
+				} catch (error) {
+					err = error;
+				}
+
+				expect(err).toBeInstanceOf(ProviderError);
+				expect(err.message).toContain('not a valid JSON-RPC response');
+				expect(err.message).toContain('boom');
+				expect(err.innerError).toBe('boom');
+				expect(err.cause).toBe('boom');
+			});
+
+			it('should reject with a ProviderError preserving the original for an object missing jsonrpc/id', async () => {
+				jest.spyOn(utils, 'isWeb3Provider').mockReturnValue(true);
+
+				const manager = new Web3RequestManager();
+				const thrown = { result: 'not-a-response' };
+				const myProvider = {
+					request: jest.fn().mockImplementation(async () => Promise.reject(thrown)),
+				} as any;
+
+				jest.spyOn(manager, 'provider', 'get').mockReturnValue(myProvider);
+
+				let err: any;
+				try {
+					await manager.send(request);
+				} catch (error) {
+					err = error;
+				}
+
+				expect(err).toBeInstanceOf(ProviderError);
+				expect(err.message).toContain('not a valid JSON-RPC response');
+				expect(err.innerError).toBe(thrown);
+				expect(err.cause).toBe(thrown);
+			});
+
+			it('should still surface a revert thrown by a web3 provider as a ContractExecutionError', async () => {
+				jest.spyOn(utils, 'isWeb3Provider').mockReturnValue(true);
+
+				const manager = new Web3RequestManager();
+				const myProvider = {
+					request: jest
+						.fn()
+						.mockImplementation(async () =>
+							Promise.reject(new Error('execution reverted')),
+						),
+				} as any;
+
+				jest.spyOn(manager, 'provider', 'get').mockReturnValue(myProvider);
+
+				await expect(manager.send(request)).rejects.toBeInstanceOf(ContractExecutionError);
+			});
+
+			it('should surface the original Error when an eip1193 provider rejects with a TypeError', async () => {
+				jest.spyOn(utils, 'isEIP1193Provider').mockReturnValue(true);
+
+				const manager = new Web3RequestManager();
+				const thrown = new TypeError('Failed to fetch');
+				const myProvider = {
+					request: jest.fn().mockImplementation(async () => Promise.reject(thrown)),
+				} as any;
+
+				jest.spyOn(manager, 'provider', 'get').mockReturnValue(myProvider);
+
+				await expect(manager.send(request)).rejects.toBe(thrown);
+			});
+
+			it('should reject with a ProviderError when a legacy request provider calls back with a TypeError', async () => {
+				const manager = new Web3RequestManager();
+				const thrown = new TypeError('socket hang up');
+				const myProvider = {
+					request: jest
+						.fn()
+						.mockImplementation((_payload, cb: (error?: any, data?: any) => void) => {
+							cb(thrown);
+						}),
+				} as any;
+
+				jest.spyOn(manager, 'provider', 'get').mockReturnValue(myProvider);
+
+				await expect(manager.send(request)).rejects.toBe(thrown);
+			});
+
+			it('should reject with a ProviderError when a legacy send provider calls back with a string', async () => {
+				const manager = new Web3RequestManager();
+				const myProvider = {
+					send: jest.fn().mockImplementation((_payload, cb) => {
+						setImmediate(() => cb('kaboom'));
+					}),
+				} as any;
+
+				jest.spyOn(manager, 'provider', 'get').mockReturnValue(myProvider);
+
+				let err: any;
+				try {
+					await manager.send(request);
+				} catch (error) {
+					err = error;
+				}
+
+				expect(err).toBeInstanceOf(ProviderError);
+				expect(err.message).toContain('kaboom');
+				expect(err.innerError).toBe('kaboom');
+			});
+
+			it('should surface the original Error when a legacy sendAsync provider rejects with an Error', async () => {
+				const manager = new Web3RequestManager();
+				const thrown = new Error('ECONNRESET');
+				const myProvider = {
+					sendAsync: jest.fn().mockImplementation(async () => Promise.reject(thrown)),
+				} as any;
+
+				jest.spyOn(manager, 'provider', 'get').mockReturnValue(myProvider);
+
+				await expect(manager.send(request)).rejects.toBe(thrown);
+			});
+
+			it('should reject with an InvalidResponseError (not a TypeError) for an error response without a message', async () => {
+				// A well-formed JSON-RPC error response whose `error` object carries no
+				// `message`. The revert check used to read `error.message.includes(...)`
+				// unguarded and blew up with an unrelated TypeError.
+				const errorResponseWithoutMessage = {
+					id: 1,
+					jsonrpc: '2.0' as JsonRpcIdentifier,
+					error: { code: -1 },
+				};
+				const manager = new Web3RequestManager();
+				const myProvider = {
+					request: jest
+						.fn()
+						.mockImplementation((_payload, cb: (error?: any, data?: any) => void) => {
+							cb(errorResponseWithoutMessage);
+						}),
+				} as any;
+
+				jest.spyOn(manager, 'provider', 'get').mockReturnValue(myProvider);
+
+				await expect(manager.send(request)).rejects.toBeInstanceOf(InvalidResponseError);
 			});
 		});
 	});

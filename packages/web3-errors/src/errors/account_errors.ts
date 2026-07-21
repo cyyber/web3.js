@@ -27,6 +27,7 @@ import {
 	ERR_IV_LENGTH,
 	ERR_INVALID_SEED,
 	ERR_SEED_LENGTH,
+	ERR_INVALID_KEYSTORE,
 } from '../error_codes.js';
 import { BaseWeb3Error } from '../web3_error_base.js';
 
@@ -90,5 +91,14 @@ export class InvalidPublicKeyError extends BaseWeb3Error {
 	public code = ERR_INVALID_PUBLIC_KEY;
 	public constructor() {
 		super(`Invalid Public Key, Not a valid string or uint8Array`);
+	}
+}
+
+export class KeyStoreMismatchError extends BaseWeb3Error {
+	public code = ERR_INVALID_KEYSTORE;
+	public constructor(expected: string, actual: string) {
+		super(
+			`Keystore address does not match the decrypted key. Expected "${expected}", derived "${actual}". The keystore may be corrupt or tampered.`,
+		);
 	}
 }

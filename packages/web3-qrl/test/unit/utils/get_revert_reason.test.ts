@@ -17,7 +17,9 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 import { Web3Context } from '@theqrl/web3-core';
 import { DEFAULT_RETURN_FORMAT } from '@theqrl/web3-types';
 
-import * as RpcMethodWrappers from '../../../src/rpc_method_wrappers';
+// `call` now lives in the leaf reader module (get_revert_reason imports it from there), so the
+// spy must target that module — spying on the re-export in rpc_method_wrappers would not intercept.
+import * as RpcMethodWrappersReaders from '../../../src/utils/rpc_method_wrappers_readers';
 import * as GetRevertReason from '../../../src/utils/get_revert_reason';
 import { SimpleRevertAbi } from '../../fixtures/simple_revert';
 
@@ -25,7 +27,7 @@ describe('getRevertReason', () => {
 	const web3Context = new Web3Context();
 
 	it('should use the call rpc wrapper', async () => {
-		const callSpy = jest.spyOn(RpcMethodWrappers, 'call').mockImplementation();
+		const callSpy = jest.spyOn(RpcMethodWrappersReaders, 'call').mockImplementation();
 
 		const transaction = {
 			from: 'Q00000000000000000000000000000000000000000000000000000000000000000000000000000000000000004fec0a51024b13030d26e70904b066c6d41157a5',
@@ -46,7 +48,7 @@ describe('getRevertReason', () => {
 	});
 
 	it('should return undefined', async () => {
-		jest.spyOn(RpcMethodWrappers, 'call').mockResolvedValueOnce(
+		jest.spyOn(RpcMethodWrappersReaders, 'call').mockResolvedValueOnce(
 			'0x000000000000000000000000000000000000000000000000000000000000000a',
 		);
 
@@ -76,7 +78,7 @@ describe('getRevertReason', () => {
 		const parseTransactionErrorSpy = jest
 			.spyOn(GetRevertReason, 'parseTransactionError')
 			.mockImplementation();
-		jest.spyOn(RpcMethodWrappers, 'call').mockRejectedValueOnce(expectedError);
+		jest.spyOn(RpcMethodWrappersReaders, 'call').mockRejectedValueOnce(expectedError);
 
 		const transaction = {
 			from: 'Q00000000000000000000000000000000000000000000000000000000000000000000000000000000000000004fec0a51024b13030d26e70904b066c6d41157a5',
@@ -104,7 +106,7 @@ describe('getRevertReason', () => {
 		const parseTransactionErrorSpy = jest
 			.spyOn(GetRevertReason, 'parseTransactionError')
 			.mockImplementation();
-		jest.spyOn(RpcMethodWrappers, 'call').mockRejectedValueOnce(expectedError);
+		jest.spyOn(RpcMethodWrappersReaders, 'call').mockRejectedValueOnce(expectedError);
 
 		const transaction = {
 			from: 'Q00000000000000000000000000000000000000000000000000000000000000000000000000000000000000004fec0a51024b13030d26e70904b066c6d41157a5',

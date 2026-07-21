@@ -93,8 +93,5 @@ export const mockRpcResponse =
  *     - address
  *     - message
  */
-type TestData = [string, [Address, Eip712TypedData, boolean]];
-export const testData: TestData[] = [
-	['useLegacy = false', [address, typedData, false]],
-	['useLegacy = true', [address, typedData, true]],
-];
+type TestData = [string, [Address, Eip712TypedData]];
+export const testData: TestData[] = [['typed data', [address, typedData]]];

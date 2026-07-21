@@ -18,6 +18,7 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 // Response error
 export const ERR_RESPONSE = 100;
 export const ERR_INVALID_RESPONSE = 101;
+export const ERR_RESPONSE_TOO_LARGE = 102;
 
 // Generic errors
 export const ERR_PARAM = 200;
@@ -103,6 +104,9 @@ export const ERR_INVALID_PROVIDER = 601;
 export const ERR_INVALID_CLIENT = 602;
 export const ERR_SUBSCRIPTION = 603;
 export const ERR_WS_PROVIDER = 604;
+export const ERR_REQUEST_TIMEOUT = 605;
+export const ERR_REQUEST_QUEUE_FULL = 606;
+export const ERR_PROVIDER_CAPABILITY = 607;
 
 // Account error codes
 export const ERR_UNSUPPORTED_KDF = 703;

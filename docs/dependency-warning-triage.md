@@ -21,20 +21,21 @@ not block a release solely because a known warning below is still present.
 - Migrated linting to ESLint 10 flat config and removed the deprecated
   `eslint-plugin-deprecation` rule because its latest release does not declare
   compatibility with ESLint 10.
-- The npm registry's latest ESLint release observed during the migration was
-  `10.3.0`, but it was published on 2026-05-01 and is inside the seven-day
-  `minimumReleaseAge` quarantine. The lockfile therefore uses the newest
-  policy-eligible ESLint release, `10.2.1`.
+- ESLint tracks the newest release that is outside the seven-day
+  `minimumReleaseAge` quarantine rather than the newest release on the registry.
+  The pinned version lives in the workspace manifests (root `package.json` and
+  each package's `devDependencies`), which are the source of truth; it is not
+  restated here because it moves every time the quarantine window clears.
 
 ## Accepted For The Current Lockfile
 
 - Some release-tool transitive warnings are inherited from
   `multi-semantic-release`, `semantic-release`, conventional-changelog tooling,
-  and the current docs/build stack. They remain acceptable while the production
-  high/critical audit gate is green.
-- `@typescript-eslint` is locked at `8.59.0` and `globals` at `17.5.0` for the
-  same reason: the newest registry releases observed on 2026-05-01 were still
-  inside the seven-day quarantine window.
+  and the current docs/build stack. They remain acceptable while the
+  high/critical audit gate (`pnpm run audit:supply-chain`) is green.
+- `@typescript-eslint` and `globals` follow the same rule as ESLint above: they
+  track the newest release outside the quarantine window, and the manifests —
+  not this document — record which version that currently is.
 - ESLint 10 reports additional type-safety and stale-disable warnings. These
   are tracked as cleanup debt, not release blockers for this tooling migration,
   because `pnpm run lint` passes with zero errors across all package/tool

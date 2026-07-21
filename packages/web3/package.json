@@ -20,7 +20,7 @@
 		"directory": "packages/web3"
 	},
 	"engines": {
-		"node": ">=20"
+		"node": ">=20.19.0"
 	},
 	"author": "The QRL Contributors",
 	"browser": "./dist/web3.min.js",

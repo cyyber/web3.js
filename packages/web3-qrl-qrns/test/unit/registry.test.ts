@@ -24,6 +24,10 @@ describe('registry', () => {
 	let object: Web3ContextObject;
 	let registry: Registry;
 	const mockAddress = 'Q00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000';
+	// A structurally valid, non-zero QRL address (Q + 128 hex chars).
+	const nonZeroAddress = `Q${'0'.repeat(127)}1`;
+	// The QRL zero address (Q + 128 zeros) — must be rejected as a resolver.
+	const zeroResolverAddress = `Q${'0'.repeat(128)}`;
 	const QRNS_NAME = 'web3js.qrl';
 
 	beforeAll(() => {
@@ -71,6 +75,23 @@ describe('registry', () => {
 			}).rejects.toThrow();
 			expect(getOwnerMock).toHaveBeenCalledWith(namehash(QRNS_NAME));
 			expect(call).toHaveBeenCalled();
+		});
+		it('getOwner surfaces a non-empty, cause-preserving error', async () => {
+			const underlying = new Error('underlying call failure');
+			// Reject asynchronously so the failure only surfaces if the call is
+			// actually awaited inside the try/catch.
+			const call = jest
+				.spyOn({ call: async () => undefined }, 'call')
+				.mockRejectedValue(underlying);
+
+			jest.spyOn(registry['contract'].methods, 'owner').mockReturnValue({
+				call,
+			} as unknown as NonPayableMethodObject<any, any>);
+
+			await expect(registry.getOwner(QRNS_NAME)).rejects.toMatchObject({
+				message: expect.stringMatching(/.+/),
+				innerError: underlying,
+			});
 		});
 	});
 
@@ -147,12 +168,12 @@ describe('registry', () => {
 				.spyOn(
 					{
 						call: async () => {
-							return mockAddress;
+							return nonZeroAddress;
 						},
 					},
 					'call',
 				)
-				.mockReturnValue(Promise.resolve(mockAddress));
+				.mockReturnValue(Promise.resolve(nonZeroAddress));
 
 			const resolverMock = jest
 				.spyOn(registry['contract'].methods, 'resolver')
@@ -161,6 +182,33 @@ describe('registry', () => {
 				} as unknown as NonPayableMethodObject<any, any>);
 
 			await registry.getResolver(QRNS_NAME);
+			expect(resolverMock).toHaveBeenCalledWith(namehash(QRNS_NAME));
+			expect(call).toHaveBeenCalled();
+		});
+
+		it('resolver (rejects a zero resolver address)', async () => {
+			// A real QRL zero address (Q + 128 zeros) is structurally valid but must
+			// be rejected by the zero-resolver guard.
+			const call = jest
+				.spyOn(
+					{
+						call: async () => {
+							return zeroResolverAddress;
+						},
+					},
+					'call',
+				)
+				.mockReturnValue(Promise.resolve(zeroResolverAddress));
+
+			const resolverMock = jest
+				.spyOn(registry['contract'].methods, 'resolver')
+				.mockReturnValue({
+					call,
+				} as unknown as NonPayableMethodObject<any, any>);
+
+			await expect(registry.getResolver(QRNS_NAME)).rejects.toThrow(
+				'QRNS registry returned zero resolver address',
+			);
 			expect(resolverMock).toHaveBeenCalledWith(namehash(QRNS_NAME));
 			expect(call).toHaveBeenCalled();
 		});

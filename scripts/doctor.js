@@ -8,9 +8,18 @@ const root = path.resolve(__dirname, '..');
 const failures = [];
 const warnings = [];
 
-const expectedNodeRange = '>=20';
+const expectedNodeFloor = '20.19.0';
+const expectedNodeRange = `>=${expectedNodeFloor}`;
 const expectedPackageManager = 'pnpm@10.27.0';
 const expectedPnpmMajor = '10.';
+
+// The supply-chain gate must run the same scanner locally and in CI. The image
+// digest is what `pnpm run audit:supply-chain` executes; the version string is
+// what the pinned trivy-action step in ci.yml is told to install. Bump all three
+// together — the checks below fail if any of them stops agreeing.
+const expectedTrivyVersion = '0.70.0';
+const expectedTrivyImage =
+	'ghcr.io/aquasecurity/trivy:0.70.0@sha256:be1190afcb28352bfddc4ddeb71470835d16462af68d310f9f4bca710961a41e';
 
 const isWindows = process.platform === 'win32';
 const localBin = name => path.join(root, 'node_modules', '.bin', `${name}${isWindows ? '.cmd' : ''}`);
@@ -68,8 +77,60 @@ function listPackageJsonFiles() {
 	}
 }
 
-const nodeMajor = Number(process.versions.node.split('.')[0]);
-if (!Number.isInteger(nodeMajor) || nodeMajor < 20) {
+// Reads the keys of the `overrides:` block in pnpm-workspace.yaml. Every key is
+// a two-space-indented mapping entry, quoted when it carries a range specifier.
+function listWorkspaceOverrideKeys(workspaceYaml) {
+	const lines = workspaceYaml.split('\n');
+	const start = lines.indexOf('overrides:');
+	if (start === -1) return null;
+
+	const keys = [];
+	for (let index = start + 1; index < lines.length; index += 1) {
+		const line = lines[index];
+		if (line.trim() === '') continue;
+		if (!line.startsWith('  ')) break;
+
+		const match = /^ {2}(?:"([^"]+)"|([^\s"#][^:]*)):/.exec(line);
+		if (match) keys.push(match[1] ?? match[2]);
+	}
+
+	return keys;
+}
+
+// Reads the override keys documented in the generated-by-hand inventory table,
+// which is fenced by HTML markers so this stays a table lookup and not a
+// full-document scan.
+function listDocumentedOverrideKeys(doc) {
+	const start = doc.indexOf('<!-- overrides:start -->');
+	const end = doc.indexOf('<!-- overrides:end -->');
+	if (start === -1 || end === -1 || end < start) return null;
+
+	return doc
+		.slice(start, end)
+		.split('\n')
+		.map(line => /^\|\s*`([^`]+)`\s*\|/.exec(line))
+		.filter(Boolean)
+		.map(match => match[1]);
+}
+
+// Drops any prerelease suffix so nightly/rc builds (23.0.0-nightly...) compare
+// on their numeric release components rather than parsing to NaN.
+const toVersionTuple = version => version.split('-')[0].split('.').map(Number);
+
+function satisfiesFloor(version, floor) {
+	const actual = toVersionTuple(version);
+	const minimum = toVersionTuple(floor);
+	if (actual.length < minimum.length || actual.some(part => !Number.isInteger(part))) return false;
+
+	for (let index = 0; index < minimum.length; index += 1) {
+		if (actual[index] > minimum[index]) return true;
+		if (actual[index] < minimum[index]) return false;
+	}
+
+	return true;
+}
+
+if (!satisfiesFloor(process.versions.node, expectedNodeFloor)) {
 	fail(`Node ${process.versions.node} does not satisfy ${expectedNodeRange}`);
 }
 
@@ -98,6 +159,43 @@ if (!exists('pnpm-workspace.yaml')) {
 	for (const required of ['linkWorkspacePackages: true', 'nodeLinker: hoisted']) {
 		if (!workspaceYaml.includes(required)) fail(`pnpm-workspace.yaml must include ${required}`);
 	}
+
+	// docs/supply-chain-security.md is a control document, so its override
+	// inventory is checked against the executable config rather than trusted.
+	const overrideKeys = listWorkspaceOverrideKeys(workspaceYaml);
+	if (!overrideKeys) {
+		fail('pnpm-workspace.yaml must declare an overrides block');
+	} else if (!exists('docs/supply-chain-security.md')) {
+		fail('Missing docs/supply-chain-security.md');
+	} else {
+		const documentedKeys = listDocumentedOverrideKeys(readText('docs/supply-chain-security.md'));
+		if (!documentedKeys) {
+			fail('docs/supply-chain-security.md must fence its override inventory with <!-- overrides:start --> and <!-- overrides:end -->');
+		} else {
+			const undocumented = overrideKeys.filter(key => !documentedKeys.includes(key));
+			const stale = documentedKeys.filter(key => !overrideKeys.includes(key));
+			if (undocumented.length > 0) {
+				fail(`docs/supply-chain-security.md does not document pnpm overrides: ${undocumented.join(', ')}`);
+			}
+			if (stale.length > 0) {
+				fail(`docs/supply-chain-security.md documents pnpm overrides that no longer exist: ${stale.join(', ')}`);
+			}
+		}
+	}
+}
+
+// The supply-chain gate is only reproducible if the local script and the CI step
+// name the same scanner. Both assertions are offline string checks, so they are
+// safe to fail on; scanner availability is checked separately and only warns.
+const auditScript = (rootPackage.scripts && rootPackage.scripts['audit:supply-chain']) || '';
+if (!auditScript.includes(expectedTrivyImage)) {
+	fail(`audit:supply-chain must run the pinned Trivy image ${expectedTrivyImage}`);
+}
+
+if (!exists('.github/workflows/ci.yml')) {
+	fail('Missing .github/workflows/ci.yml');
+} else if (!readText('.github/workflows/ci.yml').includes(`version: v${expectedTrivyVersion}`)) {
+	fail(`.github/workflows/ci.yml must pin the Trivy action to version: v${expectedTrivyVersion} to match pnpm run audit:supply-chain`);
 }
 
 if (!exists('.npmrc')) {
@@ -154,7 +252,16 @@ for (const [name, args] of [
 checkCommand('git', ['--version'], 'git');
 checkCommand('bash', ['--version'], 'bash');
 checkCommand('curl', ['--version'], 'curl', false);
-checkCommand('docker', ['--version'], 'docker', false);
+
+// Advisory only. `pnpm run doctor` is a required step on every CI leg and on
+// machines that never run the supply-chain gate, so a missing scanner must not
+// fail the toolchain check — it only tells you how to get the pinned one.
+const dockerVersion = checkCommand('docker', ['--version'], 'docker', false);
+if (!dockerVersion) {
+	warn(
+		`Supply-chain scanner unavailable: pnpm run audit:supply-chain runs Trivy ${expectedTrivyVersion} from ${expectedTrivyImage} and needs Docker. Install Docker, or install Trivy ${expectedTrivyVersion} yourself and run: trivy fs --scanners vuln --severity HIGH,CRITICAL --exit-code 1 --ignorefile .trivyignore pnpm-lock.yaml`,
+	);
+}
 
 for (const message of warnings) {
 	console.warn(`WARN ${message}`);

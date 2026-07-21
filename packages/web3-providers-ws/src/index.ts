@@ -24,7 +24,12 @@ import {
 	Web3APISpec,
 	Web3ProviderStatus,
 } from '@theqrl/web3-types';
-import { isNullish, ReconnectOptions, SocketProvider } from '@theqrl/web3-utils';
+import {
+	isNullish,
+	ReconnectOptions,
+	SocketProvider,
+	SocketProviderOptions,
+} from '@theqrl/web3-utils';
 import { ConnectionNotOpenError } from '@theqrl/web3-errors';
 
 export { ClientRequestArgs } from 'http';
@@ -83,6 +88,7 @@ export default class WebSocketProvider<
 	 * @param socketPath - The path to the Web Socket.
 	 * @param socketOptions - The options for the Web Socket client.
 	 * @param reconnectOptions - The options for the socket reconnection {@link ReconnectOptions}
+	 * @param providerOptions - Timeout and queue bounds {@link SocketProviderOptions}
 	 */
 	// this constructor is to specify the type for `socketOptions` for a better intellisense.
 	// eslint-disable-next-line no-useless-constructor
@@ -90,8 +96,9 @@ export default class WebSocketProvider<
 		socketPath: string,
 		socketOptions?: ClientOptions | ClientRequestArgs,
 		reconnectOptions?: Partial<ReconnectOptions>,
+		providerOptions?: SocketProviderOptions,
 	) {
-		super(socketPath, socketOptions, reconnectOptions);
+		super(socketPath, socketOptions, reconnectOptions, providerOptions);
 		WebSocketProvider.warnIfCleartext(socketPath);
 	}
 

@@ -16,6 +16,7 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { Web3ContextObject } from '@theqrl/web3-core';
+import { TransactionRevertInstructionError } from '@theqrl/web3-errors';
 import { Contract } from '@theqrl/web3-qrl-contract';
 import { Address } from '@theqrl/web3-types';
 import { isAddressString } from '@theqrl/web3-validator';
@@ -24,8 +25,17 @@ import { PublicResolverAbi } from './abi/qrns/PublicResolver.js';
 import { registryAddresses } from './config.js';
 import { namehash } from './utils.js';
 
-const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
-const QRL_ZERO_ADDRESS = 'Q0000000000000000000000000000000000000000';
+// A QRL address is 'Q' + 128 hex characters, so the zero address has 128 zeros.
+const QRL_ZERO_ADDRESS = `Q${'0'.repeat(128)}`;
+
+// Wrap a failed contract call in a typed error while preserving the original
+// cause (message and error object) instead of discarding it in an empty Error.
+const wrapContractCallError = (error: unknown): Error => {
+	const cause = error instanceof Error ? error : new Error(String(error));
+	const revertError = new TransactionRevertInstructionError(cause.message);
+	revertError.innerError = cause;
+	return revertError;
+};
 
 export class Registry {
 	private readonly contract: Contract<typeof QRNSRegistryAbi>;
@@ -43,58 +53,52 @@ export class Registry {
 
 	public async getOwner(name: string) {
 		try {
-			const result = this.contract.methods.owner(namehash(name)).call();
-
-			return result;
+			// Await inside the try so async rejections are actually caught here
+			// rather than bypassing the catch block.
+			return await this.contract.methods.owner(namehash(name)).call();
 		} catch (error) {
-			throw new Error(); // TODO: TransactionRevertInstructionError Needs to be added after web3-qrl call method is implemented
+			throw wrapContractCallError(error);
 		}
 	}
 
 	public async getTTL(name: string) {
 		try {
-			return this.contract.methods.ttl(namehash(name)).call();
+			return await this.contract.methods.ttl(namehash(name)).call();
 		} catch (error) {
-			throw new Error(); // TODO: TransactionRevertInstructionError Needs to be added after web3-qrl call method is implemented
+			throw wrapContractCallError(error);
 		}
 	}
 
 	public async recordExists(name: string) {
 		try {
-			const promise = this.contract.methods.recordExists(namehash(name)).call();
-
-			return promise;
+			return await this.contract.methods.recordExists(namehash(name)).call();
 		} catch (error) {
-			throw new Error(); // TODO: TransactionRevertInstructionError Needs to be added after web3-qrl call method is implemented
+			throw wrapContractCallError(error);
 		}
 	}
 
 	public async getResolver(name: string) {
+		let address: unknown;
 		try {
-			return this.contract.methods
-				.resolver(namehash(name))
-				.call()
-				.then(address => {
-					if (typeof address !== 'string') {
-						throw new Error('QRNS registry returned non-string resolver address');
-					}
-					if (!isAddressString(address)) {
-						throw new Error(
-							`QRNS registry returned invalid resolver address: ${address}`,
-						);
-					}
-					const lower = address.toLowerCase();
-					if (
-						lower === ZERO_ADDRESS.toLowerCase() ||
-						lower === QRL_ZERO_ADDRESS.toLowerCase()
-					) {
-						throw new Error('QRNS registry returned zero resolver address');
-					}
-					return new Contract(PublicResolverAbi, address, this.context);
-				});
+			// Await inside the try so a failed/reverted call surfaces a
+			// cause-preserving typed error.
+			address = await this.contract.methods.resolver(namehash(name)).call();
 		} catch (error) {
-			throw new Error(); // TODO: TransactionRevertInstructionError Needs to be added after web3-qrl call method is implemented
+			throw wrapContractCallError(error);
 		}
+
+		// Validation happens outside the try so the specific messages below are
+		// not swallowed/re-wrapped as generic contract-call failures.
+		if (typeof address !== 'string') {
+			throw new Error('QRNS registry returned non-string resolver address');
+		}
+		if (!isAddressString(address)) {
+			throw new Error(`QRNS registry returned invalid resolver address: ${address}`);
+		}
+		if (address.toLowerCase() === QRL_ZERO_ADDRESS.toLowerCase()) {
+			throw new Error('QRNS registry returned zero resolver address');
+		}
+		return new Contract(PublicResolverAbi, address, this.context);
 	}
 
 	public get events() {

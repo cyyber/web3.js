@@ -19,12 +19,9 @@ import { Web3Context } from '@theqrl/web3-core';
 import { TransactionPollingTimeoutError } from '@theqrl/web3-errors';
 import { QRLExecutionAPI, Bytes, TransactionReceipt, DataFormat } from '@theqrl/web3-types';
 
-// eslint-disable-next-line import/no-cycle
 import { pollTillDefined, rejectIfTimeout } from '@theqrl/web3-utils';
-// eslint-disable-next-line import/no-cycle
 import { rejectIfBlockTimeout } from './reject_if_block_timeout.js';
-// eslint-disable-next-line import/no-cycle
-import { getTransactionReceipt } from '../rpc_method_wrappers.js';
+import { getTransactionReceipt } from './rpc_method_wrappers_readers.js';
 
 export async function waitForTransactionReceipt<ReturnFormat extends DataFormat>(
 	web3Context: Web3Context<QRLExecutionAPI>,

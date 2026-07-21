@@ -90,9 +90,5 @@ const typedData = {
  *     - address
  *     - message
  */
-type TestData = [string, [Address, Eip712TypedData, boolean | undefined]];
-export const testData: TestData[] = [
-	['useLegacy = undefined', [address, typedData, undefined]],
-	['useLegacy = false', [address, typedData, false]],
-	['useLegacy = true', [address, typedData, true]],
-];
+type TestData = [string, [Address, Eip712TypedData]];
+export const testData: TestData[] = [['typed data', [address, typedData]]];

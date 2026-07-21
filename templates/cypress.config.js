@@ -14,6 +14,48 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
+const { execFileSync } = require('node:child_process');
+const fs = require('node:fs');
+const path = require('node:path');
+
+// Directory that holds the throwaway TLS fixture used by the Firefox engine.
+// It is git-ignored: no private key is ever committed with this template. The
+// cert/key are generated on demand (see ensureEphemeralCert) so every run uses
+// a fresh, self-signed, short-lived pair scoped to the test host only.
+const certDir = path.join(__dirname, 'cypress', '.cert');
+const certPath = path.join(certDir, 'cert.pem');
+const keyPath = path.join(certDir, 'key.pem');
+
+// Generate a fresh, self-signed cert/key pair for local Firefox system tests if
+// one is not already present. Requires `openssl`, which ships with the Firefox
+// test toolchain. The pair is disposable and must not be committed.
+function ensureEphemeralCert() {
+	if (fs.existsSync(certPath) && fs.existsSync(keyPath)) return;
+
+	fs.mkdirSync(certDir, { recursive: true });
+	execFileSync(
+		'openssl',
+		[
+			'req',
+			'-x509',
+			'-newkey',
+			'rsa:2048',
+			'-nodes',
+			'-days',
+			'7',
+			'-subj',
+			'/O=web3.js system tests/CN=web3.js',
+			'-addext',
+			'subjectAltName=DNS:web3.js',
+			'-keyout',
+			keyPath,
+			'-out',
+			certPath,
+		],
+		{ stdio: 'ignore' },
+	);
+}
+
 const config = {
 	screenshotOnRunFailure: false,
 	video: false,
@@ -29,6 +71,7 @@ const config = {
 };
 
 if (process.env.WEB3_SYSTEM_TEST_ENGINE === 'firefox') {
+	ensureEphemeralCert();
 	const port = parseInt(String(Math.random() * 10000 + 10000));
 	config.clientCertificates = [
 		{

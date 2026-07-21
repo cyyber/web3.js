@@ -35,7 +35,6 @@ import {
 	Numbers,
 	HexStringBytes,
 	AccountObject,
-	Block,
 	FeeHistory,
 	Log,
 	TransactionReceipt,
@@ -66,7 +65,6 @@ import { qrlRpcMethods } from '@theqrl/web3-rpc-methods';
 import { decodeSignedTransaction } from './utils/decode_signed_transaction.js';
 import {
 	accountSchema,
-	blockSchema,
 	feeHistorySchema,
 	logSchema,
 	transactionReceiptSchema,
@@ -79,21 +77,29 @@ import {
 	SendTransactionEvents,
 	SendTransactionOptions,
 } from './types.js';
-// eslint-disable-next-line import/no-cycle
 import { getTransactionFromOrToAttr } from './utils/transaction_builder.js';
 import { formatTransaction } from './utils/format_transaction.js';
-// eslint-disable-next-line import/no-cycle
 import { getTransactionGasPricing } from './utils/get_transaction_gas_pricing.js';
-// eslint-disable-next-line import/no-cycle
 import { trySendTransaction } from './utils/try_send_transaction.js';
-// eslint-disable-next-line import/no-cycle
 import { waitForTransactionReceipt } from './utils/wait_for_transaction_receipt.js';
 import { watchTransactionForConfirmations } from './utils/watch_transaction_for_confirmations.js';
 import { NUMBER_DATA_FORMAT } from './constants.js';
-// eslint-disable-next-line import/no-cycle
 import { getTransactionError } from './utils/get_transaction_error.js';
-// eslint-disable-next-line import/no-cycle
 import { getRevertReason } from './utils/get_revert_reason.js';
+
+// The low-level JSON-RPC *read* wrappers below were moved to a leaf module so the
+// transaction-orchestration utilities imported above can depend on them without
+// forming a source-level import cycle back into this file. They are re-exported
+// here so this module's public export surface remains unchanged.
+export {
+	getBlockNumber,
+	getBlock,
+	getTransactionReceipt,
+	getTransactionCount,
+	estimateGas,
+	getChainId,
+	call,
+} from './utils/rpc_method_wrappers_readers.js';
 
 /**
  * View additional documentations here: {@link Web3QRL.getProtocolVersion}
@@ -133,19 +139,6 @@ export async function getMaxPriorityFeePerGas<ReturnFormat extends DataFormat>(
 
 	return format({ format: 'uint' }, response, returnFormat);
 }
-/**
- * View additional documentations here: {@link Web3QRL.getBlockNumber}
- * @param web3Context ({@link Web3Context}) Web3 configuration object that contains things such as the provider, request manager, wallet, etc.
- */
-export async function getBlockNumber<ReturnFormat extends DataFormat>(
-	web3Context: Web3Context<QRLExecutionAPI>,
-	returnFormat: ReturnFormat,
-) {
-	const response = await qrlRpcMethods.getBlockNumber(web3Context.requestManager);
-
-	return format({ format: 'uint' }, response as Numbers, returnFormat);
-}
-
 /**
  * View additional documentations here: {@link Web3QRL.getBalance}
  * @param web3Context ({@link Web3Context}) Web3 configuration object that contains things such as the provider, request manager, wallet, etc.
@@ -210,37 +203,6 @@ export async function getCode<ReturnFormat extends DataFormat>(
 		blockNumberFormatted,
 	);
 	return format({ format: 'bytes' }, response as Bytes, returnFormat);
-}
-
-/**
- * View additional documentations here: {@link Web3QRL.getBlock}
- * @param web3Context ({@link Web3Context}) Web3 configuration object that contains things such as the provider, request manager, wallet, etc.
- */
-export async function getBlock<ReturnFormat extends DataFormat>(
-	web3Context: Web3Context<QRLExecutionAPI>,
-	block: Bytes | BlockNumberOrTag = web3Context.defaultBlock,
-	hydrated = false,
-	returnFormat: ReturnFormat,
-) {
-	let response;
-	if (isBytes(block)) {
-		const blockHashFormatted = format({ format: 'bytes32' }, block, QRL_DATA_FORMAT);
-		response = await qrlRpcMethods.getBlockByHash(
-			web3Context.requestManager,
-			blockHashFormatted as HexString,
-			hydrated,
-		);
-	} else {
-		const blockNumberFormatted = isBlockTag(block as string)
-			? (block as BlockTag)
-			: format({ format: 'uint' }, block as Numbers, QRL_DATA_FORMAT);
-		response = await qrlRpcMethods.getBlockByNumber(
-			web3Context.requestManager,
-			blockNumberFormatted,
-			hydrated,
-		);
-	}
-	return format(blockSchema, response as unknown as Block, returnFormat);
 }
 
 /**
@@ -354,56 +316,6 @@ export async function getTransactionFromBlock<ReturnFormat extends DataFormat>(
 }
 
 /**
- * View additional documentations here: {@link Web3QRL.getTransactionReceipt}
- * @param web3Context ({@link Web3Context}) Web3 configuration object that contains things such as the provider, request manager, wallet, etc.
- */
-export async function getTransactionReceipt<ReturnFormat extends DataFormat>(
-	web3Context: Web3Context<QRLExecutionAPI>,
-	transactionHash: Bytes,
-	returnFormat: ReturnFormat,
-) {
-	const transactionHashFormatted = format(
-		{ format: 'bytes32' },
-		transactionHash,
-		DEFAULT_RETURN_FORMAT,
-	);
-	const response = await qrlRpcMethods.getTransactionReceipt(
-		web3Context.requestManager,
-		transactionHashFormatted,
-	);
-
-	return isNullish(response)
-		? response
-		: (format(
-				transactionReceiptSchema,
-				response as unknown as TransactionReceipt,
-				returnFormat,
-		  ) as TransactionReceipt);
-}
-
-/**
- * View additional documentations here: {@link Web3QRL.getTransactionCount}
- * @param web3Context ({@link Web3Context}) Web3 configuration object that contains things such as the provider, request manager, wallet, etc.
- */
-export async function getTransactionCount<ReturnFormat extends DataFormat>(
-	web3Context: Web3Context<QRLExecutionAPI>,
-	address: Address,
-	blockNumber: BlockNumberOrTag = web3Context.defaultBlock,
-	returnFormat: ReturnFormat,
-) {
-	const blockNumberFormatted = isBlockTag(blockNumber as string)
-		? (blockNumber as BlockTag)
-		: format({ format: 'uint' }, blockNumber as Numbers, QRL_DATA_FORMAT);
-	const response = await qrlRpcMethods.getTransactionCount(
-		web3Context.requestManager,
-		address,
-		blockNumberFormatted,
-	);
-
-	return format({ format: 'uint' }, response as Numbers, returnFormat);
-}
-
-/**
  * View additional documentations here: {@link Web3QRL.sendTransaction}
  * @param web3Context ({@link Web3Context}) Web3 configuration object that contains things such as the provider, request manager, wallet, etc.
  */
@@ -423,33 +335,70 @@ export function sendTransaction<
 	const promiEvent = new Web3PromiEvent<ResolveType, SendTransactionEvents<ReturnFormat>>(
 		(resolve, reject) => {
 			setImmediate(() => {
-				(async () => {
-					let transactionFormatted = formatTransaction(
-						{
-							...transaction,
-							from: getTransactionFromOrToAttr('from', web3Context, transaction),
-							to: getTransactionFromOrToAttr('to', web3Context, transaction),
-						},
-						QRL_DATA_FORMAT,
-					);
+				// Terminal outcome contract: the PromiEvent settles exactly once and the
+				// `error` event is emitted at most once. Rejecting an already settled
+				// Promise is a no-op, but emitting an event is not, so every terminal
+				// branch goes through one of the guarded helpers below and returns
+				// immediately. The Promise rejection is authoritative; the `error` event
+				// is supplementary and only emitted when a listener is attached.
+				let settled = false;
 
-					if (
-						!options?.ignoreGasPricing &&
-						(isNullish(transaction.maxPriorityFeePerGas) ||
-							isNullish(transaction.maxFeePerGas))
-					) {
-						transactionFormatted = {
-							...transactionFormatted,
-							// TODO maxPriorityFeePerGas, maxFeePerGas
-							// should not be included if undefined, but currently are
-							...(await getTransactionGasPricing(
-								transactionFormatted,
-								web3Context,
-								QRL_DATA_FORMAT,
-							)),
-						};
+				const succeedOnce = (value: ResolveType) => {
+					if (settled) return;
+					settled = true;
+					resolve(value);
+				};
+
+				const failOnce = (
+					error: unknown,
+					errorEvent?: SendTransactionEvents<ReturnFormat>['error'],
+				) => {
+					if (settled) return;
+					settled = true;
+
+					if (!isNullish(errorEvent) && promiEvent.listenerCount('error') > 0) {
+						promiEvent.emit('error', errorEvent);
 					}
+
+					reject(error);
+				};
+
+				const execute = async () => {
+					const formatInputTransaction = () =>
+						formatTransaction(
+							{
+								...transaction,
+								from: getTransactionFromOrToAttr('from', web3Context, transaction),
+								to: getTransactionFromOrToAttr('to', web3Context, transaction),
+							},
+							QRL_DATA_FORMAT,
+						);
+
+					// Declared outside the `try` so the `catch` can still reference it for
+					// typed-error normalization, while formatting and gas pricing - both of
+					// which can throw - stay inside the catchable region.
+					let transactionFormatted: ReturnType<typeof formatInputTransaction> | undefined;
+
 					try {
+						transactionFormatted = formatInputTransaction();
+
+						if (
+							!options?.ignoreGasPricing &&
+							(isNullish(transaction.maxPriorityFeePerGas) ||
+								isNullish(transaction.maxFeePerGas))
+						) {
+							transactionFormatted = {
+								...transactionFormatted,
+								// TODO maxPriorityFeePerGas, maxFeePerGas
+								// should not be included if undefined, but currently are
+								...(await getTransactionGasPricing(
+									transactionFormatted,
+									web3Context,
+									QRL_DATA_FORMAT,
+								)),
+							};
+						}
+
 						if (options.checkRevertBeforeSending !== false) {
 							const reason = await getRevertReason(
 								web3Context,
@@ -466,11 +415,7 @@ export function sendTransaction<
 									reason,
 								);
 
-								if (promiEvent.listenerCount('error') > 0) {
-									promiEvent.emit('error', error);
-								}
-
-								reject(error);
+								failOnce(error, error);
 								return;
 							}
 						}
@@ -542,7 +487,7 @@ export function sendTransaction<
 						}
 
 						if (options?.transactionResolver) {
-							resolve(
+							succeedOnce(
 								options?.transactionResolver(
 									transactionReceiptFormatted,
 								) as unknown as ResolveType,
@@ -556,13 +501,9 @@ export function sendTransaction<
 								options?.contractAbi,
 							);
 
-							if (promiEvent.listenerCount('error') > 0) {
-								promiEvent.emit('error', error);
-							}
-
-							reject(error);
+							failOnce(error, error);
 						} else {
-							resolve(transactionReceiptFormatted as unknown as ResolveType);
+							succeedOnce(transactionReceiptFormatted as unknown as ResolveType);
 						}
 
 						if (promiEvent.listenerCount('confirmation') > 0) {
@@ -591,19 +532,27 @@ export function sendTransaction<
 						}
 
 						if (
-							(_error instanceof InvalidResponseError ||
-								_error instanceof ContractExecutionError ||
-								_error instanceof TransactionRevertWithCustomError ||
-								_error instanceof TransactionRevertedWithoutReasonError ||
-								_error instanceof TransactionRevertInstructionError) &&
-							promiEvent.listenerCount('error') > 0
+							_error instanceof InvalidResponseError ||
+							_error instanceof ContractExecutionError ||
+							_error instanceof TransactionRevertWithCustomError ||
+							_error instanceof TransactionRevertedWithoutReasonError ||
+							_error instanceof TransactionRevertInstructionError
 						) {
-							promiEvent.emit('error', _error);
+							failOnce(_error, _error);
+							return;
 						}
 
-						reject(_error);
+						failOnce(_error);
 					}
-				})() as unknown;
+				};
+
+				// Last-resort guard: `execute` handles its own errors, but if the `catch`
+				// itself throws (e.g. the error normalization RPC call fails) the
+				// PromiEvent must still settle rather than hang with an unhandled
+				// rejection.
+				void execute().catch((error: unknown) => {
+					failOnce(error);
+				});
 			});
 		},
 	);
@@ -624,32 +573,79 @@ export function sendSignedTransaction<
 	returnFormat: ReturnFormat,
 	options: SendSignedTransactionOptions<ResolveType> = { checkRevertBeforeSending: true },
 ): Web3PromiEvent<ResolveType, SendSignedTransactionEvents<ReturnFormat>> {
-	// TODO - Promise returned in function argument where a void return was expected
-	// eslint-disable-next-line @typescript-eslint/no-misused-promises
 	const promiEvent = new Web3PromiEvent<ResolveType, SendSignedTransactionEvents<ReturnFormat>>(
 		(resolve, reject) => {
 			setImmediate(() => {
-				(async () => {
-					// Formatting signedTransaction to be send to RPC endpoint
-					const signedTransactionFormattedHex = format(
-						{ format: 'bytes' },
-						signedTransaction,
-						QRL_DATA_FORMAT,
-					);
-					const unSerializedTransaction = TransactionFactory.fromSerializedData(
-						bytesToUint8Array(hexToBytes(signedTransactionFormattedHex)),
-					);
-					const unSerializedTransactionWithFrom = {
-						...unSerializedTransaction.toJSON(),
-						// Some providers will default `from` to address(0) causing the error
-						// reported from `qrl_call` to not be the reason the user's tx failed
-						// e.g. `qrl_call` will return an Out of Gas error for a failed
-						// smart contract execution contract, because the sender, address(0),
-						// has no balance to pay for the gas of the transaction execution
-						from: unSerializedTransaction.getSenderAddress().toString(),
+				// Terminal outcome contract: the PromiEvent settles exactly once and the
+				// `error` event is emitted at most once. Rejecting an already settled
+				// Promise is a no-op, but emitting an event is not, so every terminal
+				// branch goes through one of the guarded helpers below and returns
+				// immediately. The Promise rejection is authoritative; the `error` event
+				// is supplementary and only emitted when a listener is attached.
+				let settled = false;
+
+				const succeedOnce = (value: ResolveType) => {
+					if (settled) return;
+					settled = true;
+					resolve(value);
+				};
+
+				const failOnce = (
+					error: unknown,
+					errorEvent?: SendSignedTransactionEvents<ReturnFormat>['error'],
+				) => {
+					if (settled) return;
+					settled = true;
+
+					if (!isNullish(errorEvent) && promiEvent.listenerCount('error') > 0) {
+						promiEvent.emit('error', errorEvent);
+					}
+
+					reject(error);
+				};
+
+				const execute = async () => {
+					const deserializeTransaction = () => {
+						// Formatting signedTransaction to be send to RPC endpoint
+						const signedTransactionFormattedHex = format(
+							{ format: 'bytes' },
+							signedTransaction,
+							QRL_DATA_FORMAT,
+						);
+						const unSerializedTransaction = TransactionFactory.fromSerializedData(
+							bytesToUint8Array(hexToBytes(signedTransactionFormattedHex)),
+						);
+
+						return {
+							signedTransactionFormattedHex,
+							unSerializedTransactionWithFrom: {
+								...unSerializedTransaction.toJSON(),
+								// Some providers will default `from` to address(0) causing
+								// the error reported from `qrl_call` to not be the reason
+								// the user's tx failed e.g. `qrl_call` will return an Out
+								// of Gas error for a failed smart contract execution
+								// contract, because the sender, address(0), has no balance
+								// to pay for the gas of the transaction execution
+								from: unSerializedTransaction.getSenderAddress().toString(),
+							},
+						};
 					};
 
+					type UnSerializedTransactionWithFrom = ReturnType<
+						typeof deserializeTransaction
+					>['unSerializedTransactionWithFrom'];
+
+					// Declared outside the `try` so the `catch` can still reference it for
+					// typed-error normalization, while the formatting and deserialization -
+					// both of which can throw - stay inside the catchable region.
+					let unSerializedTransactionWithFrom: UnSerializedTransactionWithFrom | undefined;
+
 					try {
+						const deserialized = deserializeTransaction();
+						const { signedTransactionFormattedHex } = deserialized;
+						unSerializedTransactionWithFrom =
+							deserialized.unSerializedTransactionWithFrom;
+
 						if (options.checkRevertBeforeSending !== false) {
 							const reason = await getRevertReason(
 								web3Context,
@@ -666,11 +662,7 @@ export function sendSignedTransaction<
 									reason,
 								);
 
-								if (promiEvent.listenerCount('error') > 0) {
-									promiEvent.emit('error', error);
-								}
-
-								reject(error);
+								failOnce(error, error);
 								return;
 							}
 						}
@@ -719,7 +711,7 @@ export function sendSignedTransaction<
 						}
 
 						if (options?.transactionResolver) {
-							resolve(
+							succeedOnce(
 								options?.transactionResolver(
 									transactionReceiptFormatted,
 								) as unknown as ResolveType,
@@ -733,13 +725,9 @@ export function sendSignedTransaction<
 								options?.contractAbi,
 							);
 
-							if (promiEvent.listenerCount('error') > 0) {
-								promiEvent.emit('error', error);
-							}
-
-							reject(error);
+							failOnce(error, error);
 						} else {
-							resolve(transactionReceiptFormatted as unknown as ResolveType);
+							succeedOnce(transactionReceiptFormatted as unknown as ResolveType);
 						}
 
 						if (promiEvent.listenerCount('confirmation') > 0) {
@@ -768,19 +756,27 @@ export function sendSignedTransaction<
 						}
 
 						if (
-							(_error instanceof InvalidResponseError ||
-								_error instanceof ContractExecutionError ||
-								_error instanceof TransactionRevertWithCustomError ||
-								_error instanceof TransactionRevertedWithoutReasonError ||
-								_error instanceof TransactionRevertInstructionError) &&
-							promiEvent.listenerCount('error') > 0
+							_error instanceof InvalidResponseError ||
+							_error instanceof ContractExecutionError ||
+							_error instanceof TransactionRevertWithCustomError ||
+							_error instanceof TransactionRevertedWithoutReasonError ||
+							_error instanceof TransactionRevertInstructionError
 						) {
-							promiEvent.emit('error', _error);
+							failOnce(_error, _error);
+							return;
 						}
 
-						reject(_error);
+						failOnce(_error);
 					}
-				})() as unknown;
+				};
+
+				// Last-resort guard: `execute` handles its own errors, but if the `catch`
+				// itself throws (e.g. the error normalization RPC call fails) the
+				// PromiEvent must still settle rather than hang with an unhandled
+				// rejection.
+				void execute().catch((error: unknown) => {
+					failOnce(error);
+				});
 			});
 		},
 	);
@@ -852,56 +848,6 @@ export async function signTransaction<ReturnFormat extends DataFormat>(
 		  };
 }
 
-// TODO Decide what to do with transaction.to
-// https://github.com/theqrl/web3.js/pull/4525#issuecomment-982330076
-/**
- * View additional documentations here: {@link Web3QRL.call}
- * @param web3Context ({@link Web3Context}) Web3 configuration object that contains things such as the provider, request manager, wallet, etc.
- */
-export async function call<ReturnFormat extends DataFormat>(
-	web3Context: Web3Context<QRLExecutionAPI>,
-	transaction: TransactionCall,
-	blockNumber: BlockNumberOrTag = web3Context.defaultBlock,
-	returnFormat: ReturnFormat,
-) {
-	const blockNumberFormatted = isBlockTag(blockNumber as string)
-		? (blockNumber as BlockTag)
-		: format({ format: 'uint' }, blockNumber as Numbers, QRL_DATA_FORMAT);
-
-	const response = await qrlRpcMethods.call(
-		web3Context.requestManager,
-		formatTransaction(transaction, QRL_DATA_FORMAT),
-		blockNumberFormatted,
-	);
-
-	return format({ format: 'bytes' }, response as Bytes, returnFormat);
-}
-
-// TODO - Investigate whether response is padded as 1.x docs suggest
-/**
- * View additional documentations here: {@link Web3QRL.estimateGas}
- * @param web3Context ({@link Web3Context}) Web3 configuration object that contains things such as the provider, request manager, wallet, etc.
- */
-export async function estimateGas<ReturnFormat extends DataFormat>(
-	web3Context: Web3Context<QRLExecutionAPI>,
-	transaction: Transaction,
-	blockNumber: BlockNumberOrTag = web3Context.defaultBlock,
-	returnFormat: ReturnFormat,
-) {
-	const transactionFormatted = formatTransaction(transaction, QRL_DATA_FORMAT);
-	const blockNumberFormatted = isBlockTag(blockNumber as string)
-		? (blockNumber as BlockTag)
-		: format({ format: 'uint' }, blockNumber as Numbers, QRL_DATA_FORMAT);
-
-	const response = await qrlRpcMethods.estimateGas(
-		web3Context.requestManager,
-		transactionFormatted,
-		blockNumberFormatted,
-	);
-
-	return format({ format: 'uint' }, response as Numbers, returnFormat);
-}
-
 // TODO - Add input formatting to filter
 /**
  * View additional documentations here: {@link Web3QRL.getPastLogs}
@@ -938,24 +884,6 @@ export async function getLogs<ReturnFormat extends DataFormat>(
 	});
 
 	return result;
-}
-
-/**
- * View additional documentations here: {@link Web3QRL.getChainId}
- * @param web3Context ({@link Web3Context}) Web3 configuration object that contains things such as the provider, request manager, wallet, etc.
- */
-export async function getChainId<ReturnFormat extends DataFormat>(
-	web3Context: Web3Context<QRLExecutionAPI>,
-	returnFormat: ReturnFormat,
-) {
-	const response = await qrlRpcMethods.getChainId(web3Context.requestManager);
-
-	return format(
-		{ format: 'uint' },
-		// Response is number in hex formatted string
-		response as unknown as number,
-		returnFormat,
-	);
 }
 
 /**
@@ -1058,14 +986,12 @@ export async function signTypedData<ReturnFormat extends DataFormat>(
 	web3Context: Web3Context<QRLExecutionAPI>,
 	address: Address,
 	typedData: Eip712TypedData,
-	useLegacy: boolean,
 	returnFormat: ReturnFormat,
 ) {
 	const response = await qrlRpcMethods.signTypedData(
 		web3Context.requestManager,
 		address,
 		typedData,
-		useLegacy,
 	);
 
 	return format({ format: 'bytes' }, response, returnFormat);

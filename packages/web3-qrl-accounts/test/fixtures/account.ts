@@ -18,7 +18,6 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 import {
 	InvalidKdfError,
 	InvalidPasswordError,
-	IVLengthError,
 	InvalidSeedError,
 	SeedLengthError,
 } from '@theqrl/web3-errors';
@@ -143,10 +142,13 @@ export const validEncryptData: [[any, string | Uint8Array, CipherOptions], KeySt
 			'0x0100005dfdcad4f721fe41d1bdf632de24ba60ba7cfab9c9a79287fa007b6a0dec8200b1fa35d2575bb15bd44d59b8d878828b',
 			'1234567890',
 			{
-				t: 8,
-				m: 4096,
+				// Salt is fixed so kdfparams stay deterministic. The IV is NOT
+				// supplied: encrypt always generates a fresh random one
+				// so the ciphertext is verified via a round-trip decrypt rather
+				// than an exact-value assertion.
+				t: 2,
+				m: 19456,
 				p: 1,
-				iv: hexToBytes('0xf59185068e4cbe729dd0000c'),
 				salt: hexToBytes(
 					'6140afd0defbcc3fe45d2166969adf5fb45479da880c6cc10d4510b5dfa9908b',
 				),
@@ -156,13 +158,16 @@ export const validEncryptData: [[any, string | Uint8Array, CipherOptions], KeySt
 			version: 1,
 			address: 'Q5f279a4668d52e544a5fdf0c6212236c693e7b760377adc0754066a409c30effd2472bf229ea506ea693c01386b8a2b73c22d7e375e20e1ce8d104dade60ff2a',
 			crypto: {
-				ciphertext: 'c42ac873cf649cf61970f0ec1b382d25495a77ed4865f1366cfa10b2560514b0b618ea6e2c83c1473baf619897c9495b8e97e4c16e0cc5c92c00d2c3f3940d2e40a460',
+				// ciphertext + cipherparams.iv are non-deterministic now
+				// (random IV); the encrypt test round-trips through decrypt
+				// instead of asserting these exactly.
+				ciphertext: 'e2bc64af24e98a5405e5481164d353598d5d953d8e55386f2d2f64e43ce091727f07c770679a01df15964ea22fff4da3b5e16bc129efe02c04436925e05a4c70c4a41b',
 				cipherparams: { iv: 'f59185068e4cbe729dd0000c' },
 				cipher: 'aes-256-gcm',
 				kdf: 'argon2id',
 				kdfparams: {
-					m: 4096,
-					t: 8,
+					m: 19456,
+					t: 2,
 					p: 1,
 					dklen: 32,
 					salt: '6140afd0defbcc3fe45d2166969adf5fb45479da880c6cc10d4510b5dfa9908b',
@@ -180,7 +185,6 @@ export const invalidEncryptData: [
 		| InvalidKdfError
 		| InvalidSeedError
 		| InvalidPasswordError
-		| IVLengthError
 	),
 ][] = [
 	[
@@ -208,19 +212,9 @@ export const invalidEncryptData: [
 		['0x01000032c89a84a46859934c42dec330511fd3642e98f00575e74a44c486c8d112dbf19d7129cd61d3e6bd72c4f2f66e5556f3', undefined, {}],
 		new InvalidPasswordError(),
 	],
-	[
-		// iv length is not 12 bytes
-		[
-			'0x010000cea755979937e2dc6137c0e51ba0d1eb2a44920cefffb1a860cf194ea7d23d694045fd2c8a72ec5aecf1e7e5bb591ff2',
-			'123',
-			{
-				m: 8192,
-				iv: hexToBytes('0xbfb43120ae00e9de110f8325143a2709'),
-				salt: undefined,
-			},
-		],
-		new IVLengthError(),
-	],
+	// NOTE: the former IVLengthError case was removed. encrypt no longer
+	// accepts a caller-supplied iv (finding C18a) — it always generates a
+	// fresh random 12-byte IV, so a bad-length iv can no longer be passed.
 ];
 
 export const invalidKeyStore: [[any, string]][] = [
@@ -256,8 +250,8 @@ export const validDecryptData: [[string, string, CipherOptions, string]][] = [
 			'0x0100005dfdcad4f721fe41d1bdf632de24ba60ba7cfab9c9a79287fa007b6a0dec8200b1fa35d2575bb15bd44d59b8d878828b',
 			'1234567890',
 			{
-				t: 8,
-				m: 4096,
+				t: 2,
+				m: 19456,
 				p: 1,
 				iv: hexToBytes('0xf59185068e4cbe729dd0000c'),
 				salt: hexToBytes(
@@ -307,8 +301,8 @@ export const invalidDecryptData: [[any, string], InvalidKdfError | string][] = [
 					cipher: 'aes-256-gcm',
 					kdf: 'argon2id',
 					kdfparams: {
-						m: 4096,
-						t: 8,
+						m: 19456,
+						t: 2,
 						p: 1,
 						dklen: 32,
 						salt: '6140afd0defbcc3fe45d2166969adf5fb45479da880c6cc10d4510b5dfa9908b',

@@ -27,11 +27,9 @@ import {
 import { isNullish } from '@theqrl/web3-validator';
 import { UnsupportedTransactionTypeError } from '@theqrl/web3-errors';
 import { format } from '@theqrl/web3-utils';
-// eslint-disable-next-line import/no-cycle
-import { getBlock } from '../rpc_method_wrappers.js';
+import { getBlock } from './rpc_method_wrappers_readers.js';
 import { InternalTransaction } from '../types.js';
-// eslint-disable-next-line import/no-cycle
-import { getTransactionType } from './transaction_builder.js';
+import { getTransactionType } from './get_transaction_type.js';
 
 // 256-bit unsigned upper bound; on-chain fee fields are uint256.
 const MAX_UINT256 = (BigInt(1) << BigInt(256)) - BigInt(1);

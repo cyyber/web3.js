@@ -92,4 +92,60 @@ describe('watchTransactionByPolling', () => {
 			},
 		);
 	});
+
+	describe('when a block fetch fails during polling', () => {
+		let web3Context: Web3Context<Web3QRLExecutionAPI>;
+
+		beforeEach(() => {
+			web3Context = new Web3Context(
+				// dummy provider that does not supports subscription
+				{
+					request: jest.fn(),
+				},
+			);
+			// keep the poller ticking quickly
+			web3Context.transactionReceiptPollingInterval = 50;
+			web3Context.transactionPollingInterval = 50;
+			// high enough that the "confirmations complete" branch never clears the interval,
+			// so the only way the interval stops is via the error handling under test
+			web3Context.transactionConfirmationBlocks = 24;
+		});
+
+		it('stops the poller (clears the interval) and surfaces the error instead of looping forever', async () => {
+			const pollingError = new Error('polling failure');
+			(qrlRpcMethods.getBlockByNumber as jest.Mock).mockRejectedValue(pollingError);
+
+			const formattedTransactionReceipt = format(
+				transactionReceiptSchema,
+				expectedTransactionReceipt,
+				DEFAULT_RETURN_FORMAT,
+			);
+
+			const emit = jest.fn();
+			// minimal stand-in for the Web3PromiEvent; we only observe the emitted error here
+			const transactionPromiEvent = { emit } as any;
+
+			WatchTransactionByPolling.watchTransactionByPolling({
+				web3Context,
+				transactionReceipt: formattedTransactionReceipt,
+				transactionPromiEvent,
+				returnFormat: DEFAULT_RETURN_FORMAT,
+			});
+
+			// allow at least one interval tick (and its rejection) to be processed
+			await sleep(300);
+			const callsAfterFirstWait = (qrlRpcMethods.getBlockByNumber as jest.Mock).mock.calls
+				.length;
+
+			// the failure must have been surfaced via the promiEvent ...
+			expect(emit).toHaveBeenCalledWith('error', pollingError);
+			expect(callsAfterFirstWait).toBeGreaterThanOrEqual(1);
+
+			// ... and the poller must have stopped: no further polling calls happen
+			await sleep(300);
+			const callsAfterSecondWait = (qrlRpcMethods.getBlockByNumber as jest.Mock).mock.calls
+				.length;
+			expect(callsAfterSecondWait).toBe(callsAfterFirstWait);
+		});
+	});
 });

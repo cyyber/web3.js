@@ -10,6 +10,7 @@
 		"strictNullChecks": false,
 		"resolveJsonModule": false,
 		"target": "es2022",
+		"useDefineForClassFields": false,
 		"lib": ["es2020", "es5"],
 		"noUnusedParameters": false,
 		// "moduleResolution": "node16",

@@ -25,7 +25,7 @@ jest.mock('fs');
 // ts-jest/jest config, `net` is auto-mocked to `{}` and `new net.Socket(...)`
 // throws "Cannot read properties of undefined (reading 'Socket')". Not
 // related to the QRL address migrations; the runtime works fine.
-describe.skip('IPCProvider', () => {
+describe('IPCProvider', () => {
 	let socketPath: string;
 
 	beforeEach(() => {

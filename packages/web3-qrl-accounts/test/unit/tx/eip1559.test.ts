@@ -211,6 +211,37 @@ describe('[FeeMarketEIP1559Transaction]', () => {
 		expect(json.publicKey?.length).toBeGreaterThan(2);
 	});
 
+	it('fromValuesArray() rejects a non-minimal (leading-zero-padded) chainId encoding', () => {
+		const buildValues = (cid: Uint8Array) =>
+			[
+				cid, // chainId
+				Uint8Array.from([]), // nonce
+				Uint8Array.from([]), // maxPriorityFeePerGas
+				Uint8Array.from([]), // maxFeePerGas
+				Uint8Array.from([]), // gasLimit
+				Uint8Array.from([]), // to
+				Uint8Array.from([]), // value
+				Uint8Array.from([]), // data
+				[], // accessList
+				Uint8Array.from([]), // descriptor
+				Uint8Array.from([]), // extraParams
+			] as any;
+
+		// canonical (minimal) chainId encoding 0x04 is accepted
+		expect(() => {
+			FeeMarketEIP1559Transaction.fromValuesArray(buildValues(Uint8Array.from([4])), {
+				common,
+			});
+		}).not.toThrow();
+
+		// non-minimal chainId encoding 0x0004 is rejected
+		expect(() => {
+			FeeMarketEIP1559Transaction.fromValuesArray(buildValues(Uint8Array.from([0, 4])), {
+				common,
+			});
+		}).toThrow();
+	});
+
 	it('Fee validation', () => {
 		expect(() => {
 			FeeMarketEIP1559Transaction.fromTxData(

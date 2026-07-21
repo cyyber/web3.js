@@ -221,8 +221,9 @@ Current controls:
 - pnpm install policy enforces a seven-day minimum release age, blocks exotic
   subdependencies, enables strict dependency-build handling, and uses an
   allowlist for reviewed build-script dependencies.
-- `pnpm audit --prod --audit-level high`, Dependabot, and GitHub Dependency
-  Review gate high/critical dependency changes.
+- `pnpm run audit:supply-chain` (a pinned Trivy lockfile scan failing on
+  `HIGH,CRITICAL`), Dependabot, and GitHub Dependency Review gate high/critical
+  dependency changes.
 - Pull requests that change package manager or dependency files must document
   lockfile review and install/audit outputs.
 - Package inspection rejects forbidden dependency-manager, secret, generated, and

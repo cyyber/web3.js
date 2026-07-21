@@ -31,3 +31,5 @@ export * from './uuid.js';
 export * from './web3_eip1193_provider.js';
 export * from './socket_provider.js';
 export * from './uint8array.js';
+export * from './provider_bounds.js';
+export * from './abort_helpers.js';

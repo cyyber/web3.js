@@ -14,7 +14,7 @@ Release publishing is guarded by:
 - The repository variable `RELEASES_ENABLED` must be set to `true`.
 - The protected GitHub environment `npm-publish` must approve the job.
 - The CI workflow must pass first.
-- Release tarballs must pass CommonJS and ESM smoke tests on Node 20 before publish.
+- Release tarballs must pass CommonJS and ESM smoke tests on Node 20.19.0 (the advertised `engines.node` floor) before publish.
 - npm publishing must run from Node 22.14 or newer with npm 11.5.1 or newer so npm trusted publishing can use OIDC.
 - npm publishing must use provenance (`NPM_CONFIG_PROVENANCE=true`).
 
@@ -81,7 +81,7 @@ The release workflow:
 8. Packs released packages.
 9. Generates SHA-256 and SHA-512 checksums.
 10. Uploads tarballs and release metadata as a short-lived workflow artefact.
-11. Downloads the tarballs in a Node 20 job and smoke-tests CommonJS `require()` and ESM `import`.
+11. Downloads the tarballs in a Node 20.19.0 job (the advertised floor) and smoke-tests CommonJS `require()` and ESM `import`.
 12. Publishes the already-tested tarballs from a Node 22.14/npm 11 job using npm trusted publishing.
 13. Generates SPDX and CycloneDX SBOMs.
 14. Creates GitHub attestations for release artefacts and SBOMs.

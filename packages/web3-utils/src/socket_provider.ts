@@ -42,10 +42,15 @@ import {
 import {
 	ConnectionError,
 	ConnectionNotOpenError,
+	ConnectionTimeoutError,
 	InvalidClientError,
 	MaxAttemptsReachedOnReconnectingError,
 	PendingRequestsOnReconnectingError,
+	ProviderError,
 	RequestAlreadySentError,
+	RequestQueueFullError,
+	RequestTimeoutError,
+	ResponseError,
 	Web3WSProviderError,
 } from '@theqrl/web3-errors';
 import { Eip1193Provider } from './web3_eip1193_provider.js';
@@ -53,12 +58,75 @@ import { ChunkResponseParser } from './chunk_response_parser.js';
 import { isNullish } from './validation.js';
 import { Web3DeferredPromise } from './web3_deferred_promise.js';
 import * as jsonRpc from './json_rpc.js';
+import {
+	resolveProviderBounds,
+	validateTimeout,
+	type ProviderBoundsOptions,
+	type RequestBoundsOptions,
+	type ResolvedProviderBounds,
+} from './provider_bounds.js';
+import { composeAbortSignal, type AbortComposition } from './abort_helpers.js';
 
 export type ReconnectOptions = {
 	autoReconnect: boolean;
 	delay: number;
 	maxAttempts: number;
 };
+
+/**
+ * A point-in-time view of a socket provider's request bookkeeping.
+ *
+ * `maxInFlightRequests` defaults to a deliberately conservative 256; these counters exist
+ * so the value can be calibrated against a real workload instead of guessed.
+ */
+export interface SocketProviderDiagnostics {
+	/** Currently outstanding request ids: `pendingRequests + sentRequests`. */
+	inFlight: number;
+	/** Request ids accepted but not yet written to the socket (waiting for a connection). */
+	pendingRequests: number;
+	/** Request ids written to the socket and awaiting a response. */
+	sentRequests: number;
+	/** The highest `inFlight` observed over the lifetime of this provider. */
+	peakInFlight: number;
+	/** The configured cap that `inFlight` is checked against. */
+	maxInFlightRequests: number;
+}
+
+/**
+ * Constructor options shared by the socket (WebSocket / IPC) providers.
+ *
+ * The bound names (`connectionTimeout`, `requestTimeout`, `maxInFlightRequests`) are the
+ * same ones the HTTP provider accepts, so every transport presents one surface.
+ */
+export interface SocketProviderOptions extends ProviderBoundsOptions {
+	/**
+	 * Opt-in diagnostic hook. When supplied it is invoked with a fresh
+	 * {@link SocketProviderDiagnostics} every time a request is admitted or settled.
+	 * Nothing is computed or reported unless this is provided; {@link
+	 * SocketProvider.getDiagnostics} is always available for polling instead.
+	 */
+	onDiagnostics?: (diagnostics: SocketProviderDiagnostics) => void;
+}
+
+/**
+ * Everything that must be torn down when a request reaches any terminal state.
+ *
+ * One record is shared by every id a request owns, so a batch of N ids has a single
+ * deadline, a single abort listener and settles exactly once.
+ */
+/** A JSON-RPC id that has been checked to actually be present. */
+type DefinedJsonRpcId = Exclude<JsonRpcId, undefined>;
+
+interface RequestLifecycle {
+	/** Every request id this entry occupies. A batch of N ids consumes N slots. */
+	readonly ids: DefinedJsonRpcId[];
+	/** The composed deadline + caller-cancellation signal. */
+	readonly abort: AbortComposition;
+	/** The listener attached to `abort.signal`, so it can be detached again. */
+	onAbort?: () => void;
+	/** Guards against a second settle (e.g. a late response racing the deadline). */
+	settled: boolean;
+}
 
 const DEFAULT_RECONNECTION_OPTIONS = {
 	autoReconnect: true,
@@ -67,6 +135,13 @@ const DEFAULT_RECONNECTION_OPTIONS = {
 };
 
 const NORMAL_CLOSE_CODE = 1000; // https://developer.mozilla.org/en-US/docs/Web/API/WebSocket/close
+
+const unrefTimer = (timer: unknown): void => {
+	// A pending provider timer must not, by itself, keep a Node process alive.
+	if (typeof (timer as { unref?: () => void }).unref === 'function') {
+		(timer as { unref: () => void }).unref();
+	}
+};
 
 export abstract class SocketProvider<
 	MessageEvent,
@@ -84,6 +159,22 @@ export abstract class SocketProvider<
 	protected _reconnectAttempts!: number;
 	protected readonly _socketOptions?: unknown;
 	protected readonly _reconnectOptions: ReconnectOptions;
+	/** Validated `connectionTimeout` / `requestTimeout` / `maxInFlightRequests`. */
+	protected readonly _providerBounds: ResolvedProviderBounds;
+	/**
+	 * Teardown state for every in-flight request, reachable from either queue map via the
+	 * request item. Keyed by the item rather than by id so that the N ids of a batch share
+	 * exactly one record.
+	 */
+	/* eslint-disable @typescript-eslint/no-explicit-any */
+	private readonly _requestLifecycles = new WeakMap<
+		SocketRequestItem<any, any, any>,
+		RequestLifecycle
+	>();
+	/** Bounds the connect / handshake phase. Separate from the per-request deadline. */
+	private _connectionTimer?: ReturnType<typeof setTimeout>;
+	private _peakInFlight = 0;
+	private readonly _onDiagnostics?: (diagnostics: SocketProviderDiagnostics) => void;
 	protected _socketConnection?: unknown;
 	public get SocketConnection() {
 		return this._socketConnection;
@@ -99,14 +190,21 @@ export abstract class SocketProvider<
 	 * @param socketPath - The path to the socket (e.g. /ipc/path or ws://localhost:8546)
 	 * @param socketOptions - The options for the socket connection. Its type is supposed to be specified in the inherited classes.
 	 * @param reconnectOptions - The options for the socket reconnection {@link ReconnectOptions}
+	 * @param providerOptions - Timeout and queue bounds {@link SocketProviderOptions}
 	 */
 	public constructor(
 		socketPath: string,
 		socketOptions?: unknown,
 		reconnectOptions?: Partial<ReconnectOptions>,
+		providerOptions?: SocketProviderOptions,
 	) {
 		super();
 		this._connectionStatus = 'connecting';
+
+		// Resolved before anything else: `connect()` below arms the connection deadline, and
+		// invalid bounds must fail construction rather than surface at the first request.
+		this._providerBounds = resolveProviderBounds(providerOptions);
+		this._onDiagnostics = providerOptions?.onDiagnostics;
 
 		// Message handlers. Due to bounding of `this` and removing the listeners we have to keep it's reference.
 		this._onMessageHandler = this._onMessage.bind(this);
@@ -150,8 +248,10 @@ export abstract class SocketProvider<
 		try {
 			this._openSocketConnection();
 			this._connectionStatus = 'connecting';
+			this._armConnectionTimer();
 			this._addSocketListeners();
 		} catch (e) {
+			this._clearConnectionTimer();
 			if (!this.isReconnecting) {
 				this._connectionStatus = 'disconnected';
 				if (e && (e as Error).message) {
@@ -168,6 +268,42 @@ export abstract class SocketProvider<
 					this._reconnect();
 				});
 			}
+		}
+	}
+
+	/**
+	 * Arms the connect / handshake deadline. Cleared by {@link _onConnect}, and by every
+	 * path that abandons the connection attempt (disconnect, reset, queue teardown).
+	 *
+	 * This bound is *separate* from the per-request deadline but does not replace it: a
+	 * request issued while connecting has already armed its own `requestTimeout`, so the
+	 * connection wait is spent out of the request's total budget (see {@link request}).
+	 */
+	private _armConnectionTimer(): void {
+		this._clearConnectionTimer();
+
+		const duration = this._providerBounds.connectionTimeout;
+
+		this._connectionTimer = setTimeout(() => {
+			this._connectionTimer = undefined;
+
+			if (this.getStatus() === 'connected') return;
+
+			const error = new ConnectionTimeoutError(duration);
+			this._connectionStatus = 'disconnected';
+			// A handshake that never completes must not strand the requests queued behind
+			// it, whether or not their own 120s deadline has elapsed.
+			this._rejectAllRequests(error);
+			this._emitError(error);
+		}, duration);
+
+		unrefTimer(this._connectionTimer);
+	}
+
+	private _clearConnectionTimer(): void {
+		if (this._connectionTimer !== undefined) {
+			clearTimeout(this._connectionTimer);
+			this._connectionTimer = undefined;
 		}
 	}
 
@@ -324,11 +460,117 @@ export abstract class SocketProvider<
 	 */
 	public disconnect(code?: number, data?: string): void {
 		const disconnectCode = code ?? NORMAL_CLOSE_CODE;
+		this._clearConnectionTimer();
 		this._removeSocketListeners();
 		if (this.getStatus() !== 'disconnected') {
 			this._closeSocketConnection(disconnectCode, data);
 		}
+		// Outstanding work is rejected, not silently dropped: a caller awaiting a request
+		// on a provider that is going away must observe a failure, not hang forever.
+		this._rejectAllRequests(new ConnectionNotOpenError());
 		this._onDisconnect(disconnectCode, data);
+	}
+
+	/**
+	 * Returns the current and peak in-flight request counts.
+	 *
+	 * Cheap and always available; supply `onDiagnostics` to the constructor instead if you
+	 * want to be pushed a snapshot on every admission and settle.
+	 */
+	public getDiagnostics(): SocketProviderDiagnostics {
+		return {
+			inFlight: this._inFlightCount(),
+			pendingRequests: this._pendingRequestsQueue.size,
+			sentRequests: this._sentRequestsQueue.size,
+			peakInFlight: this._peakInFlight,
+			maxInFlightRequests: this._providerBounds.maxInFlightRequests,
+		};
+	}
+
+	private _inFlightCount(): number {
+		return this._pendingRequestsQueue.size + this._sentRequestsQueue.size;
+	}
+
+	private _notifyDiagnostics(): void {
+		const inFlight = this._inFlightCount();
+		if (inFlight > this._peakInFlight) {
+			this._peakInFlight = inFlight;
+		}
+		if (this._onDiagnostics) {
+			this._onDiagnostics(this.getDiagnostics());
+		}
+	}
+
+	/**
+	 * The single cleanup primitive: every terminal path for a request goes through here.
+	 *
+	 * Success, JSON-RPC error, deadline, caller abort, send failure, disconnect, reconnect
+	 * teardown and reset all call this, so "no stale map entry, no stale timer, no stale
+	 * abort listener" is enforced in exactly one place rather than at each call site.
+	 *
+	 * Idempotent, and safe against re-entry: the ids are removed before the promise is
+	 * settled, so a nested call finds nothing and returns `false`.
+	 *
+	 * @param requestId - any id owned by the request; a batch settles via any of its ids
+	 * @param outcome - resolve with a response, or reject with a reason
+	 * @returns `true` if this call settled the request, `false` if there was nothing to do
+	 */
+	private _settleRequest(
+		requestId: JsonRpcId,
+		outcome: { resolve: JsonRpcResponse } | { reject: unknown },
+	): boolean {
+		const item =
+			this._sentRequestsQueue.get(requestId) ?? this._pendingRequestsQueue.get(requestId);
+
+		// Unknown id, duplicate response, or a sibling id of an already-settled batch.
+		if (!item) return false;
+
+		const lifecycle = this._requestLifecycles.get(item);
+
+		// 1. Release every slot this request holds (N for a batch, 1 otherwise).
+		for (const id of lifecycle?.ids ?? [requestId]) {
+			this._pendingRequestsQueue.delete(id);
+			this._sentRequestsQueue.delete(id);
+		}
+
+		// 2. Drop the deadline timer and detach the abort listener.
+		if (lifecycle) {
+			if (lifecycle.onAbort) {
+				lifecycle.abort.signal.removeEventListener('abort', lifecycle.onAbort);
+				lifecycle.onAbort = undefined;
+			}
+			lifecycle.abort.dispose();
+			this._requestLifecycles.delete(item);
+
+			if (lifecycle.settled) {
+				this._notifyDiagnostics();
+				return false;
+			}
+			lifecycle.settled = true;
+		}
+
+		// 3. Settle exactly once.
+		if ('resolve' in outcome) {
+			item.deferredPromise.resolve(outcome.resolve);
+		} else {
+			item.deferredPromise.reject(outcome.reject);
+		}
+
+		this._notifyDiagnostics();
+		return true;
+	}
+
+	/**
+	 * Rejects every outstanding request through {@link _settleRequest}.
+	 *
+	 * Ids are snapshotted first because settling a batch removes its sibling ids.
+	 */
+	private _rejectAllRequests(error: unknown): void {
+		const ids = [...this._pendingRequestsQueue.keys(), ...this._sentRequestsQueue.keys()];
+
+		for (const id of ids) {
+			this._settleRequest(id, { reject: error });
+		}
 	}
 
 	/**
@@ -352,8 +594,12 @@ export abstract class SocketProvider<
 	 * Resets the socket, removing all listeners and pending requests
 	 */
 	public reset(): void {
-		this._sentRequestsQueue.clear();
-		this._pendingRequestsQueue.clear();
+		this._clearConnectionTimer();
+		// Previously these maps were simply cleared, which abandoned every caller's promise
+		// in `pending` forever. Reset cancels outstanding work; it does not forget it.
+		this._rejectAllRequests(
+			new ProviderError('Request cancelled: the provider was reset before it settled'),
+		);
 
 		this._init();
 		this._removeSocketListeners();
@@ -367,12 +613,10 @@ export abstract class SocketProvider<
 		this.isReconnecting = true;
 
 		if (this._sentRequestsQueue.size > 0) {
-			this._sentRequestsQueue.forEach(
-				(request: SocketRequestItem<any, any, any>, key: JsonRpcId) => {
-					request.deferredPromise.reject(new PendingRequestsOnReconnectingError());
-					this._sentRequestsQueue.delete(key);
-				},
-			);
+			const error = new PendingRequestsOnReconnectingError();
+			for (const id of [...this._sentRequestsQueue.keys()]) {
+				this._settleRequest(id, { reject: error });
+			}
 		}
 
 		if (this._reconnectAttempts < this._reconnectOptions.maxAttempts) {
@@ -398,12 +642,52 @@ export abstract class SocketProvider<
 	}
 
 	/**
+	 * Collects every JSON-RPC id a payload occupies.
+	 *
+	 * A batch owns all N of its ids: they are what a silent peer would leave behind, so
+	 * they are what must be accounted for against the cap.
+	 */
+	// eslint-disable-next-line class-methods-use-this
+	private _extractRequestIds(request: Web3APIPayload<API, any>): DefinedJsonRpcId[] {
+		if (jsonRpc.isBatchRequest(request as unknown as JsonRpcBatchRequest)) {
+			const ids = (request as unknown as JsonRpcBatchRequest).map(entry => entry.id);
+
+			if (ids.length === 0 || ids.some(id => !id)) {
+				throw new Web3WSProviderError('Request Id not defined');
+			}
+			if (new Set(ids).size !== ids.length) {
+				throw new Web3WSProviderError('Batch request contains duplicate ids');
+			}
+
+			return ids as DefinedJsonRpcId[];
+		}
+
+		const id = (request as unknown as JsonRpcRequest).id;
+
+		if (!id) {
+			throw new Web3WSProviderError('Request Id not defined');
+		}
+
+		return [id];
+	}
+
+	/**
 	 *  Creates a request object to be sent to the server
+	 *
+	 * The returned promise always settles: on a response, on a JSON-RPC error, on
+	 * `requestTimeout` ({@link RequestTimeoutError}), on caller abort, or on teardown. A
+	 * connected peer that simply never replies is bounded by the deadline armed here.
+	 *
+	 * @param request - the JSON-RPC payload, single or batch
+	 * @param requestOptions - optional per-request `requestTimeout` override and `signal`
 	 */
 	public async request<
 		Method extends Web3APIMethod<API>,
 		ResultType = Web3APIReturnType<API, Method>,
-	>(request: Web3APIPayload<API, Method>): Promise<JsonRpcResponseWithResult<ResultType>> {
+	>(
+		request: Web3APIPayload<API, Method>,
+		requestOptions?: RequestBoundsOptions,
+	): Promise<JsonRpcResponseWithResult<ResultType>> {
 		if (isNullish(this._socketConnection)) {
 			throw new Error('Connection is undefined');
 		}
@@ -412,17 +696,34 @@ export abstract class SocketProvider<
 			this.connect();
 		}
 
-		const requestId = jsonRpc.isBatchRequest(request)
-			? (request as unknown as JsonRpcBatchRequest)[0].id
-			: (request as unknown as JsonRpcRequest).id;
+		const requestIds = this._extractRequestIds(request);
+		const primaryId = requestIds[0];
 
-		if (!requestId) {
-			throw new Web3WSProviderError('Request Id not defined');
+		for (const id of requestIds) {
+			if (this._sentRequestsQueue.has(id) || this._pendingRequestsQueue.has(id)) {
+				throw new RequestAlreadySentError(id);
+			}
 		}
 
-		if (this._sentRequestsQueue.has(requestId)) {
-			throw new RequestAlreadySentError(requestId);
+		// Admission is atomic: a batch of N either takes N slots or takes none. Rejecting
+		// here -- before any bookkeeping exists -- is what keeps overflow leak-free, and is
+		// why there is no second, hidden queue to absorb the overflow.
+		if (this._inFlightCount() + requestIds.length > this._providerBounds.maxInFlightRequests) {
+			throw new RequestQueueFullError(this._providerBounds.maxInFlightRequests);
 		}
+
+		if (requestOptions?.signal?.aborted) {
+			throw requestOptions.signal.reason ?? new ProviderError('Request aborted');
+		}
+
+		const requestTimeout =
+			requestOptions?.requestTimeout === undefined
+				? this._providerBounds.requestTimeout
+				: validateTimeout(requestOptions.requestTimeout, 'requestTimeout');
+
+		const method = jsonRpc.isBatchRequest(request as unknown as JsonRpcBatchRequest)
+			? undefined
+			: (request as unknown as JsonRpcRequest).method;
 
 		const deferredPromise = new Web3DeferredPromise<JsonRpcResponseWithResult<ResultType>>();
 		deferredPromise.catch(error => {
@@ -433,27 +734,63 @@ export abstract class SocketProvider<
 			deferredPromise,
 		};
 
-		if (this.getStatus() === 'connecting') {
-			this._pendingRequestsQueue.set(requestId, reqItem);
+		// The deadline is armed here, before we know whether we can even write to the
+		// socket. That is deliberate: a request parked in `_pendingRequestsQueue` waiting
+		// for the handshake is spending its own budget, so connection wait counts toward
+		// the request's total deadline exactly as the team decided.
+		//
+		// `Web3DeferredPromise`'s own timeout machinery is deliberately bypassed: it rejects
+		// with `OperationTimeoutError` rather than the required `RequestTimeoutError`, it
+		// cannot compose a caller's `AbortSignal`, and its timer is neither unref'd nor
+		// observable. The deferred promise is used purely as a settle handle.
+		const abort = composeAbortSignal({
+			timeout: requestTimeout,
+			signal: requestOptions?.signal,
+			timeoutReason: () => new RequestTimeoutError(requestTimeout, method),
+		});
 
+		const lifecycle: RequestLifecycle = { ids: requestIds, abort, settled: false };
+		this._requestLifecycles.set(reqItem, lifecycle);
+
+		const onAbort = () => {
+			// `timedOut` is what separates our own deadline from a caller cancelling: an
+			// abort reason alone cannot, since a caller may abort with any reason at all.
+			const reason = abort.timedOut
+				? abort.signal.reason ?? new RequestTimeoutError(requestTimeout, method)
+				: abort.signal.reason ?? new ProviderError('Request aborted');
+
+			this._settleRequest(primaryId, { reject: reason });
+		};
+		lifecycle.onAbort = onAbort;
+		abort.signal.addEventListener('abort', onAbort, { once: true });
+
+		const queue =
+			this.getStatus() === 'connecting' ? this._pendingRequestsQueue : this._sentRequestsQueue;
+
+		for (const id of requestIds) {
+			queue.set(id, reqItem);
+		}
+		this._notifyDiagnostics();
+
+		if (queue === this._pendingRequestsQueue) {
+			// Sent by `_sendPendingRequests` once the handshake completes; the deadline
+			// armed above keeps running in the meantime.
 			return reqItem.deferredPromise;
 		}
-
-		this._sentRequestsQueue.set(requestId, reqItem);
 
 		try {
 			this._sendToSocket(reqItem.payload);
 		} catch (error) {
-			this._sentRequestsQueue.delete(requestId);
 			// Reject the request promise immediately when sending fails
 			// (e.g. when the socket is already disconnected).
-			deferredPromise.reject(error);
+			this._settleRequest(primaryId, { reject: error });
 		}
 
 		return deferredPromise;
 	}
 
 	protected _onConnect() {
+		this._clearConnectionTimer();
 		this._connectionStatus = 'connected';
 		this._reconnectAttempts = 0;
 		super._onConnect();
@@ -461,10 +798,32 @@ export abstract class SocketProvider<
 	}
 
 	private _sendPendingRequests() {
-		for (const [id, value] of this._pendingRequestsQueue.entries()) {
-			this._sendToSocket(value.payload as Web3APIPayload<API, any>);
-			this._pendingRequestsQueue.delete(id);
-			this._sentRequestsQueue.set(id, value);
+		const entries = [...this._pendingRequestsQueue.entries()];
+		/* eslint-disable @typescript-eslint/no-explicit-any */
+		const sent = new Set<SocketRequestItem<any, any, any>>();
+
+		for (const [id, item] of entries) {
+			// A batch occupies N ids but is one payload: write it once.
+			if (sent.has(item)) continue;
+			sent.add(item);
+
+			const lifecycle = this._requestLifecycles.get(item);
+
+			// Promote every id this request owns before writing, so a response that lands
+			// synchronously still finds its entry in `_sentRequestsQueue`.
+			for (const ownedId of lifecycle?.ids ?? [id]) {
+				if (this._pendingRequestsQueue.delete(ownedId)) {
+					this._sentRequestsQueue.set(ownedId, item);
+				}
+			}
+
+			try {
+				this._sendToSocket(item.payload as Web3APIPayload<API, any>);
+			} catch (error) {
+				// Previously a throw here escaped `_onConnect` and left every remaining
+				// pending request stranded.
+				this._settleRequest(id, { reject: error });
+			}
 		}
 	}
 
@@ -482,6 +841,11 @@ export abstract class SocketProvider<
 				jsonRpc.isResponseWithNotification(response as JsonRpcNotification) &&
 				(response as JsonRpcNotification).method.endsWith('_subscription')
 			) {
+				// An established subscription's stream is exempt from the per-request
+				// deadline: notifications carry no request id, hold no queue slot and arm no
+				// timer. The `*_subscribe` call that established it was bounded like any
+				// other request; from here the stream is governed by heartbeat / reconnect /
+				// unsubscribe / disconnect semantics instead.
 				this._eventEmitter.emit('message', response);
 				continue;
 			}
@@ -490,9 +854,10 @@ export abstract class SocketProvider<
 				? (response as unknown as JsonRpcBatchResponse)[0].id
 				: (response as unknown as JsonRpcResponseWithResult).id;
 
-			const requestItem = this._sentRequestsQueue.get(requestId);
-
-			if (!requestItem) {
+			// Unknown ids, and duplicate ids for an already-settled request, find nothing
+			// here and are dropped. A late response that lost the race against the deadline
+			// is exactly this case, so it cannot double-settle.
+			if (!this._sentRequestsQueue.has(requestId)) {
 				continue;
 			}
 
@@ -502,32 +867,23 @@ export abstract class SocketProvider<
 				jsonRpc.isResponseWithError(response)
 			) {
 				this._eventEmitter.emit('message', response);
-				requestItem.deferredPromise.resolve(response);
+				this._settleRequest(requestId, { resolve: response });
+			} else {
+				// Malformed but id-matching. This used to drop the map entry without
+				// settling, stranding the caller's promise permanently.
+				this._settleRequest(requestId, {
+					reject: new ResponseError(
+						response,
+						'Invalid JSON-RPC response received from the node',
+					),
+				});
 			}
-
-			this._sentRequestsQueue.delete(requestId);
 		}
 	}
 
 	protected _clearQueues(event?: ConnectionEvent) {
-		if (this._pendingRequestsQueue.size > 0) {
-			this._pendingRequestsQueue.forEach(
-				(request: SocketRequestItem<any, any, any>, key: JsonRpcId) => {
-					request.deferredPromise.reject(new ConnectionNotOpenError(event));
-					this._pendingRequestsQueue.delete(key);
-				},
-			);
-		}
-
-		if (this._sentRequestsQueue.size > 0) {
-			this._sentRequestsQueue.forEach(
-				(request: SocketRequestItem<any, any, any>, key: JsonRpcId) => {
-					request.deferredPromise.reject(new ConnectionNotOpenError(event));
-					this._sentRequestsQueue.delete(key);
-				},
-			);
-		}
-
+		this._clearConnectionTimer();
+		this._rejectAllRequests(new ConnectionNotOpenError(event));
 		this._removeSocketListeners();
 	}
 }

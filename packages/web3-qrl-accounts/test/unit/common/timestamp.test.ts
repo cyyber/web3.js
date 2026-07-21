@@ -18,7 +18,7 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 // import { /*Chain,*/ Common, Hardfork } from '../../../src/common';
 
 // NOTE(rgeraldes24): unused for now
-describe.skip('[Common]: Timestamp Hardfork logic', () => {
+describe('[Common]: Timestamp Hardfork logic', () => {
 	it('zond-time', () => {
 		// const c = Common.fromGqrlGenesis(timestampJson, {
 		// 	chain: 'withdrawals',

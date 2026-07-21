@@ -17,4 +17,5 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 
 import { CryptoPublicKeyBytes as externalCryptoPublicKeyBytes } from '@theqrl/mldsa87';
 
-export const CryptoPublicKeyBytes = externalCryptoPublicKeyBytes as unknown as number;
+// `@theqrl/mldsa87` already declares this as `number`; re-exported as-is.
+export const CryptoPublicKeyBytes: number = externalCryptoPublicKeyBytes;

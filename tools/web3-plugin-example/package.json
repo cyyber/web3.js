@@ -13,7 +13,7 @@
 		"directory": "tools/web3-plugin-example"
 	},
 	"engines": {
-		"node": ">=20"
+		"node": ">=20.19.0"
 	},
 	"author": "The QRL Contributors",
 	"license": "LGPL-3.0",

@@ -31,9 +31,14 @@ exports[`Web3Context getContextObject should return correct context object 1`] =
     "transactionTypeParser": undefined,
   },
   "provider": HttpProvider {
+    "bounds": {
+      "connectionTimeout": 30000,
+      "maxInFlightRequests": 256,
+      "maxResponseBytes": 10485760,
+      "requestTimeout": 120000,
+    },
     "clientUrl": "http://test/abc",
     "httpProviderOptions": undefined,
-    "maxResponseBytes": 10485760,
   },
   "providers": {
     "HttpProvider": [Function],
@@ -52,9 +57,14 @@ exports[`Web3Context getContextObject should return correct context object 1`] =
       Symbol(kCapture): false,
     },
     "_provider": HttpProvider {
+      "bounds": {
+        "connectionTimeout": 30000,
+        "maxInFlightRequests": 256,
+        "maxResponseBytes": 10485760,
+        "requestTimeout": 120000,
+      },
       "clientUrl": "http://test/abc",
       "httpProviderOptions": undefined,
-      "maxResponseBytes": 10485760,
     },
     "useRpcCallSpecification": undefined,
   },
@@ -73,9 +83,14 @@ exports[`Web3Context getContextObject should return correct context object 1`] =
         Symbol(kCapture): false,
       },
       "_provider": HttpProvider {
+        "bounds": {
+          "connectionTimeout": 30000,
+          "maxInFlightRequests": 256,
+          "maxResponseBytes": 10485760,
+          "requestTimeout": 120000,
+        },
         "clientUrl": "http://test/abc",
         "httpProviderOptions": undefined,
-        "maxResponseBytes": 10485760,
       },
       "useRpcCallSpecification": undefined,
     },

@@ -1,1 +1,11 @@
+# Accepted vulnerability advisories for `pnpm run audit:supply-chain` and the
+# matching CI scan in .github/workflows/ci.yml.
+#
+# Both scans read this file, so an entry here suppresses the finding locally and
+# in CI alike. Add one only with a maintainer's reason for why the advisory is
+# unreachable and a time-bounded follow-up, per docs/supply-chain-security.md.
+# One advisory ID per line, e.g.:
+#
+#   CVE-0000-00000  # unreachable: <reason>; revisit by <date>
+
 # (none)

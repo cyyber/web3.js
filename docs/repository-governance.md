@@ -19,7 +19,6 @@ Protect the `main` branch with these rules:
 
 The required status checks for `main` must include:
 
-- `Verify (Node 20.x)`
 - `Verify (Node 22.x)`
 - `Verify (Node 24.x)`
 - `Supply Chain Audit`

@@ -20,7 +20,7 @@
 		"url": "https://github.com/theqrl/web3.js/issues"
 	},
 	"engines": {
-		"node": ">=20",
+		"node": ">=20.19.0",
 		"pnpm": ">=10.27.0"
 	},
 	"workspaces": {
@@ -48,6 +48,7 @@
 		"pos:stop": "./scripts/local_testnet/stop_local_testnet.sh",
 		"pos:clef:setup": "./scripts/local_testnet/setup_clef.sh",
 		"lint": "turbo run lint --filter=\"./packages/*\" --filter=\"./tools/*\"",
+		"lint:budget": "node scripts/lint-budget.js",
 		"lint:fix": "turbo run lint:fix --filter=\"./packages/*\" --filter=\"./tools/*\"",
 		"format": "turbo run format --filter=\"./packages/*\" --filter=\"./tools/*\" && prettier --write ./scripts/**/*.ts",
 		"test": "turbo run test --filter=\"./packages/*\" --filter=\"./tools/*\" -- --watchman=false",
@@ -75,7 +76,7 @@
 		"release:smoke-tarballs": "node scripts/release/smoke-tarballs.js",
 		"release:touch-packages": "node scripts/release/touch-packages.js",
 		"doctor": "node scripts/doctor.js",
-		"audit:supply-chain": "trivy fs --scanners vuln --severity HIGH,CRITICAL --exit-code 1 --ignorefile .trivyignore pnpm-lock.yaml"
+		"audit:supply-chain": "command -v docker >/dev/null 2>&1 || { echo 'audit:supply-chain runs Trivy 0.70.0 from a pinned container image and needs Docker. Install Docker, or install Trivy 0.70.0 yourself and run: trivy fs --scanners vuln --severity HIGH,CRITICAL --exit-code 1 --ignorefile .trivyignore pnpm-lock.yaml' >&2; exit 1; }; scan() { docker run --rm -v \"$PWD\":/work -w /work -v qrl-web3-trivy-db:/root/.cache/trivy ghcr.io/aquasecurity/trivy:0.70.0@sha256:be1190afcb28352bfddc4ddeb71470835d16462af68d310f9f4bca710961a41e \"$@\"; }; scan fs --scanners vuln --severity HIGH,CRITICAL --exit-code 1 --ignorefile .trivyignore pnpm-lock.yaml; status=$?; scan version; exit $status"
 	},
 	"devDependencies": {
 		"@cypress/webpack-preprocessor": "7.1.0",
@@ -87,7 +88,6 @@
 		"@theqrl/eslint-config-base-web3": "workspace:*",
 		"@theqrl/hypc": "0.0.2",
 		"@theqrl/qrl-contracts": "0.1.0",
-		"@types/minimatch": "6.0.0",
 		"@types/node": "25.9.1",
 		"assert": "2.1.0",
 		"buffer": "6.0.3",

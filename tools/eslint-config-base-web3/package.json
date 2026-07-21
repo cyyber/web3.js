@@ -24,7 +24,7 @@
 		"url": "https://github.com/theqrl/web3.js/issues"
 	},
 	"engines": {
-		"node": ">=20"
+		"node": ">=20.19.0"
 	},
 	"main": "./index.cjs",
 	"scripts": {
