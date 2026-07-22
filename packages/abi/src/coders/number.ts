@@ -16,7 +16,7 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { BigNumber, BigNumberish } from '@ethersproject/bignumber';
-import { MaxUint256, NegativeOne, One, Zero } from '@ethersproject/constants';
+import { NegativeOne, One, Zero } from '@ethersproject/constants';
 
 import { Coder, Reader, Writer } from './abstract-coder.js';
 
@@ -40,13 +40,17 @@ export class NumberCoder extends Coder {
 		let v = BigNumber.from(value);
 
 		// Check bounds are safe for encoding
-		const maxUintValue = MaxUint256.mask(writer.wordSize * 8);
+		const maxUintValue = BigNumber.from(2)
+			.pow(this.size * 8)
+			.sub(One);
 		if (this.signed) {
-			const bounds = maxUintValue.mask(this.size * 8 - 1);
+			const bounds = BigNumber.from(2)
+				.pow(this.size * 8 - 1)
+				.sub(One);
 			if (v.gt(bounds) || v.lt(bounds.add(One).mul(NegativeOne))) {
 				this._throwError('value out-of-bounds', value);
 			}
-		} else if (v.lt(Zero) || v.gt(maxUintValue.mask(this.size * 8))) {
+		} else if (v.lt(Zero) || v.gt(maxUintValue)) {
 			this._throwError('value out-of-bounds', value);
 		}
 

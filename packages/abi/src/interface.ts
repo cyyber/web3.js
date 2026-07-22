@@ -15,7 +15,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { getAddress } from '@ethersproject/address';
+import { addressToHex, hexToAddress } from '@theqrl/web3-utils';
 import { BigNumber, BigNumberish } from '@ethersproject/bignumber';
 import {
 	arrayify,
@@ -226,7 +226,7 @@ export class Interface {
 	}
 
 	static getAddress(address: string): string {
-		return getAddress(address);
+		return hexToAddress(addressToHex(address));
 	}
 
 	static getSighash(fragment: ErrorFragment | FunctionFragment): string {
