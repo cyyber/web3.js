@@ -66,4 +66,17 @@ describe('getLogs', () => {
 			expect(result).toStrictEqual(expectedFormattedResult);
 		},
 	);
+
+	it('formats VM64 topics as 64-byte arrays', async () => {
+		(qrlRpcMethods.getLogs as jest.Mock).mockResolvedValueOnce(mockRpcResponse);
+
+		const result = await getLogs(web3Context, ...testData[0][1], {
+			number: FMT_NUMBER.STR,
+			bytes: FMT_BYTES.UINT8ARRAY,
+		});
+		const formattedLog = result[0] as unknown as { topics: Uint8Array[] };
+
+		expect(formattedLog.topics[0]).toBeInstanceOf(Uint8Array);
+		expect(formattedLog.topics[0]).toHaveLength(64);
+	});
 });

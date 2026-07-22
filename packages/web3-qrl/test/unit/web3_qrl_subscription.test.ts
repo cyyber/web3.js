@@ -70,6 +70,42 @@ describe('Web3QRL subscribe and clear subscriptions', () => {
 		expect(dummyLogs._processSubscriptionResult).toHaveBeenCalled();
 	});
 
+	it('should preserve valid VM64 log topic filters', async () => {
+		const requestManager = { send: jest.fn(), on: jest.fn(), provider: { on: jest.fn() } };
+		const subManager = new Web3SubscriptionManager(requestManager as any, undefined as any);
+		const dummyLogs = { logs: { test1: 'test1' } };
+		const topic = `0x${'3f'.repeat(64)}`;
+		const alternateTopic = `0x${'a7'.repeat(64)}`;
+		const filter = {
+			// eslint-disable-next-line no-null/no-null
+			topics: [topic, null, [topic, alternateTopic]],
+		};
+		const subscribe = jest.spyOn(subManager, 'subscribe').mockResolvedValueOnce(dummyLogs);
+		web3QRL = new Web3QRL({
+			provider: { on: jest.fn() } as unknown as Web3BaseProvider,
+			subscriptionManager: subManager,
+		});
+
+		await web3QRL.subscribe('logs', filter);
+
+		expect(subscribe).toHaveBeenCalledWith('logs', filter, expect.any(Object));
+	});
+
+	it('should reject legacy 32-byte log topics before subscribing', async () => {
+		const requestManager = { send: jest.fn(), on: jest.fn(), provider: { on: jest.fn() } };
+		const subManager = new Web3SubscriptionManager(requestManager as any, undefined as any);
+		const subscribe = jest.spyOn(subManager, 'subscribe');
+		web3QRL = new Web3QRL({
+			provider: { on: jest.fn() } as unknown as Web3BaseProvider,
+			subscriptionManager: subManager,
+		});
+
+		await expect(
+			web3QRL.subscribe('logs', { topics: [`0x${'3f'.repeat(32)}`] }),
+		).rejects.toThrow();
+		expect(subscribe).not.toHaveBeenCalled();
+	});
+
 	it('should be able to clear subscriptions', async () => {
 		const requestManager = { send: jest.fn(), on: jest.fn(), provider: { on: jest.fn() } };
 		const subManager = new Web3SubscriptionManager(requestManager as any, undefined as any);
