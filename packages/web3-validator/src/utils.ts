@@ -249,10 +249,11 @@ export const abiSchemaToJsonSchema = (
 			(lastSchema.items as JsonSchema[]).push(item);
 		} else if (isArray) {
 			const arraySize = arraySizes[0];
+			const arrayElementType = abiType.slice(0, abiType.indexOf('['));
 			const item: JsonSchema = {
 				type: 'array',
 				$id: abiName,
-				items: convertEthType(String(baseType)),
+				items: convertEthType(arrayElementType),
 				minItems: arraySize,
 				maxItems: arraySize,
 			};
