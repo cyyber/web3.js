@@ -14,6 +14,7 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
+import { id } from '@ethersproject/hash';
 import { AbiCoder, Interface } from '../../src';
 
 describe('VM64 ABI', () => {
@@ -58,5 +59,72 @@ describe('VM64 ABI', () => {
 		expect(coder.encode(['address'], [address])).toBe(encoded);
 		expect(coder.decode(['address'], encoded)[0]).toBe(address.toLowerCase().replace('q', 'Q'));
 		expect(Interface.getAddress(address)).toBe(address);
+	});
+
+	it('serializes VM64 event and indexed filter topics', () => {
+		const eventHash = id('Value(address,string,uint256)');
+		const valueEvent = {
+			anonymous: false,
+			inputs: [
+				{ baseType: 'address', indexed: true, name: 'sender', type: 'address' },
+				{ baseType: 'string', indexed: true, name: 'label', type: 'string' },
+				{ baseType: 'uint256', indexed: false, name: 'value', type: 'uint256' },
+			],
+		};
+		const context = { _abiCoder: coder, getEventTopic: () => eventHash };
+		const encodeFilterTopics = Interface.prototype.encodeFilterTopics as any;
+		const expectedSignatureTopic = `${eventHash}${'0'.repeat(64)}`;
+		const expectedStringTopic = `${id('hello')}${'0'.repeat(64)}`;
+
+		expect(encodeFilterTopics.call(context, valueEvent, [address, 'hello'])).toEqual([
+			expectedSignatureTopic,
+			coder.encode(['address'], [address]),
+			expectedStringTopic,
+		]);
+		const getEvent = Interface.prototype.getEvent as any;
+		expect(
+			getEvent.call(
+				{ events: { Value: valueEvent }, getEventTopic: () => eventHash },
+				expectedSignatureTopic,
+			),
+		).toBe(valueEvent);
+
+		const precomputed = `0x${'ab'.repeat(64)}`;
+		const compositeHash = id('Composite(uint256[])');
+		const compositeEvent = {
+			anonymous: false,
+			inputs: [{ baseType: 'array', indexed: true, name: 'values', type: 'uint256[]' }],
+		};
+		const compositeContext = { _abiCoder: coder, getEventTopic: () => compositeHash };
+		expect(encodeFilterTopics.call(compositeContext, compositeEvent, [precomputed])).toEqual([
+			`${compositeHash}${'0'.repeat(64)}`,
+			precomputed,
+		]);
+		expect(() => encodeFilterTopics.call(compositeContext, compositeEvent, [[1, 2]])).toThrow(
+			'require precomputed 64-byte topics',
+		);
+	});
+
+	it('roundtrips VM64 event log topics', () => {
+		const eventHash = id('Value(address,string,uint256)');
+		const event = {
+			anonymous: false,
+			inputs: [
+				{ baseType: 'address', indexed: true, name: 'sender', type: 'address' },
+				{ baseType: 'string', indexed: true, name: 'label', type: 'string' },
+				{ baseType: 'uint256', indexed: false, name: 'value', type: 'uint256' },
+			],
+		};
+		const context = { _abiCoder: coder, getEventTopic: () => eventHash };
+		const encodeEventLog = Interface.prototype.encodeEventLog as any;
+		const decodeEventLog = Interface.prototype.decodeEventLog as any;
+		const encoded = encodeEventLog.call(context, event, [address, 'hello', 7]);
+
+		expect(encoded.topics).toHaveLength(3);
+		expect(encoded.topics.every((topic: string) => topic.length === 130)).toBe(true);
+		expect(encoded.topics[2]).toBe(`${id('hello')}${'0'.repeat(64)}`);
+		const decoded = decodeEventLog.call(context, event, encoded.data, encoded.topics);
+		expect(decoded.sender).toBe(address);
+		expect(decoded.value.toString()).toBe('7');
 	});
 });
