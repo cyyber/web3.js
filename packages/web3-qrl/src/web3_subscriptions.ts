@@ -36,7 +36,7 @@ import { blockHeaderSchema, logSchema, syncSchema } from './schemas.js';
  * You can subscribe to logs matching a given filter object, which can take the following parameters:
  * - `fromBlock`: (optional, default: 'latest') Integer block number, or `'latest'` for the last mined block or `'pending'`, `'earliest'` for not yet mined transactions.
  * - `address`: (optional) Contract address or a list of addresses from which logs should originate.
- * - `topics`: (optional) Array of 32 Bytes DATA topics. Topics are order-dependent. Each topic can also be an array of DATA with `or` options.
+ * - `topics`: (optional) Array of 64-byte VM log topics. Topics are order-dependent. Each topic can also be an array of DATA with `or` options.
  *
  */
 export class LogsSubscription extends Web3Subscription<
@@ -46,7 +46,7 @@ export class LogsSubscription extends Web3Subscription<
 	{
 		readonly fromBlock?: BlockNumberOrTag;
 		readonly address?: Address | Address[];
-		readonly topics?: Topic[];
+		readonly topics?: (Topic | Topic[] | null)[];
 	}
 > {
 	protected _buildSubscriptionParams() {

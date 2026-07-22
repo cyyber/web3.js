@@ -16,6 +16,13 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 import { FilterResultsAPI, Filter } from '@theqrl/web3-types';
 
+const address =
+	'Qd5812f6cf4a0f645aa620cd57319a0ed649dd8f5519a9dde7770ae5b0e49e547985f35eb972a2a07041561aa39c65a3991478f9b1e6749e05277dcf58a9a8b72';
+const eventTopic = `0x59ebeb90bc63057b6515673c3ecf9438e5058bca0f92585014eced636878c9a5${'0'.repeat(
+	64,
+)}`;
+const alternateTopic = `0x${'a7'.repeat(64)}`;
+
 export const mockRpcResponse: FilterResultsAPI = [
 	{
 		logIndex: '0x1',
@@ -23,22 +30,22 @@ export const mockRpcResponse: FilterResultsAPI = [
 		blockHash: '0x8216c5785ac562ff41e2dcfdf5785ac562ff41e2dcfdf829c5a142f1fccd7d',
 		transactionHash: '0xdf829c5a142f1fccd7d8216c5785ac562ff41e2dcfdf5785ac562ff41e2dcf',
 		transactionIndex: '0x0',
-		address: 'Q16c5785ac562ff41e2dcfdf829c5a142f1fccd7d',
+		address,
 		data: '0x0000000000000000000000000000000000000000000000000000000000000000',
-		topics: ['0x59ebeb90bc63057b6515673c3ecf9438e5058bca0f92585014eced636878c9a5'],
+		topics: [eventTopic],
 	},
 ];
 
 const filter: Filter = {
-	address: 'Q407d73d8a49eeb85d32cf465507dd71d507100c1',
+	address,
 	topics: [
-		'0x000000000000000000000000a94f5374fce5edbc8e2a8697c15331677e6ebf0b',
+		eventTopic,
 		// Using "null" value intentionally for validation
 		// eslint-disable-next-line no-null/no-null
 		null,
 		[
-			'0x000000000000000000000000a94f5374fce5edbc8e2a8697c15331677e6ebf0b',
-			'0x0000000000000000000000000aff3454fce5edbc8cca8697c15331677e6ebccc',
+			eventTopic,
+			alternateTopic,
 		],
 	],
 };
