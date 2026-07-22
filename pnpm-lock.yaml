@@ -72,12 +72,9 @@ importers:
       '@theqrl/eslint-config-base-web3':
         specifier: workspace:*
         version: link:tools/eslint-config-base-web3
-      '@theqrl/hypc':
-        specifier: 0.0.2
-        version: 0.0.2
       '@theqrl/qrl-contracts':
-        specifier: 0.1.0
-        version: 0.1.0
+        specifier: github:cyyber/qrl-contracts#d3c84eedac4e051f6e99892397c5e42f0f0a2266
+        version: https://codeload.github.com/cyyber/qrl-contracts/tar.gz/d3c84eedac4e051f6e99892397c5e42f0f0a2266
       '@types/minimatch':
         specifier: 6.0.0
         version: 6.0.0
@@ -806,9 +803,6 @@ importers:
       crc-32:
         specifier: 1.2.2
         version: 1.2.2
-      js-sha3:
-        specifier: 0.9.3
-        version: 0.9.3
       sha3:
         specifier: 2.1.4
         version: 2.1.4
@@ -885,6 +879,9 @@ importers:
       crc-32:
         specifier: 1.2.2
         version: 1.2.2
+      js-sha3:
+        specifier: 0.9.3
+        version: 0.9.3
       sha3:
         specifier: 2.1.4
         version: 2.1.4
@@ -3531,10 +3528,6 @@ packages:
     resolution: {integrity: sha512-+PmQX0PiAYPMeVYe237LJAYvOMYW1j2rH5YROyS3b4CTVJum34HfRvKvAzozHAQG0TnHNdUfY9nCeUyRAs//cw==}
     engines: {node: '>=14.16'}
 
-  '@theqrl/hypc@0.0.2':
-    resolution: {integrity: sha512-XsP7hETJdlmmdGtmp/K5ZtTcz3EzZaP+WhjuOTf4PmhE+6oijN271H10htYHvBo95ED2OYiuUCYucYNw7Q6mfQ==}
-    hasBin: true
-
   '@theqrl/mldsa87@2.0.1':
     resolution: {integrity: sha512-BPEvwrrphkMjyPnDorMzQdfrtICTZsiUxiBnwFkv2SfIcQwTTPQV3kTVfidZXXE7033ZCvhu1u5Aiw6TrjxPPQ==}
     engines: {node: '>=20.19.0'}
@@ -3543,8 +3536,9 @@ packages:
     resolution: {integrity: sha512-xUcrFSZ1OeRSyzU5xCd/TuB+dE/z7U9MafNtKZYmPhRwcucNbhobsXHab8GO5w02dy732sdPidOT2Tkn+vjZuA==}
     engines: {node: '>=20.19.0'}
 
-  '@theqrl/qrl-contracts@0.1.0':
-    resolution: {integrity: sha512-xCKoOiEyy+uIe+20yCn+F5vFOHNb8c0610oypoyCXFsEG1iX+AcookUHaRNQndYOcgze8d+yAUJ9KnJ5NsHywQ==}
+  '@theqrl/qrl-contracts@https://codeload.github.com/cyyber/qrl-contracts/tar.gz/d3c84eedac4e051f6e99892397c5e42f0f0a2266':
+    resolution: {tarball: https://codeload.github.com/cyyber/qrl-contracts/tar.gz/d3c84eedac4e051f6e99892397c5e42f0f0a2266}
+    version: 0.1.0
 
   '@theqrl/qrl-cryptography@0.1.3':
     resolution: {integrity: sha512-rtgii8JB6W0Gk7jen2WZU6Iubl+mHKFUobGG6zzipippVxhbeA0Vb6SJ/Hi5IEbGr44KlY4sBZMjWEBLaSEQpw==}
@@ -13548,18 +13542,6 @@ snapshots:
     dependencies:
       defer-to-connect: 2.0.1
 
-  '@theqrl/hypc@0.0.2':
-    dependencies:
-      command-exists: 1.2.9
-      commander: 8.3.0
-      follow-redirects: 1.16.0(debug@4.4.3)
-      js-sha3: 0.8.0
-      memorystream: 0.3.1
-      semver: 5.7.2
-      tmp: 0.0.33
-    transitivePeerDependencies:
-      - debug
-
   '@theqrl/mldsa87@2.0.1':
     dependencies:
       '@noble/hashes': 2.0.1
@@ -13568,7 +13550,7 @@ snapshots:
     dependencies:
       '@noble/hashes': 2.0.1
 
-  '@theqrl/qrl-contracts@0.1.0': {}
+  '@theqrl/qrl-contracts@https://codeload.github.com/cyyber/qrl-contracts/tar.gz/d3c84eedac4e051f6e99892397c5e42f0f0a2266': {}
 
   '@theqrl/qrl-cryptography@0.1.3':
     dependencies:
