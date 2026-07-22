@@ -191,16 +191,16 @@ const getType = (arg: Sha3Input): [string, EncodingTypes] => {
  */
 const elementaryName = (name: string): string => {
 	if (name.startsWith('int[')) {
-		return `int256${name.slice(3)}`;
+		return `int512${name.slice(3)}`;
 	}
 	if (name === 'int') {
-		return 'int256';
+		return 'int512';
 	}
 	if (name.startsWith('uint[')) {
-		return `uint256'${name.slice(4)}`;
+		return `uint512${name.slice(4)}`;
 	}
 	if (name === 'uint') {
-		return 'uint256';
+		return 'uint512';
 	}
 	return name;
 };
@@ -250,7 +250,7 @@ const hyperionPack = (type: string, val: EncodingTypes): string => {
 	if (type.startsWith('uint')) {
 		const size = parseTypeN(name, 'uint'.length);
 
-		if (size % 8 || size < 8 || size > 256) {
+		if (size % 8 || size < 8 || size > 512) {
 			throw new InvalidSizeError(value);
 		}
 		const num = toNumber(value);
@@ -266,12 +266,13 @@ const hyperionPack = (type: string, val: EncodingTypes): string => {
 
 	if (type.startsWith('int')) {
 		const size = parseTypeN(name, 'int'.length);
-		if (size % 8 || size < 8 || size > 256) {
+		if (size % 8 || size < 8 || size > 512) {
 			throw new InvalidSizeError(type);
 		}
 
 		const num = toNumber(value);
-		if (bitLength(num) > size) {
+		const signedLimit = BigInt(1) << BigInt(size - 1);
+		if (num < -signedLimit || num >= signedLimit) {
 			throw new InvalidLargeValueError(value);
 		}
 		if (num < BigInt(0)) {

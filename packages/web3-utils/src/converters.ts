@@ -387,7 +387,7 @@ export const toHex = (
 
 	if (typeof value === 'number') {
 		// eslint-disable-next-line no-nested-ternary
-		return returnType ? (value < 0 ? 'int256' : 'uint256') : numberToHex(value);
+		return returnType ? (value < 0 ? 'int512' : 'uint512') : numberToHex(value);
 	}
 
 	if (typeof value === 'bigint') {
@@ -400,7 +400,7 @@ export const toHex = (
 
 	if (typeof value === 'string') {
 		if (value.startsWith('-0x') || value.startsWith('-0X')) {
-			return returnType ? 'int256' : numberToHex(value);
+			return returnType ? 'int512' : numberToHex(value);
 		}
 
 		if (isHexStrict(value)) {

@@ -43,12 +43,12 @@ const formats: { [key: string]: (data: unknown) => boolean } = {
 	string: (data: unknown) => isString(data as ValidInputTypes),
 };
 // generate formats for all numbers types
-for (let bitSize = 8; bitSize <= 256; bitSize += 8) {
+for (let bitSize = 8; bitSize <= 512; bitSize += 8) {
 	formats[`int${bitSize}`] = data => isInt(data as ValidInputTypes, { bitSize });
 	formats[`uint${bitSize}`] = data => isUInt(data as ValidInputTypes, { bitSize });
 }
 // generate bytes
-for (let size = 1; size <= 32; size += 1) {
+for (let size = 1; size <= 64; size += 1) {
 	formats[`bytes${size}`] = data =>
 		isBytes(data as ValidInputTypes | Uint8Array | number[], { size });
 }
