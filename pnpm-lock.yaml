@@ -1205,6 +1205,9 @@ importers:
       '@theqrl/web3-types':
         specifier: workspace:^
         version: link:../web3-types
+      js-sha3:
+        specifier: 0.9.3
+        version: 0.9.3
       util:
         specifier: 0.12.5
         version: 0.12.5

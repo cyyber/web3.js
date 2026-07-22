@@ -18,6 +18,13 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 import { TypedObject, TypedObjectAbbreviated, Bytes, Sha3Input } from '@theqrl/web3-types';
 import { hexToBytes } from '../../src/converters';
 
+const ADDRESS_A =
+	'Qd5812f6cf4a0f645aa620cd57319a0ed649dd8f5519a9dde7770ae5b0e49e547985f35eb972a2a07041561aa39c65a3991478f9b1e6749e05277dcf58a9a8b72';
+const ADDRESS_B =
+	'Qbe95a82d87a6cb9c7ff4c64e0c15bb1dff20b1d77e6b571b28ad4736f2a2a3e5857e8c225d6d61399b15beef3b196936e490ed6e234374c4887cbbe86c13b1ba';
+const ADDRESS_C =
+	'Q31f654037d4d7bce04e9522e4d346ab47a90686ef20a6c19916e68d3c77950f54babb7725ad48a3201c0acb74271e790730f9f39f9ce2e9ba1be9e41a763caf9';
+
 export const sha3Data: [Bytes, string | undefined][] = [
 	['test123', '0xf81b517a242b218999ec8eec0ea6e2ddbef2a367a14e93f4a32a39e260f686ad'],
 	[
@@ -128,8 +135,13 @@ export const hyperionSha3Data: [TypedObject[] | TypedObjectAbbreviated[], string
 		'0x661136a4267dba9ccdf6bfddb7c00e714de936674c4bdb065a531cf1cb15c7fc',
 	],
 	[
-		[{ type: 'address', value: 'Q407D73d8a49eeb85D32Cf465507dd71d507100c1' }],
-		'0x4e8ebbefa452077428f93c9520d3edd60594ff452a29ac7d2ccc11d47f3ab95b',
+		[
+			{
+				type: 'address',
+				value: ADDRESS_A,
+			},
+		],
+		'0xeade411406f1785d4476f8637223bc6c477ef1f4e46dff2205ea2b5e56fb865f',
 	],
 	[
 		[{ t: 'bytes32', v: '0x407D73d8a49eeb85D32Cf465507dd71d507100c1' }],
@@ -139,9 +151,12 @@ export const hyperionSha3Data: [TypedObject[] | TypedObjectAbbreviated[], string
 		[
 			{ t: 'string', v: 'Hello!%' },
 			{ t: 'int8', v: -23 },
-			{ t: 'address', v: 'Q85F43D8a49eeB85d32Cf465507DD71d507100C1d' },
+			{
+				t: 'address',
+				v: ADDRESS_B,
+			},
 		],
-		'0xa13b31627c1ed7aaded5aecec71baf02fe123797fffd45e662eac8e06fbe4955',
+		'0x18bbb5d822e3244bd5d4a8b74ee7eb0f0f0aa923d0753edfc9ec93ca43689012',
 	],
 	[
 		[{ t: 'int256', v: '32309054545061485574011236401' }],
@@ -193,8 +208,13 @@ export const encodePackData: [TypedObject[] | TypedObjectAbbreviated[], any][] =
 	],
 	[[{ type: 'string', value: '' }], '0x'],
 	[
-		[{ type: 'address', value: 'Qc1912fee45d61c87cc5ea59dae31190fffff232d' }],
-		'0xc1912fee45d61c87cc5ea59dae31190fffff232d',
+		[
+			{
+				type: 'address',
+				value: ADDRESS_C,
+			},
+		],
+		'0x31f654037d4d7bce04e9522e4d346ab47a90686ef20a6c19916e68d3c77950f54babb7725ad48a3201c0acb74271e790730f9f39f9ce2e9ba1be9e41a763caf9',
 	],
 	[[{ type: 'bool', value: true }], '0x01'],
 	[[{ type: 'bool', value: false }], '0x00'],
@@ -219,8 +239,13 @@ export const encodePackData: [TypedObject[] | TypedObjectAbbreviated[], any][] =
 		'0x44555ffffffffdd2222222222222244445565535220000000000000000000000',
 	],
 	[
-		[{ v: 'Q407D73d8a49eeb85D32Cf465507dd71d507100c1', t: 'address' }],
-		'0x407d73d8a49eeb85d32cf465507dd71d507100c1',
+		[
+			{
+				v: ADDRESS_A,
+				t: 'address',
+			},
+		],
+		'0xd5812f6cf4a0f645aa620cd57319a0ed649dd8f5519a9dde7770ae5b0e49e547985f35eb972a2a07041561aa39c65a3991478f9b1e6749e05277dcf58a9a8b72',
 	],
 	[
 		[{ v: '0x407D73d8a49eeb85D32Cf465507dd71d507100c1', t: 'bytes' }],
