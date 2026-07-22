@@ -1108,9 +1108,9 @@ export class ErrorFragment extends Fragment {
 function verifyType(type: string): string {
 	// These need to be transformed to their full description
 	if (type.match(/^uint($|[^1-9])/)) {
-		type = `uint256${type.substring(4)}`;
+		type = `uint512${type.substring(4)}`;
 	} else if (type.match(/^int($|[^1-9])/)) {
-		type = `int256${type.substring(3)}`;
+		type = `int512${type.substring(3)}`;
 	}
 
 	// @TODO: more verification

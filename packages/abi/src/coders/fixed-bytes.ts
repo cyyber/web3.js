@@ -30,10 +30,7 @@ export class FixedBytesCoder extends Coder {
 	}
 
 	defaultValue(): string {
-		return '0x0000000000000000000000000000000000000000000000000000000000000000'.substring(
-			0,
-			2 + this.size * 2,
-		);
+		return hexlify(new Uint8Array(this.size));
 	}
 
 	encode(writer: Writer, value: BytesLike): number {
