@@ -30,11 +30,13 @@ import HttpProvider from '../../src/index';
 import { mockGetBalanceResponse } from '../fixtures/test_data';
 
 describe('HttpProvider - implemented methods', () => {
+	const testAddress =
+		'Q83cd1122848dd1b2E3AF9ca60a1340e595B2C6d5b3B340AfD625e38EEf9067bc9C28db215702Aa8B3C0243Bb13785a9365A35ee1Fe8e57983b1D47d9fff835a3';
 	const jsonRpcPayload = {
 		jsonrpc: '2.0',
 		id: 42,
 		method: 'qrl_getBalance',
-		params: ['Q407d73d8a49eeb85d32cf465507dd71d507100c1', 'latest'],
+		params: [testAddress, 'latest'],
 	} as Web3APIPayload<QRLExecutionAPI, 'qrl_getBalance'>;
 
 	let httpProvider: HttpProvider;

@@ -15,11 +15,12 @@ You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { getAddress } from '@ethersproject/address';
 import { hexZeroPad } from '@ethersproject/bytes';
 import { hexToAddress, addressToHex } from '@theqrl/web3-utils';
 
 import { Coder, Reader, Writer } from './abstract-coder.js';
+
+const ADDRESS_BYTES = 64;
 
 export class AddressCoder extends Coder {
 	constructor(localName: string) {
@@ -27,19 +28,21 @@ export class AddressCoder extends Coder {
 	}
 
 	defaultValue(): string {
-		return 'Q0000000000000000000000000000000000000000';
+		return `Q${'0'.repeat(ADDRESS_BYTES * 2)}`;
 	}
 
 	encode(writer: Writer, value: string): number {
+		let hex: string;
 		try {
-			value = getAddress(addressToHex(value));
+			hex = addressToHex(value);
 		} catch (error: any) {
 			this._throwError(error.message, value);
+			throw error;
 		}
-		return writer.writeValue(value);
+		return writer.writeValue(hex);
 	}
 
 	decode(reader: Reader): any {
-		return hexToAddress(getAddress(hexZeroPad(reader.readValue().toHexString(), 20)));
+		return hexToAddress(hexZeroPad(reader.readValue().toHexString(), ADDRESS_BYTES));
 	}
 }

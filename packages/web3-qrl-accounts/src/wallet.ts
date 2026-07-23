@@ -91,15 +91,15 @@ export class Wallet<
 	 * web3.qrl.accounts.wallet.create(2)
 	 * > Wallet(2) [
 	 *   {
-	 *     address: 'Qde38310a42B751AE57d30cFFF4a0A3c52A442fCE',
-	 *     seed: '0x6422c9d28efdcbee93c1d32a5fc6fd6fa081b985487885296cf8c9bbb5872600',
+	 *     address: 'QA467d314BBB1E36687FfC9B277d3E163787E59641390075162BDd080E28Ddf6Ca810e1eA17308d3bec9300f85dF4F3dE54C647b4f7F02e0c9821478ac20491A1',
+	 *     seed: '0x010000034da61fe50c659a3285549dc395571e2bf6891c462c041e3c6b9061fc73eb3687d03f940e5e65d582019ef10ce1327f',
 	 *     signTransaction: [Function: signTransaction],
 	 *     sign: [Function: sign],
 	 *     encrypt: [Function: encrypt]
 	 *   },
 	 *   {
-	 *     address: 'Q766BF755246d924B1d017Fdb5390f38a60166691',
-	 *     seed: '0x756530f13c0eb636ebdda655335f5dea9921e3362e2e588b0ad59e556f7751f0',
+	 *     address: 'Q50d1766d3113D213131A20d97CcC89190Ef68ea3e34F6E797A402c2E18119f718f05898f2F47100b37375795f56b6F16b7a1F358f833c49DC4dDD64c3FDdb052',
+	 *     seed: '0x0100007fc43a2ccb557f900d4ca924c187b4438a7f8185b8edbfbabdd26b87f125594495268f55ceac9c9eb23efaab76b0d4c5',
 	 *     signTransaction: [Function: signTransaction],
 	 *     sign: [Function: sign],
 	 *     encrypt: [Function: encrypt]
@@ -110,8 +110,8 @@ export class Wallet<
 	 *     decrypt: [Function: decrypt]
 	 *   },
 	 *   _addressMap: Map(2) {
-	 *     'Qde38310a42b751ae57d30cfff4a0a3c52a442fce' => 0,
-	 *     'Q766bf755246d924b1d017fdb5390f38a60166691' => 1
+	 *     'Qa467d314bbb1e36687ffc9b277d3e163787e59641390075162bdd080e28ddf6ca810e1ea17308d3bec9300f85df4f3de54c647b4f7f02e0c9821478ac20491a1' => 0,
+	 *     'Q50d1766d3113d213131a20d97ccc89190ef68ea3e34f6e797a402c2e18119f718f05898f2f47100b37375795f56b6f16b7a1f358f833c49dc4ddd64c3fddb052' => 1
 	 *   },
 	 *   _defaultKeyName: 'web3js_wallet'
 	 * ]
@@ -134,11 +134,11 @@ export class Wallet<
 	 * @returns The wallet
 	 *
 	 * ```ts
-	 * web3.qrl.accounts.wallet.add('0xbce9b59981303e76c4878b1a6d7b088ec6b9dd5c966b7d5f54d7a749ff683387');
+	 * web3.qrl.accounts.wallet.add('0x010000c902ea9bbf1dd51aaa2ee9bed126aba921f6a6afac9cf09a21f3d915b057bace6787a894a71d1d103992aca0a6a4250c');
 	 * > Wallet(1) [
 	 *   {
-	 *     address: 'Q85D70633b90e03e0276B98880286D0D055685ed7',
-	 *     seed: '0xbce9b59981303e76c4878b1a6d7b088ec6b9dd5c966b7d5f54d7a749ff683387',
+	 *     address: 'Q68eD7F1481bb2CDA83A0A0D55F1f54c3a6eaef4e45c93D7925b42537c61057B7A0F42E1627beafC0A2DE9d1437183e49c47fA79274cc640D051adBaE9d9aDa12',
+	 *     seed: '0x010000c902ea9bbf1dd51aaa2ee9bed126aba921f6a6afac9cf09a21f3d915b057bace6787a894a71d1d103992aca0a6a4250c',
 	 *     signTransaction: [Function: signTransaction],
 	 *     sign: [Function: sign],
 	 *     encrypt: [Function: encrypt]
@@ -148,7 +148,7 @@ export class Wallet<
 	 *     publicKeyToAccount: [Function: publicKeyToAccount],
 	 *     decrypt: [Function: decrypt]
 	 *   },
-	 *   _addressMap: Map(1) { 'Q85d70633b90e03e0276b98880286d0d055685ed7' => 0 },
+	 *   _addressMap: Map(1) { 'Q68ed7f1481bb2cda83a0a0d55f1f54c3a6eaef4e45c93d7925b42537c61057b7a0f42e1627beafc0a2de9d1437183e49c47fa79274cc640d051adbae9d9ada12' => 0 },
 	 *   _defaultKeyName: 'web3js_wallet'
 	 * ]
 	 * ```
@@ -195,9 +195,9 @@ export class Wallet<
 	 * @param addressOrIndex - The account address, or index in the wallet.
 	 * @returns true if the wallet was removed. false if it couldn't be found.
 	 * ```ts
-	 * web3.qrl.accounts.wallet.add('0xbce9b59981303e76c4878b1a6d7b088ec6b9dd5c966b7d5f54d7a749ff683387');
+	 * web3.qrl.accounts.wallet.add('0x010000c902ea9bbf1dd51aaa2ee9bed126aba921f6a6afac9cf09a21f3d915b057bace6787a894a71d1d103992aca0a6a4250c');
 	 *
-	 * web3.qrl.accounts.wallet.remove('Q85D70633b90e03e0276B98880286D0D055685ed7');
+	 * web3.qrl.accounts.wallet.remove('Q68eD7F1481bb2CDA83A0A0D55F1f54c3a6eaef4e45c93D7925b42537c61057B7A0F42E1627beafC0A2DE9d1437183e49c47fA79274cc640D051adBaE9d9aDa12');
 	 * > true
 	 * web3.qrl.accounts.wallet
 	 * > Wallet(0) [
@@ -269,12 +269,12 @@ export class Wallet<
 	 * ```ts
 	 * web3.qrl.accounts.wallet.create(1)
 	 * web3.qrl.accounts.wallet.encrypt("abc").then((res) => console.log(util.inspect(res, { depth: null })));
-	 * > 
+	 * >
 	 * [
 	 *   {
 	 *     version: 1,
 	 *     id: 'ccb92c3f-94c3-4ca0-86a9-1becdb1855b4',
-	 *     address: 'Q20fd3c13848a14e2ec61a53492140c26034e3fd6',
+	 *     address: 'Q0c2d8355005433f1c0bfca0ffc9d9ba1be6503dbaa3396cec0187794fe1e5dced7647a6036a18d42300e69758a15a06bcd5b1d00213a135ea529bc3569b90bc7',
 	 *     crypto: {
 	 *       ciphertext: '9171df3615b852a8c899c0a86885fa2d932db27c17b212ee346cdad1be896736c32e48f6d8d9d2b6ff210d2454d2cc9c736147293dd47d4be0e104105599b11c',
 	 *       cipherparams: { iv: '259d7d6b79c11d3f2e4b88da' },
@@ -312,7 +312,7 @@ export class Wallet<
 	 *   {
 	 *     version: 1,
 	 *     id: 'ccb92c3f-94c3-4ca0-86a9-1becdb1855b4',
-	 *     address: 'Q20fd3c13848a14e2ec61a53492140c26034e3fd6',
+	 *     address: 'Q0c2d8355005433f1c0bfca0ffc9d9ba1be6503dbaa3396cec0187794fe1e5dced7647a6036a18d42300e69758a15a06bcd5b1d00213a135ea529bc3569b90bc7',
 	 *     crypto: {
 	 *       ciphertext: '9171df3615b852a8c899c0a86885fa2d932db27c17b212ee346cdad1be896736c32e48f6d8d9d2b6ff210d2454d2cc9c736147293dd47d4be0e104105599b11c',
 	 *       cipherparams: { iv: '259d7d6b79c11d3f2e4b88da' },
@@ -331,7 +331,7 @@ export class Wallet<
 	 * >
 	 * Wallet(1) [
 	 *   {
-	 *     address: 'Q20FD3c13848A14e2EC61A53492140c26034E3FD6',
+	 *     address: 'Q0c2d8355005433f1C0bFCA0FFC9d9BA1BE6503dbaa3396ceC0187794Fe1e5dCeD7647A6036A18d42300e69758A15A06bcD5B1D00213a135Ea529bc3569B90bc7',
 	 *     seed: '0x1a3bbb0aa289420ef915059a093cfed7e92990043b01ba8b5407a56aafae5507576781603015f6db7d33920a4947a261',
 	 *     signTransaction: [Function: signTransaction],
 	 *     sign: [Function: sign],
@@ -342,7 +342,7 @@ export class Wallet<
 	 *     seedToAccount: [Function: seedToAccountWithContext],
 	 *     decrypt: [Function: decryptWithContext]
 	 *   },
-	 *   _addressMap: Map(1) { 'Q20fd3c13848a14e2ec61a53492140c26034e3fd6' => 0 },
+	 *   _addressMap: Map(1) { 'Q0c2d8355005433f1c0bfca0ffc9d9ba1be6503dbaa3396cec0187794fe1e5dced7647a6036a18d42300e69758a15a06bcd5b1d00213a135ea529bc3569b90bc7' => 0 },
 	 *   _defaultKeyName: 'web3js_wallet'
 	 * ]
 	 * ```
@@ -377,7 +377,7 @@ export class Wallet<
 	 * ```
 	 */
 	public async save(
-		password: string, 
+		password: string,
 		keyName?: string,
 		options?: Record<string, unknown> | undefined,
 	) {

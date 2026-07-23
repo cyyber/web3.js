@@ -5,6 +5,9 @@
 - Start: `pnpm run pos:start`
 - Stop: `pnpm run pos:stop`
 - `pnpm run pos:start` also runs `pnpm run pos:clef:setup` after the network is up.
+- The start script defaults to cyyber/qrl-package PR #13 at commit
+  `261beca5fada67ec5ccad668025e3e07efb3f1e4`. Override `QRL_PKG_REPOSITORY` or
+  `QRL_PKG_VERSION` to test another package checkout.
 
 ## Clef: import accounts + auto-authorization
 

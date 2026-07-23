@@ -41,12 +41,10 @@ export const methodsInInterface: { [T: string]: string } = {
 };
 
 /**
- * An object holding the addressed of the QRNS registries on the different networks (mainnet).
+ * An object holding QRNS registry deployments by network.
+ * No VM64 QRNS registry deployment is currently configured.
  */
-// TODO(youtrack/theqrl/web3.js/1)
-export const registryAddresses: { [T: string]: string } = {
-	main: 'Q00000000000C2E074eC69A0dFb2997BA6C7d2e1e',
-};
+export const registryAddresses: Partial<Record<string, string>> = {};
 
 export const networkIds: { [T: string]: string } = {
 	'0x1': 'main',
