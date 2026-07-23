@@ -363,5 +363,5 @@ export const getStorageSlotNumForLongString = (mainSlotNumber: number | string) 
 		`0x${(typeof mainSlotNumber === 'number'
 			? mainSlotNumber.toString()
 			: mainSlotNumber
-		).padStart(64, '0')}`,
+		).padStart(128, '0')}`,
 	);

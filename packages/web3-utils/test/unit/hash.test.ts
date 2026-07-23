@@ -23,6 +23,7 @@ import {
 	hyperionSha3Raw,
 	encodePacked,
 	keccak256 as web3keccak256,
+	getStorageSlotNumForLongString,
 } from '../../src/hash';
 import {
 	sha3Data,
@@ -130,6 +131,14 @@ describe('hash', () => {
 			it.each(keccak256ValidData)('%s', (input, output) => {
 				expect(web3keccak256(input)).toEqual(output);
 			});
+		});
+	});
+
+	describe('getStorageSlotNumForLongString', () => {
+		it.each([1, '1'])('hashes slot %s as a 64-byte VM word', slot => {
+			expect(getStorageSlotNumForLongString(slot)).toBe(
+				'0xa6eef7e35abe7026729641147f7915573c7e97b47efa546f5f6e3230263bcb49',
+			);
 		});
 	});
 
