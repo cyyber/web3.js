@@ -46,10 +46,9 @@ const makeFewTxToContract = async ({
 	sendOptions,
 	testDataString,
 }: MakeFewTxToContract): Promise<void> => {
-	const prs = [];
 	for (let i = 0; i < checkEventCount; i += 1) {
 		// eslint-disable-next-line no-await-in-loop
-		prs.push(await contract.methods?.firesStringEvent(testDataString).send(sendOptions));
+		await contract.methods?.firesStringEvent(testDataString).send(sendOptions);
 	}
 };
 describeIf(isSocket)('subscription', () => {
@@ -79,7 +78,7 @@ describeIf(isSocket)('subscription', () => {
 				arguments: [10, 'string init value'],
 			};
 
-			const sendOptions = { from, gas: '1000000' };
+			const sendOptions = { from, gas: '1200000' };
 			const contractDeployed = await contract.deploy(deployOptions).send(sendOptions);
 			const web3QRL = new Web3QRL(providerWs as Web3BaseProvider);
 			const fromBlock = await web3QRL.getTransactionCount(

@@ -15,8 +15,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 import { TransactionPollingTimeoutError, TransactionSendTimeoutError } from '@theqrl/web3-errors';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { SupportedProviders, Web3 } from '@theqrl/web3';
+import { SupportedProviders } from '@theqrl/web3-types';
 import { Web3Account } from '@theqrl/web3-qrl-accounts';
 import { Web3QRL } from '../../src';
 
@@ -35,9 +34,8 @@ describe('defaults', () => {
 	let tempAcc: Web3Account;
 	beforeEach(async () => {
 		clientUrl = getSystemTestProvider();
-		const web3 = new Web3(clientUrl);
-		tempAcc = await createLocalAccount(web3);
-		web3QRL = web3.qrl as unknown as Web3QRL;
+		web3QRL = new Web3QRL(clientUrl);
+		tempAcc = await createLocalAccount(web3QRL);
 	});
 
 	afterEach(async () => {

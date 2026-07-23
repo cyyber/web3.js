@@ -21,8 +21,7 @@ import {
 	TransactionReceipt,
 	FMT_NUMBER,
 } from '@theqrl/web3-types';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import Web3 from '@theqrl/web3';
+import Web3QRL from '../../src';
 import { BasicAbi } from '../shared_fixtures/build/Basic';
 import {
 	closeOpenConnection,
@@ -48,12 +47,12 @@ export const sendFewTxes = async ({
 }: SendFewTxParams): Promise<TransactionReceipt[]> => {
 	const res: TransactionReceipt[] = [];
 	const toAddress = to ?? createAccount().address;
-	const web3 = new Web3(getSystemTestProvider());
+	const web3QRL = new Web3QRL(getSystemTestProvider());
 
 	for (let i = 0; i < times; i += 1) {
 		res.push(
 			// eslint-disable-next-line no-await-in-loop
-			await web3.qrl.sendTransaction({
+			await web3QRL.sendTransaction({
 				to: toAddress,
 				value,
 				from,
@@ -62,12 +61,12 @@ export const sendFewTxes = async ({
 			}),
 		);
 	}
-	await closeOpenConnection(web3);
+	await closeOpenConnection(web3QRL);
 
 	return res;
 };
 
-const regexAddress = /Q[0-9a-fA-F]{40}/i;
+const regexAddress = /^Q[0-9a-fA-F]{128}$/i;
 const regexHex32 = /0[xX][0-9a-fA-F]{64}/i;
 
 type ExpectOptions = {

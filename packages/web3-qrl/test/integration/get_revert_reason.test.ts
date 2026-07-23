@@ -21,7 +21,14 @@ import { Address, Transaction, TransactionCall } from '@theqrl/web3-types';
 
 import Web3QRL from '../../src';
 import { getRevertReason } from '../../src/utils/get_revert_reason';
-import { SimpleRevertAbi, SimpleRevertDeploymentData } from '../fixtures/simple_revert';
+import {
+	encodeSimpleRevertSend,
+	SIMPLE_REVERT_CALL_REASON_DATA,
+	SIMPLE_REVERT_CUSTOM_ERROR_DATA,
+	SIMPLE_REVERT_SEND_REASON_DATA,
+	SimpleRevertAbi,
+	SimpleRevertDeploymentData,
+} from '../fixtures/simple_revert';
 import {
 	createTempAccount,
 	getSystemTestBackend,
@@ -65,7 +72,7 @@ describe('Web3QRL.getRevertReason', () => {
 				expect(response).toMatchObject({
 					reason: 'execution reverted: This is a call revert',
 					signature: '0x08c379a0',
-					data: '000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000155468697320697320612063616c6c207265766572740000000000000000000000',
+					data: SIMPLE_REVERT_CALL_REASON_DATA,
 				});
 				break;
 			default:
@@ -79,7 +86,7 @@ describe('Web3QRL.getRevertReason', () => {
 		const transaction: TransactionCall = {
 			from: tempAccount.address,
 			to: simpleRevertContractAddress,
-			data: '0xba57a511000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000067265766572740000000000000000000000000000000000000000000000000000',
+			data: encodeSimpleRevertSend('revert'),
 		};
 
 		const response = await getRevertReason(web3QRL, transaction);
@@ -89,7 +96,7 @@ describe('Web3QRL.getRevertReason', () => {
 				expect(response).toMatchObject({
 					reason: 'execution reverted: This is a send revert',
 					signature: '0x08c379a0',
-					data: '000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000155468697320697320612073656e64207265766572740000000000000000000000',
+					data: SIMPLE_REVERT_SEND_REASON_DATA,
 				});
 				break;
 			default:
@@ -105,14 +112,14 @@ describe('Web3QRL.getRevertReason', () => {
 			to: simpleRevertContractAddress,
 			type: BigInt(2),
 			gas: '0x0',
-			data: '0xba57a511000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000067265766572740000000000000000000000000000000000000000000000000000',
+			data: encodeSimpleRevertSend('revert'),
 		};
 
 		const response = await getRevertReason(web3QRL, transaction);
 		switch (getSystemTestBackend()) {
 			case 'gqrl':
 				expect(response).toBe(
-					'err: intrinsic gas too low: have 0, want 21544 (supplied gas 0)',
+					'err: intrinsic gas too low: have 0, want 21928 (supplied gas 0)',
 				);
 				break;
 			default:
@@ -161,7 +168,7 @@ describe('Web3QRL.getRevertReason', () => {
 		switch (getSystemTestBackend()) {
 			case 'gqrl':
 				expect(response).toMatchObject({
-					data: '000000000000000000000000000000000000000000000000000000000000002a0000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000001c5468697320697320616e206572726f72207769746820706172616d7300000000',
+					data: SIMPLE_REVERT_CUSTOM_ERROR_DATA,
 					reason: 'execution reverted',
 					signature: '0xc85bda60',
 					customErrorName: 'ErrorWithParams',
@@ -183,7 +190,7 @@ describe('Web3QRL.getRevertReason', () => {
 		const transaction: TransactionCall = {
 			from: tempAccount.address,
 			to: simpleRevertContractAddress,
-			data: '0xba57a51100000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000000',
+			data: encodeSimpleRevertSend(''),
 			type: BigInt(2),
 		};
 

@@ -195,7 +195,7 @@ describe('rpc', () => {
 
 			const slotCount = Math.ceil((Number(hexToNumber(resStringLong)) - 1) / 64);
 			const slotDataNum = getStorageSlotNumForLongString(1);
-			const prs = [];
+			const prs: Promise<string>[] = [];
 			for (let i = 0; i < slotCount; i += 1) {
 				prs.push(
 					// eslint-disable-next-line no-await-in-loop
@@ -285,7 +285,7 @@ describe('rpc', () => {
 
 		it('getPastLogs', async () => {
 			const listOfStrings = ['t1', 't2', 't3'];
-			const resTx = [];
+			const resTx: TransactionReceipt[] = [];
 			for (const l of listOfStrings) {
 				// eslint-disable-next-line  no-await-in-loop
 				resTx.push(await contractDeployed.methods?.firesStringEvent(l).send(sendOptions));

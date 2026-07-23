@@ -18,10 +18,8 @@ import { DEFAULT_RETURN_FORMAT } from '@theqrl/web3-types';
 import { Web3PromiEvent } from '@theqrl/web3-core';
 import { SupportedProviders, TransactionReceipt } from '@theqrl/web3-types';
 import { TransactionBlockTimeoutError } from '@theqrl/web3-errors';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { Web3 } from '@theqrl/web3';
 import { Web3Account } from '@theqrl/web3-qrl-accounts';
-import { SendTransactionEvents } from '../../src';
+import { SendTransactionEvents, Web3QRL } from '../../src';
 
 import {
 	closeOpenConnection,
@@ -38,37 +36,37 @@ const MAX_32_SIGNED_INTEGER = 2147483647;
 const type = BigInt(2);
 /* eslint-disable jest/no-standalone-expect */
 describe('defaults', () => {
-	let web3: Web3;
+	let web3QRL: Web3QRL;
 	let clientUrl: string | SupportedProviders;
 	let account1: Web3Account;
 	let account2: Web3Account;
 
 	beforeEach(() => {
 		clientUrl = getSystemTestProvider();
-		web3 = new Web3(clientUrl);
+		web3QRL = new Web3QRL(clientUrl);
 		// Make the test run faster by casing the polling to start after 2 blocks
-		web3.qrl.transactionBlockTimeout = 2;
+		web3QRL.transactionBlockTimeout = 2;
 
 		// Increase other timeouts so only `transactionBlockTimeout` would be reached
-		web3.qrl.transactionSendTimeout = MAX_32_SIGNED_INTEGER;
-		web3.qrl.transactionPollingTimeout = MAX_32_SIGNED_INTEGER;
-		web3.qrl.blockHeaderTimeout = MAX_32_SIGNED_INTEGER / 1000;
+		web3QRL.transactionSendTimeout = MAX_32_SIGNED_INTEGER;
+		web3QRL.transactionPollingTimeout = MAX_32_SIGNED_INTEGER;
+		web3QRL.blockHeaderTimeout = MAX_32_SIGNED_INTEGER / 1000;
 	});
 
 	afterEach(async () => {
-		web3.qrl.transactionBlockTimeout = 50;
-		await closeOpenConnection(web3.qrl);
+		web3QRL.transactionBlockTimeout = 50;
+		await closeOpenConnection(web3QRL);
 	});
 
 	describe('defaults', () => {
 		it('should fail if transaction was not mined within `transactionBlockTimeout` blocks', async () => {
-			account1 = await createLocalAccount(web3);
-			account2 = await createLocalAccount(web3);
+			account1 = await createLocalAccount(web3QRL);
+			account2 = await createLocalAccount(web3QRL);
 			// Setting a high `nonce` when sending a transaction, to cause the RPC call to stuck at the Node
 			const sentTx: Web3PromiEvent<
 				TransactionReceipt,
 				SendTransactionEvents<typeof DEFAULT_RETURN_FORMAT>
-			> = web3.qrl.sendTransaction({
+			> = web3QRL.sendTransaction({
 				from: account1.address,
 				to: account2.address,
 				// gas,
@@ -95,7 +93,7 @@ describe('defaults', () => {
 				// eslint-disable-next-line jest/no-conditional-expect
 				expect((error as Error).message).toMatch(/was not mined within [0-9]+ blocks/);
 			}
-			await closeOpenConnection(web3.qrl);
+			await closeOpenConnection(web3QRL);
 		});
 
 		/*

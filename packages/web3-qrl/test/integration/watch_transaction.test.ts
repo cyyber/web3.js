@@ -17,9 +17,7 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 import { SupportedProviders, TransactionReceipt, DEFAULT_RETURN_FORMAT } from '@theqrl/web3-types';
 import { Web3PromiEvent } from '@theqrl/web3-core';
 import { Web3Account } from '@theqrl/web3-qrl-accounts';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { Web3 } from '@theqrl/web3';
-import { SendTransactionEvents } from '../../src';
+import { SendTransactionEvents, Web3QRL } from '../../src';
 import {
 	getSystemTestProvider,
 	describeIf,
@@ -37,25 +35,25 @@ const gas = 30000;
 type Resolve = (value?: unknown) => void;
 
 describeIf(isSocket)('watch subscription transaction', () => {
-	let web3: Web3;
+	let web3QRL: Web3QRL;
 	let clientUrl: string | SupportedProviders;
 	let account1: Web3Account;
 	let account2: Web3Account;
 	beforeEach(async () => {
 		clientUrl = getSystemTestProvider();
-		web3 = new Web3(clientUrl);
-		account1 = await createLocalAccount(web3);
+		web3QRL = new Web3QRL(clientUrl);
+		account1 = await createLocalAccount(web3QRL);
 		account2 = createAccount();
-		await waitForOpenConnection(web3.qrl);
+		await waitForOpenConnection(web3QRL);
 	});
 	describe('wait for confirmation subscription', () => {
 		it('subscription to heads', async () => {
-			web3.qrl.setConfig({ transactionConfirmationBlocks: waitConfirmations });
+			web3QRL.setConfig({ transactionConfirmationBlocks: waitConfirmations });
 
 			const sentTx: Web3PromiEvent<
 				TransactionReceipt,
 				SendTransactionEvents<typeof DEFAULT_RETURN_FORMAT>
-			> = web3.qrl.sendTransaction({
+			> = web3QRL.sendTransaction({
 				from: account1.address,
 				to: account2.address,
 				value: '0x1',
@@ -86,7 +84,7 @@ describeIf(isSocket)('watch subscription transaction', () => {
 			await receiptPromise;
 			await sendFewSampleTxs(isIpc ? 2 * waitConfirmations : waitConfirmations);
 			await confirmationPromise;
-			await closeOpenConnection(web3.qrl);
+			await closeOpenConnection(web3QRL);
 		});
 	});
 });

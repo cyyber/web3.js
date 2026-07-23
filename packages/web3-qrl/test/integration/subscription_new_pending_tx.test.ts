@@ -14,8 +14,6 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { Web3 } from '@theqrl/web3';
 import { Web3QRL, NewPendingTransactionsSubscription } from '../../src';
 import {
 	closeOpenConnection,
@@ -30,8 +28,7 @@ const checkTxCount = 2;
 describeIf(isSocket)('subscription', () => {
 	describe('new pending transaction', () => {
 		it(`wait ${checkTxCount} transaction`, async () => {
-			const web3 = new Web3(getSystemTestProvider());
-			const web3QRL = web3.qrl;
+			const web3QRL = new Web3QRL(getSystemTestProvider());
 			await waitForOpenConnection(web3QRL);
 			const sub = await web3QRL.subscribe('pendingTransactions');
 
@@ -92,9 +89,8 @@ describeIf(isSocket)('subscription', () => {
 		it(`clear`, async () => {
 			const web3QRL = new Web3QRL(getSystemTestProvider());
 			await waitForOpenConnection(web3QRL);
-			const sub: NewPendingTransactionsSubscription = await web3QRL.subscribe(
-				'pendingTransactions',
-			);
+			const sub: NewPendingTransactionsSubscription =
+				await web3QRL.subscribe('pendingTransactions');
 			expect(sub.id).toBeDefined();
 			await web3QRL.subscriptionManager?.removeSubscription(sub);
 			expect(sub.id).toBeUndefined();
