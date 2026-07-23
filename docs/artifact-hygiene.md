@@ -12,7 +12,6 @@ tree:
 
 - Root and docs `yarn.lock` files.
 - Black-box test `.yarnrc` and `yarn.lock` files.
-- Generated coverage output under `packages/web3-qrl-iban/coverage/`.
 - The accidental copied fixture `packages/web3/test/fixtures/transactions copy.json`.
 
 Local build outputs may still exist after validation commands, but they are

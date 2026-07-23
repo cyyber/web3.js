@@ -94,6 +94,15 @@ describe('validation', () => {
 		});
 
 		describe('isInt', () => {
+			it('uses exact signed bounds through 512 bits', () => {
+				const limit = BigInt(1) << BigInt(511);
+
+				expect(isInt(limit - BigInt(1), { bitSize: 512 })).toBe(true);
+				expect(isInt(-limit, { bitSize: 512 })).toBe(true);
+				expect(isInt(limit, { bitSize: 512 })).toBe(false);
+				expect(isInt(-limit - BigInt(1), { bitSize: 512 })).toBe(false);
+			});
+
 			describe('raw number', () => {
 				describe('valid cases', () => {
 					it.each(validIntData)('%s', value => {

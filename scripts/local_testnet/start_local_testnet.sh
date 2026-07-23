@@ -7,7 +7,8 @@ set -Eeuo pipefail
 SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 ENCLAVE_NAME=local-testnet
 NETWORK_PARAMS_FILE=$SCRIPT_DIR/network_params.yaml
-QRL_PKG_VERSION=main
+QRL_PKG_REPOSITORY=${QRL_PKG_REPOSITORY:-github.com/cyyber/qrl-package}
+QRL_PKG_VERSION=${QRL_PKG_VERSION:-261beca5fada67ec5ccad668025e3e07efb3f1e4}
 
 CI=false
 KEEP_ENCLAVE=false
@@ -61,7 +62,7 @@ if [ "$KEEP_ENCLAVE" = false ]; then
   kurtosis enclave rm -f $ENCLAVE_NAME 2>/dev/null || true
 fi
 
-kurtosis run --enclave $ENCLAVE_NAME github.com/theQRL/qrl-package@$QRL_PKG_VERSION --args-file $NETWORK_PARAMS_FILE
+kurtosis run --enclave "$ENCLAVE_NAME" "$QRL_PKG_REPOSITORY@$QRL_PKG_VERSION" --args-file "$NETWORK_PARAMS_FILE"
 
 echo "Started!"
 echo "Running clef setup..."

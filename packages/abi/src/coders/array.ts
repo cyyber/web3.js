@@ -264,10 +264,10 @@ export class ArrayCoder extends Coder {
 
 			// Check that there is *roughly* enough data to ensure
 			// stray random data is not being read as a length. Each
-			// slot requires at least 32 bytes for their value (or 32
-			// bytes as a link to the data). This could use a much
+			// slot requires at least one word for its value or as a link
+			// to the data. This could use a much
 			// tighter bound, but we are erroring on the side of safety.
-			if (count * 32 > reader._data.length) {
+			if (count * reader.wordSize > reader._data.length) {
 				logger.throwError('insufficient data length', Logger.errors.BUFFER_OVERRUN, {
 					length: reader._data.length,
 					count,

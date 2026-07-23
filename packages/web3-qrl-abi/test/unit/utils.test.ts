@@ -15,7 +15,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { jsonInterfaceMethodToString, isAbiConstructorFragment } from '../../src/utils';
+import { jsonInterfaceMethodToString, isAbiConstructorFragment, mapTypes } from '../../src/utils';
 import {
 	jsonInterfaceInvalidData,
 	jsonInterfaceValidData,
@@ -24,6 +24,14 @@ import {
 } from '../fixtures/data';
 
 describe('utils', () => {
+	describe('mapTypes', () => {
+		it('rejects function values that cannot fit a 64-byte QRL address', () => {
+			expect(() => mapTypes([{ type: 'function' }])).toThrow(
+				'ABI function type is not supported for 64-byte QRL addresses.',
+			);
+		});
+	});
+
 	describe('jsonInterfaceMethodToString', () => {
 		describe('valid cases', () => {
 			it.each(jsonInterfaceValidData)('%s', (input, output) => {

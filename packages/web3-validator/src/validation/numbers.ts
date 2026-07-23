@@ -94,7 +94,7 @@ export const isInt = (
 		size = options.bitSize;
 	}
 
-	const maxSize = BigInt(2) ** BigInt((size ?? 256) - 1);
+	const maxSize = BigInt(2) ** BigInt((size ?? 256) - 1) - BigInt(1);
 	const minSize = BigInt(-1) * BigInt(2) ** BigInt((size ?? 256) - 1);
 
 	try {
