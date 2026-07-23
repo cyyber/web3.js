@@ -326,9 +326,6 @@ importers:
       '@theqrl/web3-qrl-contract':
         specifier: workspace:^
         version: link:../web3-qrl-contract
-      '@theqrl/web3-qrl-iban':
-        specifier: workspace:^
-        version: link:../web3-qrl-iban
       '@theqrl/web3-qrl-qrns':
         specifier: workspace:^
         version: link:../web3-qrl-qrns
@@ -399,9 +396,6 @@ importers:
       '@theqrl/web3-providers-ws':
         specifier: workspace:^
         version: link:../web3-providers-ws
-      '@theqrl/web3-qrl-iban':
-        specifier: workspace:^
-        version: link:../web3-qrl-iban
       '@theqrl/web3-types':
         specifier: workspace:^
         version: link:../web3-types
@@ -996,55 +990,6 @@ importers:
         specifier: 5.9.3
         version: 5.9.3
 
-  packages/web3-qrl-iban:
-    dependencies:
-      '@theqrl/web3-errors':
-        specifier: workspace:^
-        version: link:../web3-errors
-      '@theqrl/web3-types':
-        specifier: workspace:^
-        version: link:../web3-types
-      '@theqrl/web3-utils':
-        specifier: workspace:^
-        version: link:../web3-utils
-      '@theqrl/web3-validator':
-        specifier: workspace:^
-        version: link:../web3-validator
-    devDependencies:
-      '@theqrl/eslint-config-base-web3':
-        specifier: workspace:^
-        version: link:../../tools/eslint-config-base-web3
-      '@types/jest':
-        specifier: 29.5.0
-        version: 29.5.0
-      '@typescript-eslint/eslint-plugin':
-        specifier: 8.59.0
-        version: 8.59.0(@typescript-eslint/parser@8.59.0(eslint@10.2.1(jiti@1.21.7))(typescript@5.9.3))(eslint@10.2.1(jiti@1.21.7))(typescript@5.9.3)
-      '@typescript-eslint/parser':
-        specifier: 8.59.0
-        version: 8.59.0(eslint@10.2.1(jiti@1.21.7))(typescript@5.9.3)
-      eslint:
-        specifier: 10.2.1
-        version: 10.2.1(jiti@1.21.7)
-      eslint-config-prettier:
-        specifier: 10.1.8
-        version: 10.1.8(eslint@10.2.1(jiti@1.21.7))
-      jest:
-        specifier: 29.7.0
-        version: 29.7.0(@types/node@22.19.17)(ts-node@10.9.1(@types/node@22.19.17)(typescript@5.9.3))
-      jest-extended:
-        specifier: 7.0.0
-        version: 7.0.0(jest@29.7.0(@types/node@22.19.17)(ts-node@10.9.1(@types/node@22.19.17)(typescript@5.9.3)))(typescript@5.9.3)
-      prettier:
-        specifier: 3.8.3
-        version: 3.8.3
-      ts-jest:
-        specifier: 29.1.0
-        version: 29.1.0(@babel/core@7.29.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.29.0))(jest@29.7.0(@types/node@22.19.17)(ts-node@10.9.1(@types/node@22.19.17)(typescript@5.9.3)))(typescript@5.9.3)
-      typescript:
-        specifier: 5.9.3
-        version: 5.9.3
-
   packages/web3-qrl-qrns:
     dependencies:
       '@adraffy/ens-normalize':
@@ -1260,6 +1205,9 @@ importers:
       '@theqrl/web3-types':
         specifier: workspace:^
         version: link:../web3-types
+      js-sha3:
+        specifier: 0.9.3
+        version: 0.9.3
       util:
         specifier: 0.12.5
         version: 0.12.5

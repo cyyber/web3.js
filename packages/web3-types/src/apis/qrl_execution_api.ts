@@ -31,6 +31,7 @@ import {
 	BlockBase,
 	LogBase,
 	HexString3Bytes,
+	TopicFilter,
 } from '../qrl_types.js';
 import { HexString } from '../primitives_types.js';
 
@@ -230,7 +231,7 @@ export type QRLExecutionAPI = {
 			| ['newHeads']
 			| ['newPendingTransactions']
 			| ['syncing']
-			| ['logs', { address?: HexString; topics?: HexString[] }]
+			| ['logs', { address?: Address | Address[]; topics?: TopicFilter[] }]
 	) => HexString;
 	qrl_unsubscribe: (subscriptionId: HexString) => HexString;
 	qrl_clearSubscriptions: (keepSyncing?: boolean) => void;

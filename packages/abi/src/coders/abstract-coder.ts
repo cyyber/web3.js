@@ -100,7 +100,7 @@ export class Writer {
 	_padding: Uint8Array;
 
 	constructor(wordSize?: number) {
-		defineReadOnly(this, 'wordSize', wordSize || 32);
+		defineReadOnly(this, 'wordSize', wordSize || 64);
 		this._data = [];
 		this._dataLength = 0;
 		this._padding = new Uint8Array(wordSize);
@@ -173,7 +173,7 @@ export class Reader {
 
 	constructor(data: BytesLike, wordSize?: number, coerceFunc?: CoerceFunc, allowLoose?: boolean) {
 		defineReadOnly(this, '_data', arrayify(data));
-		defineReadOnly(this, 'wordSize', wordSize || 32);
+		defineReadOnly(this, 'wordSize', wordSize || 64);
 		defineReadOnly(this, '_coerceFunc', coerceFunc);
 		defineReadOnly(this, 'allowLoose', allowLoose);
 
