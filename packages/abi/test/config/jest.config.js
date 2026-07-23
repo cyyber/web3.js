@@ -21,6 +21,9 @@ module.exports = {
 	transform: {
 		'^.+\\.(ts|tsx)$': ['ts-jest', { tsconfig: './test/tsconfig.json' }],
 	},
+	moduleNameMapper: {
+		'^(\\.{1,2}/.*)\\.js$': '$1',
+	},
 	verbose: false,
 	collectCoverage: false,
 	coverageReporters: ['json'],

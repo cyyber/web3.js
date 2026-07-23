@@ -113,9 +113,9 @@ export class FeeMarketEIP1559Transaction extends BaseTransaction<FeeMarketEIP155
 	 * accessList, descriptor, extraParams, signature, publicKey ]`
 	 */
 	public static fromValuesArray(values: FeeMarketEIP1559ValuesArray, opts: TxOptions = {}) {
-		if (values.length !== 9 && values.length !== 13) {
+		if (values.length !== 11 && values.length !== 13) {
 			throw new Error(
-				'Invalid EIP-1559 transaction. Only expecting 9 values (for unsigned tx) or 13 values (for signed tx).',
+				'Invalid EIP-1559 transaction. Only expecting 11 values (for unsigned tx with descriptor and extraParams) or 13 values (for signed tx).',
 			);
 		}
 
@@ -256,13 +256,13 @@ export class FeeMarketEIP1559Transaction extends BaseTransaction<FeeMarketEIP155
 	 * Returns a Uint8Array Array of the raw Uint8Arrays of the EIP-1559 transaction, in order.
 	 *
 	 * Format: `[chainId, nonce, maxPriorityFeePerGas, maxFeePerGas, gasLimit, to, value, data,
-	 * accessList, signatureYParity, signatureR, signatureS]`
+	 * accessList, descriptor, extraParams, signature, publicKey]`
 	 *
 	 * Use {@link FeeMarketEIP1559Transaction.serialize} to add a transaction to a block
 	 * with {@link Block.fromValuesArray}.
 	 *
-	 * For an unsigned tx this method uses the empty Uint8Array values for the
-	 * signature parameters for encoding. For an EIP-155 compliant
+	 * For an unsigned tx this method uses empty Uint8Array values for the
+	 * cryptographic fields. For an EIP-155 compliant
 	 * representation for external signing use {@link FeeMarketEIP1559Transaction.getMessageToSign}.
 	 */
 	public raw(): FeeMarketEIP1559ValuesArray {
@@ -311,7 +311,11 @@ export class FeeMarketEIP1559Transaction extends BaseTransaction<FeeMarketEIP155
 	 *
 	 * @param hashMessage - Return hashed message if set to true (default: true)
 	 */
-	public getMessageToSign(descriptor: Uint8Array, extraParams: Uint8Array, hashMessage = true): Uint8Array {
+	public getMessageToSign(
+		descriptor: Uint8Array,
+		extraParams: Uint8Array,
+		hashMessage = true,
+	): Uint8Array {
 		const base = this.raw().slice(0, 9);
 		base.push(descriptor);
 		base.push(extraParams);
@@ -365,7 +369,12 @@ export class FeeMarketEIP1559Transaction extends BaseTransaction<FeeMarketEIP155
 		return this.publicKey!;
 	}
 
-	public _processAuthValues(descriptor: Uint8Array, extraParams: Uint8Array, signature: Uint8Array, publicKey: Uint8Array) {
+	public _processAuthValues(
+		descriptor: Uint8Array,
+		extraParams: Uint8Array,
+		signature: Uint8Array,
+		publicKey: Uint8Array,
+	) {
 		const opts = { ...this.txOptions, common: this.common };
 
 		return FeeMarketEIP1559Transaction.fromTxData(

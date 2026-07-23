@@ -72,6 +72,7 @@
 		"@theqrl/web3-utils": "workspace:^",
 		"@theqrl/web3-validator": "workspace:^",
 		"crc-32": "1.2.2",
+		"js-sha3": "0.9.3",
 		"sha3": "2.1.4"
 	}
 }
