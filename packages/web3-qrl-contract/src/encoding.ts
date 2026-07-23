@@ -15,8 +15,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { format, isNullish, keccak256 } from '@theqrl/web3-utils';
-import { isAddressString } from '@theqrl/web3-validator';
+import { format, isNullish, keccak256, utf8ToHex } from '@theqrl/web3-utils';
+import { isAddressString, isTopic } from '@theqrl/web3-validator';
 
 import {
 	AbiConstructorFragment,
@@ -26,6 +26,7 @@ import {
 	Filter,
 	HexString,
 	Topic,
+	TopicFilter,
 	FMT_NUMBER,
 	FMT_BYTES,
 	DataFormat,
@@ -51,6 +52,35 @@ import { Web3ContractError } from '@theqrl/web3-errors';
 import { ContractOptions, ContractAbiWithSignature, EventLog } from './types.js';
 
 type Writeable<T> = { -readonly [P in keyof T]: T[P] };
+
+const serializeEventTopic = (signature: string): Topic =>
+	(isTopic(signature)
+		? signature.toLowerCase()
+		: `${signature.toLowerCase()}${'0'.repeat(64)}`) as Topic;
+
+const encodeIndexedTopic = (type: string, value: unknown): Topic => {
+	if (type === 'string') {
+		return serializeEventTopic(keccak256(utf8ToHex(value as string)));
+	}
+	if (type === 'bytes') {
+		return serializeEventTopic(keccak256(value as string | Uint8Array));
+	}
+	return encodeParameter(type, value) as Topic;
+};
+
+const encodeCompositeFilterTopic = (name: string, value: unknown): Topic | Topic[] => {
+	if (typeof value === 'string' && isTopic(value)) return value.toLowerCase();
+	if (Array.isArray(value)) {
+		const topics = value as unknown[];
+		if (topics.every((item): item is string => typeof item === 'string' && isTopic(item))) {
+			return topics.map(item => item.toLowerCase());
+		}
+	}
+	throw new Web3ContractError(
+		`Indexed tuple and array filter "${name}" requires precomputed 64-byte topics.`,
+	);
+};
+
 export const encodeEventABI = (
 	{ address }: ContractOptions,
 	event: AbiEventFragment & { signature: string },
@@ -74,13 +104,15 @@ export const encodeEventABI = (
 	}
 
 	if (topics && Array.isArray(topics)) {
-		opts.topics = [...topics] as Topic[];
+		opts.topics = [...topics] as TopicFilter[];
 	} else {
 		opts.topics = [];
 		// add event signature
 		if (event && !event.anonymous && event.name !== 'ALLEVENTS') {
 			opts.topics.push(
-				event.signature ?? encodeEventSignature(jsonInterfaceMethodToString(event)),
+				serializeEventTopic(
+					event.signature ?? encodeEventSignature(jsonInterfaceMethodToString(event)),
+				),
 			);
 		}
 
@@ -92,20 +124,18 @@ export const encodeEventABI = (
 				}
 
 				const value = filter[input.name];
-				if (!value) {
+				if (isNullish(value)) {
 					// eslint-disable-next-line no-null/no-null
 					opts.topics.push(null);
 					continue;
 				}
 
-				// TODO: https://github.com/ethereum/web3.js/issues/344
-				// TODO: deal properly with components
-				if (Array.isArray(value)) {
-					opts.topics.push(value.map(v => encodeParameter(input.type, v)));
-				} else if (input.type === 'string') {
-					opts.topics.push(keccak256(value as string));
+				if (input.type.startsWith('tuple') || input.type.includes('[')) {
+					opts.topics.push(encodeCompositeFilterTopic(input.name, value));
+				} else if (Array.isArray(value)) {
+					opts.topics.push(value.map(v => encodeIndexedTopic(input.type, v)));
 				} else {
-					opts.topics.push(encodeParameter(input.type, value));
+					opts.topics.push(encodeIndexedTopic(input.type, value));
 				}
 			}
 		}
@@ -134,10 +164,15 @@ export const decodeEventABI = (
 	let modifiedEvent = { ...event };
 
 	const result = format(logSchema, data, returnFormat);
+	const rawTopics = data.topics ?? [];
 
 	// if allEvents get the right event
 	if (modifiedEvent.name === 'ALLEVENTS') {
-		const matchedEvent = jsonInterface.find(j => j.signature === data.topics[0]);
+		const matchedEvent = rawTopics[0]
+			? jsonInterface.find(
+				j => serializeEventTopic(j.signature).toLowerCase() === rawTopics[0].toLowerCase(),
+			)
+			: undefined;
 		if (matchedEvent) {
 			modifiedEvent = matchedEvent as AbiEventFragment & { signature: string };
 		} else {
@@ -170,7 +205,7 @@ export const decodeEventABI = (
 		}
 	}
 
-	const argTopics = modifiedEvent.anonymous ? data.topics : (data.topics ?? []).slice(1);
+	const argTopics = modifiedEvent.anonymous ? rawTopics : rawTopics.slice(1);
 	return {
 		...result,
 		returnValues: decodeLog([...(modifiedEvent.inputs ?? [])], data.data, argTopics),
@@ -178,11 +213,11 @@ export const decodeEventABI = (
 		signature:
 			modifiedEvent.anonymous || !data.topics || data.topics.length === 0 || !data.topics[0]
 				? undefined
-				: data.topics[0],
+				: rawTopics[0],
 
 		raw: {
 			data: data.data,
-			topics: data.topics,
+			topics: rawTopics,
 		},
 	};
 };

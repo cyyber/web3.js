@@ -28,3 +28,5 @@ export const MAX_INTEGER = BigInt(
 );
 
 export const SEED_BYTES = 51;
+
+export const ADDRESS_BYTES = 64;
