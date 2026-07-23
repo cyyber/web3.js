@@ -457,6 +457,30 @@ describe('formatter', () => {
 						}),
 					).toEqual(new Uint8Array([16, 11, 202]));
 				});
+
+				it('formats only exact 64-byte log topics', () => {
+					const topic = `0x${'ab'.repeat(64)}`;
+					const bytes = hexToBytes(topic);
+
+					expect(
+						convertScalarValue(topic, 'topic', {
+							number: FMT_NUMBER.STR,
+							bytes: FMT_BYTES.HEX,
+						}),
+					).toBe(topic);
+					const converted = convertScalarValue(bytes, 'topic', {
+						number: FMT_NUMBER.STR,
+						bytes: FMT_BYTES.UINT8ARRAY,
+					});
+					expect(converted).toEqual(bytes);
+					expect(converted).not.toBe(bytes);
+					expect(() =>
+						convertScalarValue(`0x${'ab'.repeat(32)}`, 'topic', DEFAULT_RETURN_FORMAT),
+					).toThrow('expected 64 bytes');
+					expect(() =>
+						convertScalarValue(`0x${'ab'.repeat(65)}`, 'topic', DEFAULT_RETURN_FORMAT),
+					).toThrow('expected 64 bytes');
+				});
 			});
 		});
 
