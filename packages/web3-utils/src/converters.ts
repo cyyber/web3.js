@@ -15,15 +15,14 @@ You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { keccak256 } from '@theqrl/qrl-cryptography/keccak.js';
-import { bytesToUtf8, utf8ToBytes } from '@theqrl/qrl-cryptography/utils.js';
+import { bytesToUtf8 } from '@theqrl/qrl-cryptography/utils.js';
 import { Address, Bytes, HexString, Numbers, ValueTypes } from '@theqrl/web3-types';
 import {
 	isAddressString,
 	isHex,
 	isHexStrict,
-	isNullish,
 	isInt,
+	toChecksumAddress as toQrlChecksumAddress,
 	utils as validatorUtils,
 	validator,
 } from '@theqrl/web3-validator';
@@ -38,6 +37,8 @@ import {
 
 const base = BigInt(10);
 const expo10 = (expo: number) => base ** BigInt(expo);
+const ADDRESS_BYTES = 64;
+const ADDRESS_HEX_CHARS = ADDRESS_BYTES * 2;
 
 // Ref: https://ethdocs.org/en/latest/ether.html
 /** @internal */
@@ -138,8 +139,8 @@ export const hexToBytes = (bytes: HexString): Uint8Array => {
  *
  * @example
  * ```ts
- * console.log(web3.utils.addressToBytes('Q7465737474657374746573747465737474657374'));
- * > Uint8Array(20) [ 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116 ]
+ * console.log(web3.utils.addressToBytes('Qd5812f6cf4a0f645aa620cd57319a0ed649dd8f5519a9dde7770ae5b0e49e547985f35eb972a2a07041561aa39c65a3991478f9b1e6749e05277dcf58a9a8b72'));
+ * > Uint8Array(64) [ ... ]
  * ```
  */
 // eslint-disable-next-line no-use-before-define
@@ -152,13 +153,17 @@ export const addressToBytes = (value: Address): Uint8Array => bytesToUint8Array(
  *
  * @example
  * ```ts
- * console.log(web3.utils.hexToAddress('0x74657374123123131231231313a1231231112312'));
- * > "Q74657374123123131231231313a1231231112312"
+ * console.log(web3.utils.hexToAddress('0xd5812f6cf4a0f645aa620cd57319a0ed649dd8f5519a9dde7770ae5b0e49e547985f35eb972a2a07041561aa39c65a3991478f9b1e6749e05277dcf58a9a8b72'));
+ * > "Qd5812f6cf4a0f645aa620cd57319a0ed649dd8f5519a9dde7770ae5b0e49e547985f35eb972a2a07041561aa39c65a3991478f9b1e6749e05277dcf58a9a8b72"
  * ```
  */
 export const hexToAddress = (value: HexString): Address => {
 	validator.validate(['hex'], [value]);
-	return value.replace('0x', 'Q');
+	const hex = value.toLowerCase().replace(/^0x/i, '');
+	if (hex.length !== ADDRESS_HEX_CHARS) {
+		throw new InvalidAddressError(value);
+	}
+	return `Q${hex}`;
 };
 
 /**
@@ -168,8 +173,8 @@ export const hexToAddress = (value: HexString): Address => {
  *
  * @example
  * ```ts
- * console.log(web3.utils.addressToHex('Q74657374123123131231231313a1231231112312'));
- * > "0x74657374123123131231231313a1231231112312"
+ * console.log(web3.utils.addressToHex('Qd5812f6cf4a0f645aa620cd57319a0ed649dd8f5519a9dde7770ae5b0e49e547985f35eb972a2a07041561aa39c65a3991478f9b1e6749e05277dcf58a9a8b72'));
+ * > "0xd5812f6cf4a0f645aa620cd57319a0ed649dd8f5519a9dde7770ae5b0e49e547985f35eb972a2a07041561aa39c65a3991478f9b1e6749e05277dcf58a9a8b72"
  * ```
  */
 export const addressToHex = (value: Address): HexString => {
@@ -597,13 +602,13 @@ export const toPlanck = (number: Numbers, unit: QRLUnits): string => {
 };
 
 /**
- * Will convert an upper or lowercase QRL address to a checksum address.
+ * Will convert an upper or lowercase QRL address to its SHAKE256 mixed-case checksum address.
  * @param address - An address string
- * @returns	The checksum address
+ * @returns	The canonical address
  * @example
  * ```ts
- * web3.utils.toChecksumAddress('Qc1912fee45d61c87cc5ea59dae31190fffff232d');
- * > "Qc1912fEE45d61C87Cc5EA59DaE31190FFFFf232d"
+ * web3.utils.toChecksumAddress('Qd5812f6cf4a0f645aa620cd57319a0ed649dd8f5519a9dde7770ae5b0e49e547985f35eb972a2a07041561aa39c65a3991478f9b1e6749e05277dcf58a9a8b72');
+ * > "Qd5812F6Cf4a0f645aa620cd57319a0Ed649dd8f5519A9dde7770ae5b0E49e547985f35eB972A2a07041561aa39c65A3991478f9B1e6749e05277dcf58A9A8B72"
  * ```
  */
 export const toChecksumAddress = (address: Address): string => {
@@ -611,27 +616,5 @@ export const toChecksumAddress = (address: Address): string => {
 		throw new InvalidAddressError(address);
 	}
 
-	const lowerCaseAddress = address.toLowerCase().replace(/^q/i, '');
-
-	const hash = bytesToHex(keccak256(utf8ToBytes(lowerCaseAddress)));
-
-	if (
-		isNullish(hash) ||
-		hash === '0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470'
-	)
-		return ''; // // EIP-1052 if hash is equal to c5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470, keccak was given empty data
-
-	let checksumAddress = 'Q';
-
-	const addressHash = hash.replace(/^0x/i, '');
-
-	for (let i = 0; i < lowerCaseAddress.length; i += 1) {
-		// If ith character is 8 to f then make it uppercase
-		if (parseInt(addressHash[i], 16) > 7) {
-			checksumAddress += lowerCaseAddress[i].toUpperCase();
-		} else {
-			checksumAddress += lowerCaseAddress[i];
-		}
-	}
-	return checksumAddress;
+	return toQrlChecksumAddress(address);
 };

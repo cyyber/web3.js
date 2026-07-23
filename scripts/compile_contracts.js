@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 /*
 This file is part of web3.js.
 
@@ -17,101 +15,113 @@ You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/* eslint-disable header/header */
-/* eslint-disable @typescript-eslint/no-var-requires */
-
-const { promisify } = require('util');
-const { resolve } = require('path');
-const { compile } = require('@theqrl/hypc');
-const { rm, readdirSync, readFileSync, writeFileSync, mkdirSync, existsSync } = require('fs');
-
-const rmPromise = promisify(rm);
+const { spawnSync } = require('child_process');
+const { resolve, relative, sep } = require('path');
+const { rmSync, readdirSync, writeFileSync, mkdirSync } = require('fs');
 
 // Fetch path of build
+const projectPath = resolve(__dirname, '..');
 const buildPath = resolve(__dirname, '../fixtures/build');
 const contractsPath = resolve(__dirname, '../fixtures/contracts');
 const importDir = resolve(__dirname, '../node_modules');
+const compilerPath = process.env.HYPC_PATH ?? 'hypc';
+const requiredCompilerCommit = 'f2e6ae7a';
+const generatedFileHeader = `/*
+This file is part of web3.js.
 
-function findImports(path) {
-	const importPath = resolve(importDir, path);
+web3.js is free software: you can redistribute it and/or modify
+it under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-	if (existsSync(importPath)) {
-		return {
-			contents: readFileSync(importPath, 'utf8'),
-		};
+web3.js is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License
+along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
+*/
+`;
+
+const runCompiler = args => {
+	const result = spawnSync(compilerPath, args, {
+		encoding: 'utf8',
+		maxBuffer: 100 * 1024 * 1024,
+	});
+
+	if (result.error) {
+		throw new Error(
+			`Unable to run ${compilerPath}. Build cyyber/hyperion at ${requiredCompilerCommit} and set HYPC_PATH.`,
+			{ cause: result.error },
+		);
+	}
+	if (result.status !== 0) {
+		throw new Error(result.stderr || `${compilerPath} exited with status ${result.status}`);
 	}
 
-	return { error: 'File not found' };
+	return result.stdout;
+};
+
+const compilerVersion = runCompiler(['--version']);
+if (!compilerVersion.includes(`commit.${requiredCompilerCommit}`)) {
+	throw new Error(
+		`Expected cyyber/hyperion commit ${requiredCompilerCommit}, received: ${compilerVersion.trim()}`,
+	);
 }
 
 (async () => {
-	try {
-		await rmPromise(buildPath, { recursive: true });
-	} catch (error) {
-		// Ignore if directory does not exists
-		if (error.code !== 'ENOENT') {
-			throw error;
-		}
-	}
+	rmSync(buildPath, { recursive: true, force: true });
 
 	// Fetch all Contract files in Contracts folder
-	const fileNames = readdirSync(contractsPath);
-
-	// Gets ABI of all contracts into variable input
-	const input = fileNames.reduce(
-		(previousValue, fileName) => {
-			const filePath = resolve(contractsPath, fileName);
-			const source = readFileSync(filePath, 'utf8');
-
-			return { sources: { ...previousValue.sources, [fileName]: { content: source } } };
-		},
-		{ sources: {} },
-	);
-
-	const compileInput = {
-		...input,
-		language: 'Hyperion',
-		settings: { outputSelection: { '*': { '*': ['abi', 'qrvm.bytecode.object'] } } },
-	};
-
-	const compileResult = JSON.parse(
-		compile(JSON.stringify(compileInput), { import: findImports }),
-	);
-	if (compileResult.errors) {
-		console.error(compileResult.errors);
-		console.log('Error while compiling');
-	}
-	// Compile all contracts
-	const output = compileResult.contracts;
+	const fileNames = readdirSync(contractsPath)
+		.filter(fileName => fileName.endsWith('.hyp'))
+		.sort();
 
 	// Re-Create build folder for output files from each contract
 	mkdirSync(buildPath);
 
-	console.log(output);
+	for (const fileName of fileNames) {
+		const contractName = fileName.replace('.hyp', '');
+		const filePath = resolve(contractsPath, fileName);
+		const sourceName = relative(projectPath, filePath).split(sep).join('/');
+		const compileResult = JSON.parse(
+			runCompiler([
+				'--base-path',
+				projectPath,
+				'--include-path',
+				importDir,
+				'--combined-json',
+				'abi,bin',
+				filePath,
+			]),
+		);
+		const compiledContract = compileResult.contracts[`${sourceName}:${contractName}`];
 
-	// Output contains all objects from all contracts
-	// Write the contents of each to different files
-	for (let contract in output) {
-		const contractName = contract.replace('.hyp', '');
-		const contractBuild = output[contract][contractName];
-
-		if (!contractBuild || (contractBuild && !contractBuild['abi'])) {
-			continue;
+		if (!compiledContract) {
+			throw new Error(`Compiler did not return ${sourceName}:${contractName}`);
 		}
 
-		const contractTsInterface = `export const ${contractName}Abi = ${JSON.stringify(
-			contractBuild['abi'],
+		const contractBuild = {
+			abi: compiledContract.abi,
+			qrvm: { bytecode: { object: compiledContract.bin } },
+		};
+
+		const contractTsInterface = `${generatedFileHeader}export const ${contractName}Abi = ${JSON.stringify(
+			contractBuild.abi,
 		)} as const; \n export const ${contractName}Bytecode = '0x${
-			contractBuild['qrvm']['bytecode']['object']
+			contractBuild.qrvm.bytecode.object
 		}';`;
 
 		writeFileSync(
 			resolve(buildPath, contractName + '.json'),
-			JSON.stringify(contractBuild, null, '\t'),
+			JSON.stringify(contractBuild, undefined, '\t'),
 		);
 		writeFileSync(resolve(buildPath, contractName + '.ts'), contractTsInterface);
 	}
 
 	console.info('Compiled successfully');
-	process.exit(0);
-})().catch(console.error);
+})().catch(error => {
+	console.error(error);
+	process.exitCode = 1;
+});

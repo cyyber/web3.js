@@ -28,8 +28,8 @@ describe('getRevertReason', () => {
 		const callSpy = jest.spyOn(RpcMethodWrappers, 'call').mockImplementation();
 
 		const transaction = {
-			from: 'Q4fec0a51024b13030d26e70904b066c6d41157a5',
-			to: 'Q36361143b7e2c676f8ccd67743a89d26437f0529',
+			from: 'Q2CCeCC72b4C8C0d943bEcFb1E67c4d8996D2F24d138E62dd19Dde2dA366C4faFff063A86501141d64AC7f273CCAE5053fD059722A4E9453170cb40F569872A02',
+			to: 'Q224D6a535f8991Cf611b3447F8DfE1059dbEd07c540A53e9E36D37b2ecEEA19013F66E973b207B0467a5A793203b27456B7aa1CEE00dF1e385D1eC5272718eb7',
 			data: '0x819f48fe',
 			maxPriorityFeePerGas: '0x0',
 			maxFeePerGas: '0x15ab8f14',
@@ -51,8 +51,8 @@ describe('getRevertReason', () => {
 		);
 
 		const transaction = {
-			from: 'Q4fec0a51024b13030d26e70904b066c6d41157a5',
-			to: 'Q36361143b7e2c676f8ccd67743a89d26437f0529',
+			from: 'Q2CCeCC72b4C8C0d943bEcFb1E67c4d8996D2F24d138E62dd19Dde2dA366C4faFff063A86501141d64AC7f273CCAE5053fD059722A4E9453170cb40F569872A02',
+			to: 'Q224D6a535f8991Cf611b3447F8DfE1059dbEd07c540A53e9E36D37b2ecEEA19013F66E973b207B0467a5A793203b27456B7aa1CEE00dF1e385D1eC5272718eb7',
 			data: '0x819f48fe',
 			maxPriorityFeePerGas: '0x0',
 			maxFeePerGas: '0x15ab8f14',
@@ -70,7 +70,7 @@ describe('getRevertReason', () => {
 			error: {
 				code: -32000,
 				message:
-					'err: insufficient funds for gas * price + value: address Q0000000000000000000000000000000000000000 have 66 want 9983799287684 (supplied gas 26827)',
+					'err: insufficient funds for gas * price + value: address Q2c904f21CadA2B93D87B58F2199879074Eb2630fac88827f5bDb896BA9d8653B8A2a8092643298d0C774adf0473f38429d6edb7abec4016CFDb88d4FD41F272c have 66 want 9983799287684 (supplied gas 26827)',
 			},
 		};
 		const parseTransactionErrorSpy = jest
@@ -79,8 +79,8 @@ describe('getRevertReason', () => {
 		jest.spyOn(RpcMethodWrappers, 'call').mockRejectedValueOnce(expectedError);
 
 		const transaction = {
-			from: 'Q4fec0a51024b13030d26e70904b066c6d41157a5',
-			to: 'Q36361143b7e2c676f8ccd67743a89d26437f0529',
+			from: 'Q2CCeCC72b4C8C0d943bEcFb1E67c4d8996D2F24d138E62dd19Dde2dA366C4faFff063A86501141d64AC7f273CCAE5053fD059722A4E9453170cb40F569872A02',
+			to: 'Q224D6a535f8991Cf611b3447F8DfE1059dbEd07c540A53e9E36D37b2ecEEA19013F66E973b207B0467a5A793203b27456B7aa1CEE00dF1e385D1eC5272718eb7',
 			data: '0x819f48fe',
 			maxPriorityFeePerGas: '0x0',
 			maxFeePerGas: '0x15ab8f14',
@@ -98,7 +98,7 @@ describe('getRevertReason', () => {
 			error: {
 				code: -32000,
 				message:
-					'err: insufficient funds for gas * price + value: address Q0000000000000000000000000000000000000000 have 66 want 9983799287684 (supplied gas 26827)',
+					'err: insufficient funds for gas * price + value: address Q2c904f21CadA2B93D87B58F2199879074Eb2630fac88827f5bDb896BA9d8653B8A2a8092643298d0C774adf0473f38429d6edb7abec4016CFDb88d4FD41F272c have 66 want 9983799287684 (supplied gas 26827)',
 			},
 		};
 		const parseTransactionErrorSpy = jest
@@ -107,8 +107,8 @@ describe('getRevertReason', () => {
 		jest.spyOn(RpcMethodWrappers, 'call').mockRejectedValueOnce(expectedError);
 
 		const transaction = {
-			from: 'Q4fec0a51024b13030d26e70904b066c6d41157a5',
-			to: 'Q36361143b7e2c676f8ccd67743a89d26437f0529',
+			from: 'Q2CCeCC72b4C8C0d943bEcFb1E67c4d8996D2F24d138E62dd19Dde2dA366C4faFff063A86501141d64AC7f273CCAE5053fD059722A4E9453170cb40F569872A02',
+			to: 'Q224D6a535f8991Cf611b3447F8DfE1059dbEd07c540A53e9E36D37b2ecEEA19013F66E973b207B0467a5A793203b27456B7aa1CEE00dF1e385D1eC5272718eb7',
 			data: '0x819f48fe',
 			maxPriorityFeePerGas: '0x0',
 			maxFeePerGas: '0x15ab8f14',

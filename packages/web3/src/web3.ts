@@ -25,7 +25,6 @@ import {
 import { Web3QRL, RegisteredSubscription, registeredSubscriptions } from '@theqrl/web3-qrl';
 import Contract from '@theqrl/web3-qrl-contract';
 import { QRNS, registryAddresses } from '@theqrl/web3-qrl-qrns';
-import { Iban } from '@theqrl/web3-qrl-iban';
 import { Net } from '@theqrl/web3-net';
 import * as utils from '@theqrl/web3-utils';
 import { isNullish } from '@theqrl/web3-utils';
@@ -51,7 +50,6 @@ export class Web3<
 	public static utils = utils;
 	public static modules = {
 		Web3QRL,
-		Iban,
 		Net,
 		QRNS,
 	};
@@ -157,9 +155,6 @@ export class Web3<
 		this.qrl = Object.assign(qrl, {
 			// QRNS module
 			qrns: self.use(QRNS, registryAddresses.main), // registry address defaults to main network
-
-			// Iban helpers
-			Iban,
 
 			net: self.use(Net),
 

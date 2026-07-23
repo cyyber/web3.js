@@ -24,6 +24,7 @@ import {
 	descriptorFromBytes,
 	newMLDSA87WalletFromExtendedSeed,
 	qrlWalletType,
+	signMLDSA87Message,
 	verifyMLDSA87Signature,
 } from '../qrl_wallet.js';
 import type {
@@ -127,7 +128,7 @@ export abstract class BaseTransaction<TransactionObject> {
 		this.extraParams = extraParamsB.length > 0 ? extraParamsB : undefined;
 		this.signature = signatureB.length > 0 ? signatureB : undefined;
 		this.publicKey = publicKeyB.length > 0 ? publicKeyB : undefined;
-		
+
 		this._validateCannotExceedMaxInteger({ value: this.value });
 
 		// gqrl limits gasLimit to 2^64-1
@@ -253,8 +254,9 @@ export abstract class BaseTransaction<TransactionObject> {
 
 	public isSigned(): boolean {
 		const { descriptor, signature, publicKey } = this;
-		if (descriptor === undefined || 
-			signature === undefined || 
+		if (
+			descriptor === undefined ||
+			signature === undefined ||
 			publicKey === undefined
 		) {
 			return false;
@@ -268,12 +270,12 @@ export abstract class BaseTransaction<TransactionObject> {
 	public verifySignature(): boolean {
 		const msgHash = this.getMessageToVerifySignature();
 		const { descriptor, signature, publicKey } = this;
-		
+
 		try {
 			const desc = descriptorFromBytes(descriptor!);
 			switch (desc.type()) {
 			  case qrlWalletType.ML_DSA_87:
-			    return verifyMLDSA87Signature(signature!, msgHash, publicKey!);
+			    return verifyMLDSA87Signature(signature!, msgHash, publicKey!, descriptor!);
 			  default:
 			    return false;
 			}
@@ -314,7 +316,7 @@ export abstract class BaseTransaction<TransactionObject> {
 		const descBytes = wallet.getDescriptor().toBytes();
 		const extraParamsBytes = Uint8Array.from([]);
 		const msgHash = this.getMessageToSign(descBytes, extraParamsBytes, true);
-		const signature = wallet.sign(msgHash);
+		const signature = signMLDSA87Message(wallet, msgHash);
 		const tx = this._processAuthValues(descBytes, extraParamsBytes, signature, wallet.getPK());
 
 		return tx;

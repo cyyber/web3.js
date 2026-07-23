@@ -97,6 +97,24 @@ const findSchemaByDataPath = (
  * @returns - The value converted to the specified format
  */
 export const convertScalarValue = (value: unknown, qrlType: string, format: DataFormat) => {
+	if (qrlType === 'topic') {
+		const topic = new Uint8Array(bytesToUint8Array(value as Bytes));
+		if (topic.length !== 64) {
+			throw new FormatterError(
+				`Invalid log topic length: expected 64 bytes, got ${topic.length}`,
+			);
+		}
+
+		switch (format.bytes) {
+			case FMT_BYTES.HEX:
+				return bytesToHex(topic);
+			case FMT_BYTES.UINT8ARRAY:
+				return topic;
+			default:
+				throw new FormatterError(`Invalid format: ${String(format.bytes)}`);
+		}
+	}
+
 	try {
 		const { baseType, baseTypeSize } = parseBaseType(qrlType);
 		if (baseType === 'int' || baseType === 'uint') {
