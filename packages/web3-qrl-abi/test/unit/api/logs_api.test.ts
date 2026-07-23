@@ -16,6 +16,7 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { decodeLog } from '../../../src/api/logs_api';
+import { encodeParameter } from '../../../src/api/parameters_api';
 import { validDecodeLogsData } from '../../fixtures/data';
 
 describe('logs_api', () => {
@@ -28,6 +29,22 @@ describe('logs_api', () => {
 					expect(JSON.parse(JSON.stringify(expected))).toEqual(output);
 				},
 			);
+		});
+
+		it('decodes fixed bytes and preserves dynamic indexed values', () => {
+			const fixedBytes = `0x${'ab'.repeat(32)}`;
+			const dynamicHash = `0x${'cd'.repeat(32)}${'0'.repeat(64)}`;
+			const decoded = decodeLog(
+				[
+					{ indexed: true, name: 'fixedBytes', type: 'bytes32' },
+					{ indexed: true, name: 'dynamicValue', type: 'string' },
+				],
+				'0x',
+				[encodeParameter('bytes32', fixedBytes), dynamicHash],
+			);
+
+			expect(decoded.fixedBytes).toBe(fixedBytes);
+			expect(decoded.dynamicValue).toBe(dynamicHash);
 		});
 	});
 });

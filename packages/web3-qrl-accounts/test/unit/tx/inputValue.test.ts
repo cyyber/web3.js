@@ -109,7 +109,9 @@ const baseTxValues = {
 	data: generateBufferLikeValues('0x65'),
 	gasLimit: generateBigIntLikeValues(100000),
 	nonce: generateBigIntLikeValues(0),
-	to: generateAddressLikeValues('Q0000000000000000000000000000000000000000'),
+	to: generateAddressLikeValues(
+		'Qd5812f6cf4a0f645aa620cd57319a0ed649dd8f5519a9dde7770ae5b0e49e547985f35eb972a2a07041561aa39c65a3991478f9b1e6749e05277dcf58a9a8b72',
+	),
 	signature: generateBigIntLikeValues(100),
 	publicKey: generateBigIntLikeValues(100),
 	value: generateBigIntLikeValues(10),
@@ -154,7 +156,7 @@ test('[Invalid Array Input values]', () => {
 		for (const txType of txTypes) {
 			let tx = TransactionFactory.fromTxData({ type: txType });
 			if (signed) {
-					tx = tx.sign(hexToBytes(`010000${'42'.repeat(48)}`));
+				tx = tx.sign(hexToBytes(`010000${'42'.repeat(48)}`));
 			}
 			const rawValues = tx.raw();
 			for (let x = 0; x < rawValues.length; x += 1) {
@@ -178,25 +180,27 @@ test('[Invalid Array Input values]', () => {
 
 test('[Invalid Access Lists]', () => {
 	const txTypes = [0x2];
+	const address =
+		'Qcfec0cbee560cbd6ed89580204af71448f1fb8c577e60e9afc6e697019e2312cf3b24b98eb763627a1c38c96ecd7e7c20ba9774cb6c0a810b78e8ea529ccdc40';
 	const invalidAccessLists = [
 		[[]], // does not have an address and does not have slots
 		[[[], []]], // the address is an array
-		[['Qde0b295669a9fd93d5f28d9ec85e40f4cb697bae']], // there is no storage slot array
+		[[address]], // there is no storage slot array
 		[
 			[
-				'Qde0b295669a9fd93d5f28d9ec85e40f4cb697bae',
+				address,
 				['0x0000000000000000000000000000000000000000000000000000000000000003', []],
 			],
 		], // one of the slots is an array
 		[
 			[
-				'Qde0b295669a9fd93d5f28d9ec85e40f4cb697bae',
+				address,
 				['0x0000000000000000000000000000000000000000000000000000000000000003'],
 				'0xab',
 			],
 		], // extra field
 		[
-			'Qde0b295669a9fd93d5f28d9ec85e40f4cb697bae',
+			address,
 			['0x0000000000000000000000000000000000000000000000000000000000000003'],
 		], // account/slot needs to be encoded in a deeper array layer
 	];
@@ -218,7 +222,7 @@ test('[Invalid Access Lists]', () => {
 					tx = TransactionFactory.fromTxData({ type: txType });
 					if (signed) {
 						// eslint-disable-next-line @typescript-eslint/no-unsafe-call
-							tx = tx.sign(hexToBytes(`010000${'42'.repeat(48)}`));
+						tx = tx.sign(hexToBytes(`010000${'42'.repeat(48)}`));
 					}
 				}
 				// eslint-disable-next-line @typescript-eslint/no-unsafe-call

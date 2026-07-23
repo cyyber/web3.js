@@ -29,7 +29,9 @@ import type { AccessList } from '../../../src';
 const seed = hexToBytes(
 	'0x010000ec3077d539c7b333e596b9e6c0b5f5952d26469ab9a60d1fd54c329ef9959593850a2daf60369e434a7c55939f99e149',
 );
-const address = addressToBytes('Qe4d1cd51c8b113a12d6355e1bd39cce8998dabb0');
+const address = addressToBytes(
+	'Qe4d1CD51C8b113a12D6355E1bd39cCE8998daBb0aE72c255FbFC730faC161f4B6bF89bB5CFFF3F79028c192AfBfBF4241F8F53EF4236822a1DaED312d2AA2C6f',
+);
 
 const common = new Common({
 	chain: Chain.Mainnet,
@@ -44,7 +46,9 @@ const txTypes = [
 	},
 ];
 
-const validAddress = hexToBytes('01'.repeat(20));
+const validAddress = hexToBytes(
+	'd5812f6cf4a0f645aa620cd57319a0ed649dd8f5519a9dde7770ae5b0e49e547985f35eb972a2a07041561aa39c65a3991478f9b1e6749e05277dcf58a9a8b72',
+);
 const validSlot = hexToBytes('01'.repeat(32));
 const chainId = BigInt(1);
 
@@ -155,7 +159,7 @@ describe('[FeeMarketEIP1559Transaction] -> EIP-2930 Compatibility', () => {
 					hexToBytes('c0'),
 				);
 				txType.class.fromSerializedTx(serialized, {});
-			}).toThrow('values (for unsigned tx)');
+			}).toThrow('11 values (for unsigned tx with descriptor and extraParams)');
 		}
 	});
 
@@ -205,7 +209,7 @@ describe('[FeeMarketEIP1559Transaction] -> EIP-2930 Compatibility', () => {
 		for (const txType of txTypes) {
 			let accessList: any[] = [
 				[
-					hexToBytes('01'.repeat(21)), // Address of 21 bytes instead of 20
+					hexToBytes('01'.repeat(63)), // Address of 63 bytes instead of 64
 					[],
 				],
 			];
