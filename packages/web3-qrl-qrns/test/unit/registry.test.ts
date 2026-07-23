@@ -19,12 +19,13 @@ import { Web3Context, Web3ContextObject } from '@theqrl/web3-core';
 import { NonPayableMethodObject } from '@theqrl/web3-qrl-contract';
 import { Registry } from '../../src/registry';
 import { namehash } from '../../src/utils';
+import { TEST_QRL_ADDRESS, TEST_QRL_RESOLVER_ADDRESS } from '../fixtures/utils';
 
 describe('registry', () => {
 	let object: Web3ContextObject;
 	let registry: Registry;
-	const mockAddress = 'Q0000000000000000000000000000000000000000';
-	const mockResolverAddress = 'Q1234567890123456789012345678901234567890';
+	const mockAddress = TEST_QRL_ADDRESS;
+	const mockResolverAddress = TEST_QRL_RESOLVER_ADDRESS;
 	const QRNS_NAME = 'web3js.qrl';
 
 	beforeAll(() => {

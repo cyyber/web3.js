@@ -24,8 +24,7 @@ import { PublicResolverAbi } from './abi/qrns/PublicResolver.js';
 import { registryAddresses } from './config.js';
 import { namehash } from './utils.js';
 
-const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
-const QRL_ZERO_ADDRESS = 'Q0000000000000000000000000000000000000000';
+const QRL_ZERO_ADDRESS = `Q${'0'.repeat(128)}`;
 
 export class Registry {
 	private readonly contract: Contract<typeof QRNSRegistryAbi>;
@@ -83,11 +82,7 @@ export class Registry {
 							`QRNS registry returned invalid resolver address: ${address}`,
 						);
 					}
-					const lower = address.toLowerCase();
-					if (
-						lower === ZERO_ADDRESS.toLowerCase() ||
-						lower === QRL_ZERO_ADDRESS.toLowerCase()
-					) {
+					if (address.toLowerCase() === QRL_ZERO_ADDRESS.toLowerCase()) {
 						throw new Error('QRNS registry returned zero resolver address');
 					}
 					return new Contract(PublicResolverAbi, address, this.context);

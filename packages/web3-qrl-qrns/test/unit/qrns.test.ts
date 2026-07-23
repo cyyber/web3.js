@@ -20,6 +20,7 @@ import { QRNSNetworkNotSyncedError, QRNSUnsupportedNetworkError } from '@theqrl/
 import { Contract } from '@theqrl/web3-qrl-contract';
 import { PublicResolverAbi } from '../../src/abi/qrns/PublicResolver';
 import { registryAddresses } from '../../src/config';
+import { TEST_QRL_ADDRESS } from '../fixtures/utils';
 
 import { QRNS } from '../../src/qrns';
 
@@ -45,7 +46,7 @@ const { getId } = require('@theqrl/web3-net');
 describe('qrns', () => {
 	let object: Web3ContextObject;
 	let resolverContract: Contract<typeof PublicResolverAbi>;
-	const mockAddress = 'Q0000000000000000000000000000000000000000';
+	const mockAddress = TEST_QRL_ADDRESS;
 	const QRNS_NAME = 'web3js.qrl';
 	let qrns: QRNS;
 
@@ -213,18 +214,23 @@ describe('qrns', () => {
 		it('Threshold exceeded from previous check/QRNSNetworkNotSyncedError', async () => {
 			// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 			getId.mockImplementation(() => expectedNetworkId);
+			registryAddresses.main = TEST_QRL_ADDRESS;
 
-			// An initial check, in order to update `_lastSyncCheck`
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-call
-			isSyncing.mockImplementation(() => {
-				return false;
-			});
-			// update `_lastSyncCheck`
-			await qrns.checkNetwork();
+			try {
+				// An initial check, in order to update `_lastSyncCheck`
+				// eslint-disable-next-line @typescript-eslint/no-unsafe-call
+				isSyncing.mockImplementation(() => {
+					return false;
+				});
+				// update `_lastSyncCheck`
+				await qrns.checkNetwork();
 
-			// now - this._lastSyncCheck > 3600)
-			jest.useFakeTimers().setSystemTime(new Date('2020-01-01').getTime() + 3601000); // (3600 + 1) * 1000
-			await expect(qrns.checkNetwork()).resolves.not.toThrow();
+				// now - this._lastSyncCheck > 3600)
+				jest.useFakeTimers().setSystemTime(new Date('2020-01-01').getTime() + 3601000); // (3600 + 1) * 1000
+				await expect(qrns.checkNetwork()).resolves.not.toThrow();
+			} finally {
+				delete registryAddresses.main;
+			}
 		});
 
 		it('QRNSUnsupportedNetworkError', async () => {
