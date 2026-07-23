@@ -79,7 +79,7 @@ export class AbiCoder {
 		let match = param.type.match(paramTypeNumber);
 		if (match) {
 			const size = parseInt(match[2] || '256');
-			if (size === 0 || size > 256 || size % 8 !== 0) {
+			if (size === 0 || size > 512 || size % 8 !== 0) {
 				logger.throwArgumentError(`invalid ${match[1]} bit length`, 'param', param);
 			}
 			return new NumberCoder(size / 8, match[1] === 'int', param.name);
@@ -89,7 +89,7 @@ export class AbiCoder {
 		match = param.type.match(paramTypeBytes);
 		if (match) {
 			const size = parseInt(match[1]);
-			if (size === 0 || size > 32) {
+			if (size === 0 || size > 64) {
 				logger.throwArgumentError('invalid bytes length', 'param', param);
 			}
 			return new FixedBytesCoder(size, param.name);
@@ -99,7 +99,7 @@ export class AbiCoder {
 	}
 
 	_getWordSize(): number {
-		return 32;
+		return 64;
 	}
 
 	_getReader(data: Uint8Array, allowLoose?: boolean): Reader {

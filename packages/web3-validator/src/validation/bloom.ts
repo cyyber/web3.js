@@ -98,14 +98,14 @@ export const isUserQRLAddressInBloom = (bloom: string, qrlAddress: string): bool
 		return false;
 	}
 
-	// you have to pad the qrl address to 32 bytes
+	// you have to pad the qrl address to 64 bytes
 	// else the bloom filter does not work
 	// this is only if your matching the USERS
 	// qrl address. Contract address do not need this
 	// hence why we have 2 methods
-	// (0x is not in the 2nd parameter of padleft so 64 chars is fine)
+	// (0x is not in the 2nd parameter of padleft so 128 chars is fine)
 
-	const address = padLeft(addressToHex(qrlAddress), 64);
+	const address = padLeft(addressToHex(qrlAddress), 128);
 
 	return isInBloom(bloom, address);
 };
