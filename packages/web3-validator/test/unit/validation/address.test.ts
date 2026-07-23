@@ -18,6 +18,7 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 import { checkAddressCheckSum, isAddressString } from '../../../src/validation/address';
 import {
 	validCheckAddressCheckSumData,
+	invalidCheckAddressCheckSumData,
 	invalidAddressData,
 	validAddressData,
 } from '../../fixtures/validation';
@@ -42,6 +43,12 @@ describe('validation', () => {
 			describe('valid cases', () => {
 				it.each(validCheckAddressCheckSumData)('%s', input => {
 					expect(checkAddressCheckSum(input)).toBeTruthy();
+				});
+			});
+
+			describe('invalid cases', () => {
+				it.each(invalidCheckAddressCheckSumData)('%s', input => {
+					expect(checkAddressCheckSum(input)).toBeFalsy();
 				});
 			});
 		});
