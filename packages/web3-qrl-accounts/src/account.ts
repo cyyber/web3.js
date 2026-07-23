@@ -61,6 +61,7 @@ import {
 	newMLDSA87WalletFromExtendedSeed,
 	newQrlExtendedSeed,
 	qrlSeedFromBytes,
+	signMLDSA87Message,
 } from './qrl_wallet.js';
 import { keyStoreSchema } from './schemas.js';
 import { validateArgon2idParams } from './kdf_policy.js';
@@ -161,7 +162,7 @@ export const hashMessage = (message: string): string => {
 export const sign = (data: string, seed: Bytes): SignResult => {
 	const wallet = newMLDSA87WalletFromExtendedSeed(seed);
 	const hash = hashMessage(data);
-	const signature = wallet.sign(hexToBytes(hash));
+	const signature = signMLDSA87Message(wallet, hexToBytes(hash));
 
 	return {
 		message: data,
