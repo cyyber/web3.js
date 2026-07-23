@@ -110,6 +110,20 @@ describe('hash', () => {
 				expect(() => encodePacked(input)).toThrow(output);
 			});
 		});
+
+		it('supports exact 512-bit integer bounds', () => {
+			const signedLimit = BigInt(1) << BigInt(511);
+			expect(encodePacked({ type: 'int512', value: -signedLimit })).toHaveLength(130);
+			expect(() => encodePacked({ type: 'int512', value: signedLimit })).toThrow(
+				'value is larger than size',
+			);
+			expect(
+				encodePacked({
+					type: 'uint512',
+					value: (BigInt(1) << BigInt(511)) + BigInt(1),
+				}),
+			).toHaveLength(130);
+		});
 	});
 	describe('keccak256', () => {
 		describe('valid cases', () => {

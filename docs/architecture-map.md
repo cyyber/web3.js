@@ -18,8 +18,7 @@ The workspace is structured in four practical layers:
    `@theqrl/web3-rpc-methods`.
 3. QRL domain modules: `@theqrl/web3-qrl-accounts`, `@theqrl/web3-qrl-abi`,
    `@theqrl/web3-qrl`, `@theqrl/web3-qrl-contract`,
-   `@theqrl/web3-qrl-qrns`, `@theqrl/web3-qrl-iban`, and
-   `@theqrl/web3-net`.
+   `@theqrl/web3-qrl-qrns`, and `@theqrl/web3-net`.
 4. User-facing aggregate and tooling: `@theqrl/web3`, docs, release scripts,
    package templates, and the plugin example.
 
@@ -37,14 +36,13 @@ runtime package to assemble the default user API.
 | `@theqrl/web3-qrl-contract` | `packages/web3-qrl-contract/src/index.ts`, `packages/web3-qrl-contract/src/contract.ts` | Core, QRL, QRL ABI, utils, validator, types, errors | Contract method/event binding, ABI encoding/decoding, send/call/estimate paths, log subscriptions |
 | `@theqrl/web3-qrl-abi` | `packages/web3-qrl-abi/src/index.ts` | `@theqrl/abi`, wallet.js, utils, validator, types, errors | QRVM ABI encoding/decoding facade, EIP-712 data encoding, contract error decoding |
 | `@theqrl/abi` | `packages/abi/src/index.ts` | Utils | Foundational ABI coder fragments/interface compatibility |
-| `@theqrl/web3-core` | `packages/web3-core/src/index.ts` | HTTP/WS providers, Iban, utils, validator, types, errors | `Web3Context`, request manager, batch manager, subscription manager, plugin context sharing |
+| `@theqrl/web3-core` | `packages/web3-core/src/index.ts` | HTTP/WS providers, utils, validator, types, errors | `Web3Context`, request manager, batch manager, subscription manager, plugin context sharing |
 | `@theqrl/web3-rpc-methods` | `packages/web3-rpc-methods/src/index.ts` | Core, validator, types | Raw `qrl_*` and `net_*` request wrappers and parameter validation |
 | `@theqrl/web3-providers-http` | `packages/web3-providers-http/src/index.ts` | Utils, types, errors | HTTP JSON-RPC POST transport, URL validation, response/error handling |
 | `@theqrl/web3-providers-ws` | `packages/web3-providers-ws/src/index.ts` | Utils, types, errors | WebSocket transport, reconnect behavior, response chunk parsing, subscription support |
 | `@theqrl/web3-providers-ipc` | `packages/web3-providers-ipc/src/index.ts` | Utils, types, errors | Node IPC transport, socket path validation, reconnect behavior |
 | `@theqrl/web3-net` | `packages/web3-net/src/index.ts`, `packages/web3-net/src/net.ts` | Core, RPC methods, utils, types | Network ID, peer count, listening RPC wrappers and formatting |
 | `@theqrl/web3-qrl-qrns` | `packages/web3-qrl-qrns/src/index.ts`, `packages/web3-qrl-qrns/src/qrns.ts` | Core, net, QRL, contract, utils, validator, types, errors | QRNS registry/resolver contract calls, network detection, sync checks |
-| `@theqrl/web3-qrl-iban` | `packages/web3-qrl-iban/src/index.ts` | Utils, validator, types, errors | QRL IBAN conversion and validation helpers |
 | `@theqrl/web3-utils` | `packages/web3-utils/src/index.ts` | QRL cryptography, validator, types, errors | Bytes/number conversion, hashing, JSON-RPC payload helpers, formatter, socket base provider |
 | `@theqrl/web3-validator` | `packages/web3-validator/src/index.ts` | QRL cryptography, types, errors | Shared validation schemas and address/data validation rules |
 | `@theqrl/web3-types` | `packages/web3-types/src/index.ts` | none | Shared public TypeScript contracts for APIs, providers, wallets, transactions, ABI, contracts |

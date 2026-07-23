@@ -118,11 +118,9 @@ export const mapTypes = (
 			modifiedType = { ...type };
 		}
 
-		// Remap `function` type params to bytes24 since Ethers does not
-		// recognize former type. Hyperion docs say `Function` is a bytes24
-		// encoding the contract address followed by the function selector hash.
+		// A 64-byte QRL address plus a 4-byte selector no longer fits in bytes24.
 		if (typeof type === 'object' && type.type === 'function') {
-			modifiedType = { ...type, type: 'bytes24' };
+			throw new AbiError('ABI function type is not supported for 64-byte QRL addresses.');
 		}
 
 		if (isSimplifiedStructFormat(modifiedType)) {
