@@ -15,8 +15,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 import { BlockHeaderOutput, SupportedProviders } from '@theqrl/web3-types';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { Web3 } from '@theqrl/web3';
 import { Web3QRL, NewHeadsSubscription } from '../../src';
 import { Resolve } from './helper';
 import {
@@ -31,15 +29,15 @@ import {
 const checkTxCount = 2;
 describeIf(isSocket)('subscription', () => {
 	let clientUrl: string | SupportedProviders;
-	let web3: Web3;
+	let web3QRL: Web3QRL;
 	beforeEach(() => {
 		clientUrl = getSystemTestProvider();
 	});
 	describe('heads', () => {
 		it(`wait for ${checkTxCount} newHeads`, async () => {
-			web3 = new Web3(clientUrl);
-			const sub = await web3.qrl.subscribe('newHeads');
-			await waitForOpenConnection(web3.qrl);
+			web3QRL = new Web3QRL(clientUrl);
+			const sub = await web3QRL.subscribe('newHeads');
+			await waitForOpenConnection(web3QRL);
 			let times = 0;
 			const pr = new Promise((resolve: Resolve, reject) => {
 				sub.on('data', (data: BlockHeaderOutput) => {
@@ -79,30 +77,30 @@ describeIf(isSocket)('subscription', () => {
 			sub.off('data', () => {
 				// do nothing
 			});
-			await web3.qrl.subscriptionManager?.removeSubscription(sub);
-			await closeOpenConnection(web3.qrl);
-		});
-		it(`remove at subscriptionManager`, async () => {
-			const web3QRL = new Web3QRL(clientUrl);
-			await waitForOpenConnection(web3QRL);
-			const sub: NewHeadsSubscription = await web3QRL.subscribe('newHeads');
-			expect(sub.id).toBeDefined();
-			const subId = sub.id as string;
 			await web3QRL.subscriptionManager?.removeSubscription(sub);
-			expect(web3QRL.subscriptionManager.subscriptions.has(subId)).toBe(false);
-			expect(sub.id).toBeUndefined();
 			await closeOpenConnection(web3QRL);
 		});
+		it(`remove at subscriptionManager`, async () => {
+			const removalWeb3QRL = new Web3QRL(clientUrl);
+			await waitForOpenConnection(removalWeb3QRL);
+			const sub: NewHeadsSubscription = await removalWeb3QRL.subscribe('newHeads');
+			expect(sub.id).toBeDefined();
+			const subId = sub.id as string;
+			await removalWeb3QRL.subscriptionManager?.removeSubscription(sub);
+			expect(removalWeb3QRL.subscriptionManager.subscriptions.has(subId)).toBe(false);
+			expect(sub.id).toBeUndefined();
+			await closeOpenConnection(removalWeb3QRL);
+		});
 		it(`remove at subscribe object`, async () => {
-			const web3QRL = new Web3QRL(clientUrl);
-			await waitForOpenConnection(web3QRL);
-			const sub: NewHeadsSubscription = await web3QRL.subscribe('newHeads');
+			const unsubscribingWeb3QRL = new Web3QRL(clientUrl);
+			await waitForOpenConnection(unsubscribingWeb3QRL);
+			const sub: NewHeadsSubscription = await unsubscribingWeb3QRL.subscribe('newHeads');
 			expect(sub.id).toBeDefined();
 			const subId = sub.id as string;
 			await sub.unsubscribe();
-			expect(web3QRL.subscriptionManager.subscriptions.has(subId)).toBe(false);
+			expect(unsubscribingWeb3QRL.subscriptionManager.subscriptions.has(subId)).toBe(false);
 			expect(sub.id).toBeUndefined();
-			await closeOpenConnection(web3QRL);
+			await closeOpenConnection(unsubscribingWeb3QRL);
 		});
 	});
 });

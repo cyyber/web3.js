@@ -41,11 +41,10 @@ import {
 	hexToBytes,
 	toBigInt,
 	toHex,
-	toNumber,
 	utf8ToHex,
 	addressToHex,
 } from './converters.js';
-import { leftPad, rightPad, toTwosComplement } from './string_manipulation.js';
+import { leftPad, rightPad } from './string_manipulation.js';
 
 const SHA3_EMPTY_BYTES = '0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470';
 
@@ -214,16 +213,6 @@ const parseTypeN = (value: string, typeLength: number): number => {
 };
 
 /**
- * returns the bit length of the value
- * @param value - the input to return the bit length
- * @returns - the bit length of the input
- */
-const bitLength = (value: bigint | number): number => {
-	const updatedVal = value.toString(2);
-	return updatedVal.length;
-};
-
-/**
  * Pads the value based on size and type
  * returns a string of the padded value
  * @param type - the input to pad
@@ -250,15 +239,15 @@ const hyperionPack = (type: string, val: EncodingTypes): string => {
 	if (type.startsWith('uint')) {
 		const size = parseTypeN(name, 'uint'.length);
 
-		if (size % 8 || size < 8 || size > 256) {
+		if (size % 8 || size < 8 || size > 512) {
 			throw new InvalidSizeError(value);
 		}
-		const num = toNumber(value);
-		if (bitLength(num) > size) {
-			throw new InvalidLargeValueError(value);
-		}
-		if (num < BigInt(0)) {
+		const num = toBigInt(value);
+		if (num < 0) {
 			throw new InvalidUnsignedIntegerError(value);
+		}
+		if (num > (BigInt(1) << BigInt(size)) - BigInt(1)) {
+			throw new InvalidLargeValueError(value);
 		}
 
 		return size ? leftPad(num.toString(16), (size / 8) * 2) : num.toString(16);
@@ -266,16 +255,17 @@ const hyperionPack = (type: string, val: EncodingTypes): string => {
 
 	if (type.startsWith('int')) {
 		const size = parseTypeN(name, 'int'.length);
-		if (size % 8 || size < 8 || size > 256) {
+		if (size % 8 || size < 8 || size > 512) {
 			throw new InvalidSizeError(type);
 		}
 
-		const num = toNumber(value);
-		if (bitLength(num) > size) {
+		const num = toBigInt(value);
+		const signedLimit = BigInt(1) << BigInt(size - 1);
+		if (num < -signedLimit || num >= signedLimit) {
 			throw new InvalidLargeValueError(value);
 		}
-		if (num < BigInt(0)) {
-			return toTwosComplement(num.toString(), (size / 8) * 2);
+		if (num < 0) {
+			return leftPad(((BigInt(1) << BigInt(size)) + num).toString(16), size / 4);
 		}
 		return size ? leftPad(num.toString(16), size / 4) : num.toString(16);
 	}
@@ -373,5 +363,5 @@ export const getStorageSlotNumForLongString = (mainSlotNumber: number | string) 
 		`0x${(typeof mainSlotNumber === 'number'
 			? mainSlotNumber.toString()
 			: mainSlotNumber
-		).padStart(64, '0')}`,
+		).padStart(128, '0')}`,
 	);

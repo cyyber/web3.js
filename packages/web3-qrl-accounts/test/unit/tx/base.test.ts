@@ -44,7 +44,7 @@ describe('[BaseTransaction]', () => {
 			class: FeeMarketEIP1559Transaction,
 			name: 'FeeMarketEIP1559Transaction',
 			type: 2,
-			values: [new Uint8Array([1])].concat(Array(8).fill(zero)),
+			values: [new Uint8Array([1])].concat(Array(10).fill(zero)),
 			txs: eip1559Txs,
 			fixtures: eip1559Fixtures,
 		},
@@ -169,8 +169,8 @@ describe('[BaseTransaction]', () => {
 			for (const tx of txs) {
 				expect(tx.isSigned()).toEqual(
 					tx.descriptor !== undefined &&
-					tx.signature !== undefined &&
-					tx.publicKey !== undefined,
+						tx.signature !== undefined &&
+						tx.publicKey !== undefined,
 				);
 			}
 		}

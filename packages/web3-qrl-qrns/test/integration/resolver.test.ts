@@ -20,7 +20,7 @@ import Web3QRL from '@theqrl/web3-qrl';
 import { Contract, PayableTxOptions } from '@theqrl/web3-qrl-contract';
 import { hexToAddress, sha3 } from '@theqrl/web3-utils';
 
-import { Address, Bytes, DEFAULT_RETURN_FORMAT } from '@theqrl/web3-types';
+import { Bytes, DEFAULT_RETURN_FORMAT } from '@theqrl/web3-types';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { IpcProvider } from '@theqrl/web3-providers-ipc';
 import { QRNS } from '../../src';
@@ -66,7 +66,6 @@ describe('qrns', () => {
 	let accountOne: string;
 
 	const ZERO_NODE: Bytes = '0x0000000000000000000000000000000000000000000000000000000000000000';
-	const addressOne: Address = 'Q0000000000000000000000000000000000000001';
 
 	const contentHash = '0x0000000000000000000000000000000000000000000000000000000000000001';
 
@@ -109,7 +108,7 @@ describe('qrns', () => {
 		await registry.methods
 			.setResolver(node, resolver.options.address as string)
 			.send(sendOptions);
-		await resolver.methods.setAddr(node, addressOne).send(sendOptions);
+		await resolver.methods.setAddr(node, accountOne).send(sendOptions);
 
 		await registry.methods
 			.setSubnodeOwner(ZERO_NODE, sha3(domain) as string, defaultAccount)

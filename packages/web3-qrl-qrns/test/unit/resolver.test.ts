@@ -24,13 +24,14 @@ import { interfaceIds, methodsInInterface } from '../../src/config';
 import { Registry } from '../../src/registry';
 import { Resolver } from '../../src/resolver';
 import { namehash } from '../../src/utils';
+import { TEST_QRL_ADDRESS } from '../fixtures/utils';
 
 describe('resolver', () => {
 	let object: Web3ContextObject;
 	let registry: Registry;
 	let resolver: Resolver;
 	let contract: Contract<typeof PublicResolverAbi>;
-	const mockAddress = 'Q0000000000000000000000000000000000000000';
+	const mockAddress = TEST_QRL_ADDRESS;
 	const QRNS_NAME = 'web3js.qrl';
 
 	beforeAll(() => {
@@ -46,7 +47,7 @@ describe('resolver', () => {
 		it('isNullish interface', async () => {
 			const methodName = 'nullish';
 			await expect(resolver.checkInterfaceSupport(contract, methodName)).rejects.toThrow(
-				new ResolverMethodMissingError(mockAddress, methodName),
+				new ResolverMethodMissingError(contract.options.address ?? '', methodName),
 			);
 		});
 		it('isNullish interface with no address', async () => {
@@ -67,7 +68,7 @@ describe('resolver', () => {
 				} as unknown as NonPayableMethodObject<any, any>);
 
 			await expect(resolver.checkInterfaceSupport(contract, methodName)).rejects.toThrow(
-				new ResolverMethodMissingError(mockAddress, methodName),
+				new ResolverMethodMissingError(contract.options.address ?? '', methodName),
 			);
 
 			expect(supportsInterfaceMock).toHaveBeenCalledWith(interfaceIds[methodName]);

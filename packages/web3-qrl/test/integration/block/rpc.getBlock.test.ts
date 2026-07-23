@@ -39,6 +39,8 @@ import { toAllVariants } from '../../shared_fixtures/utils';
 import { sendFewTxes } from '../helper';
 import { blockSchema } from '../../../src/schemas';
 
+const VM64_ZERO_ADDRESS = `Q${'0'.repeat(128)}`;
+
 describe('rpc with block', () => {
 	let web3QRL: Web3QRL;
 	let clientUrl: string | SupportedProviders;
@@ -128,7 +130,7 @@ describe('rpc with block', () => {
 				})),
 			};
 			if (blockData[block] === 'pending') {
-				b.miner = 'Q0000000000000000000000000000000000000000';
+				b.miner = VM64_ZERO_ADDRESS;
 			}
 
 			expect(validator.validateJSONSchema(blockSchema, b)).toBeUndefined();

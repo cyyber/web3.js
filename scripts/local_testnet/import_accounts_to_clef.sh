@@ -61,7 +61,7 @@ existing_accounts_raw="$(
 existing_accounts="$(
   printf '%s\n' "$existing_accounts_raw" \
     | awk '{print $1}' \
-    | grep -E '^Q[0-9a-fA-F]{40}$' \
+    | grep -E '^Q[0-9a-fA-F]{128}$' \
     | tr '[:upper:]' '[:lower:]' \
     | sort -u
 )"

@@ -14,8 +14,8 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { BlockHeaderOutput, Web3 } from '@theqrl/web3';
+import { BlockHeaderOutput } from '@theqrl/web3-types';
+import { Web3QRL } from '../../src';
 import {
 	closeOpenConnection,
 	describeIf,
@@ -29,8 +29,7 @@ import { Resolve } from './helper';
 const checkTxCount = 2;
 describeIf(isSocket)('subscription on multiple events', () => {
 	test(`catch the data of pendingTransactions and newHeads`, async () => {
-		const web3 = new Web3(getSystemTestProvider());
-		const web3QRL = web3.qrl;
+		const web3QRL = new Web3QRL(getSystemTestProvider());
 		await waitForOpenConnection(web3QRL);
 		const pendingTransactionsSub = await web3QRL.subscribe('pendingTransactions');
 
@@ -51,7 +50,7 @@ describeIf(isSocket)('subscription on multiple events', () => {
 			})();
 		});
 
-		const newHeadsSub = await web3.qrl.subscribe('newHeads');
+		const newHeadsSub = await web3QRL.subscribe('newHeads');
 		let newHeadsCount = 0;
 		const newHeadsData = new Promise((resolve: Resolve, reject) => {
 			newHeadsSub.on('data', (data: BlockHeaderOutput) => {
@@ -76,8 +75,7 @@ describeIf(isSocket)('subscription on multiple events', () => {
 	});
 
 	test(`catch the data of an event even after subscribing off another one`, async () => {
-		const web3 = new Web3(getSystemTestProvider());
-		const web3QRL = web3.qrl;
+		const web3QRL = new Web3QRL(getSystemTestProvider());
 		await waitForOpenConnection(web3QRL);
 		const pendingTransactionsSub = await web3QRL.subscribe('pendingTransactions');
 
@@ -87,7 +85,7 @@ describeIf(isSocket)('subscription on multiple events', () => {
 			throw error;
 		});
 
-		const newHeadsSub = await web3.qrl.subscribe('newHeads');
+		const newHeadsSub = await web3QRL.subscribe('newHeads');
 		let times = 0;
 		const newHeadsData = new Promise((resolve: Resolve, reject) => {
 			newHeadsSub.on('data', (data: BlockHeaderOutput) => {

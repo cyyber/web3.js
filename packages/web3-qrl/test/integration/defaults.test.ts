@@ -57,6 +57,10 @@ import { BasicAbi, BasicBytecode } from '../shared_fixtures/build/Basic';
 import { MsgSenderAbi, MsgSenderBytecode } from '../shared_fixtures/build/MsgSender';
 import { getTransactionGasPricing } from '../../src/utils/get_transaction_gas_pricing';
 import { Resolve, sendFewTxes } from './helper';
+import accounts from '../fixtures/accounts.json';
+
+const FROM_ADDRESS = accounts[0].address;
+const TO_ADDRESS = accounts[1].address;
 
 describe('defaults', () => {
 	let web3QRL: Web3QRL;
@@ -129,8 +133,8 @@ describe('defaults', () => {
 				value: '0x1',
 				type: BigInt(2),
 			});
-			expect(tx.from).toBe(`Q${tempAcc.address.slice(1).toLowerCase()}`);
-			expect(txSend.from).toBe(`Q${tempAcc.address.slice(1).toLowerCase()}`);
+			expect(tx.from).toBe(tempAcc.address);
+			expect(txSend.from).toBe(tempAcc.address);
 
 			const tx2 = await contractMsgFrom.methods.setTestString('test3').send({
 				from: tempAcc2.address,
@@ -140,8 +144,8 @@ describe('defaults', () => {
 				value: '0x1',
 				from: tempAcc2.address,
 			});
-			expect(tx2.from).toBe(`Q${tempAcc2.address.slice(1).toLowerCase()}`);
-			expect(tx2Send.from).toBe(`Q${tempAcc2.address.slice(1).toLowerCase()}`);
+			expect(tx2.from).toBe(tempAcc2.address);
+			expect(tx2Send.from).toBe(tempAcc2.address);
 
 			const fromDefault = await contractMsgFrom.methods?.from().call();
 			const fromPass = await contractMsgFrom.methods?.from().call({ from: tempAcc.address });
@@ -653,8 +657,8 @@ describe('defaults', () => {
 			expect(qrl2.defaultNetworkId).toBe(4);
 			const res = await defaultTransactionBuilder({
 				transaction: {
-					from: 'QEB014f8c8B418Db6b45774c326A0E64C78914dC0',
-					to: 'Q3535353535353535353535353535353535353535',
+					from: FROM_ADDRESS,
+					to: TO_ADDRESS,
 					value: '0x174876e800',
 					gas: '0x5208',
 				},
@@ -665,8 +669,8 @@ describe('defaults', () => {
 			// pass network id
 			const resWithPassNetworkId = await defaultTransactionBuilder({
 				transaction: {
-					from: 'QEB014f8c8B418Db6b45774c326A0E64C78914dC0',
-					to: 'Q3535353535353535353535353535353535353535',
+					from: FROM_ADDRESS,
+					to: TO_ADDRESS,
 					value: '0x174876e800',
 					gas: '0x5208',
 					networkId: 5,
@@ -696,8 +700,8 @@ describe('defaults', () => {
 			expect(qrl2.defaultChain).toBe('rinkeby');
 			const res = await defaultTransactionBuilder({
 				transaction: {
-					from: 'QEB014f8c8B418Db6b45774c326A0E64C78914dC0',
-					to: 'Q3535353535353535353535353535353535353535',
+					from: FROM_ADDRESS,
+					to: TO_ADDRESS,
 					value: '0x174876e800',
 					gas: '0x5208',
 				},
@@ -726,8 +730,8 @@ describe('defaults', () => {
 
 			const res = await prepareTransactionForSigning(
 				{
-					from: 'QEB014f8c8B418Db6b45774c326A0E64C78914dC0',
-					to: 'Q3535353535353535353535353535353535353535',
+					from: FROM_ADDRESS,
+					to: TO_ADDRESS,
 					value: '0x174876e800',
 					gas: '0x5208',
 					maxFeePerGas: '0x4a817c800',
@@ -788,8 +792,8 @@ describe('defaults', () => {
 
 			const res = getTransactionType(
 				{
-					from: 'QEB014f8c8B418Db6b45774c326A0E64C78914dC0',
-					to: 'Q3535353535353535353535353535353535353535',
+					from: FROM_ADDRESS,
+					to: TO_ADDRESS,
 					value: '0x174876e800',
 					gas: '0x5208',
 					data: '0x0',
@@ -803,8 +807,8 @@ describe('defaults', () => {
 
 			const maxFeePerGasOverride = getTransactionType(
 				{
-					from: 'QEB014f8c8B418Db6b45774c326A0E64C78914dC0',
-					to: 'Q3535353535353535353535353535353535353535',
+					from: FROM_ADDRESS,
+					to: TO_ADDRESS,
 					value: '0x174876e800',
 					gas: '0x5208',
 					data: '0x0',
@@ -818,8 +822,8 @@ describe('defaults', () => {
 			expect(maxFeePerGasOverride).toBe('0x2');
 			const maxPriorityFeePerGasOverride = getTransactionType(
 				{
-					from: 'QEB014f8c8B418Db6b45774c326A0E64C78914dC0',
-					to: 'Q3535353535353535353535353535353535353535',
+					from: FROM_ADDRESS,
+					to: TO_ADDRESS,
 					value: '0x174876e800',
 					gas: '0x5208',
 					data: '0x0',
@@ -833,8 +837,8 @@ describe('defaults', () => {
 			expect(maxPriorityFeePerGasOverride).toBe('0x2');
 			const hardforkOverride = getTransactionType(
 				{
-					from: 'QEB014f8c8B418Db6b45774c326A0E64C78914dC0',
-					to: 'Q3535353535353535353535353535353535353535',
+					from: FROM_ADDRESS,
+					to: TO_ADDRESS,
 					value: '0x174876e800',
 					gas: '0x5208',
 					data: '0x0',
@@ -848,8 +852,8 @@ describe('defaults', () => {
 			expect(hardforkOverride).toBe('0x2');
 			const commonOverride = getTransactionType(
 				{
-					from: 'QEB014f8c8B418Db6b45774c326A0E64C78914dC0',
-					to: 'Q3535353535353535353535353535353535353535',
+					from: FROM_ADDRESS,
+					to: TO_ADDRESS,
 					value: '0x174876e800',
 					gas: '0x5208',
 					data: '0x0',
@@ -867,8 +871,8 @@ describe('defaults', () => {
 
 			const accessListOverride = getTransactionType(
 				{
-					from: 'QEB014f8c8B418Db6b45774c326A0E64C78914dC0',
-					to: 'Q3535353535353535353535353535353535353535',
+					from: FROM_ADDRESS,
+					to: TO_ADDRESS,
 					value: '0x174876e800',
 					gas: '0x5208',
 					data: '0x0',
@@ -879,7 +883,7 @@ describe('defaults', () => {
 					maxFeePerGas: '0x4a817c800',
 					accessList: [
 						{
-							address: 'QEB014f8c8B418Db6b45774c326A0E64C78914dC0',
+							address: FROM_ADDRESS,
 							storageKeys: ['0x3535353535353535353535353535353535353535'],
 						},
 					],
@@ -890,8 +894,8 @@ describe('defaults', () => {
 
 			const hardforkBerlinOverride = getTransactionType(
 				{
-					from: 'QEB014f8c8B418Db6b45774c326A0E64C78914dC0',
-					to: 'Q3535353535353535353535353535353535353535',
+					from: FROM_ADDRESS,
+					to: TO_ADDRESS,
 					value: '0x174876e800',
 					gas: '0x5208',
 					data: '0x0',
@@ -906,8 +910,8 @@ describe('defaults', () => {
 
 			const commonBerlinOverride = getTransactionType(
 				{
-					from: 'QEB014f8c8B418Db6b45774c326A0E64C78914dC0',
-					to: 'Q3535353535353535353535353535353535353535',
+					from: FROM_ADDRESS,
+					to: TO_ADDRESS,
 					value: '0x174876e800',
 					gas: '0x5208',
 					data: '0x0',
@@ -943,8 +947,8 @@ describe('defaults', () => {
 
 			const res = await getTransactionGasPricing(
 				{
-					from: 'QEB014f8c8B418Db6b45774c326A0E64C78914dC0',
-					to: 'Q3535353535353535353535353535353535353535',
+					from: FROM_ADDRESS,
+					to: TO_ADDRESS,
 					value: '0x174876e800',
 					type: '0x2',
 					gas: '0x5208',
@@ -961,8 +965,8 @@ describe('defaults', () => {
 			// override test
 			const resOverride = await getTransactionGasPricing(
 				{
-					from: 'QEB014f8c8B418Db6b45774c326A0E64C78914dC0',
-					to: 'Q3535353535353535353535353535353535353535',
+					from: FROM_ADDRESS,
+					to: TO_ADDRESS,
 					value: '0x174876e800',
 					type: '0x2',
 					gas: '0x5208',
@@ -1001,8 +1005,8 @@ describe('defaults', () => {
 
 			await transactionBuilder({
 				transaction: {
-					from: 'QEB014f8c8B418Db6b45774c326A0E64C78914dC0',
-					to: 'Q3535353535353535353535353535353535353535',
+					from: FROM_ADDRESS,
+					to: TO_ADDRESS,
 					value: '0x174876e800',
 					gas: '0x5208',
 					maxFeePerGas: '0x4a817c800',
@@ -1035,8 +1039,8 @@ describe('defaults', () => {
 			expect(qrl2.transactionTypeParser).toBe(newParserMock);
 			detectTransactionType(
 				{
-					from: 'QEB014f8c8B418Db6b45774c326A0E64C78914dC0',
-					to: 'Q3535353535353535353535353535353535353535',
+					from: FROM_ADDRESS,
+					to: TO_ADDRESS,
 					value: '0x174876e800',
 					gas: '0x5208',
 					maxFeePerGas: '0x4a817c800',

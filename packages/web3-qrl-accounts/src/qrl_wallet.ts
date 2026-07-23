@@ -18,13 +18,15 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 import {
 	Descriptor as ExternalDescriptor,
 	ExtendedSeed as ExternalExtendedSeed,
-	MLDSA87 as ExternalMLDSA87,
 	Seed as ExternalSeed,
 	WalletType as ExternalWalletType,
-	getAddressFromPKAndDescriptor as createAddressFromPublicKeyAndDescriptor,
 	newMLDSA87Descriptor as createMLDSA87Descriptor,
 	newWalletFromExtendedSeed as createWalletFromExtendedSeed,
 } from '@theqrl/wallet.js';
+import { CryptoBytes, cryptoSignSignature, cryptoSignVerify } from '@theqrl/mldsa87';
+import sha3 from 'js-sha3';
+
+const { shake256 } = sha3;
 
 export type QrlDescriptor = {
 	type(): number;
@@ -45,8 +47,12 @@ export type MLDSA87Wallet = {
 	getDescriptor(): QrlDescriptor;
 	getExtendedSeed(): QrlExtendedSeed;
 	getPK(): Uint8Array;
+	getSK(): Uint8Array;
 	sign(message: Uint8Array): Uint8Array;
 };
+
+const SIGNING_CONTEXT_PREFIX = new Uint8Array([0x5a, 0x4f, 0x4e, 0x44]);
+const SIGNING_CONTEXT_VERSION = 0x01;
 
 type ExtendedSeedInput = QrlExtendedSeed | Uint8Array | string;
 
@@ -56,10 +62,6 @@ const Descriptor = ExternalDescriptor as unknown as {
 
 const ExtendedSeed = ExternalExtendedSeed as unknown as {
 	newExtendedSeed(desc: QrlDescriptor, seed: QrlSeed): QrlExtendedSeed;
-};
-
-const MLDSA87 = ExternalMLDSA87 as unknown as {
-	verify(signature: Uint8Array, message: Uint8Array, pk: Uint8Array): boolean;
 };
 
 const Seed = ExternalSeed as unknown as {
@@ -76,16 +78,16 @@ const typedCreateWalletFromExtendedSeed = createWalletFromExtendedSeed as unknow
 
 const typedCreateMLDSA87Descriptor = createMLDSA87Descriptor as unknown as () => QrlDescriptor;
 
-const typedCreateAddressFromPublicKeyAndDescriptor =
-	createAddressFromPublicKeyAndDescriptor as unknown as (
-		publicKey: Uint8Array,
-		descriptor: QrlDescriptor,
-	) => Uint8Array;
-
 export const addressFromPublicKeyAndDescriptor = (
 	publicKey: Uint8Array,
 	descriptor: QrlDescriptor,
-): Uint8Array => typedCreateAddressFromPublicKeyAndDescriptor(publicKey, descriptor);
+): Uint8Array => {
+	const descriptorBytes = descriptor.toBytes();
+	const input = new Uint8Array(descriptorBytes.length + publicKey.length);
+	input.set(descriptorBytes);
+	input.set(publicKey, descriptorBytes.length);
+	return new Uint8Array(shake256.array(input, 512));
+};
 
 export const newMLDSA87WalletFromExtendedSeed = (extendedSeed: ExtendedSeedInput): MLDSA87Wallet =>
 	typedCreateWalletFromExtendedSeed(extendedSeed);
@@ -103,8 +105,35 @@ export const qrlWalletType = {
 	ML_DSA_87: WalletType.ML_DSA_87,
 } as const;
 
+export const getMLDSA87SigningContext = (descriptor: Uint8Array): Uint8Array => {
+	const context = new Uint8Array(SIGNING_CONTEXT_PREFIX.length + 1 + descriptor.length);
+	context.set(SIGNING_CONTEXT_PREFIX);
+	context[SIGNING_CONTEXT_PREFIX.length] = SIGNING_CONTEXT_VERSION;
+	context.set(descriptor, SIGNING_CONTEXT_PREFIX.length + 1);
+	return context;
+};
+
+export const signMLDSA87Message = (wallet: MLDSA87Wallet, message: Uint8Array): Uint8Array => {
+	const descriptor = wallet.getDescriptor().toBytes();
+	const secretKey = wallet.getSK();
+	const signature = new Uint8Array(CryptoBytes);
+	try {
+		cryptoSignSignature(
+			signature,
+			message,
+			secretKey,
+			false,
+			getMLDSA87SigningContext(descriptor),
+		);
+		return signature;
+	} finally {
+		secretKey.fill(0);
+	}
+};
+
 export const verifyMLDSA87Signature = (
 	signature: Uint8Array,
 	message: Uint8Array,
 	publicKey: Uint8Array,
-): boolean => MLDSA87.verify(signature, message, publicKey);
+	descriptor: Uint8Array,
+): boolean => cryptoSignVerify(signature, message, publicKey, getMLDSA87SigningContext(descriptor));

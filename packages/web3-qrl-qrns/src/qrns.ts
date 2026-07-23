@@ -38,9 +38,9 @@ import { Resolver } from './resolver.js';
  */
 export class QRNS extends Web3Context<QRLExecutionAPI & Web3NetAPI> {
 	/**
-	 * The registryAddress property can be used to define a custom registry address when you are connected to an unknown chain. It defaults to the main registry address.
+	 * The registryAddress property identifies the configured QRNS registry.
 	 */
-	public registryAddress: string;
+	public registryAddress?: string;
 	private readonly _registry: Registry;
 	private readonly _resolver: Resolver;
 	private _detectedAddress?: string;
@@ -48,12 +48,12 @@ export class QRNS extends Web3Context<QRLExecutionAPI & Web3NetAPI> {
 
 	/**
 	 * Use to create an instance of QRNS
-	 * @param registryAddr - (Optional) The address of the QRNS registry (default: mainnet registry address)
+	 * @param registryAddr - (Optional) The address of a VM64 QRNS registry
 	 * @param provider - (Optional) The provider to use for the QRNS instance
 	 * @example
 	 * ```ts
 	 * const qrns = new QRNS(
-	 * 	"Q00000000000C2E074eC69A0dFb2997BA6C7d2e1e",
+	 * 	customRegistryAddress,
 	 * 	"http://localhost:8545"
 	 * );
 	 *
@@ -69,7 +69,7 @@ export class QRNS extends Web3Context<QRLExecutionAPI & Web3NetAPI> {
 			| string,
 	) {
 		super(provider ?? '');
-		this.registryAddress = registryAddr ?? registryAddresses.main; // will default to main registry address
+		this.registryAddress = registryAddr ?? registryAddresses.main;
 		this._registry = new Registry(this.getContextObject(), registryAddr);
 		this._resolver = new Resolver(this._registry);
 	}
@@ -84,7 +84,6 @@ export class QRNS extends Web3Context<QRLExecutionAPI & Web3NetAPI> {
 	 * const resolver = await qrns.getResolver('resolver');
 	 *
 	 * console.log(resolver.options.address);
-	 * > 'Q1234567890123456789012345678901234567890'
 	 * ```
 	 */
 	public async getResolver(name: string): Promise<Contract<typeof PublicResolverAbi>> {
@@ -138,7 +137,6 @@ export class QRNS extends Web3Context<QRLExecutionAPI & Web3NetAPI> {
 	 * ```ts
 	 * const address = await web3.qrl.qrns.getAddress('qrl.qrns');
 	 * console.log(address);
-	 * > 'QfB6916095ca1df60bB79Ce92cE3Ea74c37c5d359'
 	 * ```
 	 */
 	public async getAddress(QRNSName: string, coinType = 60) {
@@ -187,7 +185,6 @@ export class QRNS extends Web3Context<QRLExecutionAPI & Web3NetAPI> {
 	 * @example
 	 * ```ts
 	 * console.log(await web3.qrl.qrns.checkNetwork());
-	 * > 'Q00000000000C2E074eC69A0dFb2997BA6C7d2e1e'
 	 * ```
 	 */
 	public async checkNetwork() {

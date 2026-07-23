@@ -25,6 +25,16 @@ import {
 } from '@theqrl/web3-types';
 import { QRLUnits, hexToBytes } from '../../src/converters';
 
+const addressBodies = [
+	'd5812f6cf4a0f645aa620cd57319a0ed649dd8f5519a9dde7770ae5b0e49e547985f35eb972a2a07041561aa39c65a3991478f9b1e6749e05277dcf58a9a8b72',
+	'be95a82d87a6cb9c7ff4c64e0c15bb1dff20b1d77e6b571b28ad4736f2a2a3e5857e8c225d6d61399b15beef3b196936e490ed6e234374c4887cbbe86c13b1ba',
+	'31f654037d4d7bce04e9522e4d346ab47a90686ef20a6c19916e68d3c77950f54babb7725ad48a3201c0acb74271e790730f9f39f9ce2e9ba1be9e41a763caf9',
+] as const;
+
+const address64 = (body: string): QPrefixedHexString => `Q${body}` as QPrefixedHexString;
+const hex64 = (body: string): HexString => `0x${body}` as HexString;
+const addressBytes64 = (body: string): Uint8Array => hexToBytes(hex64(body));
+
 export const bytesToHexValidData: [Bytes, HexString][] = [
 	[new Uint8Array([72]), '0x48'],
 	[new Uint8Array([72, 12]), '0x480c'],
@@ -240,10 +250,7 @@ export const toHexValidData: [Numbers | Bytes | Address | boolean, [HexString, V
 		'0x72fdb1c1ddd4c67804f42b93de95cf6a8c51d2d1',
 		['0x72fdb1c1ddd4c67804f42b93de95cf6a8c51d2d1', 'bytes'],
 	],
-	[
-		'Q72fdb1c1ddd4c67804f42b93de95cf6a8c51d2d1',
-		['0x72fdb1c1ddd4c67804f42b93de95cf6a8c51d2d1', 'address'],
-	],
+	[address64(addressBodies[0]), [hex64(addressBodies[0]), 'address']],
 	['-0x01', ['-0x1', 'int256']],
 	['123c', ['0x123c', 'bytes']],
 ];
@@ -323,9 +330,14 @@ export const toPlanckInvalidData: [[any, any], string][] = [
 	[['1234', 'uplanck'], 'Invalid value given "uplanck". Error: invalid unit.'],
 ];
 export const toCheckSumValidData: [string, string][] = [
-	['Q0089d53f703f7e0843953d48133f74ce247184c2', 'Q0089d53F703f7E0843953D48133f74cE247184c2'],
-	['Q5fbc2b6c19ee3dd5f9af96ff337ddc89e30ceaef', 'Q5FBc2b6C19EE3DD5f9Af96ff337DDC89e30ceAef'],
-	['Qa54D3c09E34aC96807c1CC397404bF2B98DC4eFb', 'Qa54d3c09E34aC96807c1CC397404bF2B98DC4eFb'],
+	[
+		address64(addressBodies[0]),
+		'Qd5812F6Cf4a0f645aa620cd57319a0Ed649dd8f5519A9dde7770ae5b0E49e547985f35eB972A2a07041561aa39c65A3991478f9B1e6749e05277dcf58A9A8B72',
+	],
+	[
+		address64(addressBodies[1].toUpperCase()),
+		'QBe95a82D87a6CB9c7Ff4C64e0C15BB1DFF20b1d77E6B571B28Ad4736f2a2A3E5857E8c225D6D61399B15BEeF3B196936E490ed6E234374C4887CBBe86C13b1BA',
+	],
 ];
 export const toCheckSumInvalidData: [string, string][] = [
 	['not an address', 'Invalid value given "not an address". Error: invalid qrl address.'],
@@ -358,56 +370,38 @@ export const toBigIntInvalidData: [any, string][] = [
 ];
 
 export const addressToBytesValidData: [QPrefixedHexString, Uint8Array][] = [
-	[
-		'Q4848484848484848484848484848484848484848',
-		new Uint8Array([
-			72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72,
-		]),
-	],
-	[
-		'Q3772377237723772377237723772377237723772',
-		new Uint8Array([
-			55, 114, 55, 114, 55, 114, 55, 114, 55, 114, 55, 114, 55, 114, 55, 114, 55, 114, 55,
-			114,
-		]),
-	],
-	[
-		'Q480c480c480c480c480c480c480c480c480c480c',
-		new Uint8Array([
-			72, 12, 72, 12, 72, 12, 72, 12, 72, 12, 72, 12, 72, 12, 72, 12, 72, 12, 72, 12,
-		]),
-	],
+	[address64(addressBodies[0]), addressBytes64(addressBodies[0])],
+	[address64(addressBodies[1]), addressBytes64(addressBodies[1])],
+	[address64(addressBodies[2]), addressBytes64(addressBodies[2])],
 ];
 
 export const addressToHexValidData: [QPrefixedHexString, HexString][] = [
-	['Q4848484848484848484848484848484848484848', '0x4848484848484848484848484848484848484848'],
-	['Q3772377237723772377237723772377237723772', '0x3772377237723772377237723772377237723772'],
-	['Q480c480c480c480c480c480c480c480c480c480c', '0x480c480c480c480c480c480c480c480c480c480c'],
-	['Q9c129c129c129c129c129c129c129c129c129c12', '0x9c129c129c129c129c129c129c129c129c129c12'],
-	['Q12c612c612c612c612c612c612c612c612c612c6', '0x12c612c612c612c612c612c612c612c612c612c6'],
+	[address64(addressBodies[0]), hex64(addressBodies[0])],
+	[address64(addressBodies[1]), hex64(addressBodies[1])],
+	[address64(addressBodies[2]), hex64(addressBodies[2])],
 ];
+
+const invalidNegativeAddress = `-${address64(addressBodies[0])}`;
 
 export const invalidAddressData: [any, string][] = [
 	['Q1', 'value "Q1" at "/0" must pass "address" validation'],
 	[
-		'QE247a45c287191d435A8a5D72A7C8dc030451E9F',
-		'value "QE247a45c287191d435A8a5D72A7C8dc030451E9F" at "/0" must pass "address" validation',
-	], // Invalid checksum
-	[
-		'-Q407d73d8a49eeb85d32cf465507dd71d507100c1',
-		'value "-Q407d73d8a49eeb85d32cf465507dd71d507100c1" at "/0" must pass "address" validation',
+		invalidNegativeAddress,
+		`value "${invalidNegativeAddress}" at "/0" must pass "address" validation`,
 	],
 ];
 
 export const hexToAddressValidData: [HexString, QPrefixedHexString][] = [
-	['0x4848484848484848484848484848484848484848', 'Q4848484848484848484848484848484848484848'],
-	['0x3772377237723772377237723772377237723772', 'Q3772377237723772377237723772377237723772'],
-	['0x480c480c480c480c480c480c480c480c480c480c', 'Q480c480c480c480c480c480c480c480c480c480c'],
-	['0x9c129c129c129c129c129c129c129c129c129c12', 'Q9c129c129c129c129c129c129c129c129c129c12'],
-	['0x12c612c612c612c612c612c612c612c612c612c6', 'Q12c612c612c612c612c612c612c612c612c612c6'],
+	[hex64(addressBodies[0]), address64(addressBodies[0])],
+	[hex64(addressBodies[1]), address64(addressBodies[1])],
+	[hex64(addressBodies[2]), address64(addressBodies[2])],
 ];
 
 export const hexToAddressInvalidData: [HexString, string][] = [
+	[
+		'0x407d73d8a49eeb85d32cf465507dd71d507100c1',
+		'Invalid value given "0x407d73d8a49eeb85d32cf465507dd71d507100c1". Error: invalid qrl address.',
+	],
 	['1a', 'value "1a" at "/0" must pass "hex" validation'],
 	['0xffdg', 'value "0xffdg" at "/0" must pass "hex" validation'],
 	['xfff', 'value "xfff" at "/0" must pass "hex" validation'],

@@ -18,7 +18,7 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { getBlock } from '@theqrl/web3-qrl';
 import { Contract, PayableTxOptions } from '@theqrl/web3-qrl-contract';
-import { Address, Bytes, DEFAULT_RETURN_FORMAT } from '@theqrl/web3-types';
+import { Bytes, DEFAULT_RETURN_FORMAT } from '@theqrl/web3-types';
 import { sha3, toChecksumAddress } from '@theqrl/web3-utils';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { IpcProvider } from '@theqrl/web3-providers-ipc';
@@ -69,7 +69,6 @@ describe('qrns', () => {
 	let accountOne: string;
 
 	const ZERO_NODE: Bytes = '0x0000000000000000000000000000000000000000000000000000000000000000';
-	const addressOne: Address = 'Q0000000000000000000000000000000000000001';
 
 	beforeAll(async () => {
 		accounts = await getSystemTestAccounts();
@@ -108,7 +107,7 @@ describe('qrns', () => {
 		await registry.methods
 			.setResolver(node, resolver.options.address as string)
 			.send(sendOptions);
-		await resolver.methods.setAddr(node, addressOne).send(sendOptions);
+		await resolver.methods.setAddr(node, accountOne).send(sendOptions);
 
 		await registry.methods
 			.setSubnodeOwner(ZERO_NODE, sha3(domain) as string, defaultAccount)

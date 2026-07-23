@@ -15,7 +15,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { getAddress } from '@ethersproject/address';
+import { addressToHex, hexToAddress } from '@theqrl/web3-utils';
 import { BigNumber, BigNumberish } from '@ethersproject/bignumber';
 import {
 	arrayify,
@@ -23,7 +23,6 @@ import {
 	concat,
 	hexDataSlice,
 	hexlify,
-	hexZeroPad,
 	isHexString,
 } from '@ethersproject/bytes';
 import { id } from '@ethersproject/hash';
@@ -47,6 +46,26 @@ import {
 import { version } from './_version.js';
 
 const logger = new Logger(version);
+const EVENT_HASH_BYTES = 32;
+const LOG_TOPIC_BYTES = 64;
+
+const serializeEventTopic = (hash: string): string => {
+	if (!isHexString(hash, EVENT_HASH_BYTES)) {
+		logger.throwArgumentError('invalid event hash', 'hash', hash);
+	}
+	return `${hash.toLowerCase()}${'0'.repeat(EVENT_HASH_BYTES * 2)}`;
+};
+
+const eventHashFromTopic = (topic: string): string | null => {
+	if (isHexString(topic, EVENT_HASH_BYTES)) return topic.toLowerCase();
+	if (
+		isHexString(topic, LOG_TOPIC_BYTES) &&
+		topic.slice(2 + EVENT_HASH_BYTES * 2) === '0'.repeat(EVENT_HASH_BYTES * 2)
+	) {
+		return `0x${topic.slice(2, 2 + EVENT_HASH_BYTES * 2).toLowerCase()}`;
+	}
+	return null;
+};
 
 export { checkResultErrors, Result };
 
@@ -226,7 +245,7 @@ export class Interface {
 	}
 
 	static getAddress(address: string): string {
-		return getAddress(address);
+		return hexToAddress(addressToHex(address));
 	}
 
 	static getSighash(fragment: ErrorFragment | FunctionFragment): string {
@@ -279,7 +298,7 @@ export class Interface {
 	// Find an event definition by any means necessary (unless it is ambiguous)
 	getEvent(nameOrSignatureOrTopic: string): EventFragment {
 		if (isHexString(nameOrSignatureOrTopic)) {
-			const topichash = nameOrSignatureOrTopic.toLowerCase();
+			const topichash = eventHashFromTopic(nameOrSignatureOrTopic);
 			for (const name in this.events) {
 				if (topichash === this.getEventTopic(name)) {
 					return this.events[name];
@@ -533,7 +552,7 @@ export class Interface {
 	encodeFilterTopics(
 		eventFragment: EventFragment | string,
 		values: ReadonlyArray<any>,
-	): Array<string | Array<string>> {
+	): Array<string | Array<string> | null> {
 		if (typeof eventFragment === 'string') {
 			eventFragment = this.getEvent(eventFragment);
 		}
@@ -549,32 +568,20 @@ export class Interface {
 			);
 		}
 
-		const topics: Array<string | Array<string>> = [];
+		const topics: Array<string | Array<string> | null> = [];
 		if (!eventFragment.anonymous) {
-			topics.push(this.getEventTopic(eventFragment));
+			topics.push(serializeEventTopic(this.getEventTopic(eventFragment)));
 		}
 
 		const encodeTopic = (param: ParamType, value: any): string => {
 			if (param.type === 'string') {
-				return id(value);
+				return serializeEventTopic(id(value));
 			}
 			if (param.type === 'bytes') {
-				return keccak256(hexlify(value));
+				return serializeEventTopic(keccak256(hexlify(value)));
 			}
 
-			if (param.type === 'bool' && typeof value === 'boolean') {
-				value = value ? '0x01' : '0x00';
-			}
-
-			if (param.type.match(/^u?int/)) {
-				value = BigNumber.from(value).toHexString();
-			}
-
-			// Check addresses are valid
-			if (param.type === 'address') {
-				this._abiCoder.encode(['address'], [value]);
-			}
-			return hexZeroPad(hexlify(value), 32);
+			return this._abiCoder.encode([param], [value]).toLowerCase();
 		};
 
 		values.forEach((value, index) => {
@@ -594,11 +601,22 @@ export class Interface {
 			if (value == null) {
 				topics.push(null);
 			} else if (param.baseType === 'array' || param.baseType === 'tuple') {
-				logger.throwArgumentError(
-					'filtering with tuples or arrays not supported',
-					`contract.${param.name}`,
-					value,
-				);
+				if (typeof value === 'string' && isHexString(value, LOG_TOPIC_BYTES)) {
+					topics.push(value.toLowerCase());
+				} else if (
+					Array.isArray(value) &&
+					value.every(
+						item => typeof item === 'string' && isHexString(item, LOG_TOPIC_BYTES),
+					)
+				) {
+					topics.push(value.map(item => item.toLowerCase()));
+				} else {
+					logger.throwArgumentError(
+						'indexed tuple and array filters require precomputed 64-byte topics',
+						`contract.${param.name}`,
+						value,
+					);
+				}
 			} else if (Array.isArray(value)) {
 				topics.push(value.map(value => encodeTopic(param, value)));
 			} else {
@@ -628,7 +646,7 @@ export class Interface {
 		const dataValues: Array<string> = [];
 
 		if (!eventFragment.anonymous) {
-			topics.push(this.getEventTopic(eventFragment));
+			topics.push(serializeEventTopic(this.getEventTopic(eventFragment)));
 		}
 
 		if (values.length !== eventFragment.inputs.length) {
@@ -639,9 +657,9 @@ export class Interface {
 			const value = values[index];
 			if (param.indexed) {
 				if (param.type === 'string') {
-					topics.push(id(value));
+					topics.push(serializeEventTopic(id(value)));
 				} else if (param.type === 'bytes') {
-					topics.push(keccak256(value));
+					topics.push(serializeEventTopic(keccak256(value)));
 				} else if (param.baseType === 'tuple' || param.baseType === 'array') {
 					// @TODO
 					throw new Error('not implemented');
@@ -671,8 +689,8 @@ export class Interface {
 		}
 
 		if (topics != null && !eventFragment.anonymous) {
-			const topicHash = this.getEventTopic(eventFragment);
-			if (!isHexString(topics[0], 32) || topics[0].toLowerCase() !== topicHash) {
+			const topicHash = serializeEventTopic(this.getEventTopic(eventFragment));
+			if (!isHexString(topics[0], LOG_TOPIC_BYTES) || topics[0].toLowerCase() !== topicHash) {
 				logger.throwError('fragment/topic mismatch', Logger.errors.INVALID_ARGUMENT, {
 					argument: 'topics[0]',
 					expected: topicHash,

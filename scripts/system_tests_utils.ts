@@ -16,13 +16,14 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { format, SocketProvider } from '@theqrl/web3-utils';
+import { format, SocketProvider, toChecksumAddress } from '@theqrl/web3-utils';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {
 	create as _createAccount,
 	decrypt,
 	seedToAccount,
 	signTransaction,
+	Wallet,
 } from '@theqrl/web3-qrl-accounts';
 
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -46,6 +47,7 @@ import {
 	SupportedProviders,
 	Web3APISpec,
 	Web3QRLExecutionAPI,
+	TransactionReceipt,
 } from '@theqrl/web3-types';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import HttpProvider from '@theqrl/web3-providers-http';
@@ -53,12 +55,14 @@ import HttpProvider from '@theqrl/web3-providers-http';
 import { IpcProvider } from '@theqrl/web3-providers-ipc';
 import accountsString from './accounts.json';
 
-// Avoid an eager type-only import of the umbrella '@theqrl/web3' package: it depends on
-// '@theqrl/web3-qrl', so it can't be a dependency of web3-qrl, and turbo therefore doesn't
-// guarantee its lib outputs exist when unit tests pull this file in via fixture symlinks.
-// The runtime require below is lazy and only reached from integration-style helpers.
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type Web3 = any;
+type Web3WithQRL = {
+	qrl: Web3QRL & {
+		accounts: {
+			create: typeof _createAccount;
+			wallet: Wallet;
+		};
+	};
+};
 
 type NonPayableMethodObject = {
 	encodeABI: () => string;
@@ -255,7 +259,7 @@ export const createNewAccount = async (config?: {
 		await refillAccount(mainAcc, acc.address, '10000000000000000000');
 	}
 
-	return { address: `Q${acc.address.slice(1).toLowerCase()}`, seed: acc.seed };
+	return { address: toChecksumAddress(acc.address), seed: acc.seed };
 };
 let tempAccountList: { address: string; seed: string }[] = [];
 const walletsOnWorker = 20;
@@ -289,7 +293,7 @@ export const createTempAccount = async (
 	});
 	currentIndex += 1;
 
-	return acc;
+	return { ...acc, address: toChecksumAddress(acc.address) };
 };
 
 export const getSystemTestAccountsWithKeys = async (): Promise<
@@ -307,20 +311,23 @@ export const getSystemTestAccountsWithKeys = async (): Promise<
 export const getSystemTestAccounts = async (): Promise<string[]> =>
 	(await getSystemTestAccountsWithKeys()).map(a => a.address);
 
-type Web3Constructor = new (provider: SupportedProviders) => Web3;
+const createWeb3QRL = (provider: unknown): Web3QRL => new Web3QRL(provider as SupportedProviders);
 
-const createWeb3 = (provider: unknown): Web3 => {
-	// Load the umbrella package only in helpers that need it. Some unit tests import this
-	// fixture for account helpers, and eager loading races Turbo's package build outputs.
-	// eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-require-imports, import/no-extraneous-dependencies, global-require
-	const Web3Ctor = (require('@theqrl/web3') as { default: Web3Constructor }).default;
-	return new Web3Ctor(provider as SupportedProviders);
+const attachLocalWallet = (web3QRL: Web3QRL) => {
+	if (web3QRL.wallet) {
+		return web3QRL.wallet;
+	}
+	const accountProvider = createAccountProvider(web3QRL);
+	const wallet = new Wallet(accountProvider);
+	web3QRL['_accountProvider'] = accountProvider;
+	web3QRL['_wallet'] = wallet;
+	return wallet;
 };
 
 export const signTxAndSendEIP1559 = async (provider: unknown, tx: Transaction, seed: string) => {
-	const web3 = createWeb3(provider);
-	const acc = web3.qrl.accounts.seedToAccount(seed);
-	web3.qrl.wallet?.add(seed);
+	const web3QRL = createWeb3QRL(provider);
+	const acc = seedToAccount(seed);
+	attachLocalWallet(web3QRL).add(seed);
 
 	const txObj = {
 		...tx,
@@ -329,7 +336,7 @@ export const signTxAndSendEIP1559 = async (provider: unknown, tx: Transaction, s
 		from: acc.address,
 	};
 
-	return web3.qrl.sendTransaction(txObj, undefined, { checkRevertBeforeSending: false });
+	return web3QRL.sendTransaction(txObj, undefined, { checkRevertBeforeSending: false });
 };
 
 export const signAndSendContractMethodEIP1559 = async (
@@ -347,16 +354,19 @@ export const signAndSendContractMethodEIP1559 = async (
 		seed,
 	);
 
-export const createLocalAccount = async (web3: ReturnType<typeof createWeb3>) => {
-	const account = web3.qrl.accounts.create();
+export const createLocalAccount = async (web3: Web3WithQRL | Web3QRL) => {
+	const web3QRL = 'qrl' in web3 ? web3.qrl : web3;
+	const account = 'qrl' in web3 ? web3.qrl.accounts.create() : _createAccount();
 	await refillAccount(
-		(
-			await createTempAccount()
-		).address,
+		(await createTempAccount()).address,
 		account.address,
 		'100000000000000000000',
 	);
-	web3.qrl.accounts.wallet.add(account);
+	if ('qrl' in web3) {
+		web3.qrl.accounts.wallet.add(account);
+	} else {
+		attachLocalWallet(web3QRL).add(account.seed);
+	}
 	return account;
 };
 /* eslint-disable @typescript-eslint/no-unsafe-call */
@@ -410,20 +420,13 @@ const waitForSocketStatus = async <ResultType>(
 };
 
 export const waitForSocketConnect = async (provider: SocketProvider<any, any, any>) =>
-	waitForSocketStatus(
-		provider,
-		'connected',
-		'connect',
-		{} as ProviderConnectInfo,
-	);
+	waitForSocketStatus(provider, 'connected', 'connect', {} as ProviderConnectInfo);
 
 export const waitForSocketDisconnect = async (provider: SocketProvider<any, any, any>) =>
-	waitForSocketStatus(
-		provider,
-		'disconnected',
-		'disconnect',
-		{ code: 1000, message: '' } as ProviderRpcError,
-	);
+	waitForSocketStatus(provider, 'disconnected', 'disconnect', {
+		code: 1000,
+		message: '',
+	} as ProviderRpcError);
 
 export const waitForOpenSocketConnection = async (provider: SocketProvider<any, any, any>) =>
 	waitForSocketConnect(provider);
@@ -442,14 +445,14 @@ export const waitForEvent = async (
 	});
 
 export const sendFewSampleTxs = async (cnt = 1) => {
-	const web3 = createWeb3(getSystemTestProviderUrl());
-	const fromAcc = await createLocalAccount(web3);
+	const web3QRL = createWeb3QRL(getSystemTestProviderUrl());
+	const fromAcc = await createTempAccount();
 	const toAcc = createAccount();
-	const res: unknown[] = [];
+	const res: TransactionReceipt[] = [];
 	for (let i = 0; i < cnt; i += 1) {
 		res.push(
 			// eslint-disable-next-line no-await-in-loop
-			await web3.qrl.sendTransaction({
+			await web3QRL.sendTransaction({
 				to: toAcc.address,
 				value: '0x1',
 				from: fromAcc.address,
@@ -457,7 +460,7 @@ export const sendFewSampleTxs = async (cnt = 1) => {
 			}),
 		);
 	}
-	await closeOpenConnection(web3 as unknown as Web3Context);
+	await closeOpenConnection(web3QRL);
 	return res;
 };
 

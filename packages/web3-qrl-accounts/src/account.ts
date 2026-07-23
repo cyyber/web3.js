@@ -56,10 +56,12 @@ import {
 import { isHexStrict, isNullish, isString, validator } from '@theqrl/web3-validator';
 import { CryptoPublicKeyBytes } from './qrl_crypto.js';
 import {
+	addressFromPublicKeyAndDescriptor,
 	newMLDSA87Descriptor,
 	newMLDSA87WalletFromExtendedSeed,
 	newQrlExtendedSeed,
 	qrlSeedFromBytes,
+	signMLDSA87Message,
 } from './qrl_wallet.js';
 import { keyStoreSchema } from './schemas.js';
 import { validateArgon2idParams } from './kdf_policy.js';
@@ -160,7 +162,7 @@ export const hashMessage = (message: string): string => {
 export const sign = (data: string, seed: Bytes): SignResult => {
 	const wallet = newMLDSA87WalletFromExtendedSeed(seed);
 	const hash = hashMessage(data);
-	const signature = wallet.sign(hexToBytes(hash));
+	const signature = signMLDSA87Message(wallet, hexToBytes(hash));
 
 	return {
 		message: data,
@@ -183,7 +185,7 @@ export const sign = (data: string, seed: Bytes): SignResult => {
  * Signing an eip 1559 transaction
  * ```ts
  * signTransaction({
- *	to: 'QF0109fC8DF283027b6285cc889F5aA624EaC1F55',
+ *	to: 'Qd5812f6cf4a0f645aa620cd57319a0ed649dd8f5519a9dde7770ae5b0e49e547985f35eb972a2a07041561aa39c65a3991478f9b1e6749e05277dcf58a9a8b72',
  *	maxPriorityFeePerGas: '0x3B9ACA00',
  *	maxFeePerGas: '0xB2D05E00',
  *	gasLimit: '0x6A4012',
@@ -226,7 +228,9 @@ export const signTransaction = async (
 
 	const rawTx = bytesToHex(signedTx.serialize());
 	const txHash = sha3Raw(rawTx); // using keccak in web3-utils.sha3Raw instead of SHA3 (NIST Standard) as both are different
-	const extraParams = isNullish(signedTx.extraParams) ? Uint8Array.from([]) : signedTx.extraParams;
+	const extraParams = isNullish(signedTx.extraParams)
+		? Uint8Array.from([])
+		: signedTx.extraParams;
 
 	return {
 		messageHash: bytesToHex(signedTx.getMessageToSign(signedTx.descriptor, extraParams, true)),
@@ -242,8 +246,7 @@ export const signTransaction = async (
  * @param rawTransaction - The hex string having RLP encoded transaction
  * @returns The QRL address used to sign this transaction
  * ```ts
- * recoverTransaction('0xf869808504e3b29200831e848094f0109fc8df283027b6285cc889f5aa624eac1f55843b9aca008025a0c9cf86333bcb065d140032ecaab5d9281bde80f21b9687b3e94161de42d51895a0727a108a0b8d101465414033c3f705a9c7b826e596766046ee1183dbc8aeaa68');
- * > "Q2c7536E3605D9C16a7a3D7b1898e529396a65c23"
+ * recoverTransaction(rawTransaction);
  * ```
  */
 export const recoverTransaction = (rawTransaction: HexString): Address => {
@@ -280,7 +283,7 @@ export const recoverTransaction = (rawTransaction: HexString): Address => {
  * {
  *   version: 1,
  *   id: '1b1dd3e2-ee6f-49c6-8a9b-a4722046582e',
- *   address: 'Qcfec0cbee560cbd6ed89580204af71448f1fb8c5',
+ *   address: 'Qcfec0cbee560cbd6ed89580204af71448f1fb8c577e60e9afc6e697019e2312cf3b24b98eb763627a1c38c96ecd7e7c20ba9774cb6c0a810b78e8ea529ccdc40',
  *   crypto: {
  *     ciphertext: '02383d4ea331fdf518651aa638d77f36de002f6b2cb340712c2957b68f927234a9c87f776e40b61227aca366bd4b7056046dfdddee29df22290939a1e96f5be5',
  *     cipherparams: { iv: 'bfb43120ae00e9de110f8325' },
@@ -359,11 +362,14 @@ export const encrypt = async (
 	const cipher = await createCipheriv(seedUint8Array, derivedKey, initializationVector);
 	const ciphertext = bytesToHex(cipher).slice(2);
 	const wallet = newMLDSA87WalletFromExtendedSeed(seedUint8Array);
+	const address = bytesToHex(
+		addressFromPublicKeyAndDescriptor(wallet.getPK(), wallet.getDescriptor()),
+	).replace('0x', 'Q');
 
 	return {
 		version: 1,
 		id: uuidV4(),
-		address: `Q${toChecksumAddress(wallet.getAddressStr()).slice(1).toLowerCase()}`,
+		address,
 		crypto: {
 			ciphertext,
 			cipherparams: {
@@ -390,7 +396,7 @@ export const encrypt = async (
  * seedToAccount("0x010000cea755979937e2dc6137c0e51ba0d1eb2a44920cefffb1a860cf194ea7d23d694045fd2c8a72ec5aecf1e7e5bb591ff2");
  * >
  * {
- *   address: 'QcfEC0CbEe560cbD6ED89580204AF71448F1fb8c5',
+ *   address: 'QCfeC0cbeE560cbD6ed89580204AF71448f1fB8c577e60e9afC6E697019E2312cF3B24B98Eb763627a1C38c96ecd7E7c20BA9774cb6c0a810B78E8ea529ccdc40',
  *   seed: '0x010000cea755979937e2dc6137c0e51ba0d1eb2a44920cefffb1a860cf194ea7d23d694045fd2c8a72ec5aecf1e7e5bb591ff2',
  *   signTransaction: [Function: signTransaction],
  *   sign: [Function: sign],
@@ -400,10 +406,13 @@ export const encrypt = async (
  */
 export function seedToAccount(seed: Bytes): Web3Account {
 	const acc = newMLDSA87WalletFromExtendedSeed(seed);
+	const address = bytesToHex(
+		addressFromPublicKeyAndDescriptor(acc.getPK(), acc.getDescriptor()),
+	).replace('0x', 'Q');
 	const seedHex = bytesToHex(acc.getExtendedSeed().toBytes());
 
 	const account = {
-		address: toChecksumAddress(acc.getAddressStr()),
+		address: toChecksumAddress(address),
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		signTransaction: (_tx: Transaction) => {
 			throw new TransactionSigningError('Do not have network access to sign the transaction');
@@ -436,7 +445,7 @@ export function seedToAccount(seed: Bytes): Web3Account {
  * ```ts
  * web3.qrl.accounts.create();
  * {
- * address: 'QcfEC0CbEe560cbD6ED89580204AF71448F1fb8c5',
+ * address: 'QCfeC0cbeE560cbD6ed89580204AF71448f1fB8c577e60e9afC6E697019E2312cF3B24B98Eb763627a1C38c96ecd7E7c20BA9774cb6c0a810B78E8ea529ccdc40',
  * seed: '0x010000cea755979937e2dc6137c0e51ba0d1eb2a44920cefffb1a860cf194ea7d23d694045fd2c8a72ec5aecf1e7e5bb591ff2',
  * signTransaction: [Function: signTransaction],
  * sign: [Function: sign],
@@ -464,7 +473,7 @@ export const create = (): Web3Account => {
  * decrypt({
  *   version: 1,
  *   id: '1b1dd3e2-ee6f-49c6-8a9b-a4722046582e',
- *   address: 'Qcfec0cbee560cbd6ed89580204af71448f1fb8c5',
+ *   address: 'Qcfec0cbee560cbd6ed89580204af71448f1fb8c577e60e9afc6e697019e2312cf3b24b98eb763627a1c38c96ecd7e7c20ba9774cb6c0a810b78e8ea529ccdc40',
  *   crypto: {
  *     ciphertext: '02383d4ea331fdf518651aa638d77f36de002f6b2cb340712c2957b68f927234a9c87f776e40b61227aca366bd4b7056046dfdddee29df22290939a1e96f5be5',
  *     cipherparams: { iv: 'bfb43120ae00e9de110f8325' },
@@ -481,7 +490,7 @@ export const create = (): Web3Account => {
  * }, '123').then((res) => console.log(util.inspect(res, { depth: null })));
  * >
  * {
- *   address: 'QcfEC0CbEe560cbD6ED89580204AF71448F1fb8c5',
+ *   address: 'QCfeC0cbeE560cbD6ed89580204AF71448f1fB8c577e60e9afC6E697019E2312cF3B24B98Eb763627a1C38c96ecd7E7c20BA9774cb6c0a810B78E8ea529ccdc40',
  *   seed: '0x010000cea755979937e2dc6137c0e51ba0d1eb2a44920cefffb1a860cf194ea7d23d694045fd2c8a72ec5aecf1e7e5bb591ff2',
  *   signTransaction: [Function: signTransaction],
  *   sign: [Function: sign],

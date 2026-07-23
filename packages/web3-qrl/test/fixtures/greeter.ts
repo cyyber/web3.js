@@ -15,10 +15,18 @@ You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-// Have to use `require` because of Jest issue https://jestjs.io/docs/ecmascript-modules
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-require('jest-extended');
+import { encodeFunctionCall, encodeParameter } from '@theqrl/web3-qrl-abi';
 
-// @todo extend jest to have "toHaveBeenCalledOnceWith" matcher.
+import { GreeterAbi, GreeterBytecode } from '../shared_fixtures/build/Greeter';
 
-process.env.NODE_ENV = 'test';
+export const GREETER_GREETING = 'solyent green is people';
+export const GREETER_DEPLOYMENT_DATA = `${GreeterBytecode}${encodeParameter(
+	'string',
+	GREETER_GREETING,
+).slice(2)}`;
+
+const setGreetingAbi = GreeterAbi.find(
+	item => item.type === 'function' && item.name === 'setGreeting',
+);
+
+export const GREETER_SET_GREETING_42_DATA = encodeFunctionCall(setGreetingAbi!, ['42']);

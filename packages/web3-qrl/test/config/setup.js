@@ -19,6 +19,11 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 require('jest-extended');
 
+if (typeof globalThis.crypto?.getRandomValues !== 'function') {
+	// Jest's VM context does not expose Node's global Web Crypto implementation.
+	globalThis.crypto = require('node:crypto').webcrypto;
+}
+
 // @todo extend jest to have "toHaveBeenCalledOnceWith" matcher.
 
 process.env.NODE_ENV = 'test';
