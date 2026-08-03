@@ -38,7 +38,6 @@ import {
 import { Contract } from '@theqrl/web3-qrl-contract';
 import { QRNS } from '@theqrl/web3-qrl-qrns';
 import { Net } from '@theqrl/web3-net';
-import { Iban } from '@theqrl/web3-qrl-iban';
 
 /**
  * The QRL interface for main web3 object. It provides extra methods in addition to `web3-qrl` interface.
@@ -56,7 +55,6 @@ export interface Web3QRLInterface extends QRL {
 	 * ```
 	 */
 	Contract: typeof Contract;
-	Iban: typeof Iban;
 	net: Net;
 	qrns: QRNS;
 	abi: {

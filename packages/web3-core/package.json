@@ -51,7 +51,6 @@
 		"@theqrl/web3-errors": "workspace:^",
 		"@theqrl/web3-providers-http": "workspace:^",
 		"@theqrl/web3-providers-ws": "workspace:^",
-		"@theqrl/web3-qrl-iban": "workspace:^",
 		"@theqrl/web3-types": "workspace:^",
 		"@theqrl/web3-utils": "workspace:^",
 		"@theqrl/web3-validator": "workspace:^"
