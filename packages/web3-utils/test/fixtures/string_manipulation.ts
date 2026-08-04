@@ -69,6 +69,14 @@ export const toTwosComplementData: [[Numbers, number], HexString][] = [
 	[['13', 32], '0x0000000000000000000000000000000d'],
 	[['-13', 32], '0xfffffffffffffffffffffffffffffff3'],
 	[[-16, 2], '0xf0'],
+	[
+		[-(BigInt(1) << BigInt(511)), 128],
+		`0x8${'0'.repeat(127)}`,
+	],
+	[
+		['0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff00', 64],
+		'0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff00',
+	],
 ];
 
 export const fromTwosComplementData: [[Numbers, number], number | bigint][] = [
@@ -84,11 +92,6 @@ export const fromTwosComplementData: [[Numbers, number], number | bigint][] = [
 ];
 
 export const toTwosComplementInvalidData: [[Numbers, number], string][] = [
-	// hyperion only store 32 bytes numbers
-	[
-		['0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff00', 64],
-		'value "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff00" at "/0" must pass "int" validation',
-	],
 	[['ab', 32], 'value "ab" at "/0" must pass "int" validation'],
 	[['-ab', 3], 'value "-ab" at "/0" must pass "int" validation'],
 	[['ab0x', 2], 'value "ab0x" at "/0" must pass "int" validation'],

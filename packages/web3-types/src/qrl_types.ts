@@ -16,9 +16,11 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 import { Bytes, HexString, QPrefixedHexString, Numbers } from './primitives_types.js';
 
-export type ValueTypes = 'address' | 'bool' | 'string' | 'int256' | 'uint256' | 'bytes' | 'bigint';
+export type ValueTypes = 'address' | 'bool' | 'string' | 'int512' | 'uint512' | 'bytes' | 'bigint';
 // Hex encoded 32 bytes
 export type HexString32Bytes = HexString;
+// Hex encoded 64 bytes
+export type HexString64Bytes = HexString;
 // Hex encoded 16 bytes
 export type HexString16Bytes = HexString;
 // Hex encoded 8 bytes
@@ -38,8 +40,7 @@ export type Uint256 = HexString;
 // Q-prefixed hex encoded address
 export type Address = QPrefixedHexString;
 
-// https://github.com/ethereum/execution-apis/blob/main/src/schemas/filter.json#L59
-export type Topic = HexString32Bytes;
+export type Topic = HexString64Bytes;
 
 export type TransactionHash = HexString;
 export enum BlockTags {

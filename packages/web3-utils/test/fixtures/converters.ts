@@ -227,13 +227,13 @@ export const hexToAsciiValidData: [string, HexString][] = [
 ];
 
 export const toHexValidData: [Numbers | Bytes | Address | boolean, [HexString, ValueTypes]][] = [
-	[1, ['0x1', 'uint256']],
-	[255, ['0xff', 'uint256']],
-	[256, ['0x100', 'uint256']],
+	[1, ['0x1', 'uint512']],
+	[255, ['0xff', 'uint512']],
+	[256, ['0x100', 'uint512']],
 	[BigInt(12), ['0xc', 'bigint']],
 	['768', ['0x373638', 'string']],
 	['-768', ['0x2d373638', 'string']],
-	[-255, ['-0xff', 'int256']],
+	[-255, ['-0xff', 'int512']],
 	['I have 100£', ['0x49206861766520313030c2a3', 'string']],
 	['I \u0000 data', ['0x4920002064617461', 'string']],
 	['\u0000 null suffix', ['0x206e756c6c20737566666978', 'string']],
@@ -253,7 +253,7 @@ export const toHexValidData: [Numbers | Bytes | Address | boolean, [HexString, V
 			'address',
 		],
 	],
-	['-0x01', ['-0x1', 'int256']],
+	['-0x01', ['-0x1', 'int512']],
 	['123c', ['0x123c', 'bytes']],
 ];
 

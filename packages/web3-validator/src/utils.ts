@@ -95,7 +95,7 @@ const assertSupportedSize = (
 	if (baseTypeSize === undefined || Number.isNaN(baseTypeSize)) return;
 	if (
 		(baseType === 'int' || baseType === 'uint') &&
-		(baseTypeSize <= 0 || baseTypeSize > 256 || baseTypeSize % 8 !== 0)
+		(baseTypeSize <= 0 || baseTypeSize > 512 || baseTypeSize % 8 !== 0)
 	) {
 		throw new Web3ValidatorError([
 			{
@@ -107,7 +107,7 @@ const assertSupportedSize = (
 			},
 		]);
 	}
-	if (baseType === 'bytes' && (baseTypeSize <= 0 || baseTypeSize > 32)) {
+	if (baseType === 'bytes' && (baseTypeSize <= 0 || baseTypeSize > 64)) {
 		throw new Web3ValidatorError([
 			{
 				keyword: 'eth',
