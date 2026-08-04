@@ -72,6 +72,23 @@ describe('AbiCoder', () => {
 			expect(defaultAbiCoder.encode(['int256'], [-1])).toBe(`0x${'ff'.repeat(WORD)}`);
 		});
 
+		/* eslint-disable @typescript-eslint/no-unsafe-call */
+		it('encodes 512-bit integer bounds', () => {
+			const maxUint512 = BigNumber.from(2).pow(512).sub(1);
+			const minInt512 = BigNumber.from(2).pow(511).mul(-1);
+
+			expect(defaultAbiCoder.encode(['uint512'], [maxUint512])).toBe(
+				`0x${'ff'.repeat(WORD)}`,
+			);
+			expect(defaultAbiCoder.encode(['int512'], [minInt512])).toBe(
+				`0x80${'00'.repeat(WORD - 1)}`,
+			);
+			expect(() => defaultAbiCoder.encode(['uint512'], [maxUint512.add(1)])).toThrow(
+				/out-of-bounds/,
+			);
+		});
+		/* eslint-enable @typescript-eslint/no-unsafe-call */
+
 		it('encodes bytes32 left-aligned in one word', () => {
 			const value = `0x${'ab'.repeat(32)}`;
 			expect(defaultAbiCoder.encode(['bytes32'], [value])).toBe(
@@ -400,13 +417,13 @@ describe('AbiCoder', () => {
 				'uint256',
 				'bool',
 				'address',
-				'bytes',
+				'bytes64',
 				'string',
 			]);
 			expect(defaults[0]).toBe(0);
 			expect(defaults[1]).toBe(false);
 			expect(defaults[2]).toBe(ADDR_ZERO);
-			expect(defaults[3]).toBe('0x');
+			expect(defaults[3]).toBe(`0x${'00'.repeat(64)}`);
 			expect(defaults[4]).toBe('');
 		});
 
@@ -417,26 +434,26 @@ describe('AbiCoder', () => {
 	});
 
 	describe('_getCoder validation', () => {
-		it.each(['uint0', 'uint257', 'uint7', 'int0', 'int257', 'int9'])(
+		it.each(['uint0', 'uint257', 'uint520', 'uint7', 'int0', 'int257', 'int520', 'int9'])(
 			'rejects the invalid numeric type %s',
 			type => {
 				expect(() => defaultAbiCoder._getCoder(ParamType.from(type))).toThrow(/bit length/);
 			},
 		);
 
-		it.each(['uint8', 'uint256', 'int8', 'int256', 'uint', 'int'])(
+		it.each(['uint8', 'uint256', 'uint512', 'int8', 'int256', 'int512', 'uint', 'int'])(
 			'accepts the valid numeric type %s',
 			type => {
 				expect(() => defaultAbiCoder._getCoder(ParamType.from(type))).not.toThrow();
 			},
 		);
 
-		it('defaults a bare uint/int to 256 bits', () => {
-			expect(defaultAbiCoder._getCoder(ParamType.from('uint')).name).toBe('uint256');
-			expect(defaultAbiCoder._getCoder(ParamType.from('int')).name).toBe('int256');
+		it('defaults a bare uint/int to 512 bits', () => {
+			expect(defaultAbiCoder._getCoder(ParamType.from('uint')).name).toBe('uint512');
+			expect(defaultAbiCoder._getCoder(ParamType.from('int')).name).toBe('int512');
 		});
 
-		it.each(['bytes0', 'bytes33', 'bytes64'])('rejects the invalid type %s', type => {
+		it.each(['bytes0', 'bytes65'])('rejects the invalid type %s', type => {
 			expect(() => defaultAbiCoder._getCoder(ParamType.from(type))).toThrow(
 				/invalid bytes length/,
 			);
