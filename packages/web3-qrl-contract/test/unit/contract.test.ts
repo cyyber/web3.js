@@ -982,7 +982,7 @@ describe('Contract', () => {
 			const pastEvent = await deployedContract.getPastEvents(getPastEventsData.event as any, {
 				fromBlock,
 				toBlock,
-				topics: ['0x7d7846723bda52976e0286c6efffee937ee9f76817a867ec70531ad29fb1fc0e'],
+				topics: ['0x7d7846723bda52976e0286c6efffee937ee9f76817a867ec70531ad29fb1fc0e0000000000000000000000000000000000000000000000000000000000000000'],
 			});
 
 			expect(pastEvent).toStrictEqual(getPastEventsData.response);
@@ -1122,7 +1122,7 @@ describe('Contract', () => {
 				.send(sendOptions);
 
 			const pastEvent = await deployedContract.getPastEvents({
-				topics: ['0x7d7846723bda52976e0286c6efffee937ee9f76817a867ec70531ad29fb1fc0e'],
+				topics: ['0x7d7846723bda52976e0286c6efffee937ee9f76817a867ec70531ad29fb1fc0e0000000000000000000000000000000000000000000000000000000000000000'],
 			});
 			expect(pastEvent).toHaveLength(1);
 			expect(pastEvent[0]).toStrictEqual(AllGetPastEventsData.response[1]);

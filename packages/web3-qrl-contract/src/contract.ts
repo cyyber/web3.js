@@ -41,6 +41,7 @@ import {
 	encodeEventSignature,
 	encodeFunctionSignature,
 	decodeContractErrorData,
+	hashToLogTopic,
 	isAbiErrorFragment,
 	isAbiEventFragment,
 	isAbiFunctionFragment,
@@ -789,7 +790,11 @@ export class Contract<Abi extends ContractAbi>
 
 					const inputAbi = abi.inputs?.filter(input => input.name === key)[0];
 					if (inputAbi?.indexed && inputAbi.type === 'string') {
-						const hashedIndexedString = keccak256(filter[key] as string);
+						// `returnValues` holds the raw 64-byte topic for a dynamic indexed
+						// argument, so compare against the left-aligned hash, not the bare one.
+						const hashedIndexedString = hashToLogTopic(
+							keccak256(filter[key] as string),
+						);
 						if (hashedIndexedString === String(log.returnValues[key])) return true;
 					}
 

@@ -15,11 +15,33 @@ You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { sha3Raw } from '@theqrl/web3-utils';
+import { isTopic } from '@theqrl/web3-validator';
 import { encodeEventSignature } from '../../../src/api/events_api';
 import { invalidEventsSignatures, validEventsSignatures } from '../../fixtures/data';
 
 describe('events_api', () => {
 	describe('encodeEventSignature', () => {
+		describe('log topic alignment', () => {
+			// A QRVM log topic is 64 bytes wide (go-qrl `common.LogTopicLength`) and a 32-byte
+			// Keccak hash is left-aligned within it (go-qrl `common.HashToLogTopic`), so the
+			// signature must be the hash followed by 64 hex characters of zero padding.
+			const eventName = 'Transfer(address,address,uint256)';
+
+			it('should return the event signature hash left-aligned in a 64-byte topic', () => {
+				expect(encodeEventSignature(eventName)).toBe(
+					`${sha3Raw(eventName)}${'0'.repeat(64)}`,
+				);
+			});
+
+			it('should return a signature accepted as a topic by the validator', () => {
+				const signature = encodeEventSignature(eventName);
+
+				expect(signature).toHaveLength(130);
+				expect(isTopic(signature)).toBe(true);
+			});
+		});
+
 		describe('valid data', () => {
 			it.each(validEventsSignatures)(
 				'should pass for valid values: %s',

@@ -39,6 +39,7 @@ import {
 	encodeFunctionSignature,
 	encodeParameter,
 	encodeParameters,
+	hashToLogTopic,
 	isAbiConstructorFragment,
 	jsonInterfaceMethodToString,
 } from '@theqrl/web3-qrl-abi';
@@ -103,7 +104,9 @@ export const encodeEventABI = (
 				if (Array.isArray(value)) {
 					opts.topics.push(value.map(v => encodeParameter(input.type, v)));
 				} else if (input.type === 'string') {
-					opts.topics.push(keccak256(value as string));
+					// A dynamic indexed argument is topic-encoded as its Keccak hash, which the
+					// node left-aligns in the 64-byte topic word (go-qrl `HashToLogTopic`).
+					opts.topics.push(hashToLogTopic(keccak256(value as string)));
 				} else {
 					opts.topics.push(encodeParameter(input.type, value));
 				}
