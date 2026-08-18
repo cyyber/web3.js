@@ -102,8 +102,11 @@ describe('encodeEventAbi', () => {
 		});
 	});
 
-	// This test fails because encoding of a dynamic sized array is not current supported
-	// Received error: AbiError: Parameter encoding error
+	// Still skipped: an indexed array topic is the hash of an in-place encoding that no
+	// component of the stack implements — go-qrl's own `MakeTopics` rejects slices and arrays
+	// with "unsupported indexed type", so there is nothing to validate a client-side encoding
+	// against. `encodeEventABI` now fails these with that same clear error instead of emitting
+	// an unusable ABI blob; see the "dynamic indexed topics" cases below.
 	it.skip('should set the filter topics to the keccak256 hash of the provided filter value', () => {
 		const _abiEventFragment: AbiEventFragment & { signature: string } = {
 			anonymous: false,
@@ -127,8 +130,11 @@ describe('encodeEventAbi', () => {
 		});
 	});
 
-	// This test fails because encoding of a dynamic sized array is not current supported
-	// Received error: AbiError: Parameter encoding error
+	// Still skipped: an indexed array topic is the hash of an in-place encoding that no
+	// component of the stack implements — go-qrl's own `MakeTopics` rejects slices and arrays
+	// with "unsupported indexed type", so there is nothing to validate a client-side encoding
+	// against. `encodeEventABI` now fails these with that same clear error instead of emitting
+	// an unusable ABI blob; see the "dynamic indexed topics" cases below.
 	it.skip('should set the filter topics', () => {
 		const _abiEventFragment: AbiEventFragment & { signature: string } = {
 			anonymous: false,
@@ -258,5 +264,65 @@ describe('encodeEventAbi', () => {
 				expect(isTopic(topic as string)).toBe(true);
 			});
 		});
+	});
+
+	describe('dynamic indexed topics', () => {
+		// go-qrl's `accounts/abi.MakeTopics` hashes exactly two indexed kinds into a topic:
+		// `string` and `[]byte`, both through `common.HashToLogTopic`. Anything else that is not
+		// a value type — dynamic slices, fixed-size arrays of non-byte elements, structs — it
+		// rejects with "unsupported indexed type", and `ParseTopics` refuses a tuple outright.
+		const dynamicEventFragment: AbiEventFragment & { signature: string } = {
+			anonymous: false,
+			inputs: [
+				{ indexed: true, internalType: 'bytes', name: 'blob', type: 'bytes' },
+				{ indexed: true, internalType: 'string', name: 'str', type: 'string' },
+			],
+			name: 'MixedIndexedEvent',
+			type: 'event',
+			// keccak256('MixedIndexedEvent(bytes,string)'), left-aligned
+			signature: `0xc94cd7f80862704b9f87392344fc93693edb60dc685dc8cc7a3b4d56e7846381${'0'.repeat(
+				64,
+			)}`,
+		};
+		// keccak256 hex-decodes a 0x-prefixed string before hashing, so this is the hash of the
+		// four raw bytes — the same bytes the node hashes for a `[]byte` filter value.
+		const hashedBlob = `0xd4fd4e189132273036449fc9e11198c739161b4c0116a9a2dccdfa1c492006f1${'0'.repeat(
+			64,
+		)}`;
+		const hashedStr = `0x3f6d5d7b72c0059e2ecac56fd4adeefb2cff23aa41d13170f78ea6bf81e6e0ca${'0'.repeat(
+			64,
+		)}`;
+
+		const topicsFor = (filter: Filter['filter']) =>
+			encodeEventABI(contractOptions, dynamicEventFragment, { filter }).topics ?? [];
+
+		it('should hash an indexed bytes filter into a left-aligned topic', () => {
+			expect(topicsFor({ blob: '0xdeadbeef' })[1]).toBe(hashedBlob);
+		});
+
+		it('should emit a single-word topic for an indexed bytes filter', () => {
+			expect(isTopic(topicsFor({ blob: '0xdeadbeef' })[1] as string)).toBe(true);
+		});
+
+		it('should hash every alternative of an "or" filter on a dynamic type', () => {
+			const topics = topicsFor({ blob: '0xdeadbeef', str: ['str4', 'str4'] });
+
+			expect(topics[1]).toBe(hashedBlob);
+			expect(topics[2]).toStrictEqual([hashedStr, hashedStr]);
+		});
+
+		it.each(['uint256[]', 'string[]', 'uint256[3]', 'tuple'])(
+			'should reject an indexed %s filter the way the node does',
+			type => {
+				const fragment: AbiEventFragment & { signature: string } = {
+					...dynamicEventFragment,
+					inputs: [{ indexed: true, internalType: type, name: 'vals', type }],
+				};
+
+				expect(() =>
+					encodeEventABI(contractOptions, fragment, { filter: { vals: 1 } }),
+				).toThrow(`Unsupported indexed filter type: ${type}`);
+			},
+		);
 	});
 });

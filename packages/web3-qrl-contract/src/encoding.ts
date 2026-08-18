@@ -52,6 +52,35 @@ import { Web3ContractError } from '@theqrl/web3-errors';
 import { ContractOptions, ContractAbiWithSignature, EventLog } from './types.js';
 
 type Writeable<T> = { -readonly [P in keyof T]: T[P] };
+
+/**
+ * An indexed argument of a dynamic type is topic-encoded as the Keccak hash of its value, not as
+ * its ABI encoding. go-qrl's `accounts/abi.MakeTopics` hashes exactly `string` and `[]byte`
+ * through `common.HashToLogTopic`; value types — including the fixed `bytesN` it left-aligns —
+ * already leave `encodeParameter` as a complete 64-byte word.
+ */
+const isHashedIndexedType = (type: string) => type === 'string' || type === 'bytes';
+
+/**
+ * Indexed arrays and structs are stored as a hash of an in-place encoding that go-qrl does not
+ * implement: `MakeTopics` rejects them with "unsupported indexed type", and `ParseTopics` rejects
+ * a tuple outright. Fail the same way rather than emitting an ABI encoding — an offset-based,
+ * multi-word blob — that no log topic can ever match.
+ */
+const isUnsupportedIndexedType = (type: string) => type.endsWith(']') || type.startsWith('tuple');
+
+const encodeIndexedTopic = (type: string, value: unknown): Topic => {
+	if (isUnsupportedIndexedType(type)) {
+		throw new Web3ContractError(
+			`Unsupported indexed filter type: ${type}; arrays and structs cannot be filtered on`,
+		);
+	}
+
+	return isHashedIndexedType(type)
+		? hashToLogTopic(keccak256(value as string))
+		: encodeParameter(type, value);
+};
+
 export const encodeEventABI = (
 	{ address }: ContractOptions,
 	event: AbiEventFragment & { signature: string },
@@ -99,16 +128,12 @@ export const encodeEventABI = (
 					continue;
 				}
 
-				// TODO: https://github.com/ethereum/web3.js/issues/344
-				// TODO: deal properly with components
+				// An array of filter values means "or": each alternative is topic-encoded on
+				// its own, by the same rules as a single value.
 				if (Array.isArray(value)) {
-					opts.topics.push(value.map(v => encodeParameter(input.type, v)));
-				} else if (input.type === 'string') {
-					// A dynamic indexed argument is topic-encoded as its Keccak hash, which the
-					// node left-aligns in the 64-byte topic word (go-qrl `HashToLogTopic`).
-					opts.topics.push(hashToLogTopic(keccak256(value as string)));
+					opts.topics.push(value.map(v => encodeIndexedTopic(input.type, v)));
 				} else {
-					opts.topics.push(encodeParameter(input.type, value));
+					opts.topics.push(encodeIndexedTopic(input.type, value));
 				}
 			}
 		}
