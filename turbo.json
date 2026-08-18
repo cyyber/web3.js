@@ -42,39 +42,49 @@
 			"dependsOn": ["build", "^build"]
 		},
 		"test:integration": {
-			"dependsOn": ["build", "^build"]
+			"cache": false,
+			"dependsOn": ["build", "^build"],
+			"env": ["WEB3_SYSTEM_TEST_*", "WEB3_SYTEM_TEST_MODE", "TEST_OPTION"]
 		},
 		"test:coverage:unit": {
 			"dependsOn": ["build", "^build"],
 			"outputs": [".coverage/**"]
 		},
 		"test:coverage:integration": {
+			"cache": false,
 			"dependsOn": ["build", "^build"],
+			"env": ["WEB3_SYSTEM_TEST_*", "WEB3_SYTEM_TEST_MODE", "TEST_OPTION"],
 			"outputs": [".coverage/**"]
 		},
 		"test:e2e:gqrl": {
 			"cache": false,
-			"dependsOn": ["build"]
+			"dependsOn": ["build"],
+			"env": ["WEB3_SYSTEM_TEST_*", "WEB3_SYTEM_TEST_MODE", "TEST_OPTION"]
 		},
 		"test:e2e:mainnet": {
 			"cache": false,
-			"dependsOn": ["build"]
+			"dependsOn": ["build"],
+			"env": ["WEB3_SYSTEM_TEST_*", "WEB3_SYTEM_TEST_MODE", "TEST_OPTION"]
 		},
 		"test:e2e:testnet": {
 			"cache": false,
-			"dependsOn": ["build"]
+			"dependsOn": ["build"],
+			"env": ["WEB3_SYSTEM_TEST_*", "WEB3_SYTEM_TEST_MODE", "TEST_OPTION"]
 		},
 		"test:e2e:electron": {
 			"cache": false,
-			"dependsOn": ["build"]
+			"dependsOn": ["build"],
+			"env": ["WEB3_SYSTEM_TEST_*", "WEB3_SYTEM_TEST_MODE", "TEST_OPTION"]
 		},
 		"test:e2e:chrome": {
 			"cache": false,
-			"dependsOn": ["build"]
+			"dependsOn": ["build"],
+			"env": ["WEB3_SYSTEM_TEST_*", "WEB3_SYTEM_TEST_MODE", "TEST_OPTION"]
 		},
 		"test:e2e:firefox": {
 			"cache": false,
-			"dependsOn": ["build"]
+			"dependsOn": ["build"],
+			"env": ["WEB3_SYSTEM_TEST_*", "WEB3_SYTEM_TEST_MODE", "TEST_OPTION"]
 		}
 	}
 }

@@ -101,11 +101,11 @@ exception and follow-up issue.
 | Remote mainnet HTTP/WS | `pnpm run test:e2e:mainnet:http` and `pnpm run test:e2e:mainnet:ws` | Exit `0` for read-only mainnet checks only; no private key or value-transfer dependency. |
 | E2E coverage | `pnpm run test:e2e:coverage` | Exit `0`; integration/e2e coverage artefacts are generated. |
 
-Current known prerequisite gap: `scripts/test-runner.sh` still references legacy
-`gqrl:start:background`, `gqrl-binary:start:background`, `generate:accounts`,
-and stop scripts that are not currently exposed by the root `package.json`.
-Resolve that runner mapping before treating local GQRL e2e evidence as
-release-blocking.
+Prerequisite: `scripts/test-runner.sh` does not start a node. For the local
+GQRL rows, bring the kurtosis testnet up with `pnpm run pos:start` (see
+`scripts/local_testnet/README.md`) before the run and tear it down with
+`pnpm run pos:stop` afterwards. The testnet and mainnet rows expect an
+already-reachable endpoint.
 
 ## Artefacts To Preserve
 

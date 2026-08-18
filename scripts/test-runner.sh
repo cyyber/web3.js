@@ -48,7 +48,6 @@ TEST_TASK=""
 
 if [[ $MODE == "ipc" ]]; then
         export WEB3_SYSTEM_TEST_PROVIDER=$IPC_PATH
-        BACKEND=gqrl-binary
 fi
 
 if [[ $ENGINE == "node" ]] || [[ $ENGINE == "" ]]; then
@@ -67,16 +66,12 @@ else
 	TEST_TASK="test:e2e:$ENGINE"
 fi
 
-run_test_command() {
-	if [[ $TEST_COMMAND_KIND == "turbo" ]]; then
-		pnpm exec turbo run "$TEST_TASK"
-	else
-		pnpm run "$TEST_TASK"
-	fi
-}
-
-if [[ $BACKEND == "gqrl" || $BACKEND == "gqrl-binary" ]]; then
-	pnpm run "$BACKEND:start:background" && pnpm run generate:accounts && run_test_command && pnpm run "$BACKEND:stop"
+# This runner only points the test suites at a node; it never starts one.
+# For the local gqrl backend, bring the kurtosis testnet up and down yourself:
+# `pnpm run pos:start` before, `pnpm run pos:stop` after (scripts/local_testnet).
+# The testnet and mainnet backends expect an already-reachable endpoint.
+if [[ $TEST_COMMAND_KIND == "turbo" ]]; then
+	pnpm exec turbo run "$TEST_TASK"
 else
-	run_test_command
+	pnpm run "$TEST_TASK"
 fi
