@@ -46,7 +46,6 @@
 		"hygiene": "node scripts/check-repo-hygiene.js",
 		"pos:start": "./scripts/local_testnet/start_local_testnet.sh",
 		"pos:stop": "./scripts/local_testnet/stop_local_testnet.sh",
-		"pos:clef:setup": "./scripts/local_testnet/setup_clef.sh",
 		"lint": "turbo run lint --filter=\"./packages/*\" --filter=\"./tools/*\"",
 		"lint:budget": "node scripts/lint-budget.js",
 		"lint:fix": "turbo run lint:fix --filter=\"./packages/*\" --filter=\"./tools/*\"",
