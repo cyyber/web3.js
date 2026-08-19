@@ -32,14 +32,14 @@ jest.mock('@theqrl/web3-qrl', () => ({
 	isSyncing: jest.fn(),
 }));
 
-// eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const { isSyncing } = require('@theqrl/web3-qrl');
 
 const expectedNetworkId = '0x1';
 jest.mock('@theqrl/web3-net', () => ({
 	getId: jest.fn(),
 }));
-// eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const { getId } = require('@theqrl/web3-net');
 
 describe('qrns', () => {
@@ -233,7 +233,6 @@ describe('qrns', () => {
 
 		it('QRNSUnsupportedNetworkError', async () => {
 			// reset from previous check
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 			qrns['_detectedAddress'] = undefined;
 
 			const network = 'AnUnsupportedNetwork';

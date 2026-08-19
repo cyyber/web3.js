@@ -36,7 +36,6 @@ import {
 	HexString32Bytes,
 	Uint,
 } from '@theqrl/web3-types';
-// eslint-disable-next-line import/no-cycle
 import { LogsSubscription } from './log_subscription.js';
 
 export type NonPayableTxOptions = NonPayableCallOptions;

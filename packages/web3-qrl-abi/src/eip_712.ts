@@ -70,7 +70,6 @@ const getDependencies = (
  */
 const encodeType = (typedData: Eip712TypedData, type: string): string => {
 	const [primary, ...dependencies] = getDependencies(typedData, type);
-	// eslint-disable-next-line @typescript-eslint/require-array-sort-compare
 	const types = [primary, ...dependencies.sort()];
 
 	return types

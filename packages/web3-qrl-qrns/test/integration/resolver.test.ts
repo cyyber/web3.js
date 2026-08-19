@@ -15,13 +15,11 @@ You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import Web3QRL from '@theqrl/web3-qrl';
 import { Contract, PayableTxOptions } from '@theqrl/web3-qrl-contract';
 import { hexToAddress, sha3 } from '@theqrl/web3-utils';
 
 import { Address, Bytes, DEFAULT_RETURN_FORMAT } from '@theqrl/web3-types';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { IpcProvider } from '@theqrl/web3-providers-ipc';
 import { QRNS } from '../../src';
 import { namehash } from '../../src/utils';
@@ -197,7 +195,6 @@ describe('qrns', () => {
 		expect(res).toBe(contentHash);
 	});
 
-	// eslint-disable-next-line jest/expect-expect
 	itIf(isSocket)('ContenthashChanged event', async () => {
 		// eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
 		await new Promise<void>(async resolve => {

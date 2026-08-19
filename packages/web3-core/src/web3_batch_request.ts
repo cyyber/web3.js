@@ -51,7 +51,6 @@ export class Web3BatchRequest {
 		return promise;
 	}
 
-	// eslint-disable-next-line class-methods-use-this
 	public async execute(options?: {
 		timeout?: number;
 	}): Promise<JsonRpcBatchResponse<unknown, unknown>> {

@@ -112,11 +112,9 @@ describe('Web3QRL.sendSignedTransaction', () => {
 		);
 		const signedTransaction = await web3QRL.signTransaction({ ...transaction, ...gasPricing });
 		const response = await web3QRL.sendSignedTransaction(signedTransaction.raw as Bytes);
-		// eslint-disable-next-line jest/no-standalone-expect
 		expect(response.status).toBe(BigInt(1));
 
 		const minedTransactionData = await web3QRL.getTransaction(response.transactionHash);
-		// eslint-disable-next-line jest/no-standalone-expect
 		expect(minedTransactionData).toMatchObject({
 			nonce: BigInt(hexToNumber(accountNonce)),
 			from: tempAcc.address,

@@ -224,7 +224,6 @@ export type PrimitiveTupleType<
 > = TypeComponents extends ReadonlyArray<AbiParameter>
 	? Type extends 'tuple'
 		? {
-				// eslint-disable-next-line no-use-before-define
 				[Param in TypeComponents[number] as Param['name']]: MatchPrimitiveType<
 					Param['type'],
 					Param['components']
@@ -233,7 +232,6 @@ export type PrimitiveTupleType<
 		: Type extends `tuple[${infer Size}]`
 		? _TypedArray<
 				{
-					// eslint-disable-next-line no-use-before-define
 					[Param in TypeComponents[number] as Param['name']]: MatchPrimitiveType<
 						Param['type'],
 						Param['components']

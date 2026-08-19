@@ -17,9 +17,7 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 
 import { AbiEventFragment, LogsInput, HexString, Topic, DataFormat } from '@theqrl/web3-types';
 import { Web3RequestManager, Web3Subscription, Web3SubscriptionManager } from '@theqrl/web3-core';
-// eslint-disable-next-line import/no-cycle
 import { decodeEventABI } from './encoding.js';
-// eslint-disable-next-line import/no-cycle
 import { EventLog, ContractAbiWithSignature } from './types.js';
 
 /**
@@ -81,7 +79,6 @@ export class LogsSubscription extends Web3Subscription<
 		data: EventLog;
 		changed: EventLog & { removed: true };
 	},
-	// eslint-disable-next-line @typescript-eslint/ban-types
 	{ address?: HexString; topics?: (Topic | Topic[] | null)[]; abi: AbiEventFragment }
 > {
 	/**
@@ -92,7 +89,6 @@ export class LogsSubscription extends Web3Subscription<
 	/**
 	 * The list of topics subscribed
 	 */
-	// eslint-disable-next-line @typescript-eslint/ban-types
 	public readonly topics?: (Topic | Topic[] | null)[];
 
 	/**
@@ -105,7 +101,6 @@ export class LogsSubscription extends Web3Subscription<
 	public constructor(
 		args: {
 			address?: HexString;
-			// eslint-disable-next-line @typescript-eslint/ban-types
 			topics?: (Topic | Topic[] | null)[];
 			abi: AbiEventFragment & { signature: HexString };
 			jsonInterface: ContractAbiWithSignature;
@@ -115,7 +110,6 @@ export class LogsSubscription extends Web3Subscription<
 	public constructor(
 		args: {
 			address?: HexString;
-			// eslint-disable-next-line @typescript-eslint/ban-types
 			topics?: (Topic | Topic[] | null)[];
 			abi: AbiEventFragment & { signature: HexString };
 			jsonInterface: ContractAbiWithSignature;

@@ -15,7 +15,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-// eslint-disable-next-line max-classes-per-file
 import {
 	BlockOutput,
 	DEFAULT_RETURN_FORMAT,
@@ -32,7 +31,6 @@ import {
 import { jsonRpc } from '@theqrl/web3-utils';
 import { SubscriptionError } from '@theqrl/web3-errors';
 
-// eslint-disable-next-line import/no-cycle
 import { Web3SubscriptionManager } from './web3_subscription_manager.js';
 import { Web3EventEmitter, Web3EventMap } from './web3_event_emitter.js';
 import { Web3RequestManager } from './web3_request_manager.js';

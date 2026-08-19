@@ -133,7 +133,6 @@ describe('[BaseTransaction]', () => {
 
 	it('verifySignature() -> invalid', () => {
 		for (const txType of txTypes) {
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 			for (const txFixture of txType.fixtures.slice(0, 4)) {
 				txFixture.data.signature = '0x01231412';
 				const tx = txType.class.fromTxData(txFixture.data, { common });

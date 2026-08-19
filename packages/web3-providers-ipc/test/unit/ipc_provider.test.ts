@@ -40,7 +40,6 @@ describe('IpcProvider', () => {
 
 		it('should try to connect', () => {
 			const connectSpy = jest.spyOn(IpcProvider.prototype, 'connect');
-			// eslint-disable-next-line no-new
 			new IpcProvider(socketPath);
 
 			expect(connectSpy).toHaveBeenCalled();
@@ -49,7 +48,6 @@ describe('IpcProvider', () => {
 
 	describe('connect', () => {
 		it('should verify socket path', () => {
-			// eslint-disable-next-line no-new
 			new IpcProvider(socketPath);
 
 			expect(fs.existsSync).toHaveBeenCalledWith(socketPath);

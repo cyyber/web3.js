@@ -163,7 +163,6 @@ describe('registry', () => {
 
 	describe('resolver', () => {
 		it('resolver', async () => {
-			// eslint-disable-next-line @typescript-eslint/no-empty-function
 			const call = jest
 				.spyOn(
 					{
@@ -214,7 +213,6 @@ describe('registry', () => {
 		});
 
 		it('resolver (return non string)', async () => {
-			// eslint-disable-next-line @typescript-eslint/no-empty-function
 			const call = jest
 				.spyOn(
 					{

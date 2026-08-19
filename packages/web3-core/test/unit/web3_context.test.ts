@@ -15,15 +15,12 @@ You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-// eslint-disable-next-line max-classes-per-file
 import { ExistingPluginNamespaceError } from '@theqrl/web3-errors';
 import HttpProvider from '@theqrl/web3-providers-http';
 import { Web3Context, Web3PluginBase } from '../../src/web3_context';
 import { Web3RequestManager } from '../../src/web3_request_manager';
 
-// eslint-disable-next-line @typescript-eslint/ban-types
 class Context1 extends Web3Context<{}> {}
-// eslint-disable-next-line @typescript-eslint/ban-types
 class Context2 extends Web3Context<{}> {}
 
 describe('Web3Context', () => {

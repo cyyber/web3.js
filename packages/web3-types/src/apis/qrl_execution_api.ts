@@ -50,7 +50,6 @@ export interface TransactionCallAPI {
 }
 
 export interface BaseTransactionAPI {
-	// eslint-disable-next-line @typescript-eslint/ban-types
 	readonly to?: Address | null;
 	readonly type: HexStringSingleByte;
 	readonly nonce: Uint;
@@ -148,7 +147,6 @@ export interface CompileResultAPI {
 	};
 }
 
-/* eslint-disable camelcase */
 export type QRLExecutionAPI = {
 	// https://github.com/ethereum/execution-apis/blob/main/src/eth/block.yaml
 	qrl_getBlockByHash: (blockHash: HexString32Bytes, hydrated: boolean) => BlockAPI;

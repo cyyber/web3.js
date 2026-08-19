@@ -106,7 +106,6 @@ describe('[FeeMarketEIP1559Transaction]', () => {
 		// eslint-disable-next-line @typescript-eslint/prefer-for-of
 		for (let index = 0; index < testdata.length; index += 1) {
 			const data = testdata[index];
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 			const seed = hexToBytes(data.seed.slice(2));
 			const txn = FeeMarketEIP1559Transaction.fromTxData(data, { common });
 			const signed = txn.sign(seed);
@@ -120,7 +119,6 @@ describe('[FeeMarketEIP1559Transaction]', () => {
 
 	it('hash()', () => {
 		const data = testdata[0];
-		// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 		const seed = hexToBytes(data.seed.slice(2));
 		let txn = FeeMarketEIP1559Transaction.fromTxData(data, { common });
 		let signed = txn.sign(seed);
@@ -133,7 +131,6 @@ describe('[FeeMarketEIP1559Transaction]', () => {
 
 	it('freeze property propagates from unsigned tx to signed tx', () => {
 		const data = testdata[0];
-		// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 		const seed = hexToBytes(data.seed.slice(2));
 		const txn = FeeMarketEIP1559Transaction.fromTxData(data, { common, freeze: false });
 		expect(Object.isFrozen(txn)).toBe(false);
@@ -144,7 +141,6 @@ describe('[FeeMarketEIP1559Transaction]', () => {
 	// NOTE(rgeraldes24): test not valid atm: no qips available
 	it.skip('common propagates from the common of tx, not the common in TxOptions', () => {
 		const data = testdata[0];
-		// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 		const seed = hexToBytes(data.seed.slice(2));
 		const txn = FeeMarketEIP1559Transaction.fromTxData(data, { common, freeze: false });
 		const newCommon = new Common({
@@ -186,7 +182,6 @@ describe('[FeeMarketEIP1559Transaction]', () => {
 
 	it('toJSON()', () => {
 		const data = testdata[0];
-		// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 		const seed = hexToBytes(data.seed.slice(2));
 		const txn = FeeMarketEIP1559Transaction.fromTxData(data, { common });
 		const signed = txn.sign(seed);

@@ -99,7 +99,6 @@ describe('Web3QRL.signTransaction', () => {
 			},
 		};
 
-		// eslint-disable-next-line jest/no-standalone-expect
 		expect(response).toMatchObject(expectedResponse);
 		// Pulling out of toMatchObject to be compatiable with Cypress
 		expect(response.raw).toMatch(/0[xX][0-9a-fA-F]+/);
