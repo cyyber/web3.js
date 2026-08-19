@@ -46,7 +46,6 @@ import { testData as createAccessListTestData } from './rpc_method_wrappers/fixt
 
 jest.mock('@theqrl/web3-rpc-methods');
 jest.mock('../../src/rpc_method_wrappers');
-// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 jest.spyOn(rpcMethodWrappers, 'getTransaction').mockResolvedValue(tx);
 jest.spyOn(rpcMethodWrappers, 'getTransactionReceipt').mockResolvedValue(txReceipt);
 

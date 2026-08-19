@@ -28,14 +28,6 @@ const noNull = require('eslint-plugin-no-null');
 const tsdoc = require('eslint-plugin-tsdoc');
 const globals = require('globals');
 
-tsPlugin.rules['ban-types'] ??= {
-	meta: {
-		type: 'problem',
-		schema: [],
-	},
-	create: () => ({}),
-};
-
 const deprecatedNoopRule = {
 	meta: {
 		type: 'problem',
@@ -250,6 +242,29 @@ const testRules = {
 	'no-null/no-null': ['error'],
 };
 
+// Rules that need `strictNullChecks` to work. Under a project that turns it
+// off they cannot analyse anything and instead emit a single file-level
+// "requires the strictNullChecks compiler option" message. They are switched
+// off per project, and only for projects that actually relax the option — see
+// `strictNullChecksEnabled`.
+const testFiles = ['**/test/**/*.{js,cjs,mjs,ts}', '**/*.test.ts'];
+const testTypeScriptFiles = ['**/test/**/*.ts', '**/*.test.ts'];
+
+// Test support that does not live under a `test/` directory. `lint-staged`
+// runs `eslint` on the real path, while `eslint .` inside a package sees the
+// symlink under `test/fixtures/`; without this the same file would be linted
+// against two different rule profiles depending on how it was reached.
+const sharedTestSources = ['scripts/system_tests_utils.ts'];
+
+const nullCheckDependentRuleNames = [
+	'@typescript-eslint/no-unnecessary-boolean-literal-compare',
+	'@typescript-eslint/prefer-nullish-coalescing',
+];
+
+const nullCheckDependentRulesOff = Object.fromEntries(
+	nullCheckDependentRuleNames.map(rule => [rule, 'off']),
+);
+
 const testTypeScriptRules = {
 	'@typescript-eslint/no-magic-numbers': 'off',
 	'@typescript-eslint/unbound-method': 'off',
@@ -275,6 +290,14 @@ const legacyNullRestriction = {
 // warnings (verified with `pnpm run lint:budget` / eslint), we escalate them to
 // `error` so a regression cannot slip in as just another warning. Scope is
 // `src/**` only: test files keep the relaxed `warn`/`off` treatment.
+// Re-asserted (rather than left unset) so that a project block is independent
+// of whatever block matched the same file earlier: an empty `rules` cannot undo
+// an `off` from a previous block. Severities come from `typeScriptRules` so
+// there is still one source of truth.
+const nullCheckDependentRulesOn = Object.fromEntries(
+	nullCheckDependentRuleNames.map(rule => [rule, typeScriptRules[rule]]),
+);
+
 const escalatedTypeSafetyRules = {
 	'@typescript-eslint/no-explicit-any': 'error',
 	'@typescript-eslint/no-misused-promises': 'error',
@@ -301,6 +324,28 @@ function existingProjects(rootDir, patterns) {
 		.map(projectPath => path.relative(rootDir, projectPath).split(path.sep).join('/'));
 }
 
+// Effective `strictNullChecks` for a tsconfig, following its `extends` chain.
+// Falls back to `true` when TypeScript cannot be loaded, which keeps
+// `nullCheckDependentRules` enabled — the direction that never hides a finding.
+function strictNullChecksEnabled(rootDir, project) {
+	let ts;
+	try {
+		// typescript is a peer of @typescript-eslint/parser, so it is always
+		// present wherever this config does type-aware linting.
+		ts = require('typescript');
+	} catch {
+		return true;
+	}
+
+	const parsed = ts.getParsedCommandLineOfConfigFile(path.join(rootDir, project), {}, {
+		...ts.sys,
+		onUnRecoverableConfigFileDiagnostic() {},
+	});
+	if (!parsed) return true;
+
+	return parsed.options.strictNullChecks ?? parsed.options.strict ?? false;
+}
+
 function workspaceDirectories(rootDir) {
 	return ['packages', 'tools'].flatMap(parent => {
 		const parentPath = path.join(rootDir, parent);
@@ -324,6 +369,77 @@ function createWeb3Config({ rootDir }) {
 		'packages/web3/test/cjs_black_box/tsconfig.json',
 		'packages/web3/test/esm_black_box/tsconfig.json',
 	]);
+
+	// `tsconfig.base.json` declares no `include`, so it globs the whole
+	// repository, and it declares no `compilerOptions.types` — which since
+	// TypeScript 6.0 means NO ambient `@types` at all (only a literal `"*"`
+	// entry restores the old auto-inclusion). Any file typed by it therefore
+	// sees no Jest globals: `describe` / `it` / `expect` have no declarations,
+	// every test call is an unresolved type, and `no-unsafe-*` fires on all of
+	// them.
+	//
+	// Every package already ships a `test/tsconfig.json` carrying
+	// `"types": ["node", "jest"]`. The blocks below pin each package's tests to
+	// exactly that one project.
+	//
+	// A single repo-wide cascade (specific projects first, base last) is NOT
+	// enough. typescript-eslint honours array order only on its single-run
+	// (CLI) path; in watch mode — what editors and long-lived processes use —
+	// it scans a cache of already-created watch programs in insertion order, so
+	// the repo-wide `tsconfig.base.json` program gets reused for test files and
+	// the phantom warnings come back. A one-entry `project` makes membership
+	// unambiguous in both modes. It is also much cheaper: a cascade builds a
+	// program per candidate project on every package's lint run.
+	const projectBlock = (files, project) => ({
+		files,
+		languageOptions: {
+			parser: tsParser,
+			parserOptions: {
+				project: [project],
+				tsconfigRootDir: rootDir,
+				sourceType: 'module',
+			},
+		},
+		plugins: {
+			'@typescript-eslint': tsPlugin,
+		},
+		rules: strictNullChecksEnabled(rootDir, project)
+			? nullCheckDependentRulesOn
+			: nullCheckDependentRulesOff,
+	});
+
+	const hasProject = project => fs.existsSync(path.join(rootDir, project));
+
+	// One block per workspace package that ships its own test project.
+	const packageTestBlocks = workspaceDirs
+		.map(directory => ({ directory, project: `${directory}/test/tsconfig.json` }))
+		.filter(({ project }) => hasProject(project))
+		.map(({ directory, project }) =>
+			projectBlock([`${directory}/test/**/*.ts`, `${directory}/**/*.test.ts`], project),
+		);
+
+	// The black-box suites live under `packages/web3/test/` and have their own
+	// projects, so they must come after the `packages/web3` block above.
+	const blackBoxTestBlocks = [
+		'packages/web3/test/cjs_black_box',
+		'packages/web3/test/esm_black_box',
+	]
+		.map(directory => ({ directory, project: `${directory}/tsconfig.json` }))
+		.filter(({ project }) => hasProject(project))
+		.map(({ directory, project }) => projectBlock([`${directory}/**/*.ts`], project));
+
+	// `scripts/` and `scripts/changelog/` are outside the workspace packages but
+	// still contain TypeScript that gets linted directly — by `lint-staged`, and
+	// by editors. `scripts/system_tests_utils.ts` matters most: it is symlinked
+	// into nearly every package as `test/fixtures/system_test{s,}_utils.ts`, so
+	// it is linted under two different paths and must resolve the same way from
+	// both.
+	const scriptsProjectBlocks = [
+		{ directory: 'scripts', project: 'scripts/tsconfig.json' },
+		{ directory: 'scripts/changelog', project: 'scripts/changelog/tsconfig.json' },
+	]
+		.filter(({ project }) => hasProject(project))
+		.map(({ directory, project }) => projectBlock([`${directory}/**/*.ts`], project));
 
 	return [
 		{
@@ -409,7 +525,7 @@ function createWeb3Config({ rootDir }) {
 				},
 			},
 		{
-			files: ['**/test/**/*.{js,cjs,mjs,ts}', '**/*.test.ts'],
+			files: [...testFiles, ...sharedTestSources],
 			languageOptions: {
 				globals: {
 					...globals.jest,
@@ -422,12 +538,19 @@ function createWeb3Config({ rootDir }) {
 			rules: testRules,
 		},
 		{
-			files: ['**/test/**/*.ts', '**/*.test.ts'],
+			files: [...testTypeScriptFiles, ...sharedTestSources],
 			plugins: {
 				'@typescript-eslint': tsPlugin,
 			},
 			rules: testTypeScriptRules,
 		},
+		// Per-project typing overrides. These only set `parserOptions.project`
+		// (plus the rules that depend on the project's `strictNullChecks`), so
+		// the rule profiles above still apply. Anything they do not match keeps
+		// resolving through `typedProjects`, i.e. `tsconfig.base.json`.
+		...packageTestBlocks,
+		...blackBoxTestBlocks,
+		...scriptsProjectBlocks,
 		// Escalation overrides come last so they win for the matched sources.
 		// They target `src/**` only, so they never overlap the test overrides
 		// above.

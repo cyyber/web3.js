@@ -150,9 +150,7 @@ describe('utils', () => {
 	});
 
 	describe('padLeft', () => {
-		// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 		it.each(padLeftData.data)('valid numbers and bigints', (input, res) => {
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 			expect(padLeft(input, padLeftData.padDigits)).toBe(res);
 		});
 	});

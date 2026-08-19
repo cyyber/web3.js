@@ -1,0 +1,14 @@
+{
+	"extends": "../tsconfig.base.json",
+	"compilerOptions": {
+		"noEmit": true,
+		"types": ["node", "jest"],
+		"baseUrl": "..",
+		"paths": {
+			"@theqrl/web3": ["packages/web3/src/index.ts"],
+			"@theqrl/web3-qrl": ["packages/web3-qrl/src/index.ts"],
+			"@theqrl/*": ["packages/*/lib/commonjs/index.d.ts"]
+		}
+	},
+	"include": ["./*.ts", "./test/**/*"]
+}

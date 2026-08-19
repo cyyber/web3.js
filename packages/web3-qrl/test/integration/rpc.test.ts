@@ -192,7 +192,7 @@ describe('rpc', () => {
 
 			const slotCount = Math.ceil((Number(hexToNumber(resStringLong)) - 1) / 64);
 			const slotDataNum = getStorageSlotNumForLongString(1);
-			const prs = [];
+			const prs: ReturnType<typeof web3QRL.getStorageAt>[] = [];
 			for (let i = 0; i < slotCount; i += 1) {
 				prs.push(
 					web3QRL.getStorageAt(
