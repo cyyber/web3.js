@@ -15,12 +15,10 @@ You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { getBlock } from '@theqrl/web3-qrl';
 import { Contract, PayableTxOptions } from '@theqrl/web3-qrl-contract';
 import { Address, Bytes, DEFAULT_RETURN_FORMAT } from '@theqrl/web3-types';
 import { sha3, toChecksumAddress } from '@theqrl/web3-utils';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { IpcProvider } from '@theqrl/web3-providers-ipc';
 import { QRNS } from '../../src';
 import { namehash } from '../../src/utils';

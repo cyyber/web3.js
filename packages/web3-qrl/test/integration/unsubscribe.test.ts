@@ -16,7 +16,6 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 import WebSocketProvider from '@theqrl/web3-providers-ws';
 import { Web3BaseProvider } from '@theqrl/web3-types';
-/* eslint-disable  import/no-extraneous-dependencies */
 import { IpcProvider } from '@theqrl/web3-providers-ipc';
 import Web3QRL from '../../src/index';
 import { NewHeadsSubscription, SyncingSubscription } from '../../src/web3_subscriptions';

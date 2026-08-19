@@ -14,14 +14,12 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
-/* eslint-disable import/no-relative-packages */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
 import {
 	getSystemTestProvider,
 	closeOpenConnection,
 	isWs,
 } from '../../shared_fixtures/system_tests_utils';
-// eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const Web3 = require('@theqrl/web3').default;
 
 describe('CJS - Black Box Unit Tests - web3.BatchRequest', () => {

@@ -329,12 +329,9 @@ describe('Web3QRL.sendTransaction', () => {
 		};
 		const response = await web3QRL.sendTransaction(transaction);
 
-		// eslint-disable-next-line jest/no-standalone-expect
 		expect(response.type).toBe(BigInt(2));
-		// eslint-disable-next-line jest/no-standalone-expect
 		expect(response.status).toBe(BigInt(1));
 		const minedTransactionData = await web3QRL.getTransaction(response.transactionHash);
-		// eslint-disable-next-line jest/no-standalone-expect
 		expect(minedTransactionData).toMatchObject(transaction);
 	});
 

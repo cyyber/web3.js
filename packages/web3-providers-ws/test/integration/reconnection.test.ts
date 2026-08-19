@@ -127,7 +127,6 @@ describeIf(isWs && !isBrowser)('WebSocketProvider - reconnection', () => {
 			const errorEvent = new Promise(resolve => {
 				web3Provider.on('error', (error: unknown) => {
 					if (
-						// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 						(error as ProviderRpcError)?.message?.startsWith(
 							'Maximum number of reconnect attempts reached',
 						)

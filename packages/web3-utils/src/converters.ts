@@ -381,12 +381,10 @@ export const toHex = (
 	returnType?: boolean,
 ): HexString | ValueTypes => {
 	if (typeof value === 'boolean') {
-		// eslint-disable-next-line no-nested-ternary
 		return returnType ? 'bool' : value ? '0x01' : '0x00';
 	}
 
 	if (typeof value === 'number') {
-		// eslint-disable-next-line no-nested-ternary
 		return returnType ? (value < 0 ? 'int512' : 'uint512') : numberToHex(value);
 	}
 

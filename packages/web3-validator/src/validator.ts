@@ -96,10 +96,8 @@ const convertToZod = (schema: JsonSchema): ZodType => {
 };
 
 export class Validator {
-	// eslint-disable-next-line no-use-before-define
 	private static validatorInstance?: Validator;
 
-	// eslint-disable-next-line no-useless-constructor, @typescript-eslint/no-empty-function
 	public static factory(): Validator {
 		if (!Validator.validatorInstance) {
 			Validator.validatorInstance = new Validator();
@@ -168,7 +166,6 @@ export class Validator {
 					keyword: keyword ?? field,
 					instancePath: instancePath ? `/${instancePath}` : '',
 					schemaPath: schemaPath ? `#${schemaPath}` : '#',
-					// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 					params: params ?? { value: error.message },
 					message: message ?? error.message,
 				} as Web3ValidationErrorObject;

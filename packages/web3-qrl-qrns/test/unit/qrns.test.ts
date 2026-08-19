@@ -32,14 +32,14 @@ jest.mock('@theqrl/web3-qrl', () => ({
 	isSyncing: jest.fn(),
 }));
 
-// eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const { isSyncing } = require('@theqrl/web3-qrl');
 
 const expectedNetworkId = '0x1';
 jest.mock('@theqrl/web3-net', () => ({
 	getId: jest.fn(),
 }));
-// eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const { getId } = require('@theqrl/web3-net');
 
 describe('qrns', () => {
@@ -190,16 +190,12 @@ describe('qrns', () => {
 
 	describe('CheckNetwork', () => {
 		beforeEach(() => {
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 			getId.mockReset();
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 			isSyncing.mockReset();
 		});
 		it('Not last sync/QRNSNetworkNotSyncedError', async () => {
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 			getId.mockImplementation(() => expectedNetworkId);
 
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 			isSyncing.mockImplementation(() => {
 				return {
 					startingBlock: 100,
@@ -211,11 +207,9 @@ describe('qrns', () => {
 		});
 
 		it('Threshold exceeded from previous check/QRNSNetworkNotSyncedError', async () => {
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 			getId.mockImplementation(() => expectedNetworkId);
 
 			// An initial check, in order to update `_lastSyncCheck`
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 			isSyncing.mockImplementation(() => {
 				return false;
 			});
@@ -233,15 +227,12 @@ describe('qrns', () => {
 
 		it('QRNSUnsupportedNetworkError', async () => {
 			// reset from previous check
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 			qrns['_detectedAddress'] = undefined;
 
 			const network = 'AnUnsupportedNetwork';
 
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 			getId.mockImplementation(() => network);
 
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 			isSyncing.mockImplementation(() => {
 				return {
 					startingBlock: 100,

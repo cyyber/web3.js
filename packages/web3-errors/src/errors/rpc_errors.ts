@@ -15,8 +15,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/* eslint-disable max-classes-per-file */
-
 import { JsonRpcResponseWithError, JsonRpcId, JsonRpcError } from '@theqrl/web3-types';
 import { BaseWeb3Error } from '../web3_error_base.js';
 import {

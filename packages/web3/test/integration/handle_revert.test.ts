@@ -86,7 +86,6 @@ describe('qrl', () => {
 
 	describe('handleRevert', () => {
 		// todo enable when figure out what happening in qrl_call (doesn't throw error)
-		// eslint-disable-next-line jest/expect-expect
 		it('should get revert reason', async () => {
 			contract.handleRevert = true;
 			await expect(contract.methods.reverts().send({ from: accounts[0] })).rejects.toThrow(

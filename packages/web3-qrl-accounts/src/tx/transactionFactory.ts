@@ -23,7 +23,6 @@ import type { FeeMarketEIP1559TxData, TxData, TxOptions } from './types.js';
 // eslint-disable-next-line @typescript-eslint/no-extraneous-class
 export class TransactionFactory {
 	// It is not possible to instantiate a TransactionFactory object.
-	// eslint-disable-next-line @typescript-eslint/no-empty-function, no-useless-constructor
 	private constructor() {}
 
 	/**

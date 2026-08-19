@@ -58,7 +58,6 @@ export const mergeDeep = (
 				);
 			} else if (!isNullish(src[key])) {
 				if (Array.isArray(src[key]) || src[key] instanceof TypedArray) {
-					// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
 					result[key] = (src[key] as unknown[]).slice(0);
 				} else {
 					result[key] = src[key];

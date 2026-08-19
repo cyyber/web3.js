@@ -15,8 +15,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/* eslint-disable @typescript-eslint/no-magic-numbers */
-
 import { Web3AccountProvider, KeyStore } from '@theqrl/web3-types';
 import { isBrowser, isElectron, itIf } from '../fixtures/system_test_utils';
 import { Wallet } from '../../src';
@@ -251,7 +249,6 @@ describe('Wallet', () => {
 			'should throw error if local storage not present',
 			async () => {
 				const options = { m: 65536, t: 1, p: 1 };
-				// eslint-disable-next-line jest/no-standalone-expect
 				return expect(wallet.save('password', undefined, options)).rejects.toThrow(
 					'Local storage not available.',
 				);
@@ -264,9 +261,7 @@ describe('Wallet', () => {
 				const options = { m: 65536, t: 1, p: 1 };
 				const account = accountProvider.create();
 				wallet.add(account);
-				// eslint-disable-next-line jest/no-standalone-expect
 				expect(await wallet.save('password', 'myKey', options)).toBe(true);
-				// eslint-disable-next-line jest/no-standalone-expect
 				expect((await wallet.load('password', 'myKey')).get(0)?.address).toBe(
 					account.address,
 				);
@@ -279,9 +274,7 @@ describe('Wallet', () => {
 				const options = { m: 65536, t: 1, p: 1 };
 				const account = accountProvider.create();
 				wallet.add(account);
-				// eslint-disable-next-line jest/no-standalone-expect
 				expect(await wallet.save('password', undefined, options)).toBe(true);
-				// eslint-disable-next-line jest/no-standalone-expect
 				expect((await wallet.load('password')).get(0)?.address).toBe(account.address);
 			},
 		);
@@ -291,7 +284,6 @@ describe('Wallet', () => {
 		itIf(!(isBrowser || isElectron))(
 			'should throw error if local storage not present',
 			async () => {
-				// eslint-disable-next-line jest/no-standalone-expect
 				return expect(wallet.load('password')).rejects.toThrow(
 					'Local storage not available.',
 				);

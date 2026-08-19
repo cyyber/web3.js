@@ -258,7 +258,12 @@ const testTypeScriptRules = {
 	'@typescript-eslint/no-unsafe-argument': 'off',
 	'@typescript-eslint/no-unsafe-assignment': 'off',
 	'@typescript-eslint/no-unsafe-member-access': 'off',
-	'@typescript-eslint/no-unsafe-call': ['warn'],
+	// Off for test sources, matching upstream web3/web3.js. The type-aware pass
+	// resolves test files against `tsconfig.base.json`, which carries no
+	// `compilerOptions.types`, so Jest's globals (`describe`, `it`, `expect`)
+	// have no declarations and every test call reads as an unresolved type.
+	// Leaving the rule on only produced disable directives, never fixes.
+	'@typescript-eslint/no-unsafe-call': 'off',
 	'@typescript-eslint/no-unsafe-return': ['warn'],
 	'@typescript-eslint/no-unnecessary-type-assertion': 'off',
 	'@typescript-eslint/no-empty-function': ['error'],

@@ -27,7 +27,6 @@ import {
 import { isAbiParameterSchema } from './validation/abi.js';
 import { isHexStrict } from './validation/string.js';
 import { Web3ValidatorError } from './errors.js';
-// eslint-disable-next-line import/no-cycle
 import { isAddressString } from './validation/address.js';
 
 // Format names that are not ABI types. A name must appear here as well as in `formats.ts`,
@@ -178,7 +177,6 @@ export const abiSchemaToJsonSchema = (
 	};
 
 	for (const [index, abi] of abis.entries()) {
-		// eslint-disable-next-line no-nested-ternary
 		let abiType!: string;
 		let abiName!: string;
 		let abiComponents: ShortValidationSchema | FullValidationSchema | undefined = [];
@@ -205,7 +203,6 @@ export const abiSchemaToJsonSchema = (
 				abi[1] &&
 				Array.isArray(abi[1])
 			) {
-				// eslint-disable-next-line prefer-destructuring
 				abiType = abi[0];
 				abiName = `${level}/${index}`;
 				abiComponents = abi[1] as ReadonlyArray<ShortValidationSchema>;
@@ -282,7 +279,6 @@ export const transformJsonDataToAbiFormat = (
 	const newData: Array<unknown> = [];
 
 	for (const [index, abi] of abis.entries()) {
-		// eslint-disable-next-line no-nested-ternary
 		let abiType!: string;
 		let abiName!: string;
 		let abiComponents: ShortValidationSchema | FullValidationSchema | undefined = [];
@@ -360,7 +356,6 @@ export const transformJsonDataToAbiFormat = (
 	}
 
 	// Have to reassign before pushing to transformedData
-	// eslint-disable-next-line no-param-reassign
 	transformedData = transformedData ?? [];
 	transformedData.push(...newData);
 

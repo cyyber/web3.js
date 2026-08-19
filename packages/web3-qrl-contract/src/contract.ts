@@ -310,7 +310,6 @@ export class Contract<Abi extends ContractAbi>
 		contextOrReturnFormat?: Web3ContractContext | Web3Context | DataFormat,
 		returnFormat?: DataFormat,
 	) {
-		// eslint-disable-next-line no-nested-ternary
 		const options = isContractInitOptions(addressOrOptionsOrContext)
 			? addressOrOptionsOrContext
 			: isContractInitOptions(optionsOrContextOrReturnFormat)
@@ -363,7 +362,6 @@ export class Contract<Abi extends ContractAbi>
 			});
 		this._overloadedMethodAbis = new Map<string, AbiFunctionFragment[]>();
 
-		// eslint-disable-next-line no-nested-ternary
 		const returnDataFormat = isDataFormat(contextOrReturnFormat)
 			? contextOrReturnFormat
 			: isDataFormat(optionsOrContextOrReturnFormat)
@@ -734,14 +732,12 @@ export class Contract<Abi extends ContractAbi>
 		const eventName = typeof param1 === 'string' ? param1 : 'allEvents';
 
 		const options =
-			// eslint-disable-next-line no-nested-ternary
 			typeof param1 !== 'string' && !isDataFormat(param1)
 				? param1
 				: !isDataFormat(param2)
 				? param2
 				: {};
 
-		// eslint-disable-next-line no-nested-ternary
 		const returnFormat = isDataFormat(param1)
 			? param1
 			: isDataFormat(param2)
@@ -1086,7 +1082,6 @@ export class Contract<Abi extends ContractAbi>
 			checkRevertBeforeSending: false,
 		});
 
-		// eslint-disable-next-line no-void
 		void transactionToSend.on('error', (error: unknown) => {
 			if (error instanceof ContractExecutionError) {
 				// this will parse the error data by trying to decode the ABI error inputs according to EIP-838
@@ -1121,7 +1116,6 @@ export class Contract<Abi extends ContractAbi>
 
 				const newContract = this.clone();
 
-				// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
 				newContract.options.address = receipt.contractAddress;
 				return newContract;
 			},
@@ -1155,7 +1149,6 @@ export class Contract<Abi extends ContractAbi>
 		return estimateGas(this, tx, BlockTags.LATEST, returnFormat);
 	}
 
-	// eslint-disable-next-line class-methods-use-this
 	private _createContractEvent(
 		abi: AbiEventFragment & { signature: HexString },
 		returnFormat: DataFormat = DEFAULT_RETURN_FORMAT,

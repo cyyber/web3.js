@@ -160,7 +160,6 @@ test('[Invalid Array Input values]', () => {
 			for (let x = 0; x < rawValues.length; x += 1) {
 				// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 				rawValues[x] = <any>[1, 2, 3];
-				// eslint-disable-next-line default-case
 				switch (txType) {
 					case 2:
 						// eslint-disable-next-line jest/no-conditional-expect
@@ -211,24 +210,20 @@ test('[Invalid Access Lists]', () => {
 						accessList: <any>invalidAccessListItem,
 					});
 					if (signed) {
-						// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 						tx = tx.sign(hexToBytes('42'.repeat(32)));
 					}
 				} catch (e: any) {
 					tx = TransactionFactory.fromTxData({ type: txType });
 					if (signed) {
-						// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 							tx = tx.sign(hexToBytes(`010000${'42'.repeat(48)}`));
 					}
 				}
-				// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 				const rawValues = tx!.raw();
 
 				if (txType === 2 && rawValues[8].length === 0) {
 					rawValues[8] = invalidAccessListItem;
 				}
 
-				// eslint-disable-next-line default-case
 				switch (txType) {
 					case 2:
 						// eslint-disable-next-line jest/no-conditional-expect

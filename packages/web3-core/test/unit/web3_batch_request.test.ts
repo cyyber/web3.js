@@ -37,7 +37,6 @@ describe('Web3BatchRequest', () => {
 		batchRequest = new Web3BatchRequest(requestManager);
 
 		jest.spyOn(jsonRpc, 'toPayload').mockImplementation(request => {
-			// eslint-disable-next-line no-plusplus
 			return { ...request, id: request.id ?? ++requestId, jsonrpc: '2.0' };
 		});
 	});

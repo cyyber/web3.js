@@ -133,7 +133,6 @@ describe('[BaseTransaction]', () => {
 
 	it('verifySignature() -> invalid', () => {
 		for (const txType of txTypes) {
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 			for (const txFixture of txType.fixtures.slice(0, 4)) {
 				txFixture.data.signature = '0x01231412';
 				const tx = txType.class.fromTxData(txFixture.data, { common });
@@ -263,27 +262,22 @@ describe('[BaseTransaction]', () => {
 	it('_validateCannotExceedMaxInteger()', () => {
 		const tx = FeeMarketEIP1559Transaction.fromTxData(eip1559Txs[0]);
 		expect(() => {
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 			(tx as any)._validateCannotExceedMaxInteger({ a: MAX_INTEGER }, 256, true);
 		}).toThrow('equal or exceed MAX_INTEGER');
 
 		expect(() => {
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 			(tx as any)._validateCannotExceedMaxInteger({ a: MAX_INTEGER + BigInt(1) }, 256, false);
 		}).toThrow('exceed MAX_INTEGER');
 
 		expect(() => {
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 			(tx as any)._validateCannotExceedMaxInteger({ a: BigInt(0) }, 100, false);
 		}).toThrow('unimplemented bits value');
 
 		expect(() => {
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 			(tx as any)._validateCannotExceedMaxInteger({ a: MAX_UINT64 + BigInt(1) }, 64, false);
 		}).toThrow('2^64');
 
 		expect(() => {
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 			(tx as any)._validateCannotExceedMaxInteger({ a: MAX_UINT64 }, 64, true);
 		}).toThrow('2^64');
 	});

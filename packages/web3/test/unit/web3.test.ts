@@ -82,13 +82,11 @@ describe('Web3 object', () => {
 		});
 		it('should throw if the second and the third parameters are both options', () => {
 			expect(() => {
-				// eslint-disable-next-line no-new
 				new Web3Contract(abi, options as unknown as string, options);
 			}).toThrow();
 		});
 		it('should throw if `options` is a function', () => {
 			expect(() => {
-				// eslint-disable-next-line no-new
 				new Web3Contract(abi, (() => {
 					/* nothing */
 				}) as ContractInitOptions);

@@ -194,7 +194,6 @@ describe('contract', () => {
 			// On http we use polling to get confirmation, so wait a bit longer
 			// await sleep(isWs ? 500 : 2000);
 
-			// eslint-disable-next-line jest/no-standalone-expect
 			expect(confirmationHandler).toHaveBeenCalled();
 		});
 
@@ -271,7 +270,6 @@ describe('contract', () => {
 		it('should fail with errors on revert', async () => {
 			const revert = new Contract(DeployRevertAbi);
 			revert.provider = getSystemTestProvider();
-			// eslint-disable-next-line jest/no-standalone-expect
 			await expect(
 				revert
 					.deploy({

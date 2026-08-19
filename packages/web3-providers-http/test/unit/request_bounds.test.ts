@@ -20,9 +20,7 @@ const mockFetch = jest.fn();
 
 jest.setMock('cross-fetch', mockFetch);
 
-/* eslint-disable-next-line import/first */
 import { Web3APIPayload, QRLExecutionAPI } from '@theqrl/web3-types';
-/* eslint-disable-next-line import/first */
 import {
 	ConnectionTimeoutError,
 	ProviderCapabilityError,
@@ -30,13 +28,11 @@ import {
 	RequestTimeoutError,
 	ResponseTooLargeError,
 } from '@theqrl/web3-errors';
-/* eslint-disable-next-line import/first */
 import {
 	DEFAULT_CONNECTION_TIMEOUT,
 	DEFAULT_MAX_RESPONSE_BYTES,
 	DEFAULT_REQUEST_TIMEOUT,
 } from '@theqrl/web3-utils';
-/* eslint-disable-next-line import/first */
 import HttpProvider from '../../src/index';
 
 const payload = {

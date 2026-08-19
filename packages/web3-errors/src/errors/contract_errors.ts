@@ -15,7 +15,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/* eslint-disable max-classes-per-file */
 
 import { JsonRpcError, TransactionReceipt, HexString } from '@theqrl/web3-types';
 import {
@@ -143,7 +142,6 @@ export class Eip838ExecutionError extends Web3ContractError {
 	public errorSignature?: string;
 	public errorArgs?: { [K in string]: unknown };
 
-	// eslint-disable-next-line no-use-before-define
 	public innerError: Eip838ExecutionError | undefined;
 
 	public constructor(error: JsonRpcError<ProviderErrorData> | Eip838ExecutionError) {

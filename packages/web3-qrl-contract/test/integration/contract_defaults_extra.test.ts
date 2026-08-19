@@ -177,7 +177,6 @@ describe('contract defaults (extra)', () => {
 			contract.transactionBlockTimeout = 32;
 			expect(contract.transactionBlockTimeout).toBe(32);
 
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 			await contract.methods.setGreeting('New Greeting').send(sendOptions);
 
 			expect(sendTransactionSpy).toHaveBeenLastCalledWith(
@@ -254,7 +253,6 @@ describe('contract defaults (extra)', () => {
 
 			const confirmationPromise = new Promise((resolve: Resolve) => {
 				// Tx promise is handled separately
-				// eslint-disable-next-line no-void
 				void sentTx.on(
 					'confirmation',
 					async ({ confirmations }: { confirmations: bigint }) => {
@@ -269,7 +267,6 @@ describe('contract defaults (extra)', () => {
 			});
 			await new Promise((resolve: Resolve) => {
 				// Tx promise is handled separately
-				// eslint-disable-next-line no-void
 				void sentTx.on('receipt', (params: TransactionReceipt) => {
 					expect(params.status).toBe(BigInt(1));
 					resolve();

@@ -22,7 +22,7 @@ import { encodeParameters, decodeParameters } from '../../src/api/parameters_api
 // And the following override is to convert BigInt to a string inside the Unit Tests that uses this file,
 // 	i.e when serialization is needed there (because the values in this file is in a string format).
 (BigInt.prototype as any).toJSON = function () {
-	// eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
+	// eslint-disable-next-line @typescript-eslint/no-unsafe-return
 	return this.toString();
 };
 
