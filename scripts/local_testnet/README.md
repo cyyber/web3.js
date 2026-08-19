@@ -4,26 +4,32 @@
 
 - Start: `pnpm run pos:start`
 - Stop: `pnpm run pos:stop`
-- `pnpm run pos:start` also runs `pnpm run pos:clef:setup` after the network is up.
 
-## Clef: import accounts + auto-authorization
+The network comes from [`cyyber/qrl-package`](https://github.com/cyyber/qrl-package), pinned to a
+revision in `start_local_testnet.sh`. Bump that pin deliberately.
 
-The Kurtosis package starts a `clef` remote-signer service (`signer-clef`). By default it uses the interactive CLI UI, which blocks on transaction approvals and password prompts.
+## Endpoints
 
-To:
-- import the seeds in `scripts/accounts.json` into the clef keystore, and
-- enable non-interactive signing (auto-approve + auto-password)
+`network_params.yaml` publishes the execution layer on fixed host ports, so the HTTP RPC is always
+`http://127.0.0.1:8545` and the WS RPC `ws://127.0.0.1:8546` — the endpoints `scripts/env.sh` hands
+to the test suites. Only one enclave can hold those ports, so stop a running testnet before
+starting another.
 
-run manually:
+## Accounts
 
-- `pnpm run pos:clef:setup`
+`network_params.yaml` sets `remote_signer_auto_approve: true`, so the package provisions the
+`signer-clef` service with ten development accounts, already imported into the clef keystore,
+prefunded at genesis, and approved by an attested clef ruleset. Nothing has to be imported or
+patched after the network is up.
 
-This will:
-- upload a small `clef-autoui` shim into the enclave and restart `signer-clef` to run behind it
-- import each `seed` from `scripts/accounts.json` into `/clef-keystore/keystore`
+Those same ten accounts are listed in `scripts/accounts.json`, which the system tests read through
+`scripts/system_tests_utils.ts`. Tests can therefore either sign locally with the seed or send
+`from` the account and let the node sign through clef.
+
+When bumping `QRL_PKG_VERSION`, regenerate `scripts/accounts.json` if the package's development
+accounts changed — the tests and clef must agree on the same set.
 
 ### Notes
 
-- Default clef key password is `passwordpassword` (override with `CLEF_KEY_PASSWORD=...`).
-- This is meant for **local testing only**; it auto-approves signing requests.
-- If you tear down the enclave (`pnpm run pos:stop`), `pnpm run pos:start` will run clef setup again on the next start.
+- Development networks only: anyone who can reach the node can spend from these accounts.
+- The seeds are publicly known dev keys — never fund them on a real network.

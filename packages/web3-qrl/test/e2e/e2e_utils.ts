@@ -69,7 +69,7 @@ const loadSecrets = (): Secrets => {
 const secrets = loadSecrets();
 
 export const getSystemE2ETestProvider = (): string => {
-	if (process.env.WEB3_SYTEM_TEST_MODE === 'http') {
+	if (process.env.WEB3_SYSTEM_TEST_MODE === 'http') {
 		return getSystemTestBackend() === 'testnet'
 			? process.env.QRL_TESTNET_HTTP ?? secrets.TESTNET.HTTP
 			: process.env.QRL_MAINNET_HTTP ?? secrets.MAINNET.HTTP;
