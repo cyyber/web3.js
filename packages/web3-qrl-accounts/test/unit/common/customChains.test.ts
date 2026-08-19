@@ -36,9 +36,8 @@ describe('[Common]: Custom chains', () => {
 		const chainParams = { ...testnet };
 		delete (chainParams as any)['hardforks'];
 		expect(() => {
-			// eslint-disable-next-line no-new
 			new Common({ chain: chainParams });
-		}).toThrow('Missing required'); // eslint-disable-line no-new
+		}).toThrow('Missing required');
 	});
 
 	it('custom() -> base functionality', () => {
@@ -92,7 +91,6 @@ describe('[Common]: Custom chains', () => {
 
 	it('customChains parameter: initialization exception', () => {
 		expect(() => {
-			// eslint-disable-next-line no-new
 			new Common({ chain: testnet, customChains: [testnet] });
 		}).toThrow(
 			'Chain must be a string, number, or bigint when initialized with customChains passed in',

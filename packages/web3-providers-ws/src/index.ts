@@ -91,7 +91,6 @@ export default class WebSocketProvider<
 	 * @param providerOptions - Timeout and queue bounds {@link SocketProviderOptions}
 	 */
 	// this constructor is to specify the type for `socketOptions` for a better intellisense.
-	// eslint-disable-next-line no-useless-constructor
 	public constructor(
 		socketPath: string,
 		socketOptions?: ClientOptions | ClientRequestArgs,
@@ -107,7 +106,6 @@ export default class WebSocketProvider<
 		const host = socketPath.replace(/^ws:\/\//i, '').split(/[/?#]/)[0].split(':')[0];
 		const loopbacks = new Set(['localhost', '127.0.0.1', '::1', '0.0.0.0']);
 		if (loopbacks.has(host.toLowerCase())) return;
-		// eslint-disable-next-line no-console
 		console.warn(
 			`web3-providers-ws: cleartext ws:// URL to non-loopback host "${host}". Use wss:// for production.`,
 		);

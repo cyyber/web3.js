@@ -14,7 +14,6 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
-// eslint-disable-next-line max-classes-per-file
 import {
 	Web3APISpec,
 	Web3BaseWallet,
@@ -30,7 +29,6 @@ import { isNullish } from '@theqrl/web3-utils';
 import { ExistingPluginNamespaceError } from '@theqrl/web3-errors';
 
 import { isSupportedProvider } from './utils.js';
-// eslint-disable-next-line import/no-cycle
 import { Web3Config, Web3ConfigEvent, Web3ConfigOptions } from './web3_config.js';
 import { Web3RequestManager } from './web3_request_manager.js';
 import { Web3SubscriptionConstructor } from './web3_subscriptions.js';
@@ -72,14 +70,12 @@ export type Web3ContextInitOptions<
 	wallet?: Web3BaseWallet<Web3BaseWalletAccount>;
 };
 
-// eslint-disable-next-line no-use-before-define
 export type Web3ContextConstructor<T extends Web3Context, T2 extends unknown[]> = new (
 	...args: [...extras: T2, context: Web3ContextObject]
 ) => T;
 
 // To avoid circular dependencies, we need to export type from here.
 export type Web3ContextFactory<
-	// eslint-disable-next-line no-use-before-define
 	T extends Web3Context,
 	T2 extends unknown[],
 > = Web3ContextConstructor<T, T2> & {
@@ -182,7 +178,6 @@ export class Web3Context<
 		return this._accountProvider;
 	}
 
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	public static fromContextObject<T extends Web3Context, T3 extends unknown[]>(
 		this: Web3ContextConstructor<T, T3>,
 		...args: [Web3ContextObject, ...T3]
@@ -217,7 +212,6 @@ export class Web3Context<
 		);
 
 		this.on(Web3ConfigEvent.CONFIG_CHANGE, event => {
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 			newContextChild.setConfig({ [event.name]: event.newValue });
 		});
 
@@ -237,12 +231,10 @@ export class Web3Context<
 		this._accountProvider = parentContext._accountProvider;
 
 		parentContext.on(Web3ConfigEvent.CONFIG_CHANGE, event => {
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 			this.setConfig({ [event.name]: event.newValue });
 		});
 	}
 
-	// eslint-disable-next-line no-use-before-define
 	public registerPlugin(plugin: Web3PluginBase) {
 		const context = this as unknown as Record<string, unknown>;
 		if (context[plugin.pluginNamespace] !== undefined)
@@ -391,7 +383,6 @@ export class Web3Context<
 				});
 
 			if (extendObj.property)
-				// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
 				(context[extendObj.property] as Record<string, unknown>)[element.name] = method;
 			else context[element.name] = method;
 		});

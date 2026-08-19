@@ -47,7 +47,6 @@ describeIf(isWs)('Support of Basic Auth', () => {
 			logLevel: 'silent',
 		});
 
-		// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 		app.use(wsProxy);
 		server = app.listen(port, host);
 
@@ -85,7 +84,6 @@ describeIf(isWs)('Support of Basic Auth', () => {
 			await closePromise;
 		}
 	});
-	// eslint-disable-next-line jest/expect-expect
 	test('should connect with basic auth', async () => {
 		await waitForSocketConnect(webSocketProvider);
 		expect(webSocketProvider.getStatus()).toBe('connected');

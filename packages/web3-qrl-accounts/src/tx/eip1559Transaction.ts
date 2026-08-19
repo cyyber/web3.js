@@ -51,7 +51,6 @@ const TRANSACTION_TYPE_UINT8ARRAY = hexToBytes(TRANSACTION_TYPE.toString(16).pad
  * - TransactionType: 2
  * - EIP: [EIP-1559](https://eips.ethereum.org/EIPS/eip-1559)
  */
-// eslint-disable-next-line no-use-before-define
 export class FeeMarketEIP1559Transaction extends BaseTransaction<FeeMarketEIP1559Transaction> {
 	public readonly chainId: bigint;
 	public readonly accessList: AccessListUint8Array;

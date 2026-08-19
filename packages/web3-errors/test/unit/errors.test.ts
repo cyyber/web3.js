@@ -54,7 +54,6 @@ describe('errors', () => {
 			if (ErrorClass === transactionErrors.InvalidPropertiesForTransactionTypeError) break;
 			// To disable error for the abstract class
 
-			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 			const err = new ErrorClass({} as never, {} as never, {} as never, {} as never);
 			errorCodes.push(err.code);
 		}

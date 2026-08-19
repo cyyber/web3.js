@@ -91,8 +91,7 @@ export const getTransactionFromOrToAttr = (
 		} else {
 			throw attr === 'from'
 				? new InvalidTransactionWithSender(transaction.from)
-				: // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-				  new InvalidTransactionWithReceiver(transaction.to);
+				: new InvalidTransactionWithReceiver(transaction.to);
 		}
 	}
 	if (attr === 'from') {

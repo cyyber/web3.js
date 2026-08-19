@@ -20,13 +20,9 @@ import fetchMock from 'jest-fetch-mock';
 
 jest.setMock('cross-fetch', fetchMock);
 
-/* eslint-disable-next-line import/first */
 import { Web3APIPayload, QRLExecutionAPI } from '@theqrl/web3-types';
-/* eslint-disable-next-line import/first */
 import { ResponseError } from '@theqrl/web3-errors';
-/* eslint-disable-next-line import/first */
 import HttpProvider from '../../src/index';
-/* eslint-disable-next-line import/first */
 import { mockGetBalanceResponse } from '../fixtures/test_data';
 
 describe('HttpProvider - implemented methods', () => {

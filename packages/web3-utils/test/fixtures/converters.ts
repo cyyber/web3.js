@@ -308,7 +308,6 @@ export const toPlanckValidData: [[Numbers, QRLUnits], string][] = [
 ];
 
 export const fromPlanckInvalidData: [[any, any], string][] = [
-	// eslint-disable-next-line no-useless-escape
 	[['123.34', 'kplanck'], 'Invalid value given "123.34". Error: can not parse as number data.'],
 	// Using "null" value intentionally for validation
 	// eslint-disable-next-line no-null/no-null

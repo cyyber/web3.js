@@ -15,9 +15,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { format, SocketProvider } from '@theqrl/web3-utils';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import {
 	create as _createAccount,
 	decrypt,
@@ -25,12 +23,9 @@ import {
 	signTransaction,
 } from '@theqrl/web3-qrl-accounts';
 
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { prepareTransactionForSigning, Web3QRL } from '@theqrl/web3-qrl';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { Web3Context } from '@theqrl/web3-core';
 
-// eslint-disable-next-line import/no-extraneous-dependencies
 import {
 	QRLExecutionAPI,
 	Bytes,
@@ -47,9 +42,7 @@ import {
 	Web3APISpec,
 	Web3QRLExecutionAPI,
 } from '@theqrl/web3-types';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import HttpProvider from '@theqrl/web3-providers-http';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { IpcProvider } from '@theqrl/web3-providers-ipc';
 import accountsString from './accounts.json';
 
@@ -57,7 +50,6 @@ import accountsString from './accounts.json';
 // '@theqrl/web3-qrl', so it can't be a dependency of web3-qrl, and turbo therefore doesn't
 // guarantee its lib outputs exist when unit tests pull this file in via fixture symlinks.
 // The runtime require below is lazy and only reached from integration-style helpers.
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Web3 = any;
 
 type NonPayableMethodObject = {
@@ -70,7 +62,7 @@ type NonPayableMethodObject = {
 export const getEnvVar = (name: string): string | undefined =>
 	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 	// @ts-expect-error
-	// eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+	// eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
 	global.Cypress ? Cypress.env(name) : process.env[name];
 
 export const DEFAULT_SYSTEM_PROVIDER = 'http://127.0.0.1:8545';
@@ -139,7 +131,6 @@ export const waitForOpenConnection = async (
 				clearInterval(interval);
 				resolve();
 			}
-			// eslint-disable-next-line no-plusplus, no-param-reassign
 			currentAttempt++;
 		}, intervalTime);
 	});
@@ -312,7 +303,7 @@ type Web3Constructor = new (provider: SupportedProviders) => Web3;
 const createWeb3 = (provider: unknown): Web3 => {
 	// Load the umbrella package only in helpers that need it. Some unit tests import this
 	// fixture for account helpers, and eager loading races Turbo's package build outputs.
-	// eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-require-imports, import/no-extraneous-dependencies, global-require
+	// eslint-disable-next-line @typescript-eslint/no-require-imports
 	const Web3Ctor = (require('@theqrl/web3') as { default: Web3Constructor }).default;
 	return new Web3Ctor(provider as SupportedProviders);
 };
@@ -360,7 +351,6 @@ export const createLocalAccount = async (web3: ReturnType<typeof createWeb3>) =>
 	return account;
 };
 /* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 const socketWaitTimeoutMs = 5_000;
 const socketPollIntervalMs = 50;
 

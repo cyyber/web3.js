@@ -89,7 +89,6 @@ export default class HttpProvider<
 		const host = clientUrl.replace(/^http:\/\//i, '').split(/[/?#]/)[0].split(':')[0];
 		const loopbacks = new Set(['localhost', '127.0.0.1', '::1', '0.0.0.0']);
 		if (loopbacks.has(host.toLowerCase())) return;
-		// eslint-disable-next-line no-console
 		console.warn(
 			`web3-providers-http: cleartext http:// URL to non-loopback host "${host}". Use https:// for production.`,
 		);
@@ -378,7 +377,6 @@ export default class HttpProvider<
 
 			if (!response.ok) {
 				throw new ResponseError(
-					// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
 					(await this.parseBoundedJson(response, requestComposition.signal)) as never,
 				);
 			}

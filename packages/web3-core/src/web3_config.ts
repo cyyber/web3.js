@@ -19,7 +19,6 @@ import { Numbers, HexString, BlockNumberOrTag, Common } from '@theqrl/web3-types
 import { ConfigHardforkMismatchError, ConfigChainMismatchError } from '@theqrl/web3-errors';
 import { isNullish, toHex } from '@theqrl/web3-utils';
 import { TransactionTypeParser } from './types.js';
-// eslint-disable-next-line import/no-cycle
 import { TransactionBuilder } from './web3_context.js';
 import { Web3EventEmitter } from './web3_event_emitter.js';
 

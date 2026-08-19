@@ -423,7 +423,6 @@ export class Web3RequestManager<
 		return error;
 	}
 
-	// eslint-disable-next-line class-methods-use-this
 	private _processJsonRpcResponse<ResultType, ErrorType, RequestType>(
 		payload: JsonRpcPayload<RequestType>,
 		response: JsonRpcResponse<ResultType, ErrorType>,
@@ -450,7 +449,6 @@ export class Web3RequestManager<
 				const rpcErrorResponse = response as JsonRpcResponseWithError;
 				// check if rpc error flag is on and response error code match an EIP-1474 or a standard rpc error code
 				if (rpcErrorsMap.get(rpcErrorResponse.error.code)) {
-					// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 					const Err = rpcErrorsMap.get(rpcErrorResponse.error.code)!.error;
 					throw new Err(rpcErrorResponse);
 				} else {
@@ -544,7 +542,6 @@ export class Web3RequestManager<
 	): JsonRpcResponse<ResultType> {
 		const res = {
 			jsonrpc: '2.0',
-			// eslint-disable-next-line no-nested-ternary
 			id: jsonRpc.isBatchRequest(payload)
 				? payload[0].id
 				: 'id' in payload
