@@ -68,6 +68,12 @@ describe('utils', () => {
 		});
 	});
 	describe('ethAbiToJsonSchema', () => {
+		it('preserves explicit VM64 widths for array elements', () => {
+			expect(qrlAbiToJsonSchema(['uint512[]', 'bytes64[2]'])).toMatchObject({
+				items: [{ items: { format: 'uint512' } }, { items: { format: 'bytes64' } }],
+			});
+		});
+
 		describe('full schema', () => {
 			it.each(abiToJsonSchemaCases)('$title', ({ abi, json }) => {
 				expect(qrlAbiToJsonSchema(abi.fullSchema)).toEqual(json.fullSchema);

@@ -228,7 +228,10 @@ export const abiSchemaToJsonSchema = (
 				elementSchema.$id = abiName;
 			}
 		} else if (isArray) {
-			elementSchema = convertEthType(String(baseType));
+			// Pass the full type: parseBaseType strips the array dimensions while
+			// keeping the declared element width (`uint256` for `uint256[2][3]`), so
+			// element bounds validate at the right size.
+			elementSchema = convertEthType(abiType);
 		} else {
 			elementSchema = { $id: abiName, ...convertEthType(abiType) };
 		}
