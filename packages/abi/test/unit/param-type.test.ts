@@ -19,7 +19,7 @@ import { FormatTypes, ParamType } from '../../src/fragments.js';
 
 describe('ParamType', () => {
 	describe('fromString: simple types', () => {
-		it.each(['address', 'bool', 'string', 'bytes', 'uint256', 'int8', 'bytes32'])(
+		it.each(['address', 'bool', 'string', 'bytes', 'uint512', 'int8', 'bytes64'])(
 			'parses %s with itself as the base type',
 			type => {
 				const param = ParamType.from(type);
@@ -55,30 +55,30 @@ describe('ParamType', () => {
 
 	describe('fromString: arrays', () => {
 		it('parses a fixed-length array', () => {
-			const param = ParamType.from('uint256[3]');
+			const param = ParamType.from('uint512[3]');
 			expect(param.baseType).toBe('array');
 			expect(param.arrayLength).toBe(3);
-			expect(param.arrayChildren.type).toBe('uint256');
+			expect(param.arrayChildren.type).toBe('uint512');
 		});
 
 		it('parses a dynamic array with length -1', () => {
-			const param = ParamType.from('uint256[]');
+			const param = ParamType.from('uint512[]');
 			expect(param.baseType).toBe('array');
 			expect(param.arrayLength).toBe(-1);
-			expect(param.arrayChildren.type).toBe('uint256');
+			expect(param.arrayChildren.type).toBe('uint512');
 		});
 
 		it('peels the OUTERMOST dimension first for a nested array', () => {
-			// "uint256[3][4]" is 4 elements, each of which is uint256[3].
-			const param = ParamType.from('uint256[3][4]');
+			// "uint512[3][4]" is 4 elements, each of which is uint512[3].
+			const param = ParamType.from('uint512[3][4]');
 			expect(param.arrayLength).toBe(4);
-			expect(param.arrayChildren.type).toBe('uint256[3]');
+			expect(param.arrayChildren.type).toBe('uint512[3]');
 			expect(param.arrayChildren.arrayLength).toBe(3);
-			expect(param.arrayChildren.arrayChildren.type).toBe('uint256');
+			expect(param.arrayChildren.arrayChildren.type).toBe('uint512');
 		});
 
 		it('parses a dynamic array of fixed arrays', () => {
-			const param = ParamType.from('uint256[3][]');
+			const param = ParamType.from('uint512[3][]');
 			expect(param.arrayLength).toBe(-1);
 			expect(param.arrayChildren.arrayLength).toBe(3);
 		});
@@ -91,27 +91,27 @@ describe('ParamType', () => {
 
 	describe('fromString: tuples', () => {
 		it('parses an unnamed tuple', () => {
-			const param = ParamType.from('tuple(uint256,address)');
+			const param = ParamType.from('tuple(uint512,address)');
 			expect(param.baseType).toBe('tuple');
 			expect(param.components).toHaveLength(2);
-			expect(param.components[0].type).toBe('uint256');
+			expect(param.components[0].type).toBe('uint512');
 			expect(param.components[1].type).toBe('address');
 		});
 
 		it('parses a tuple with named components', () => {
-			const param = ParamType.from('tuple(uint256 amount, address to)');
+			const param = ParamType.from('tuple(uint512 amount, address to)');
 			expect(param.components[0].name).toBe('amount');
 			expect(param.components[1].name).toBe('to');
 		});
 
 		it('parses a bare parenthesised tuple', () => {
-			const param = ParamType.from('(uint256,address)');
+			const param = ParamType.from('(uint512,address)');
 			expect(param.baseType).toBe('tuple');
 			expect(param.components).toHaveLength(2);
 		});
 
 		it('parses a nested tuple', () => {
-			const param = ParamType.from('tuple(uint256 a, tuple(bool b, string c) inner)');
+			const param = ParamType.from('tuple(uint512 a, tuple(bool b, string c) inner)');
 			expect(param.components).toHaveLength(2);
 			expect(param.components[1].baseType).toBe('tuple');
 			expect(param.components[1].name).toBe('inner');
@@ -119,7 +119,7 @@ describe('ParamType', () => {
 		});
 
 		it('parses a tuple array', () => {
-			const param = ParamType.from('tuple(uint256 a)[2]');
+			const param = ParamType.from('tuple(uint512 a)[2]');
 			expect(param.baseType).toBe('array');
 			expect(param.arrayLength).toBe(2);
 			expect(param.arrayChildren.baseType).toBe('tuple');
@@ -141,8 +141,8 @@ describe('ParamType', () => {
 
 	describe('fromObject', () => {
 		it('builds from an object form', () => {
-			const param = ParamType.from({ type: 'uint256', name: 'amount' });
-			expect(param.type).toBe('uint256');
+			const param = ParamType.from({ type: 'uint512', name: 'amount' });
+			expect(param.type).toBe('uint512');
 			expect(param.name).toBe('amount');
 		});
 
@@ -152,7 +152,7 @@ describe('ParamType', () => {
 				name: 'order',
 				components: [
 					{ type: 'address', name: 'to' },
-					{ type: 'uint256', name: 'value' },
+					{ type: 'uint512', name: 'value' },
 				],
 			});
 			expect(param.baseType).toBe('tuple');
@@ -192,35 +192,35 @@ describe('ParamType', () => {
 	describe('format round-trips', () => {
 		it.each([
 			'address',
-			'uint256',
+			'uint512',
 			'bytes32',
-			'uint256[]',
-			'uint256[3]',
-			'uint256[3][4]',
+			'uint512[]',
+			'uint512[3]',
+			'uint512[3][4]',
 			'address[]',
 		])('sighash-formats %s back to itself', type => {
 			expect(ParamType.from(type).format(FormatTypes.sighash)).toBe(type);
 		});
 
 		it('defaults to the sighash format', () => {
-			expect(ParamType.from('uint256').format()).toBe('uint256');
+			expect(ParamType.from('uint512').format()).toBe('uint512');
 		});
 
 		it('drops the "tuple" keyword and names in the sighash format', () => {
-			expect(ParamType.from('tuple(uint256 a, address b)').format(FormatTypes.sighash)).toBe(
-				'(uint256,address)',
+			expect(ParamType.from('tuple(uint512 a, address b)').format(FormatTypes.sighash)).toBe(
+				'(uint512,address)',
 			);
 		});
 
 		it('keeps the "tuple" keyword but drops names in the minimal format', () => {
-			expect(ParamType.from('tuple(uint256 a, address b)').format(FormatTypes.minimal)).toBe(
-				'tuple(uint256,address)',
+			expect(ParamType.from('tuple(uint512 a, address b)').format(FormatTypes.minimal)).toBe(
+				'tuple(uint512,address)',
 			);
 		});
 
 		it('keeps the "tuple" keyword and names in the full format', () => {
-			expect(ParamType.from('tuple(uint256 a, address b)').format(FormatTypes.full)).toBe(
-				'tuple(uint256 a, address b)',
+			expect(ParamType.from('tuple(uint512 a, address b)').format(FormatTypes.full)).toBe(
+				'tuple(uint512 a, address b)',
 			);
 		});
 
@@ -239,16 +239,16 @@ describe('ParamType', () => {
 		});
 
 		it('formats a tuple array', () => {
-			expect(ParamType.from('tuple(uint256 a)[2]').format(FormatTypes.full)).toBe(
-				'tuple(uint256 a)[2]',
+			expect(ParamType.from('tuple(uint512 a)[2]').format(FormatTypes.full)).toBe(
+				'tuple(uint512 a)[2]',
 			);
-			expect(ParamType.from('tuple(uint256 a)[2]').format(FormatTypes.sighash)).toBe(
-				'(uint256)[2]',
+			expect(ParamType.from('tuple(uint512 a)[2]').format(FormatTypes.sighash)).toBe(
+				'(uint512)[2]',
 			);
 		});
 
 		it('formats a nested tuple', () => {
-			const type = 'tuple(uint256 a, tuple(bool b) inner)';
+			const type = 'tuple(uint512 a, tuple(bool b) inner)';
 			expect(ParamType.from(type).format(FormatTypes.full)).toBe(type);
 		});
 
@@ -260,12 +260,12 @@ describe('ParamType', () => {
 	describe('string <-> object round-trips', () => {
 		it.each([
 			'address',
-			'uint256',
-			'uint256[]',
-			'uint256[3]',
-			'tuple(uint256 a, address b)',
-			'tuple(uint256 a, tuple(bool b) inner)',
-			'tuple(uint256 a)[]',
+			'uint512',
+			'uint512[]',
+			'uint512[3]',
+			'tuple(uint512 a, address b)',
+			'tuple(uint512 a, tuple(bool b) inner)',
+			'tuple(uint512 a)[]',
 		])('string -> JSON -> object -> string is stable for %s', type => {
 			const fromString = ParamType.from(type);
 			const json = JSON.parse(fromString.format(FormatTypes.json));
@@ -276,15 +276,15 @@ describe('ParamType', () => {
 		});
 
 		it('emits "tuple" as the JSON type for a tuple', () => {
-			const json = JSON.parse(ParamType.from('tuple(uint256 a)').format(FormatTypes.json));
+			const json = JSON.parse(ParamType.from('tuple(uint512 a)').format(FormatTypes.json));
 			expect(json.type).toBe('tuple');
 			expect(json.components).toHaveLength(1);
-			expect(json.components[0]).toEqual({ type: 'uint256', name: 'a' });
+			expect(json.components[0]).toEqual({ type: 'uint512', name: 'a' });
 		});
 
 		it('omits a missing name from the JSON form', () => {
-			const json = JSON.parse(ParamType.from('uint256').format(FormatTypes.json));
-			expect(json).toEqual({ type: 'uint256' });
+			const json = JSON.parse(ParamType.from('uint512').format(FormatTypes.json));
+			expect(json).toEqual({ type: 'uint512' });
 		});
 
 		it('includes indexed in the JSON form only when it is a boolean', () => {
@@ -305,7 +305,7 @@ describe('ParamType', () => {
 	});
 
 	describe('malformed input', () => {
-		it.each(['tuple(uint256', 'uint256]', 'uint256[[]', '(', ')', 'uint256 name extra'])(
+		it.each(['tuple(uint512', 'uint512]', 'uint512[[]', '(', ')', 'uint512 name extra'])(
 			'rejects %s',
 			type => {
 				expect(() => ParamType.from(type)).toThrow();

@@ -178,7 +178,7 @@ export const formatParam = (type: string, _param: unknown): unknown => {
 	// Format correct width for u?int[0-9]*
 	let match = paramTypeNumber.exec(type);
 	if (match) {
-		const size = parseInt(match[2] ?? '256', 10);
+		const size = parseInt(match[2] ? match[2] : '512', 10);
 		if (size / 8 < (param as { length: number }).length) {
 			// pad to correct bit width
 			return leftPad(param as string, size);

@@ -58,11 +58,11 @@ export type CoerceFunc = (type: string, value: any) => any;
 
 export abstract class Coder {
 	// The coder name:
-	//   - address, uint256, tuple, array, etc.
+	//   - address, uint512, tuple, array, etc.
 	readonly name: string;
 
 	// The fully expanded type, including composite types:
-	//   - address, uint256, tuple(address,bytes), uint256[3][4][],  etc.
+	//   - address, uint512, tuple(address,bytes), uint512[3][4][],  etc.
 	readonly type: string;
 
 	// The localName bound in the signature, in this example it is "baz":
@@ -71,7 +71,7 @@ export abstract class Coder {
 
 	// Whether this type is dynamic:
 	//  - Dynamic: bytes, string, address[], tuple(boolean[]), etc.
-	//  - Not Dynamic: address, uint256, boolean[3], tuple(address, uint8)
+	//  - Not Dynamic: address, uint512, boolean[3], tuple(address, uint8)
 	readonly dynamic: boolean;
 
 	constructor(name: string, type: string, localName: string, dynamic: boolean) {

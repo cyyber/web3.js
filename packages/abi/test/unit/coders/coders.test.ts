@@ -17,7 +17,7 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 
 import { BigNumber } from '@ethersproject/bignumber';
 
-import { Reader, Writer } from '../../../src/coders/abstract-coder.js';
+import { Coder, Reader, Writer } from '../../../src/coders/abstract-coder.js';
 import { AnonymousCoder } from '../../../src/coders/anonymous.js';
 import { ArrayCoder } from '../../../src/coders/array.js';
 import { BooleanCoder } from '../../../src/coders/boolean.js';
@@ -37,16 +37,18 @@ const word = (n: number | string) => {
 };
 const bytesWord = (hex: string) => `${hex}${'0'.repeat(WORD * 2 - hex.length)}`;
 
-const write = (coder: any, value: any) => {
+const write = (coder: Coder, value: unknown) => {
 	const writer = new Writer(WORD);
 	coder.encode(writer, value);
 	return writer.data;
 };
-const read = (coder: any, data: string) => coder.decode(new Reader(data, WORD));
+const read = (coder: Coder, data: string) => coder.decode(new Reader(data, WORD));
 
 describe('NumberCoder', () => {
 	it('names itself uint/int with the bit width', () => {
 		expect(new NumberCoder(32, false, 'a').name).toBe('uint256');
+		expect(new NumberCoder(64, false, 'a').name).toBe('uint512');
+		expect(new NumberCoder(64, true, 'a').name).toBe('int512');
 		expect(new NumberCoder(1, true, 'a').name).toBe('int8');
 		expect(new NumberCoder(32, false, 'a').dynamic).toBe(false);
 	});
@@ -71,6 +73,11 @@ describe('NumberCoder', () => {
 		);
 	});
 
+	it('encodes uint512 max as a full word with no padding', () => {
+		const max = BigNumber.from(`0x${'ff'.repeat(WORD)}`);
+		expect(write(new NumberCoder(WORD, false, 'a'), max)).toBe(`0x${'ff'.repeat(WORD)}`);
+	});
+
 	it('sign-extends a negative int8 across the whole 64-byte word', () => {
 		// -1 as int8 is 0xff, sign-extended to 64 bytes is all-ones.
 		expect(write(new NumberCoder(1, true, 'a'), -1)).toBe(`0x${'ff'.repeat(WORD)}`);
@@ -78,6 +85,12 @@ describe('NumberCoder', () => {
 
 	it('encodes int8 min (-128) sign-extended', () => {
 		expect(write(new NumberCoder(1, true, 'a'), -128)).toBe(`0x${'ff'.repeat(63)}80`);
+	});
+
+	it('encodes int512 extremes across the exact word', () => {
+		expect(write(new NumberCoder(WORD, true, 'a'), -1)).toBe(`0x${'ff'.repeat(WORD)}`);
+		const min = BigNumber.from(`0x80${'00'.repeat(WORD - 1)}`).mul(-1);
+		expect(write(new NumberCoder(WORD, true, 'a'), min)).toBe(`0x80${'00'.repeat(WORD - 1)}`);
 	});
 
 	it('encodes a positive signed value the same as an unsigned one', () => {
@@ -213,11 +226,12 @@ describe('NullCoder', () => {
 describe('FixedBytesCoder', () => {
 	it('names itself bytesN and is static', () => {
 		expect(new FixedBytesCoder(32, 'a').name).toBe('bytes32');
+		expect(new FixedBytesCoder(64, 'a').name).toBe('bytes64');
 		expect(new FixedBytesCoder(1, 'a').name).toBe('bytes1');
 		expect(new FixedBytesCoder(32, 'a').dynamic).toBe(false);
 	});
 
-	it.each([1, 4, 16, 32])('defaults bytes%i to that many zero bytes', size => {
+	it.each([1, 4, 16, 32, 64])('defaults bytes%i to that many zero bytes', size => {
 		const value = new FixedBytesCoder(size, 'a').defaultValue();
 		expect(value).toBe(`0x${'00'.repeat(size)}`);
 	});
@@ -230,6 +244,12 @@ describe('FixedBytesCoder', () => {
 	it('encodes bytes32 with 32 bytes of trailing padding', () => {
 		expect(write(new FixedBytesCoder(32, 'a'), `0x${'ab'.repeat(32)}`)).toBe(
 			`0x${'ab'.repeat(32)}${'00'.repeat(32)}`,
+		);
+	});
+
+	it('encodes bytes64 filling the word with no padding', () => {
+		expect(write(new FixedBytesCoder(WORD, 'a'), `0x${'ab'.repeat(WORD)}`)).toBe(
+			`0x${'ab'.repeat(WORD)}`,
 		);
 	});
 

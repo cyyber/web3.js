@@ -300,7 +300,7 @@ export class ParamType {
 	// The local name of the parameter (of null if unbound)
 	readonly name: string;
 
-	// The fully qualified type (e.g. "address", "tuple(address)", "uint256[3][]"
+	// The fully qualified type (e.g. "address", "tuple(address)", "uint512[3][]"
 	readonly type: string;
 
 	// The base type (e.g. "address", "tuple", "array")
@@ -353,9 +353,9 @@ export class ParamType {
 	}
 
 	// Format the parameter fragment
-	//   - sighash: "(uint256,address)"
-	//   - minimal: "tuple(uint256,address) indexed"
-	//   - full:    "tuple(uint256 foo, address bar) indexed baz"
+	//   - sighash: "(uint512,address)"
+	//   - minimal: "tuple(uint512,address) indexed"
+	//   - full:    "tuple(uint512 foo, address bar) indexed baz"
 	format(format?: string): string {
 		if (!format) {
 			format = FormatTypes.sighash;
@@ -1021,7 +1021,7 @@ export class FunctionFragment extends ConstructorFragment {
 
 function checkForbidden(fragment: ErrorFragment): ErrorFragment {
 	const sig = fragment.format();
-	if (sig === 'Error(string)' || sig === 'Panic(uint256)') {
+	if (sig === 'Error(string)' || sig === 'Panic(uint512)') {
 		logger.throwArgumentError(`cannot specify user defined ${sig} error`, 'fragment', fragment);
 	}
 	return fragment;
@@ -1108,9 +1108,9 @@ export class ErrorFragment extends Fragment {
 function verifyType(type: string): string {
 	// These need to be transformed to their full description
 	if (type.match(/^uint($|[^1-9])/)) {
-		type = `uint256${type.substring(4)}`;
+		type = `uint512${type.substring(4)}`;
 	} else if (type.match(/^int($|[^1-9])/)) {
-		type = `int256${type.substring(3)}`;
+		type = `int512${type.substring(3)}`;
 	}
 
 	// @TODO: more verification

@@ -365,7 +365,7 @@ describe('Reader', () => {
 			expect(typeof Reader.coerce(`int${bits}`, BigNumber.from(1))).toBe('number');
 		});
 
-		it.each([56, 64, 128, 256])('leaves uint%i as a BigNumber', bits => {
+		it.each([56, 64, 128, 256, 512])('leaves uint%i as a BigNumber', bits => {
 			expect(BigNumber.isBigNumber(Reader.coerce(`uint${bits}`, BigNumber.from(1)))).toBe(
 				true,
 			);
