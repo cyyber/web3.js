@@ -15,11 +15,9 @@ You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 import WebSocketProvider from '@theqrl/web3-providers-ws';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { Contract, decodeEventABI } from '@theqrl/web3-qrl-contract';
 import { AbiEventFragment, Web3BaseProvider } from '@theqrl/web3-types';
 import { numberToHex } from '@theqrl/web3-utils';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { IpcProvider } from '@theqrl/web3-providers-ipc';
 import { Web3QRL } from '../../src';
 import { LogsSubscription } from '../../src/web3_subscriptions';

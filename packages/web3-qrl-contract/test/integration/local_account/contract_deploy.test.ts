@@ -15,9 +15,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-// eslint-disable-next-line import/no-extraneous-dependencies
 import Web3 from '@theqrl/web3';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { Web3Account } from '@theqrl/web3-qrl-accounts';
 import { GreeterBytecode, GreeterAbi } from '../../shared_fixtures/build/Greeter';
 import { getSystemTestProvider, createLocalAccount, isWs } from '../../fixtures/system_test_utils';
@@ -130,7 +128,6 @@ describe('contract', () => {
 			// On http we use polling to get confirmation, so wait a bit longer
 			await sleep(isWs ? 500 : 2000);
 
-			// eslint-disable-next-line jest/no-standalone-expect
 			expect(confirmationHandler).toHaveBeenCalled();
 		});
 

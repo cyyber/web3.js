@@ -45,7 +45,6 @@ describe('contract', () => {
 
 		it('should use "defaultAccount" on "instance" level instead of "from"', async () => {
 			const deployedContract = await contract.deploy(deployOptions).send(sendOptions);
-			// eslint-disable-next-line prefer-destructuring
 			deployedContract.defaultAccount = acc.address;
 			// We didn't specify "from" in this call
 			const receipt = await deployedContract.methods

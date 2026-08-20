@@ -30,7 +30,6 @@ import {
 	RequestTimeoutError,
 	ResponseError,
 } from '@theqrl/web3-errors';
-// eslint-disable-next-line import/no-relative-packages
 import { sleep } from '../../../../fixtures/utils';
 import { SocketProvider, SocketProviderOptions } from '../../src/socket_provider';
 

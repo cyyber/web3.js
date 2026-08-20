@@ -107,7 +107,6 @@ export class Common extends EventEmitter {
 			});
 		}
 
-		// eslint-disable-next-line @typescript-eslint/restrict-template-expressions
 		throw new Error(`Custom chain ${chainParamsOrName} not supported`);
 	}
 
@@ -347,7 +346,6 @@ export class Common extends EventEmitter {
 	 * @param hardfork Hardfork name
 	 * @returns Dictionary with hardfork params or null if hardfork not on chain
 	 */
-	// eslint-disable-next-line @typescript-eslint/ban-types
 	public _getHardfork(hardfork: string | Hardfork): HardforkConfig | null {
 		const hfs = this.hardforks();
 		for (const hf of hfs) {
@@ -370,7 +368,6 @@ export class Common extends EventEmitter {
 			const minHF = this.gteHardfork(QIPs[qip].minimumHardfork);
 			if (!minHF) {
 				throw new Error(
-					// eslint-disable-next-line @typescript-eslint/restrict-template-expressions
 					`${qip} cannot be activated on hardfork ${this.hardfork()}, minimumHardfork: ${minHF}`,
 				);
 			}
@@ -381,7 +378,6 @@ export class Common extends EventEmitter {
 					// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
 					if (!(qips.includes(elem) || this.isActivatedQIP(elem))) {
 						throw new Error(
-							// eslint-disable-next-line @typescript-eslint/restrict-template-expressions
 							`${qip} requires QIP ${elem}, but is not included in the QIP list`,
 						);
 					}
@@ -531,7 +527,6 @@ export class Common extends EventEmitter {
 	 * @returns True if HF is active on block number
 	 */
 	public hardforkIsActiveOnBlock(
-		// eslint-disable-next-line @typescript-eslint/ban-types
 		_hardfork: string | Hardfork | null,
 		_blockNumber: Numbers,
 	): boolean {
@@ -562,7 +557,6 @@ export class Common extends EventEmitter {
 	 * @returns True if HF1 gte HF2
 	 */
 	public hardforkGteHardfork(
-		// eslint-disable-next-line @typescript-eslint/ban-types
 		_hardfork1: string | Hardfork | null,
 		hardfork2: string | Hardfork,
 	): boolean {
@@ -595,7 +589,6 @@ export class Common extends EventEmitter {
 	 * @param hardfork Hardfork name, optional if HF set
 	 * @returns Block number or null if unscheduled
 	 */
-	// eslint-disable-next-line @typescript-eslint/ban-types
 	public hardforkBlock(_hardfork?: string | Hardfork): bigint | null {
 		const hardfork = _hardfork ?? this._hardfork;
 		const block = this._getHardfork(hardfork)?.block;
@@ -606,7 +599,6 @@ export class Common extends EventEmitter {
 		}
 		return BigInt(block);
 	}
-	// eslint-disable-next-line @typescript-eslint/ban-types
 	public hardforkTimestamp(_hardfork?: string | Hardfork): bigint | null {
 		const hardfork = _hardfork ?? this._hardfork;
 		const timestamp = this._getHardfork(hardfork)?.timestamp;
@@ -623,13 +615,12 @@ export class Common extends EventEmitter {
 	 * @param qip QIP number
 	 * @returns Block number or null if unscheduled
 	 */
-	// eslint-disable-next-line @typescript-eslint/ban-types
 	public qipBlock(qip: number): bigint | null {
 		for (const hfChanges of this.HARDFORK_CHANGES) {
 			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 			const hf = hfChanges[1];
 			if ('qips' in hf) {
-				// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+				// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
 				if (hf.qips.includes(qip)) {
 					return this.hardforkBlock(
 						typeof hfChanges[0] === 'number' ? String(hfChanges[0]) : hfChanges[0],
@@ -646,7 +637,6 @@ export class Common extends EventEmitter {
 	 * @param hardfork Hardfork name, optional if HF set
 	 * @returns Block timestamp, number or null if not available
 	 */
-	// eslint-disable-next-line @typescript-eslint/ban-types
 	public nextHardforkBlockOrTimestamp(_hardfork?: string | Hardfork): bigint | null {
 		const hardfork = _hardfork ?? this._hardfork;
 		const hfs = this.hardforks();
@@ -732,7 +722,6 @@ export class Common extends EventEmitter {
 
 		// CRC32 delivers result as signed (negative) 32-bit integer,
 		// convert to hex string
-		// eslint-disable-next-line no-bitwise
 		const forkhash = bytesToHex(intToUint8Array(crc32Uint8Array(inputUint8Array) >>> 0));
 		return forkhash;
 	}
@@ -767,7 +756,6 @@ export class Common extends EventEmitter {
 	 * @param forkHash Fork hash as a hex string
 	 * @returns Array with hardfork data (name, block, forkHash)
 	 */
-	// eslint-disable-next-line @typescript-eslint/ban-types
 	public hardforkForForkHash(forkHash: string): HardforkConfig | null {
 		const resArray = this.hardforks().filter((hf: HardforkConfig) => hf.forkHash === forkHash);
 		// eslint-disable-next-line no-null/no-null

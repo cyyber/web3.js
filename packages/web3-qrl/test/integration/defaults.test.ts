@@ -14,7 +14,6 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { Contract } from '@theqrl/web3-qrl-contract';
 import { hexToNumber, numberToHex } from '@theqrl/web3-utils';
 import {
@@ -312,14 +311,12 @@ describe('defaults', () => {
 		});
 		it('transactionConfirmationBlocks', () => {
 			// default
-			// eslint-disable-next-line jest/no-standalone-expect
 			expect(web3QRL.transactionConfirmationBlocks).toBe(24);
 
 			// after set
 			web3QRL.setConfig({
 				transactionConfirmationBlocks: 3,
 			});
-			// eslint-disable-next-line jest/no-standalone-expect
 			expect(web3QRL.transactionConfirmationBlocks).toBe(3);
 
 			// set by create new instance
@@ -328,7 +325,6 @@ describe('defaults', () => {
 					transactionConfirmationBlocks: 4,
 				},
 			});
-			// eslint-disable-next-line jest/no-standalone-expect
 			expect(qrl2.transactionConfirmationBlocks).toBe(4);
 		});
 		it('transactionConfirmationBlocks implementation', async () => {
@@ -352,7 +348,6 @@ describe('defaults', () => {
 
 			const receiptPromise = new Promise((resolve: Resolve) => {
 				// Tx promise is handled separately
-				// eslint-disable-next-line no-void
 				void sentTx.on('receipt', (params: TransactionReceipt) => {
 					expect(Number(params.status)).toBe(1);
 					resolve();
@@ -361,7 +356,6 @@ describe('defaults', () => {
 			let shouldBe = 1;
 			const confirmationPromise = new Promise((resolve: Resolve) => {
 				// Tx promise is handled separately
-				// eslint-disable-next-line no-void
 				void sentTx.on('confirmation', ({ confirmations }) => {
 					expect(Number(confirmations)).toBeGreaterThanOrEqual(shouldBe);
 					shouldBe += 1;
@@ -582,7 +576,6 @@ describe('defaults', () => {
 
 			const confirmationPromise = new Promise((resolve: (status: bigint) => void) => {
 				// Tx promise is handled separately
-				// eslint-disable-next-line no-void
 				void sentTx.on(
 					'confirmation',
 					async ({

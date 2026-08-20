@@ -243,7 +243,6 @@ describe('Contract', () => {
 			const input = `${GreeterBytecode}000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000b4d79204772656574696e670000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000`;
 			const contract = new Contract(GreeterAbi);
 
-			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			const sendTransactionSpy = jest
 				.spyOn(qrl, 'sendTransaction')
 				.mockImplementation((_objInstance, tx) => {
@@ -277,7 +276,6 @@ describe('Contract', () => {
 			const data = `${GreeterBytecode}000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000b4d79204772656574696e670000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000`;
 			const contract = new Contract(GreeterAbi);
 
-			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			const sendTransactionSpy = jest
 				.spyOn(qrl, 'sendTransaction')
 				.mockImplementation((_objInstance, tx) => {
@@ -316,7 +314,6 @@ describe('Contract', () => {
 			);
 		});
 
-		// eslint-disable-next-line @typescript-eslint/require-await
 		it('send method on deployed contract should work using input', async () => {
 			const arg = 'Hello';
 			const contract = new Contract(GreeterAbi);
@@ -1440,7 +1437,6 @@ describe('Contract', () => {
 			const contract = new Contract(GreeterAbi);
 			contract.options.address = 'Q000000000000000000000000000000000000000000000000000000000000000000000000000000000000000012364916b10ae90076dda6de756ee1395bb69ec2';
 
-			/* eslint-disable no-useless-escape */
 			await expect(async () => {
 				await contract.methods.setGreeting(arg).send(sendOptionsSpecial);
 			}).rejects.toThrow('Contract "from" address not specified');

@@ -60,7 +60,6 @@ const findSchemaByDataPath = (
 			const path = oneOfPath.find((element: [string, number]) => prev === element[0]);
 
 			if (path && path[0] === previousDataPath) {
-				// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
 				result = result.oneOf[path[1]];
 			}
 		}
@@ -199,7 +198,6 @@ export const convert = (
 				// over each possible schema and check if they type of the schema
 				// matches the type of value[0], and if so we use the oneOfSchemaProp
 				// as the schema for formatting
-				// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
 				schemaProp.oneOf.forEach((oneOfSchemaProp: JsonSchema, index: number) => {
 					if (
 						!Array.isArray(schemaProp?.items) &&
@@ -227,7 +225,6 @@ export const convert = (
 				for (let i = 0; i < value.length; i += 1) {
 					(object[key] as unknown[])[i] = convertScalarValue(
 						value[i],
-						// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
 						_schemaProp?.items?.format,
 						format,
 					);
@@ -294,7 +291,6 @@ export const format = <
 		dataToParse = data;
 	}
 
-	// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 	const jsonSchema: JsonSchema = isObject(schema) ? schema : utils.qrlAbiToJsonSchema(schema);
 
 	if (!jsonSchema.properties && !jsonSchema.items && !jsonSchema.format) {

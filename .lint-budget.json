@@ -19,7 +19,7 @@
 		"packages/web3-utils": 1293,
 		"packages/web3-validator": 882,
 		"tools/eslint-config-base-web3": 0,
-		"tools/web3-packagetemplate": 7,
-		"tools/web3-plugin-example": 40
+		"tools/web3-packagetemplate": 5,
+		"tools/web3-plugin-example": 39
 	}
 }

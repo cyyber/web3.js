@@ -38,8 +38,6 @@ import {
 	waitForOpenConnection,
 } from '../shared_fixtures/system_tests_utils';
 
-/* eslint-disable jest/no-standalone-expect */
-
 describe('Web3 instance', () => {
 	let provider: string | SupportedProviders;
 	let providerUrl: string;
@@ -183,7 +181,6 @@ describe('Web3 instance', () => {
 			} else {
 				newProvider = new IpcProvider(providerUrl);
 			}
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 			web3.setProvider(newProvider as SupportedProviders);
 
 			expect(web3.provider).toBe(newProvider);

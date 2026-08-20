@@ -82,7 +82,6 @@ export default class IpcProvider<API extends Web3APISpec = QRLExecutionAPI> exte
 	 * @param providerOptions - Timeout and queue bounds {@link SocketProviderOptions}
 	 */
 	// this constructor is to specify the type for `socketOptions` for a better intellisense.
-	// eslint-disable-next-line no-useless-constructor
 	public constructor(
 		socketPath: string,
 		socketOptions?: SocketConstructorOpts,

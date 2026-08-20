@@ -47,7 +47,6 @@ import { blockSchema, logSchema } from '@theqrl/web3-qrl';
 
 import { Web3ContractError } from '@theqrl/web3-errors';
 
-// eslint-disable-next-line import/no-cycle
 import { ContractOptions, ContractAbiWithSignature, EventLog } from './types.js';
 
 type Writeable<T> = { -readonly [P in keyof T]: T[P] };
