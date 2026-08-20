@@ -30,7 +30,7 @@ import { Web3ValidatorError } from './errors.js';
 import { isAddressString } from './validation/address.js';
 
 // Format names that are not ABI types. A name must appear here as well as in `formats.ts`,
-// otherwise `convertEthType` rejects it as an unknown data type before the format ever runs.
+// otherwise `convertQRLType` rejects it as an unknown data type before the format ever runs.
 const extraTypes = [
 	'hex',
 	'number',
@@ -119,7 +119,7 @@ const assertSupportedSize = (
 	}
 };
 
-const convertEthType = (
+const convertQRLType = (
 	type: string,
 	parentSchema: JsonSchema = {},
 ): { format?: string; required?: boolean } => {
@@ -231,9 +231,9 @@ export const abiSchemaToJsonSchema = (
 			// Pass the full type: parseBaseType strips the array dimensions while
 			// keeping the declared element width (`uint256` for `uint256[2][3]`), so
 			// element bounds validate at the right size.
-			elementSchema = convertEthType(abiType);
+			elementSchema = convertQRLType(abiType);
 		} else {
-			elementSchema = { $id: abiName, ...convertEthType(abiType) };
+			elementSchema = { $id: abiName, ...convertQRLType(abiType) };
 		}
 
 		if (!isArray) {
