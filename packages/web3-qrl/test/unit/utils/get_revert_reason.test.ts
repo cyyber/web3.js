@@ -21,7 +21,7 @@ import { DEFAULT_RETURN_FORMAT } from '@theqrl/web3-types';
 // spy must target that module — spying on the re-export in rpc_method_wrappers would not intercept.
 import * as RpcMethodWrappersReaders from '../../../src/utils/rpc_method_wrappers_readers';
 import * as GetRevertReason from '../../../src/utils/get_revert_reason';
-import { SimpleRevertAbi } from '../../fixtures/simple_revert';
+import { SimpleRevertAbi } from '../../shared_fixtures/build/SimpleRevert';
 
 describe('getRevertReason', () => {
 	const web3Context = new Web3Context();

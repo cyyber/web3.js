@@ -17,7 +17,7 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 import { ContractExecutionError, InvalidResponseError } from '@theqrl/web3-errors';
 
 import { parseTransactionError } from '../../../src/utils/get_revert_reason';
-import { SimpleRevertAbi } from '../../fixtures/simple_revert';
+import { SimpleRevertAbi } from '../../shared_fixtures/build/SimpleRevert';
 
 describe('parseTransactionError', () => {
 	it('should return object of type RevertReason', () => {
