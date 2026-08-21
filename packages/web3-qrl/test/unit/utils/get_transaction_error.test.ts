@@ -25,7 +25,7 @@ import {
 
 import * as GetRevertReasonUtils from '../../../src/utils/get_revert_reason';
 import { getTransactionError } from '../../../src/utils/get_transaction_error';
-import { SimpleRevertAbi } from '../../fixtures/simple_revert';
+import { SimpleRevertAbi } from '../../shared_fixtures/build/SimpleRevert';
 
 describe('getTransactionError', () => {
 	let web3Context: Web3Context;
