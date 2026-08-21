@@ -25,7 +25,7 @@ import { qrlRpcMethods } from '../../../src/index';
 // the only way to prove the guard actually fires rather than being registered but inert.
 
 const address =
-	'Q0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000eb014f8c8b418db6b45774c326a0e64c78914dc0';
+	'QdBb14ea952DfAedB0788Beae4fD92393f215CAa2c115ac22bc68805E171cfadE76CFF540c1ADC7B13017E4c66b6109135f25ff73412650da569E458E4A43800b';
 
 const validTypedData = {
 	types: {

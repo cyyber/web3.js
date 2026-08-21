@@ -121,20 +121,20 @@ export type ContractOverloadedMethodInputs<AbiArr extends ReadonlyArray<unknown>
 	AbiArr extends readonly []
 		? undefined
 		: AbiArr extends readonly [infer A, ...infer R]
-		? A extends AbiFunctionFragment
-			? ContractMethodInputParameters<A['inputs']> | ContractOverloadedMethodInputs<R>
+			? A extends AbiFunctionFragment
+				? ContractMethodInputParameters<A['inputs']> | ContractOverloadedMethodInputs<R>
+				: undefined
 			: undefined
-		: undefined
 >;
 
 export type ContractOverloadedMethodOutputs<AbiArr extends ReadonlyArray<unknown>> = NonNullable<
 	AbiArr extends readonly []
 		? undefined
 		: AbiArr extends readonly [infer A, ...infer R]
-		? A extends AbiFunctionFragment
-			? ContractMethodOutputParameters<A['outputs']> | ContractOverloadedMethodOutputs<R>
+			? A extends AbiFunctionFragment
+				? ContractMethodOutputParameters<A['outputs']> | ContractOverloadedMethodOutputs<R>
+				: undefined
 			: undefined
-		: undefined
 >;
 
 // To avoid circular dependency between types and encoding, declared these types here.
@@ -200,15 +200,15 @@ export class Contract<Abi extends ContractAbi>
 	 * ```ts
 	 * myContract.options;
 	 * > {
-	 *     address: 'Q00000000000000000000000000000000000000000000000000000000000000000000000000000000000000001234567890123456789012345678901234567891',
+	 *     address: 'Q5562344B82A426FBA86EA4C35c048c71bB17bb46f68309aabFb8A4Cd79052ec10B88738Df7fd204Ce37A9f18Bd9cbdbE0a0F3b2a1dDF26F793008eFE331A2A88',
 	 *     jsonInterface: [...],
-	 *     from: 'Q0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000de0b295669a9fd93d5f28d9ec85e40f4cb697bae',
+	 *     from: 'QCfeC0cbeE560cbD6ed89580204AF71448f1fB8c577e60e9afC6E697019E2312cF3B24B98Eb763627a1C38c96ecd7E7c20BA9774cb6c0a810B78E8ea529ccdc40',
 	 *     maxFeePerGas: '10000000000000',
 	 * 	   maxPriorityFeePerGas: '0',
 	 *     gas: 1000000
 	 * }
 	 *
-	 * myContract.options.from = 'Q00000000000000000000000000000000000000000000000000000000000000000000000000000000000000001234567890123456789012345678901234567891'; // default from address
+	 * myContract.options.from = 'Q5562344B82A426FBA86EA4C35c048c71bB17bb46f68309aabFb8A4Cd79052ec10B88738Df7fd204Ce37A9f18Bd9cbdbE0a0F3b2a1dDF26F793008eFE331A2A88'; // default from address
 	 * myContract.options.maxFeePerGas = '20000000000000'; // default max fee per gas in planck
 	 * myContract.options.maxPriorityFeePerGas = '0'; // default max priority fee per gas in planck
 	 * myContract.options.gas = 5000000; // provide as fallback always 5M gas
@@ -258,8 +258,8 @@ export class Contract<Abi extends ContractAbi>
 	 * @returns - The contract instance with all its methods and events.
 	 *
 	 * ```ts title="Example"
-	 * var myContract = new web3.qrl.Contract([...], 'Q0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000de0b295669a9fd93d5f28d9ec85e40f4cb697bae', {
-	 *   from: 'Q00000000000000000000000000000000000000000000000000000000000000000000000000000000000000001234567890123456789012345678901234567891', // default from address
+	 * var myContract = new web3.qrl.Contract([...], 'QCfeC0cbeE560cbD6ed89580204AF71448f1fB8c577e60e9afC6E697019E2312cF3B24B98Eb763627a1C38c96ecd7E7c20BA9774cb6c0a810B78E8ea529ccdc40', {
+	 *   from: 'Q5562344B82A426FBA86EA4C35c048c71bB17bb46f68309aabFb8A4Cd79052ec10B88738Df7fd204Ce37A9f18Bd9cbdbE0a0F3b2a1dDF26F793008eFE331A2A88', // default from address
 	 *   maxFeePerGas: '20000000000' // default max fee per gas in planck, 20 shor in this case
 	 * });
 	 * ```
@@ -268,7 +268,7 @@ export class Contract<Abi extends ContractAbi>
 	 *
 	 * ```ts title="Example"
 	 * const myContractAbi = [....] as const; // ABI definitions
-	 * const myContract = new web3.qrl.Contract(myContractAbi, 'Q0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000de0b295669a9fd93d5f28d9ec85e40f4cb697bae');
+	 * const myContract = new web3.qrl.Contract(myContractAbi, 'QCfeC0cbeE560cbD6ed89580204AF71448f1fB8c577e60e9afC6E697019E2312cF3B24B98Eb763627a1C38c96ecd7E7c20BA9774cb6c0a810B78E8ea529ccdc40');
 	 * ```
 	 */
 	public constructor(
@@ -313,8 +313,8 @@ export class Contract<Abi extends ContractAbi>
 		const options = isContractInitOptions(addressOrOptionsOrContext)
 			? addressOrOptionsOrContext
 			: isContractInitOptions(optionsOrContextOrReturnFormat)
-			? optionsOrContextOrReturnFormat
-			: undefined;
+				? optionsOrContextOrReturnFormat
+				: undefined;
 
 		let contractContext;
 		if (isWeb3ContractContext(addressOrOptionsOrContext)) {
@@ -365,8 +365,8 @@ export class Contract<Abi extends ContractAbi>
 		const returnDataFormat = isDataFormat(contextOrReturnFormat)
 			? contextOrReturnFormat
 			: isDataFormat(optionsOrContextOrReturnFormat)
-			? optionsOrContextOrReturnFormat
-			: returnFormat ?? DEFAULT_RETURN_FORMAT;
+				? optionsOrContextOrReturnFormat
+				: (returnFormat ?? DEFAULT_RETURN_FORMAT);
 
 		const address =
 			typeof addressOrOptionsOrContext === 'string' ? addressOrOptionsOrContext : undefined;
@@ -444,13 +444,13 @@ export class Contract<Abi extends ContractAbi>
 	 *
 	 * ```ts
 	 * // calling a method
-	 * const result = await myContract.methods.myMethod(123).call({from: 'Q0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000de0b295669a9fd93d5f28d9ec85e40f4cb697bae'});
+	 * const result = await myContract.methods.myMethod(123).call({from: 'QCfeC0cbeE560cbD6ed89580204AF71448f1fB8c577e60e9afC6E697019E2312cF3B24B98Eb763627a1C38c96ecd7E7c20BA9774cb6c0a810B78E8ea529ccdc40'});
 	 *
 	 * // or sending and using a promise
-	 * const receipt = await myContract.methods.myMethod(123).send({from: 'Q0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000de0b295669a9fd93d5f28d9ec85e40f4cb697bae'});
+	 * const receipt = await myContract.methods.myMethod(123).send({from: 'QCfeC0cbeE560cbD6ed89580204AF71448f1fB8c577e60e9afC6E697019E2312cF3B24B98Eb763627a1C38c96ecd7E7c20BA9774cb6c0a810B78E8ea529ccdc40'});
 	 *
 	 * // or sending and using the events
-	 * const sendObject = myContract.methods.myMethod(123).send({from: 'Q0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000de0b295669a9fd93d5f28d9ec85e40f4cb697bae'});
+	 * const sendObject = myContract.methods.myMethod(123).send({from: 'QCfeC0cbeE560cbD6ed89580204AF71448f1fB8c577e60e9afC6E697019E2312cF3B24B98Eb763627a1C38c96ecd7E7c20BA9774cb6c0a810B78E8ea529ccdc40'});
 	 * sendObject.on('transactionHash', function(hash){
 	 *   ...
 	 * });
@@ -536,7 +536,7 @@ export class Contract<Abi extends ContractAbi>
 	 *   arguments: [123, 'My String']
 	 * })
 	 * .send({
-	 *   from: 'Q00000000000000000000000000000000000000000000000000000000000000000000000000000000000000001234567890123456789012345678901234567891',
+	 *   from: 'Q5562344B82A426FBA86EA4C35c048c71bB17bb46f68309aabFb8A4Cd79052ec10B88738Df7fd204Ce37A9f18Bd9cbdbE0a0F3b2a1dDF26F793008eFE331A2A88',
 	 *   gas: 1500000,
 	 *   maxFeePerGas: '30000000000000',
 	 *   maxPriorityFeePerGas: '0'
@@ -559,7 +559,7 @@ export class Contract<Abi extends ContractAbi>
 	 *   arguments: [123, 'My String']
 	 * })
 	 * .send({
-	 *   from: 'Q00000000000000000000000000000000000000000000000000000000000000000000000000000000000000001234567890123456789012345678901234567891',
+	 *   from: 'Q5562344B82A426FBA86EA4C35c048c71bB17bb46f68309aabFb8A4Cd79052ec10B88738Df7fd204Ce37A9f18Bd9cbdbE0a0F3b2a1dDF26F793008eFE331A2A88',
 	 *   gas: 1500000,
 	 *   maxFeePerGas: '30000000000000',
 	 *   maxPriorityFeePerGas: '0',
@@ -697,7 +697,7 @@ export class Contract<Abi extends ContractAbi>
 	 *   transactionHash: '0x7f9fade1c0d57a7af66ab4ead79fade1c0d57a7af66ab4ead7c2c2eb7b11a91385',
 	 *   blockHash: '0xfd43ade1c09fade1c0d57a7af66ab4ead7c2c2eb7b11a91ffdd57a7af66ab4ead7',
 	 *   blockNumber: 1234,
-	 *   address: 'Q0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000de0b295669a9fd93d5f28d9ec85e40f4cb697bae'
+	 *   address: 'QCfeC0cbeE560cbD6ed89580204AF71448f1fB8c577e60e9afC6E697019E2312cF3B24B98Eb763627a1C38c96ecd7E7c20BA9774cb6c0a810B78E8ea529ccdc40'
 	 * },{
 	 *   ...
 	 * }]
@@ -735,21 +735,21 @@ export class Contract<Abi extends ContractAbi>
 			typeof param1 !== 'string' && !isDataFormat(param1)
 				? param1
 				: !isDataFormat(param2)
-				? param2
-				: {};
+					? param2
+					: {};
 
 		const returnFormat = isDataFormat(param1)
 			? param1
 			: isDataFormat(param2)
-			? param2
-			: param3 ?? DEFAULT_RETURN_FORMAT;
+				? param2
+				: (param3 ?? DEFAULT_RETURN_FORMAT);
 
 		const abi =
 			eventName === 'allEvents' || eventName === ALL_EVENTS
 				? ALL_EVENTS_ABI
 				: (this._jsonInterface.find(
 						j => 'name' in j && j.name === eventName,
-				  ) as AbiEventFragment & { signature: string });
+					) as AbiEventFragment & { signature: string });
 
 		if (!abi) {
 			throw new Web3ContractError(`Event ${String(eventName)} not found.`);

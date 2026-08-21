@@ -295,12 +295,12 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
  * let request1: JsonRpcOptionalRequest = {
  * 	id: 10,
  * 	method: 'qrl_getBalance',
- * 	params: ["Q0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000dc6bad79dab7ea733098f66f6c6f9dd008da3258", 'latest'],
+ * 	params: ["Q954661615C7818d41Eb6c410e5206d640D49aC2c8396AEc1Cf464357459bB372E2b3F3477aD4ADBD462634e33C7b34666769f2D6b7a4a727658DE8EE8a9150BA", 'latest'],
  * };
  * let request2: JsonRpcOptionalRequest = {
  * 	id: 11,
  * 	method: 'qrl_getBalance',
- * 	params: ["Q0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000962f9a9c2a6c092474d24def35eccb3d9363265e", 'latest'],
+ * 	params: ["Q43AFAE518DA3aC35a77D53157702Aa6cb25AE551c84031541Bdac877a2d7006662B950A224c228b5b13150e529451d8aa90277d3E54e0a1CC5A4B1dE8F574114", 'latest'],
  * };
  *
  * const batch = new web3.BatchRequest();

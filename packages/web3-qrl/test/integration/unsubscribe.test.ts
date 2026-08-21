@@ -58,7 +58,8 @@ describeIf(isSocket)('unsubscribe', () => {
 			await web3QRL.subscribe('newPendingTransactions');
 			await web3QRL.subscribe('syncing');
 			await web3QRL.subscribe('logs', {
-				address: 'Q00000000000000000000000000000000000000000000000000000000000000000000000000000000000000008320fe7702b96808f7bbc0d4a888ed1468216cfd',
+				address:
+					'Q65cf644db92149522f91c70Fa9a87584315B635F3c19fc7f61E5a9c0FFF3b069dD59a571A86DD4a0D84BF9D07D1259FD67dFe0f77078F95f2D4D81EBbe802d45',
 				topics: ['0xd78a0cb8bb633d06981248b816e7bd33c2a35a6089241d099fa519e361cab902'],
 			});
 			expect(web3QRL?.subscriptionManager?.subscriptions.size).toBe(4);

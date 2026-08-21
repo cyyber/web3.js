@@ -204,7 +204,9 @@ export const signTransaction = async (
 
 	const rawTx = bytesToHex(signedTx.serialize());
 	const txHash = sha3Raw(rawTx); // using keccak in web3-utils.sha3Raw instead of SHA3 (NIST Standard) as both are different
-	const extraParams = isNullish(signedTx.extraParams) ? Uint8Array.from([]) : signedTx.extraParams;
+	const extraParams = isNullish(signedTx.extraParams)
+		? Uint8Array.from([])
+		: signedTx.extraParams;
 
 	return {
 		messageHash: bytesToHex(signedTx.getMessageToSign(signedTx.descriptor, extraParams, true)),
@@ -284,7 +286,7 @@ export type EncryptOptions = Omit<CipherOptions, 'iv'>;
  * {
  *   version: 1,
  *   id: '1b1dd3e2-ee6f-49c6-8a9b-a4722046582e',
- *   address: 'Q0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000cfec0cbee560cbd6ed89580204af71448f1fb8c5',
+ *   address: 'Qcfec0cbee560cbd6ed89580204af71448f1fb8c577e60e9afc6e697019e2312cf3b24b98eb763627a1c38c96ecd7e7c20ba9774cb6c0a810b78e8ea529ccdc40',
  *   crypto: {
  *     ciphertext: '02383d4ea331fdf518651aa638d77f36de002f6b2cb340712c2957b68f927234a9c87f776e40b61227aca366bd4b7056046dfdddee29df22290939a1e96f5be5',
  *     cipherparams: { iv: 'bfb43120ae00e9de110f8325' },
@@ -359,11 +361,7 @@ export const encrypt = async (
 		throw new InvalidKdfError();
 	}
 
-	const cipher = await createCipheriv(
-		seedUint8Array,
-		derivedKey,
-		initializationVector,
-	);
+	const cipher = await createCipheriv(seedUint8Array, derivedKey, initializationVector);
 	const ciphertext = bytesToHex(cipher).slice(2);
 	// eslint-disable-next-line no-use-before-define
 	const acc = seedToAccount(seedUint8Array);
@@ -422,7 +420,7 @@ export const parseAndValidateSeed = (data: Bytes, ignoreLength?: boolean): Uint8
  * seedToAccount("0x010000cea755979937e2dc6137c0e51ba0d1eb2a44920cefffb1a860cf194ea7d23d694045fd2c8a72ec5aecf1e7e5bb591ff2");
  * >
  * {
- *   address: 'Q0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000cfec0cbee560cbd6ed89580204af71448f1fb8c5',
+ *   address: 'QCfeC0cbeE560cbD6ed89580204AF71448f1fB8c577e60e9afC6E697019E2312cF3B24B98Eb763627a1C38c96ecd7E7c20BA9774cb6c0a810B78E8ea529ccdc40',
  *   seed: '0x010000cea755979937e2dc6137c0e51ba0d1eb2a44920cefffb1a860cf194ea7d23d694045fd2c8a72ec5aecf1e7e5bb591ff2',
  *   signTransaction: [Function: signTransaction],
  *   sign: [Function: sign],
@@ -475,7 +473,7 @@ export const seedToAccount = (seed: Bytes): Web3Account => {
  * ```ts
  * web3.qrl.accounts.create();
  * {
- * address: 'Q0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000cfec0cbee560cbd6ed89580204af71448f1fb8c5',
+ * address: 'QCfeC0cbeE560cbD6ed89580204AF71448f1fB8c577e60e9afC6E697019E2312cF3B24B98Eb763627a1C38c96ecd7E7c20BA9774cb6c0a810B78E8ea529ccdc40',
  * seed: '0x010000cea755979937e2dc6137c0e51ba0d1eb2a44920cefffb1a860cf194ea7d23d694045fd2c8a72ec5aecf1e7e5bb591ff2',
  * signTransaction: [Function: signTransaction],
  * sign: [Function: sign],
@@ -510,7 +508,7 @@ export const create = (): Web3Account => {
  * decrypt({
  *   version: 1,
  *   id: '1b1dd3e2-ee6f-49c6-8a9b-a4722046582e',
- *   address: 'Q0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000cfec0cbee560cbd6ed89580204af71448f1fb8c5',
+ *   address: 'Qcfec0cbee560cbd6ed89580204af71448f1fb8c577e60e9afc6e697019e2312cf3b24b98eb763627a1c38c96ecd7e7c20ba9774cb6c0a810b78e8ea529ccdc40',
  *   crypto: {
  *     ciphertext: '02383d4ea331fdf518651aa638d77f36de002f6b2cb340712c2957b68f927234a9c87f776e40b61227aca366bd4b7056046dfdddee29df22290939a1e96f5be5',
  *     cipherparams: { iv: 'bfb43120ae00e9de110f8325' },
@@ -527,7 +525,7 @@ export const create = (): Web3Account => {
  * }, '123').then((res) => console.log(util.inspect(res, { depth: null })));
  * >
  * {
- *   address: 'Q0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000cfec0cbee560cbd6ed89580204af71448f1fb8c5',
+ *   address: 'QCfeC0cbeE560cbD6ed89580204AF71448f1fB8c577e60e9afC6E697019E2312cF3B24B98Eb763627a1C38c96ecd7E7c20BA9774cb6c0a810B78E8ea529ccdc40',
  *   seed: '0x010000cea755979937e2dc6137c0e51ba0d1eb2a44920cefffb1a860cf194ea7d23d694045fd2c8a72ec5aecf1e7e5bb591ff2',
  *   signTransaction: [Function: signTransaction],
  *   sign: [Function: sign],
