@@ -370,9 +370,11 @@ export const hyperionSha3Raw = (...values: TypedObject[] | TypedObjectAbbreviate
  * @returns - the slot number where will be stored long string
  */
 export const getStorageSlotNumForLongString = (mainSlotNumber: number | string) =>
+	// The pre-image is the slot as a hex 64-byte VM word, matching hyperion's `keccak256(0, VMWordBytes=64)`;
+	// the 32-byte keccak output is the storage key. Numeric slots must be hex-formatted (`toString(16)`).
 	sha3(
 		`0x${(typeof mainSlotNumber === 'number'
-			? mainSlotNumber.toString()
+			? mainSlotNumber.toString(16)
 			: mainSlotNumber
-		).padStart(64, '0')}`,
+		).padStart(128, '0')}`,
 	);

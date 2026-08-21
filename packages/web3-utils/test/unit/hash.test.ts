@@ -24,6 +24,7 @@ import {
 	hyperionSha3Raw,
 	encodePacked,
 	keccak256 as web3keccak256,
+	getStorageSlotNumForLongString,
 } from '../../src/hash';
 import {
 	sha3Data,
@@ -123,6 +124,25 @@ describe('hash', () => {
 			it.each(keccak256ValidData)('%s', (input, output) => {
 				expect(web3keccak256(input)).toEqual(output);
 			});
+		});
+	});
+
+	describe('getStorageSlotNumForLongString', () => {
+		it.each([1, '1'])('hashes slot %s as a 64-byte VM word', slot => {
+			expect(getStorageSlotNumForLongString(slot)).toBe(
+				'0xa6eef7e35abe7026729641147f7915573c7e97b47efa546f5f6e3230263bcb49',
+			);
+		});
+
+		// Multi-digit numeric slots: the pre-image is hex, so slot 10 must hash 0x0a (not
+		// decimal text "10" read as 0x10). String slots are hex, so 'a' equals numeric 10.
+		it.each([
+			[10, '0x13da86008ba1c6922daee3e07db95305ef49ebced9f5467a0b8613fcc6b343e3'],
+			['a', '0x13da86008ba1c6922daee3e07db95305ef49ebced9f5467a0b8613fcc6b343e3'],
+			[255, '0x03d616f3758432b4d7452e2e9011612152589bfc903ce751686613c478b2af5f'],
+			['ff', '0x03d616f3758432b4d7452e2e9011612152589bfc903ce751686613c478b2af5f'],
+		])('hashes multi-digit slot %s from a hex pre-image', (slot, expected) => {
+			expect(getStorageSlotNumForLongString(slot)).toBe(expected);
 		});
 	});
 
