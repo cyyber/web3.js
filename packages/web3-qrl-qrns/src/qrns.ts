@@ -84,7 +84,7 @@ export class QRNS extends Web3Context<QRLExecutionAPI & Web3NetAPI> {
 	 * const resolver = await qrns.getResolver('resolver');
 	 *
 	 * console.log(resolver.options.address);
-	 * > 'Q00000000000000000000000000000000000000000000000000000000000000000000000000000000000000001234567890123456789012345678901234567890'
+	 * > 'Qd5812F6Cf4a0f645aa620cd57319a0Ed649dd8f5519A9dde7770ae5b0E49e547985f35eB972A2a07041561aa39c65A3991478f9B1e6749e05277dcf58A9A8B72'
 	 * ```
 	 */
 	public async getResolver(name: string): Promise<Contract<typeof PublicResolverAbi>> {
@@ -138,7 +138,7 @@ export class QRNS extends Web3Context<QRLExecutionAPI & Web3NetAPI> {
 	 * ```ts
 	 * const address = await web3.qrl.qrns.getAddress('qrl.qrns');
 	 * console.log(address);
-	 * > 'Q0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000fb6916095ca1df60bb79ce92ce3ea74c37c5d359'
+	 * > 'Q693bA851060EFb980DACA536C4A1EF74585e1F14657DEa79e1f8f4655b543046e11c577AD9a2445443e9e3092AEeE55ecf99325f4ADd93BE6C23A2431F6065b9'
 	 * ```
 	 */
 	public async getAddress(QRNSName: string, coinType = 60) {
