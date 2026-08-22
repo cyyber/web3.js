@@ -39,6 +39,7 @@ import {
 	encodeFunctionSignature,
 	encodeParameter,
 	encodeParameters,
+	hashToLogTopic,
 	isAbiConstructorFragment,
 	jsonInterfaceMethodToString,
 } from '@theqrl/web3-qrl-abi';
@@ -50,6 +51,7 @@ import { Web3ContractError } from '@theqrl/web3-errors';
 import { ContractOptions, ContractAbiWithSignature, EventLog } from './types.js';
 
 type Writeable<T> = { -readonly [P in keyof T]: T[P] };
+
 export const encodeEventABI = (
 	{ address }: ContractOptions,
 	event: AbiEventFragment & { signature: string },
@@ -102,7 +104,9 @@ export const encodeEventABI = (
 				if (Array.isArray(value)) {
 					opts.topics.push(value.map(v => encodeParameter(input.type, v)));
 				} else if (input.type === 'string') {
-					opts.topics.push(keccak256(value as string));
+					// An indexed string is topic-encoded as the keccak hash of its value,
+					// left-aligned to the 64-byte VM64 topic width.
+					opts.topics.push(hashToLogTopic(keccak256(value as string)));
 				} else {
 					opts.topics.push(encodeParameter(input.type, value));
 				}

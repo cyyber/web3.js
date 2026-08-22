@@ -18,12 +18,17 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 import { sha3Raw } from '@theqrl/web3-utils';
 import { AbiError } from '@theqrl/web3-errors';
 import { AbiEventFragment } from '@theqrl/web3-types';
-import { jsonInterfaceMethodToString, isAbiEventFragment } from '../utils.js';
+import { jsonInterfaceMethodToString, isAbiEventFragment, hashToLogTopic } from '../utils.js';
 
 /**
  * Encodes the event name to its ABI signature, which are the sha3 hash of the event name including input types.
+ *
+ * The hash is returned as a complete log topic: QRVM topics are 64 bytes wide and a 32-byte
+ * Keccak hash is left-aligned within one, mirroring go-qrl `common.HashToLogTopic`. Returning
+ * the bare hash would produce filters no node ever matches.
+ *
  * @param functionName - The event name to encode, or the {@link AbiEventFragment} object of the event. If string, it has to be in the form of `eventName(param1Type,param2Type,...)`. eg: myEvent(uint256,bytes32).
- * @returns - The ABI signature of the event.
+ * @returns - The ABI signature of the event, as a 64-byte log topic.
  *
  * @example
  * ```ts
@@ -42,7 +47,7 @@ import { jsonInterfaceMethodToString, isAbiEventFragment } from '../utils.js';
  *   ],
  * });
  * console.log(event);
- * > 0xf2eeb729e636a8cb783be044acf6b7b1e2c5863735b60d6daae84c366ee87d97
+ * > 0xf2eeb729e636a8cb783be044acf6b7b1e2c5863735b60d6daae84c366ee87d970000000000000000000000000000000000000000000000000000000000000000
  *
  *  const event = web3.qrl.abi.encodeEventSignature({
  *   inputs: [
@@ -66,7 +71,7 @@ import { jsonInterfaceMethodToString, isAbiEventFragment } from '../utils.js';
  *   type: "event",
  * });
  * console.log(event);
- * > 0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef
+ * > 0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef0000000000000000000000000000000000000000000000000000000000000000
  * ```
  */
 export const encodeEventSignature = (functionName: string | AbiEventFragment): string => {
@@ -82,5 +87,5 @@ export const encodeEventSignature = (functionName: string | AbiEventFragment): s
 		name = jsonInterfaceMethodToString(functionName);
 	}
 
-	return sha3Raw(name);
+	return hashToLogTopic(sha3Raw(name));
 };

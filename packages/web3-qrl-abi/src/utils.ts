@@ -27,6 +27,7 @@ import {
 	AbiEventFragment,
 	AbiFunctionFragment,
 	AbiConstructorFragment,
+	HexString,
 } from '@theqrl/web3-types';
 import ethersAbiCoder from './ethers_abi_coder.js';
 
@@ -59,6 +60,26 @@ export const isAbiConstructorFragment = (item: unknown): item is AbiConstructorF
 	typeof item === 'object' &&
 	!isNullish((item as { type: string }).type) &&
 	(item as { type: string }).type === 'constructor';
+
+/**
+ * Width of a serialized QRVM log topic, in hex characters (64 bytes).
+ */
+const LOG_TOPIC_HEX_LENGTH = 128;
+
+/**
+ * Left-aligns a 32-byte Keccak hash inside a 64-byte log topic, i.e. `hash || zero padding`.
+ *
+ * QRVM log topics are full 64-byte VM64 words (go-qrl `common.LogTopicLength`). Keccak hashes
+ * used as topics — event signature hashes and hashed dynamic indexed arguments — are ABI
+ * `bytes32` values, so the node places them in the HIGH bytes of the topic word and zero-pads
+ * the remainder (go-qrl `common.HashToLogTopic` / `common.BytesToLeftAlignedLogTopic`).
+ * Client-side topics have to reproduce that layout byte for byte, otherwise they neither match
+ * the topics a node emits nor pass `isTopic` validation.
+ *
+ * @param hash - a 0x-prefixed 32-byte Keccak hash.
+ * @returns - the 0x-prefixed 64-byte log topic holding that hash.
+ */
+export const hashToLogTopic = (hash: HexString): HexString => rightPad(hash, LOG_TOPIC_HEX_LENGTH);
 
 /**
  * Check if type is simplified struct format

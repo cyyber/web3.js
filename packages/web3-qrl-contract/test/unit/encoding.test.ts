@@ -22,9 +22,17 @@ describe('encoding decoding functions', () => {
 	describe('decode', () => {
 		describe('decodeEventABI', () => {
 			it.each(decodeEventABIData)(
-				'%s',
-				(event: AbiEventFragment & { signature: string }, inputs: LogsInput, output) => {
-					expect(decodeEventABI(event, inputs, [])).toBe(output);
+				'should decode %s',
+				(
+					_title: string,
+					event: AbiEventFragment & { signature: string },
+					inputs: LogsInput,
+					output,
+				) => {
+					// `toBe` compares object identity and could never have passed here; the rest
+					// of the suite compares decoded logs with `toStrictEqual`, which also holds
+					// the fixtures to the `signature: undefined` key an anonymous log carries.
+					expect(decodeEventABI(event, inputs, [])).toStrictEqual(output);
 				},
 			);
 		});
