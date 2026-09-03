@@ -17,14 +17,13 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 
 import { ResolverMethodMissingError } from '@theqrl/web3-errors';
 import { Contract } from '@theqrl/web3-qrl-contract';
-import { isNullish, sha3 } from '@theqrl/web3-utils';
-import { isAddressString, isHexStrict } from '@theqrl/web3-validator';
+import { bytesToHex, hexToAddress, isNullish, sha3 } from '@theqrl/web3-utils';
+import { isHexStrict } from '@theqrl/web3-validator';
 import { PublicResolverAbi } from './abi/qrns/PublicResolver.js';
 import { interfaceIds, methodsInInterface } from './config.js';
 import { Registry } from './registry.js';
 import { namehash } from './utils.js';
 
-// A QRL address is 'Q' + 128 hex characters, so the zero address has 128 zeros.
 const QRL_ZERO_ADDRESS = `Q${'0'.repeat(128)}`;
 
 //  Default public resolver
@@ -88,16 +87,19 @@ export class Resolver {
 
 		const address = await resolverContract.methods.addr(namehash(QRNSName), coinType).call();
 
-		// Apply the same zero/format sanity check used for the resolver address
-		// to the resolved target so a zero/invalid target is rejected.
-		if (typeof address !== 'string' || !isAddressString(address)) {
-			throw new Error(`QRNS resolver returned invalid address: ${String(address)}`);
+		if (coinType !== 60) return address;
+
+		const addressBytes = bytesToHex(address);
+		if (addressBytes.length !== 130) {
+			throw new Error(`QRNS resolver returned invalid address: ${addressBytes}`);
 		}
-		if (address.toLowerCase() === QRL_ZERO_ADDRESS.toLowerCase()) {
+
+		const qrlAddress = hexToAddress(addressBytes);
+		if (qrlAddress.toLowerCase() === QRL_ZERO_ADDRESS.toLowerCase()) {
 			throw new Error('QRNS resolver returned zero address');
 		}
 
-		return address;
+		return qrlAddress;
 	}
 
 	public async getPubkey(QRNSName: string) {
