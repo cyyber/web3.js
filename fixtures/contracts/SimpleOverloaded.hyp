@@ -1,6 +1,7 @@
+// SPDX-License-Identifier: GNU
 pragma hyperion >=0.0;
 
-contract SimpleOverload {
+contract SimpleOverloaded {
 	uint256 public secret;
 	string public someString;
 
