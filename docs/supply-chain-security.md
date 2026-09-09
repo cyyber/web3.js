@@ -115,7 +115,7 @@ one once every dependent has released a compatible fixed version.
 | `shell-quote@<1.8.4` | `1.9.0` | Newline-escaping advisory (critical). |
 | `ws@>=7.0.0 <7.5.11` | `7.5.11` | Memory-exhaustion DoS advisory (high), ws 7 line. |
 | `ws@>=8.0.0 <8.21.0` | `8.21.0` | Memory-exhaustion DoS advisory (high), ws 8 line. |
-| `path-to-regexp` | `0.1.13` | Patched version for GHSA-37ch-88jc-xwx2. |
+| `path-to-regexp@<0.1.13` | `0.1.13` | Patched version for GHSA-37ch-88jc-xwx2. |
 | `serialize-javascript` | `7.0.5` | Patched version for GHSA-5c6j-r48x-rmvq in the Docusaurus/webpack graph. |
 
 ### Development-tooling patch floors
