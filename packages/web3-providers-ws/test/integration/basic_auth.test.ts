@@ -15,6 +15,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 import express from 'express';
+import { once } from 'events';
 import { Server } from 'http';
 import { createProxyMiddleware } from 'http-proxy-middleware';
 import WebSocketProvider from '../../src/index';
@@ -31,7 +32,7 @@ describeIf(isWs)('Support of Basic Auth', () => {
 	let clientWsUrl: string;
 	let webSocketProvider: WebSocketProvider;
 
-	beforeAll(() => {
+	beforeAll(async () => {
 		clientWsUrl = getSystemTestProviderUrl();
 		const app = express();
 		const port = 3000;
@@ -41,14 +42,16 @@ describeIf(isWs)('Support of Basic Auth', () => {
 			target: clientWsUrl,
 			changeOrigin: true,
 			ws: true,
-			onError: () => {
-				console.warn('************** proxy error');
+			on: {
+				error: () => {
+					console.warn('************** proxy error');
+				},
 			},
-			logLevel: 'silent',
 		});
 
 		app.use(wsProxy);
 		server = app.listen(port, host);
+		await once(server, 'listening');
 
 		server.on('upgrade', (req, socket, head) => {
 			if (!req.headers.authorization?.includes('Basic ')) {
