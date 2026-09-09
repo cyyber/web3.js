@@ -161,7 +161,7 @@ describeIf(isWs)('WebSocketProvider - implemented methods', () => {
 				}
 
 				public sentRequestsSize() {
-					return this._pendingRequestsQueue.size;
+					return this._sentRequestsQueue.size;
 				}
 
 				public setPendingRequest(id: JsonRpcId, reqItem: SocketRequestItem<any, any, any>) {
@@ -193,7 +193,9 @@ describeIf(isWs)('WebSocketProvider - implemented methods', () => {
 			testResetProvider.setSentRequest(jsonRpcPayload.id, reqItem);
 			expect(testResetProvider.sentRequestsSize()).toBe(1);
 
+			const resetRejection = expect(defPromise).rejects.toThrow('the provider was reset');
 			testResetProvider.reset();
+			await resetRejection;
 			expect(testResetProvider.pendingRequestsSize()).toBe(0);
 			expect(testResetProvider.sentRequestsSize()).toBe(0);
 
