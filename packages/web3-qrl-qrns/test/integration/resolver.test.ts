@@ -64,7 +64,8 @@ describe('qrns', () => {
 	let accountOne: string;
 
 	const ZERO_NODE: Bytes = '0x0000000000000000000000000000000000000000000000000000000000000000';
-	const addressOne: Address = 'Q00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001';
+	const addressOne: Address =
+		'Q00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001';
 
 	const contentHash = '0x0000000000000000000000000000000000000000000000000000000000000001';
 
@@ -225,7 +226,7 @@ describe('qrns', () => {
 		// NOTE(rgeraldes24): resolver.methods.addr(node, coin) return type is 'bytes';
 		// value is not converted automatically to the 'address' type via ABI
 		const res = await resolver.methods.addr(domainNode, DEFAULT_COIN_TYPE).call(sendOptions);
-		expect(hexToAddress(res.toString())).toBe(accounts[1]);
+		expect(hexToAddress(res.toString())).toBe(`Q${accounts[1].slice(1).toLowerCase()}`);
 	});
 
 	it('fetches address', async () => {
@@ -235,9 +236,37 @@ describe('qrns', () => {
 
 		await resolver.methods.setAddr(domainNode, accountOne).send(sendOptions);
 
-		// NOTE(rgeraldes24): qrns.getAddress(domain) return type is 'bytes';
-		// value is not converted automatically to the 'address' type via ABI
 		const resultAddress = await qrns.getAddress(domain);
-		expect(hexToAddress(resultAddress.toString())).toBe(accountOne);
+		expect(resultAddress).toBe(`Q${accountOne.slice(1).toLowerCase()}`);
+	});
+
+	it('rejects registry and resolver updates from a non-owner', async () => {
+		const nonOwnerOptions = { ...sendOptions, from: accounts[2] };
+		await expect(
+			registry.methods.setOwner(domainNode, accounts[2]).call(nonOwnerOptions),
+		).rejects.toThrow();
+		await expect(
+			resolver.methods.setAddr(domainNode, addressOne).call(nonOwnerOptions),
+		).rejects.toThrow();
+	});
+
+	it('uses NameWrapper ownership for wrapped names', async () => {
+		const wrappedLabel = sha3('wrapped') as string;
+		const wrappedNode = namehash('wrapped');
+		await registry.methods
+			.setSubnodeOwner(ZERO_NODE, wrappedLabel, defaultAccount)
+			.send(sendOptions);
+		await registry.methods
+			.setResolver(wrappedNode, resolver.options.address as string)
+			.send(sendOptions);
+		await registry.methods
+			.setOwner(wrappedNode, nameWrapper.options.address as string)
+			.send(sendOptions);
+		await resolver.methods
+			.setAddr(wrappedNode, accounts[2])
+			.send({ ...sendOptions, from: accounts[2] });
+		await expect(qrns.getAddress('wrapped')).resolves.toBe(
+			`Q${accounts[2].slice(1).toLowerCase()}`,
+		);
 	});
 });
