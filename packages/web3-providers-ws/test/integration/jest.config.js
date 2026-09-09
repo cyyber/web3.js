@@ -24,9 +24,7 @@ module.exports = {
 		'node_modules/.+\\.m?js$': ['ts-jest', { tsconfig: './test/tsconfig.json' }],
 	},
 	// The proxy helper and its ESM dependencies must load in our CommonJS tests.
-	transformIgnorePatterns: [
-		'node_modules/(?!(?:\\.pnpm/)?(?:http-proxy-middleware|httpxy|is-plain-obj)(?:/|@))',
-	],
+	transformIgnorePatterns: ['node_modules/(?!(http-proxy-middleware|httpxy|is-plain-obj)/)'],
 	setupFilesAfterEnv: ['<rootDir>/test/integration/setup.js'],
 	testMatch: ['<rootDir>/test/integration/**/*.(spec|test).(js|ts)'],
 	roots: ['<rootDir>/test/integration/'],
