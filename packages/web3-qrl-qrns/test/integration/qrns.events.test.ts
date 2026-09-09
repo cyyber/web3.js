@@ -35,10 +35,11 @@ import {
 	getSystemTestProviderUrl,
 } from '../fixtures/system_tests_utils';
 
-import { QRNSRegistryAbi } from '../../../../fixtures/build/QRNSRegistry';
-import { QRNSRegistryBytecode } from '../fixtures/qrns/bytecode/QRNSRegistryBytecode';
-import { PublicResolverAbi } from '../../../../fixtures/build/PublicResolver';
-import { PublicResolverBytecode } from '../fixtures/qrns/bytecode/PublicResolverBytecode';
+import { QRNSRegistryAbi, QRNSRegistryBytecode } from '../../../../fixtures/build/QRNSRegistry';
+import {
+	PublicResolverAbi,
+	PublicResolverBytecode,
+} from '../../../../fixtures/build/PublicResolver';
 
 describeIf(isSocket)('qrns events', () => {
 	let registry: Contract<typeof QRNSRegistryAbi>;
