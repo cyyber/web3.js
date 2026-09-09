@@ -64,7 +64,6 @@ import {
 	newMLDSA87WalletFromExtendedSeed,
 	newQrlExtendedSeed,
 	qrlSeedFromBytes,
-	type MLDSA87Wallet,
 } from './qrl_wallet.js';
 import { TransactionFactory } from './tx/transactionFactory.js';
 import type { SignTransactionResult, TypedTransaction, Web3Account, SignResult } from './types.js';
@@ -119,28 +118,9 @@ export const hashMessage = (message: string): string => {
 	return sha3Raw(qrlMessage); // using keccak in web3-utils.sha3Raw instead of SHA3 (NIST Standard) as both are different
 };
 
-const signHashedMessage = (
-	data: string,
-	seed: Bytes,
-	signHash: (wallet: MLDSA87Wallet, hash: Uint8Array) => Uint8Array,
-): SignResult => {
-	const wallet = newMLDSA87WalletFromExtendedSeed(seed);
-	const hash = hashMessage(data);
-	const signature = signHash(wallet, hexToBytes(hash));
-
-	return {
-		message: data,
-		messageHash: hash,
-		signature: bytesToHex(signature),
-	};
-};
-
 /**
  * Signs arbitrary data with the private key derived from the given seed.
  * **_NOTE:_** The value passed as the data parameter will be UTF-8 HEX decoded and wrapped as follows: "\\x19QRL Signed Message:\\n" + message.length + message
- *
- * Signing is hedged (FIPS 204 3.4). For byte-identical signatures use
- * {@link signDeterministic} instead.
  *
  * @param data - The data to sign
  * @param seed - The 51 byte extended seed (3-byte descriptor + 48-byte seed)
@@ -155,32 +135,17 @@ const signHashedMessage = (
  * }
  * ```
  */
-export const sign = (data: string, seed: Bytes): SignResult =>
-	signHashedMessage(data, seed, (wallet, hash) => wallet.sign(hash));
+export const sign = (data: string, seed: Bytes): SignResult => {
+	const wallet = newMLDSA87WalletFromExtendedSeed(seed);
+	const hash = hashMessage(data);
+	const signature = wallet.sign(hexToBytes(hash));
 
-/**
- * Same wrapping and return shape as {@link sign}, but uses FIPS 204 3.5
- * deterministic ML-DSA-87 signing.
- *
- * Opt-in only: use when byte-identical signatures are themselves a protocol
- * requirement (RANDAO-style beacon contributions, KAT / ACVP vectors). Prefer
- * {@link sign} for general-purpose signing.
- *
- * @param data - The data to sign
- * @param seed - The 51 byte extended seed (3-byte descriptor + 48-byte seed)
- * @returns The signature Object containing the message, messageHash, signature
- *
- * ```ts
- * web3.qrl.accounts.signDeterministic('Some data', seed)
- * > {
- * message: 'Some data',
- * messageHash: '0x...',
- * signature: '0x...'
- * }
- * ```
- */
-export const signDeterministic = (data: string, seed: Bytes): SignResult =>
-	signHashedMessage(data, seed, (wallet, hash) => wallet.signDeterministic(hash));
+	return {
+		message: data,
+		messageHash: hash,
+		signature: bytesToHex(signature),
+	};
+};
 
 /**
  * Signs a QRL transaction with the private key derived from the given seed.

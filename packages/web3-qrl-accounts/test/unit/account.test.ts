@@ -26,7 +26,7 @@ import {
 	hashMessage,
 	seedToAccount,
 	recoverTransaction,
-	signDeterministic,
+	sign,
 	signTransaction,
 } from '../../src/account';
 import {
@@ -147,12 +147,12 @@ describe('accounts', () => {
 	});
 
 	describe('Sign Message', () => {
-		describe('signDeterministic', () => {
+		describe('sign', () => {
 			it.each(signatureRecoverData)('%s', (data, testObj) => {
-				const result = signDeterministic(data, testObj.seed);
+				const result = sign(data, testObj.seed);
 				expect(result.message).toEqual(data);
 				expect(result.messageHash).toEqual(hashMessage(data));
-				expect(result.signature).toEqual(testObj.signature);
+				expect(result.signature).toMatch(/^0x[0-9a-f]+$/i);
 			});
 		});
 	});

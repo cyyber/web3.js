@@ -17,7 +17,7 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 
 import { Address } from '@theqrl/web3-types';
 import { Web3ValidatorError, isAddressString } from '@theqrl/web3-validator';
-import { bytesToHex } from '@theqrl/web3-utils';
+import { bytesToHex, hexToBytes } from '@theqrl/web3-utils';
 import {
 	create,
 	decrypt,
@@ -25,10 +25,11 @@ import {
 	hashMessage,
 	seedToAccount,
 	recoverTransaction,
-	signDeterministic,
+	sign,
 	signTransaction,
 } from '../../src';
 import { TransactionFactory } from '../../src/tx/transactionFactory';
+import { newMLDSA87WalletFromExtendedSeed, verifyMLDSA87Signature } from '../../src/qrl_wallet';
 import {
 	invalidDecryptData,
 	invalidEncryptData,
@@ -112,12 +113,23 @@ describe('accounts', () => {
 	});
 
 	describe('Sign Message', () => {
-		describe('signDeterministic', () => {
+		describe('sign', () => {
 			it.each(signatureRecoverData)('%s', (data, testObj) => {
-				const result = signDeterministic(data, testObj.seed);
+				const wallet = newMLDSA87WalletFromExtendedSeed(testObj.seed);
+				const result = sign(data, testObj.seed);
+				const signature = hexToBytes(result.signature);
+
 				expect(result.message).toBe(data);
 				expect(result.messageHash).toBe(hashMessage(data));
-				expect(result.signature).toBe(testObj.signature);
+				expect(signature).toHaveLength(4627);
+				expect(
+					verifyMLDSA87Signature(
+						signature,
+						hexToBytes(result.messageHash),
+						wallet.getPK(),
+						wallet.getDescriptor(),
+					),
+				).toBe(true);
 			});
 		});
 	});
