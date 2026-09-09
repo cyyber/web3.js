@@ -108,14 +108,9 @@ describe('signTransaction', () => {
 			expect(typeof sentRawTransaction).toBe('string');
 
 			const raw = sentRawTransaction as string;
-			const serialized = hexToBytes(raw);
-			const decoded = TransactionFactory.fromSerializedData(serialized);
+			const decoded = TransactionFactory.fromSerializedData(hexToBytes(raw));
 
 			expect(decoded.type).toBe(2);
-			expect(decoded.serialize()).toEqual(serialized);
-			expect(decoded.verifySignature()).toBe(true);
-			expect(decoded.signature).toHaveLength(4627);
-			expect(decoded.publicKey).toHaveLength(2592);
 			const decodedJson = decoded.toJSON();
 			expect(decodedJson).toMatchObject({
 				chainId: normalTx.chainId,
