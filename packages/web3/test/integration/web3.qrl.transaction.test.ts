@@ -17,7 +17,7 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 
 import * as httpProvider from '@theqrl/web3-providers-http';
 import { recoverTransaction, TransactionFactory, Web3Account } from '@theqrl/web3-qrl-accounts';
-import { hexToBytes } from '@theqrl/web3-utils';
+import { addressToHex, hexToBytes } from '@theqrl/web3-utils';
 import Web3, { DEFAULT_RETURN_FORMAT, Transaction } from '../../src';
 // TODO(youtrack/theqrl/web3.js/8)
 import testsData from '../fixtures/transactions.json';
@@ -118,9 +118,17 @@ describe('signTransaction', () => {
 			expect(decoded.publicKey).toHaveLength(2592);
 			const decodedJson = decoded.toJSON();
 			expect(decodedJson).toMatchObject({
+				chainId: normalTx.chainId,
 				nonce: '0xf',
+				maxPriorityFeePerGas: normalTx.maxPriorityFeePerGas,
+				maxFeePerGas: normalTx.maxFeePerGas,
+				gasLimit: normalTx.gasLimit,
 				value: normalTx.value,
 				data: normalTx.data,
+				accessList: txObj.transaction.accessList.map(({ address, storageKeys }) => ({
+					address: addressToHex(address).toLowerCase(),
+					storageKeys,
+				})),
 				descriptor: '0x010000',
 			});
 			expect(decodedJson.to?.toLowerCase()).toBe(normalTx.to?.toLowerCase());
