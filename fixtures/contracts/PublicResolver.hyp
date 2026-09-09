@@ -68,10 +68,22 @@ interface QRNS {
 }
 
 // @openzeppelin/contracts/utils/introspection/IERC165.sol
-interface IERC165 { function supportsInterface(bytes4 interfaceId) external view returns (bool); }
+interface IERC165 {
+    function supportsInterface(bytes4 interfaceId) external view returns (bool);
+}
 
 // @openzeppelin/contracts/utils/introspection/ERC165.sol
-abstract contract ERC165 is IERC165 { function supportsInterface(bytes4 interfaceId) public view virtual override returns (bool) { return interfaceId == type(IERC165).interfaceId; } }
+abstract contract ERC165 is IERC165 {
+    function supportsInterface(bytes4 interfaceId)
+        public
+        view
+        virtual
+        override
+        returns (bool)
+    {
+        return interfaceId == type(IERC165).interfaceId;
+    }
+}
 
 // resolvers/ResolverBase.sol
 abstract contract ResolverBase is ERC165 {
@@ -361,19 +373,42 @@ abstract contract ContentHashResolver is IContentHashResolver, ResolverBase {
 
 // dnssec-oracle/BytesUtils.sol
 library BytesUtils {
-    function readUint8(bytes memory self, uint256 idx) internal pure returns (uint8) { return uint8(self[idx]); }
-    function readUint16(bytes memory self, uint256 idx) internal pure returns (uint16) {
+    function readUint8(bytes memory self, uint256 idx)
+        internal
+        pure
+        returns (uint8)
+    {
+        return uint8(self[idx]);
+    }
+
+    function readUint16(bytes memory self, uint256 idx)
+        internal
+        pure
+        returns (uint16)
+    {
         require(idx + 2 <= self.length);
         return (uint16(uint8(self[idx])) << 8) | uint16(uint8(self[idx + 1]));
     }
-    function readUint32(bytes memory self, uint256 idx) internal pure returns (uint32) {
+    function readUint32(bytes memory self, uint256 idx)
+        internal
+        pure
+        returns (uint32)
+    {
         require(idx + 4 <= self.length);
         return (uint32(readUint16(self, idx)) << 16) | uint32(readUint16(self, idx + 2));
     }
-    function equals(bytes memory self, bytes memory other) internal pure returns (bool) {
+    function equals(bytes memory self, bytes memory other)
+        internal
+        pure
+        returns (bool)
+    {
         return self.length == other.length && keccak256(self) == keccak256(other);
     }
-    function substring(bytes memory self, uint256 offset, uint256 len) internal pure returns (bytes memory) {
+    function substring(bytes memory self, uint256 offset, uint256 len)
+        internal
+        pure
+        returns (bytes memory)
+    {
         require(offset + len <= self.length);
         bytes memory result = new bytes(len);
         for (uint256 i = 0; i < len; i++) result[i] = self[offset + i];
@@ -383,7 +418,8 @@ library BytesUtils {
 
 // dnssec-oracle/RRUtils.sol
 library RRUtils {
-using BytesUtils for *;
+    using BytesUtils for *;
+
     function nameLength(bytes memory self, uint256 offset)
         internal
         pure
@@ -493,8 +529,6 @@ using BytesUtils for *;
                 iter.nextOffset - iter.rdataOffset
             );
     }
-
-
 }
 
 // resolvers/profiles/IDNSRecordResolver.sol

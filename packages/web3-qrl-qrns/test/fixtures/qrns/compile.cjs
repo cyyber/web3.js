@@ -1,4 +1,19 @@
-// SPDX-License-Identifier: MIT
+/*
+This file is part of web3.js.
+
+web3.js is free software: you can redistribute it and/or modify
+it under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+web3.js is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License
+along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
+*/
 const { readFileSync, writeFileSync } = require('node:fs');
 const { resolve } = require('node:path');
 const { execFileSync } = require('node:child_process');
@@ -52,6 +67,6 @@ for (const name of names) {
 		const artifact = JSON.parse(readFileSync(artifactFile, 'utf8'));
 		artifact.bytecode = `0x${contract.qrvm.bytecode.object}`;
 		artifact.deployedBytecode = `0x${contract.qrvm.deployedBytecode.object}`;
-		writeFileSync(artifactFile, `${JSON.stringify(artifact, null, '\t')}\n`);
+		writeFileSync(artifactFile, `${JSON.stringify(artifact, undefined, '\t')}\n`);
 	}
 }
