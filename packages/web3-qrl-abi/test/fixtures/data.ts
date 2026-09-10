@@ -27,16 +27,6 @@ import { encodeParameters, decodeParameters } from '../../src/api/parameters_api
 	return this.toString();
 };
 
-const decodedFrom = toChecksumAddress(
-	'Q9fa83f21ce9bd493b02d7460e03d82d44a77b4612d8b6a0acc94655106fbb96152d3e16a0ba414c368653bae2fe868cb109c05727ca47148114749451afb7cc1',
-);
-const decodedTo = toChecksumAddress(
-	'Q32bc304efea6eeda861cf8949ebb480da50b91da5f7f8d5918779865c88e16c790935cb72a27613327126ad142b767616784022611b0a345ff346f4e81fa1499',
-);
-const decodedUser = toChecksumAddress(
-	'Q5ac5b741524500d497d5793f8b271c9affddbf1acbdef73962d347c7e1cec21830ad2349fb08a3eb261c31a6f6bf9745aded2677da9ee1f6399b6da0303108fa',
-);
-
 export const jsonInterfaceValidData: [any, string][] = [
 	[
 		{
@@ -463,12 +453,12 @@ export const validDecodeLogsData: {
 			data: '0x000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000186a0',
 		},
 		output: {
-			'0': decodedFrom,
-			'1': decodedTo,
+			'0': toChecksumAddress('Q9fa83f21ce9bd493b02d7460e03d82d44a77b4612d8b6a0acc94655106fbb96152d3e16a0ba414c368653bae2fe868cb109c05727ca47148114749451afb7cc1'),
+			'1': toChecksumAddress('Q32bc304efea6eeda861cf8949ebb480da50b91da5f7f8d5918779865c88e16c790935cb72a27613327126ad142b767616784022611b0a345ff346f4e81fa1499'),
 			'2': '100000',
 			__length__: 3,
-			from: decodedFrom,
-			to: decodedTo,
+			from: toChecksumAddress('Q9fa83f21ce9bd493b02d7460e03d82d44a77b4612d8b6a0acc94655106fbb96152d3e16a0ba414c368653bae2fe868cb109c05727ca47148114749451afb7cc1'),
+			to: toChecksumAddress('Q32bc304efea6eeda861cf8949ebb480da50b91da5f7f8d5918779865c88e16c790935cb72a27613327126ad142b767616784022611b0a345ff346f4e81fa1499'),
 			value: '100000',
 		},
 	},
@@ -500,10 +490,10 @@ export const validDecodeLogsData: {
 			topics: ['0x5ac5b741524500d497d5793f8b271c9affddbf1acbdef73962d347c7e1cec21830ad2349fb08a3eb261c31a6f6bf9745aded2677da9ee1f6399b6da0303108fa'],
 		},
 		output: {
-			'0': decodedUser,
+			'0': toChecksumAddress('Q5ac5b741524500d497d5793f8b271c9affddbf1acbdef73962d347c7e1cec21830ad2349fb08a3eb261c31a6f6bf9745aded2677da9ee1f6399b6da0303108fa'),
 			'1': {
 				'0': 'Rick Sanchez',
-				'1': decodedUser,
+				'1': toChecksumAddress('Q5ac5b741524500d497d5793f8b271c9affddbf1acbdef73962d347c7e1cec21830ad2349fb08a3eb261c31a6f6bf9745aded2677da9ee1f6399b6da0303108fa'),
 				'2': {
 					'0': 'rick.c137@citadel.cfc',
 					'1': '+1 (555) 314-1593',
@@ -513,7 +503,7 @@ export const validDecodeLogsData: {
 				},
 				__length__: 3,
 				name: 'Rick Sanchez',
-				addr: decodedUser,
+				addr: toChecksumAddress('Q5ac5b741524500d497d5793f8b271c9affddbf1acbdef73962d347c7e1cec21830ad2349fb08a3eb261c31a6f6bf9745aded2677da9ee1f6399b6da0303108fa'),
 				contact: {
 					'0': 'rick.c137@citadel.cfc',
 					'1': '+1 (555) 314-1593',
@@ -523,10 +513,10 @@ export const validDecodeLogsData: {
 				},
 			},
 			__length__: 2,
-			addr: decodedUser,
+			addr: toChecksumAddress('Q5ac5b741524500d497d5793f8b271c9affddbf1acbdef73962d347c7e1cec21830ad2349fb08a3eb261c31a6f6bf9745aded2677da9ee1f6399b6da0303108fa'),
 			user: {
 				'0': 'Rick Sanchez',
-				'1': decodedUser,
+				'1': toChecksumAddress('Q5ac5b741524500d497d5793f8b271c9affddbf1acbdef73962d347c7e1cec21830ad2349fb08a3eb261c31a6f6bf9745aded2677da9ee1f6399b6da0303108fa'),
 				'2': {
 					'0': 'rick.c137@citadel.cfc',
 					'1': '+1 (555) 314-1593',
@@ -536,7 +526,7 @@ export const validDecodeLogsData: {
 				},
 				__length__: 3,
 				name: 'Rick Sanchez',
-				addr: decodedUser,
+				addr: toChecksumAddress('Q5ac5b741524500d497d5793f8b271c9affddbf1acbdef73962d347c7e1cec21830ad2349fb08a3eb261c31a6f6bf9745aded2677da9ee1f6399b6da0303108fa'),
 				contact: {
 					'0': 'rick.c137@citadel.cfc',
 					'1': '+1 (555) 314-1593',
@@ -908,7 +898,7 @@ export const validDecodeParametersData: {
 		outputResult: {
 			'0': {
 				'0': 'Rick Sanchez',
-				'1': decodedUser,
+				'1': toChecksumAddress('Q5ac5b741524500d497d5793f8b271c9affddbf1acbdef73962d347c7e1cec21830ad2349fb08a3eb261c31a6f6bf9745aded2677da9ee1f6399b6da0303108fa'),
 				'2': {
 					'0': 'rick.c137@citadel.cfc',
 					'1': '+1 (555) 314-1593',
@@ -917,7 +907,7 @@ export const validDecodeParametersData: {
 					phone: '+1 (555) 314-1593',
 				},
 				__length__: 3,
-				addr: decodedUser,
+				addr: toChecksumAddress('Q5ac5b741524500d497d5793f8b271c9affddbf1acbdef73962d347c7e1cec21830ad2349fb08a3eb261c31a6f6bf9745aded2677da9ee1f6399b6da0303108fa'),
 				contact: {
 					'0': 'rick.c137@citadel.cfc',
 					'1': '+1 (555) 314-1593',
@@ -930,7 +920,7 @@ export const validDecodeParametersData: {
 			__length__: 1,
 			user: {
 				'0': 'Rick Sanchez',
-				'1': decodedUser,
+				'1': toChecksumAddress('Q5ac5b741524500d497d5793f8b271c9affddbf1acbdef73962d347c7e1cec21830ad2349fb08a3eb261c31a6f6bf9745aded2677da9ee1f6399b6da0303108fa'),
 				'2': {
 					'0': 'rick.c137@citadel.cfc',
 					'1': '+1 (555) 314-1593',
@@ -939,7 +929,7 @@ export const validDecodeParametersData: {
 					phone: '+1 (555) 314-1593',
 				},
 				__length__: 3,
-				addr: decodedUser,
+				addr: toChecksumAddress('Q5ac5b741524500d497d5793f8b271c9affddbf1acbdef73962d347c7e1cec21830ad2349fb08a3eb261c31a6f6bf9745aded2677da9ee1f6399b6da0303108fa'),
 				contact: {
 					'0': 'rick.c137@citadel.cfc',
 					'1': '+1 (555) 314-1593',
