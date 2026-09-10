@@ -139,14 +139,12 @@ export class QRNS extends Web3Context<QRLExecutionAPI & Web3NetAPI> {
 	}
 
 	/**
-	 * Resolves a QRNS name to a QRL address.
+	 * Resolves a QRNS name via PublicResolver.addr(node, coinType).
 	 * @param QRNSName - The QRNS name to resolve
 	 * @param coinType - (Optional) The coin type, defaults to 60 (QRL)
-	 * @returns - The QRL address of the given name
+	 * @returns - The decoded addr() result (bytes for the coin-type overload)
 	 * ```ts
 	 * const address = await web3.qrl.qrns.getAddress('qrl.qrns');
-	 * console.log(address);
-	 * > 'Q693bA851060EFb980DACA536C4A1EF74585e1F14657DEa79e1f8f4655b543046e11c577AD9a2445443e9e3092AEeE55ecf99325f4ADd93BE6C23A2431F6065b9'
 	 * ```
 	 */
 	public async getAddress(QRNSName: string, coinType = 60) {

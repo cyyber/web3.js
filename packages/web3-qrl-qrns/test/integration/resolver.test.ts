@@ -234,7 +234,9 @@ describe('qrns', () => {
 		await resolver.methods.setAddr(domainNode, accountOne).send(sendOptions);
 
 		const resultAddress = await qrns.getAddress(domain);
-		expect(resultAddress).toBe(`Q${accountOne.slice(1).toLowerCase()}`);
+		expect(hexToAddress(resultAddress.toString())).toBe(
+			`Q${accountOne.slice(1).toLowerCase()}`,
+		);
 	});
 
 	it('rejects registry and resolver updates from a non-owner', async () => {
@@ -262,7 +264,8 @@ describe('qrns', () => {
 		await resolver.methods
 			.setAddr(wrappedNode, accounts[2])
 			.send({ ...sendOptions, from: accounts[2] });
-		await expect(qrns.getAddress('wrapped')).resolves.toBe(
+		const wrappedAddress = await qrns.getAddress('wrapped');
+		expect(hexToAddress(wrappedAddress.toString())).toBe(
 			`Q${accounts[2].slice(1).toLowerCase()}`,
 		);
 	});

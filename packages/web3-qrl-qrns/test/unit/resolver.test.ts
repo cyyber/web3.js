@@ -32,8 +32,7 @@ describe('resolver', () => {
 	let contract: Contract<typeof PublicResolverAbi>;
 	const mockAddress =
 		'Q00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000';
-	const nonZeroAddress = `Q${'0'.repeat(127)}1`;
-	const nonZeroAddressBytes = `0x${nonZeroAddress.slice(1)}`;
+	const nonZeroAddressBytes = `0x${'0'.repeat(127)}1`;
 	const QRNS_NAME = 'web3js.qrl';
 
 	beforeAll(() => {
@@ -149,7 +148,7 @@ describe('resolver', () => {
 			});
 
 			const address = await resolver.getAddress(QRNS_NAME);
-			expect(address).toBe(nonZeroAddress);
+			expect(address).toBe(nonZeroAddressBytes);
 			expect(supportsInterfaceMock).toHaveBeenCalledWith(
 				interfaceIds[methodsInInterface.addr],
 			);
