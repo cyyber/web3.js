@@ -34,12 +34,9 @@ import {
 } from '../fixtures/system_tests_utils';
 
 import { PublicResolverAbi as PublicResolver } from '../../src/abi/qrns/PublicResolver';
-import { QRNSRegistryAbi } from '../fixtures/qrns/abi/QRNSRegistry';
-import { NameWrapperAbi } from '../fixtures/qrns/abi/NameWrapper';
-import { PublicResolverAbi } from '../fixtures/qrns/abi/PublicResolver';
-import { QRNSRegistryBytecode } from '../fixtures/qrns/bytecode/QRNSRegistryBytecode';
-import { NameWrapperBytecode } from '../fixtures/qrns/bytecode/NameWrapperBytecode';
-import { PublicResolverBytecode } from '../fixtures/qrns/bytecode/PublicResolverBytecode';
+import { NameWrapperAbi, NameWrapperBytecode } from '../shared_fixtures/build/NameWrapper';
+import { PublicResolverAbi, PublicResolverBytecode } from '../shared_fixtures/build/PublicResolver';
+import { QRNSRegistryAbi, QRNSRegistryBytecode } from '../shared_fixtures/build/QRNSRegistry';
 
 describe('qrns', () => {
 	let registry: Contract<typeof QRNSRegistryAbi>;

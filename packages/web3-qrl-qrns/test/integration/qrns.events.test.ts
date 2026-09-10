@@ -35,12 +35,9 @@ import {
 	getSystemTestProviderUrl,
 } from '../fixtures/system_tests_utils';
 
-import { QRNSRegistryAbi } from '../fixtures/qrns/abi/QRNSRegistry';
-import { QRNSRegistryBytecode } from '../fixtures/qrns/bytecode/QRNSRegistryBytecode';
-import { NameWrapperAbi } from '../fixtures/qrns/abi/NameWrapper';
-import { NameWrapperBytecode } from '../fixtures/qrns/bytecode/NameWrapperBytecode';
-import { PublicResolverAbi } from '../fixtures/qrns/abi/PublicResolver';
-import { PublicResolverBytecode } from '../fixtures/qrns/bytecode/PublicResolverBytecode';
+import { NameWrapperAbi, NameWrapperBytecode } from '../shared_fixtures/build/NameWrapper';
+import { PublicResolverAbi, PublicResolverBytecode } from '../shared_fixtures/build/PublicResolver';
+import { QRNSRegistryAbi, QRNSRegistryBytecode } from '../shared_fixtures/build/QRNSRegistry';
 
 describeIf(isSocket)('qrns events', () => {
 	let registry: Contract<typeof QRNSRegistryAbi>;
@@ -66,7 +63,8 @@ describeIf(isSocket)('qrns events', () => {
 	let accountOne: string;
 
 	const ZERO_NODE: Bytes = '0x0000000000000000000000000000000000000000000000000000000000000000';
-	const addressOne: Address = 'Q00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001';
+	const addressOne: Address =
+		'Q00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001';
 
 	beforeAll(async () => {
 		accounts = await getSystemTestAccounts();
