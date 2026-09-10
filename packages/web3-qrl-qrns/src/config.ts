@@ -47,7 +47,7 @@ export const methodsInInterface: { [T: string]: string } = {
  */
 // TODO(https://github.com/cyyber/web3.js/issues/103)
 export const registryAddresses: { [T: string]: string } = {
-	main: 'Q000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c2e074ec69a0dfb2997ba6c7d2e1e',
+	main: 'Q33380cd8b47eed92b0dcd1ccca2ee84efd0c8b87a4fe6ee4a918969cdd454c0b04ac9f03ffaafa765af0cbeab572d8c9dd514044aa94adee50fa5d361a3e4629',
 };
 
 export const networkIds: { [T: string]: string } = {

@@ -61,7 +61,7 @@ export class QRNS extends Web3Context<QRLExecutionAPI & Web3NetAPI> {
 	 * @example
 	 * ```ts
 	 * const qrns = new QRNS(
-	 * 	"Q000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c2e074ec69a0dfb2997ba6c7d2e1e",
+	 * 	"Q33380cd8b47eed92b0dcd1ccca2ee84efd0c8b87a4fe6ee4a918969cdd454c0b04ac9f03ffaafa765af0cbeab572d8c9dd514044aa94adee50fa5d361a3e4629",
 	 * 	"http://localhost:8545"
 	 * );
 	 *
@@ -139,12 +139,14 @@ export class QRNS extends Web3Context<QRLExecutionAPI & Web3NetAPI> {
 	}
 
 	/**
-	 * Resolves a QRNS name via PublicResolver.addr(node, coinType).
+	 * Resolves a QRNS name to a QRL address.
 	 * @param QRNSName - The QRNS name to resolve
 	 * @param coinType - (Optional) The coin type, defaults to 60 (QRL)
 	 * @returns - The decoded addr() result (bytes for the coin-type overload)
 	 * ```ts
 	 * const address = await web3.qrl.qrns.getAddress('qrl.qrns');
+	 * console.log(address);
+	 * > '0x693ba851060efb980daca536c4a1ef74585e1f14657dea79e1f8f4655b543046e11c577ad9a2445443e9e3092aeee55ecf99325f4add93be6c23a2431f6065b9'
 	 * ```
 	 */
 	public async getAddress(QRNSName: string, coinType = 60) {
@@ -214,7 +216,7 @@ export class QRNS extends Web3Context<QRLExecutionAPI & Web3NetAPI> {
 	 * @example
 	 * ```ts
 	 * console.log(await web3.qrl.qrns.checkNetwork());
-	 * > 'Q000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c2e074ec69a0dfb2997ba6c7d2e1e'
+	 * > 'Q33380cd8b47eed92b0dcd1ccca2ee84efd0c8b87a4fe6ee4a918969cdd454c0b04ac9f03ffaafa765af0cbeab572d8c9dd514044aa94adee50fa5d361a3e4629'
 	 * ```
 	 */
 	public async checkNetwork() {
@@ -276,7 +278,7 @@ export class QRNS extends Web3Context<QRLExecutionAPI & Web3NetAPI> {
 	 * @param txConfig - (Optional) The transaction config
 	 * @returns - The transaction receipt
 	 * ```ts
-	 * const receipt = await qrns.setAddress('web3js.qrl','Q...');
+	 * const receipt = await qrns.setAddress('web3js.qrl','Q33380cd8b47eed92b0dcd1ccca2ee84efd0c8b87a4fe6ee4a918969cdd454c0b04ac9f03ffaafa765af0cbeab572d8c9dd514044aa94adee50fa5d361a3e4629');
 	 *```
 	 */
 	public async setAddress(
