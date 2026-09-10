@@ -187,6 +187,37 @@ describe('qrns', () => {
 		});
 	});
 
+	describe('text', () => {
+		it('getText', async () => {
+			const getTextMock = jest.spyOn(qrns['_resolver'], 'getText').mockResolvedValue('value');
+
+			await qrns.getText(QRNS_NAME, 'url');
+			expect(getTextMock).toHaveBeenCalledWith(QRNS_NAME, 'url');
+		});
+
+		it('getText from address', async () => {
+			const getNameMock = jest
+				.spyOn(qrns['_resolver'], 'getName')
+				.mockResolvedValue(QRNS_NAME);
+			const getTextMock = jest.spyOn(qrns['_resolver'], 'getText').mockResolvedValue('value');
+
+			await qrns.getText(mockAddress, 'url');
+			expect(getNameMock).toHaveBeenCalledWith(mockAddress, false);
+			expect(getTextMock).toHaveBeenCalledWith(QRNS_NAME, 'url');
+		});
+	});
+
+	describe('name', () => {
+		it('getName', async () => {
+			const getNameMock = jest
+				.spyOn(qrns['_resolver'], 'getName')
+				.mockResolvedValue(QRNS_NAME);
+
+			await qrns.getName(mockAddress);
+			expect(getNameMock).toHaveBeenCalledWith(mockAddress, true);
+		});
+	});
+
 	it('supportsInterface', async () => {
 		const interfaceId = 'setAddr';
 		const supportsInterfaceMock = jest
