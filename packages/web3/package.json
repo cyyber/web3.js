@@ -59,6 +59,7 @@
 		"test:watch": "pnpm run test -- --watch",
 		"test:unit": "jest --config=./test/unit/jest.config.js",
 		"test:integration": "jest --config=./test/integration/jest.config.js --forceExit",
+		"test:integration:stress": "jest --config=./test/stress/jest.config.js --forceExit",
 		"test:blackbox:gqrl:http": "./scripts/black_box_test.sh gqrl http",
 		"test:blackbox:gqrl:ws": "./scripts/black_box_test.sh gqrl ws"
 	},
