@@ -70,3 +70,7 @@ export const toUpperCaseHex = (str: string) => {
 export const toUpperCaseAddress = (str: string) => {
 	return `Q${str.slice(1).toUpperCase()}`;
 };
+
+export const toLowerCaseAddress = (str: string) => {
+	return `Q${str.slice(1).toLowerCase()}`;
+};
