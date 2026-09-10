@@ -17,6 +17,7 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 
 import { ResolverMethodMissingError } from '@theqrl/web3-errors';
 import { Contract } from '@theqrl/web3-qrl-contract';
+import { Address, PayableCallOptions } from '@theqrl/web3-types';
 import { bytesToHex, hexToAddress, isNullish, sha3 } from '@theqrl/web3-utils';
 import { isHexStrict } from '@theqrl/web3-validator';
 import { PublicResolverAbi } from './abi/qrns/PublicResolver.js';
@@ -105,5 +106,34 @@ export class Resolver {
 		await this.checkInterfaceSupport(resolverContract, methodsInInterface.contenthash);
 
 		return resolverContract.methods.contenthash(namehash(QRNSName)).call();
+	}
+
+	public async setAddress(QRNSName: string, address: Address, txConfig: PayableCallOptions) {
+		const resolverContract = await this.getResolverContractAdapter(QRNSName);
+		await this.checkInterfaceSupport(resolverContract, methodsInInterface.setAddr);
+
+		return resolverContract.methods.setAddr(namehash(QRNSName), address).send(txConfig);
+	}
+
+	public async getText(QRNSName: string, key: string) {
+		const resolverContract = await this.getResolverContractAdapter(QRNSName);
+		await this.checkInterfaceSupport(resolverContract, methodsInInterface.text);
+
+		return resolverContract.methods.text(namehash(QRNSName), key).call();
+	}
+
+	public async getName(address: string, checkInterfaceSupport = true) {
+		const hexBody =
+			address.startsWith('Q') || address.startsWith('q')
+				? address.slice(1)
+				: address.replace(/^0x/i, '');
+		const reverseName = `${hexBody.toLowerCase()}.addr.reverse`;
+
+		const resolverContract = await this.getResolverContractAdapter(reverseName);
+
+		if (checkInterfaceSupport)
+			await this.checkInterfaceSupport(resolverContract, methodsInInterface.name);
+
+		return resolverContract.methods.name(namehash(reverseName)).call();
 	}
 }

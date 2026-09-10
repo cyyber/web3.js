@@ -108,6 +108,27 @@ describe('resolver', () => {
 		);
 	});
 	describe('addr', () => {
+		it('setAddr valid', async () => {
+			const checkInteraface = jest.spyOn(resolver, 'checkInterfaceSupport');
+
+			const setAddrMock = jest.spyOn(contract.methods, 'setAddr').mockReturnValue({
+				send: jest.fn(),
+			} as unknown as NonPayableMethodObject<any, any>);
+
+			jest.spyOn(contract.methods, 'supportsInterface').mockReturnValue({
+				call: jest.fn().mockReturnValue(true),
+			} as unknown as NonPayableMethodObject<any, any>);
+
+			jest.spyOn(registry, 'getResolver').mockImplementation(async () => {
+				return new Promise(resolve => {
+					resolve(contract);
+				});
+			});
+
+			await resolver.setAddress(QRNS_NAME, mockAddress, { from: mockAddress });
+			expect(checkInteraface).toHaveBeenCalled();
+			expect(setAddrMock).toHaveBeenCalledWith(namehash(QRNS_NAME), mockAddress);
+		});
 		it('getAddress', async () => {
 			const supportsInterfaceMock = jest
 				.spyOn(contract.methods, 'supportsInterface')
@@ -155,7 +176,62 @@ describe('resolver', () => {
 			);
 			expect(addrMock).toHaveBeenCalledWith(namehash(QRNS_NAME), 0);
 		});
+	});
 
+	describe('text', () => {
+		it('getText', async () => {
+			const supportsInterfaceMock = jest
+				.spyOn(contract.methods, 'supportsInterface')
+				.mockReturnValue({
+					call: async () => Promise.resolve(true),
+				} as unknown as NonPayableMethodObject<any, any>);
+
+			const textMock = jest.spyOn(contract.methods, 'text').mockReturnValue({
+				call: jest.fn(),
+			} as unknown as NonPayableMethodObject<any, any>);
+
+			jest.spyOn(registry, 'getResolver').mockImplementation(async () => {
+				return new Promise(resolve => {
+					resolve(contract);
+				});
+			});
+
+			await resolver.getText(QRNS_NAME, 'key');
+			expect(supportsInterfaceMock).toHaveBeenCalledWith(
+				interfaceIds[methodsInInterface.text],
+			);
+			expect(textMock).toHaveBeenCalledWith(namehash(QRNS_NAME), 'key');
+		});
+	});
+
+	describe('name', () => {
+		it('getName', async () => {
+			const address = `Q${'31'.repeat(64)}`;
+
+			const supportsInterfaceMock = jest
+				.spyOn(contract.methods, 'supportsInterface')
+				.mockReturnValue({
+					call: async () => Promise.resolve(true),
+				} as unknown as NonPayableMethodObject<any, any>);
+
+			const nameMock = jest.spyOn(contract.methods, 'name').mockReturnValue({
+				call: jest.fn(),
+			} as unknown as NonPayableMethodObject<any, any>);
+
+			jest.spyOn(registry, 'getResolver').mockImplementation(async () => {
+				return new Promise(resolve => {
+					resolve(contract);
+				});
+			});
+
+			await resolver.getName(address);
+			expect(supportsInterfaceMock).toHaveBeenCalledWith(
+				interfaceIds[methodsInInterface.name],
+			);
+
+			const reverseName = `${address.slice(1).toLowerCase()}.addr.reverse`;
+			expect(nameMock).toHaveBeenCalledWith(namehash(reverseName));
+		});
 	});
 
 	describe('pubkey', () => {

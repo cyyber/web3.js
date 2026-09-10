@@ -38,6 +38,8 @@ export const methodsInInterface: { [T: string]: string } = {
 	pubkey: 'pubkey',
 	setContenthash: 'contenthash',
 	contenthash: 'contenthash',
+	text: 'text',
+	name: 'name',
 };
 
 /**
