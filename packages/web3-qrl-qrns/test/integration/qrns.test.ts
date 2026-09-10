@@ -18,7 +18,7 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 import { getBlock } from '@theqrl/web3-qrl';
 import { Contract, PayableTxOptions } from '@theqrl/web3-qrl-contract';
 import { Address, Bytes, DEFAULT_RETURN_FORMAT } from '@theqrl/web3-types';
-import { sha3 } from '@theqrl/web3-utils';
+import { sha3, toChecksumAddress } from '@theqrl/web3-utils';
 import { IpcProvider } from '@theqrl/web3-providers-ipc';
 import { QRNS } from '../../src';
 import { namehash } from '../../src/utils';
@@ -150,7 +150,7 @@ describe('qrns', () => {
 	it('should return the subnode owner of "resolver"', async () => {
 		const owner = await qrns.getOwner('resolver');
 
-		expect(owner).toEqual(`Q${defaultAccount.slice(1).toLowerCase()}`);
+		expect(owner).toEqual(toChecksumAddress(defaultAccount));
 	});
 
 	it('should return the registered resolver for the subnode "resolver"', async () => {
@@ -162,7 +162,7 @@ describe('qrns', () => {
 	it('should get the owner record for a name', async () => {
 		const web3jsOwner = await qrns.getOwner(web3jsName);
 
-		expect(web3jsOwner).toEqual(`Q${defaultAccount.slice(1).toLowerCase()}`);
+		expect(web3jsOwner).toEqual(toChecksumAddress(defaultAccount));
 	});
 
 	it('should get TTL', async () => {

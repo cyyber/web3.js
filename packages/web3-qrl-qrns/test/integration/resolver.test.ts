@@ -17,7 +17,7 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 
 import Web3QRL from '@theqrl/web3-qrl';
 import { Contract, PayableTxOptions } from '@theqrl/web3-qrl-contract';
-import { hexToAddress, sha3 } from '@theqrl/web3-utils';
+import { hexToAddress, sha3, toChecksumAddress } from '@theqrl/web3-utils';
 
 import { Address, Bytes, DEFAULT_RETURN_FORMAT } from '@theqrl/web3-types';
 import { IpcProvider } from '@theqrl/web3-providers-ipc';
@@ -234,7 +234,7 @@ describe('qrns', () => {
 		await resolver.methods.setAddr(domainNode, accountOne).send(sendOptions);
 
 		const resultAddress = await qrns.getAddress(domain);
-		expect(resultAddress).toBe(`Q${accountOne.slice(1).toLowerCase()}`);
+		expect(resultAddress).toBe(toChecksumAddress(accountOne));
 	});
 
 	it('rejects registry and resolver updates from a non-owner', async () => {
@@ -262,8 +262,6 @@ describe('qrns', () => {
 		await resolver.methods
 			.setAddr(wrappedNode, accounts[2])
 			.send({ ...sendOptions, from: accounts[2] });
-		await expect(qrns.getAddress('wrapped')).resolves.toBe(
-			`Q${accounts[2].slice(1).toLowerCase()}`,
-		);
+		await expect(qrns.getAddress('wrapped')).resolves.toBe(toChecksumAddress(accounts[2]));
 	});
 });

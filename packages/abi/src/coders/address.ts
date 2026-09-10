@@ -16,7 +16,7 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { hexZeroPad } from '@ethersproject/bytes';
-import { hexToAddress, addressToHex } from '@theqrl/web3-utils';
+import { hexToAddress, addressToHex, toChecksumAddress } from '@theqrl/web3-utils';
 
 import { Coder, Reader, Writer } from './abstract-coder.js';
 
@@ -58,6 +58,12 @@ export class AddressCoder extends Coder {
 	}
 
 	decode(reader: Reader): any {
-		return hexToAddress(hexZeroPad(reader.readValue().toHexString(), ADDRESS_BYTES));
+		// hexToAddress is a format conversion (0x-hex → Q + lowercase body).
+		// toChecksumAddress then restores the mixed-case form that ethers
+		// getAddress used to return for 20-byte addresses. ethers cannot be
+		// used here: it still hard-codes the 20-byte ETH layout.
+		return toChecksumAddress(
+			hexToAddress(hexZeroPad(reader.readValue().toHexString(), ADDRESS_BYTES)),
+		);
 	}
 }

@@ -17,7 +17,7 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 
 import { ResolverMethodMissingError } from '@theqrl/web3-errors';
 import { Contract } from '@theqrl/web3-qrl-contract';
-import { bytesToHex, hexToAddress, isNullish, sha3 } from '@theqrl/web3-utils';
+import { bytesToHex, hexToAddress, isNullish, sha3, toChecksumAddress } from '@theqrl/web3-utils';
 import { isHexStrict } from '@theqrl/web3-validator';
 import { PublicResolverAbi } from './abi/qrns/PublicResolver.js';
 import { interfaceIds, methodsInInterface } from './config.js';
@@ -99,7 +99,7 @@ export class Resolver {
 			throw new Error('QRNS resolver returned zero address');
 		}
 
-		return qrlAddress;
+		return toChecksumAddress(qrlAddress);
 	}
 
 	public async getPubkey(QRNSName: string) {
