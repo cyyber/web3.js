@@ -32,8 +32,8 @@ const buildPath = resolve(__dirname, '../fixtures/build');
 const contractsPath = resolve(__dirname, '../fixtures/contracts');
 const importDir = resolve(__dirname, '../node_modules');
 
-// QRNS fixtures are compiled with native hypc from cyyber/hyperion.
-// Rebuild them with `pnpm compile:qrns-contracts` instead of this @theqrl/hypc path.
+// QRNS fixtures are compiled with native hypc from cyyber/hyperion, not this
+// @theqrl/hypc path. Rebuild them with `node ./scripts/compile_qrns_contracts.js`.
 const QRNS_FIXTURES = ['NameWrapper', 'PublicResolver', 'QRNSRegistry'];
 const QRNS_SOURCES = new Set(QRNS_FIXTURES.map(name => `${name}.hyp`));
 

@@ -65,7 +65,6 @@
 		"husky:install": "husky install",
 		"husky:uninstall": "husky uninstall",
 		"compile:contracts": "node ./scripts/compile_contracts.js && pnpm run format && pnpm run lint:fix",
-		"compile:qrns-contracts": "node ./scripts/compile_qrns_contracts.js",
 		"release": "multi-semantic-release --ignore-private-packages",
 		"release:dry-run": "multi-semantic-release --ignore-private-packages --dry-run",
 		"release:inspect-packages": "node scripts/release/inspect-packages.js",

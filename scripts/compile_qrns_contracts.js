@@ -27,10 +27,10 @@ Sources: fixtures/contracts/{QRNSRegistry,PublicResolver,NameWrapper}.hyp
 Artifacts: fixtures/build/{QRNSRegistry,PublicResolver,NameWrapper}.{ts,json}
 
 Compile with native hypc from https://github.com/cyyber/hyperion (optimizer
-enabled, 200 runs). Do not compile them with scripts/compile_contracts.js
+enabled, 200 runs). Do not compile them with `pnpm compile:contracts`
 (@theqrl/hypc). Override the binary with HYPC_PATH if needed.
 
-  pnpm compile:qrns-contracts
+  node ./scripts/compile_qrns_contracts.js
 
 src/abi/qrns remains the published library ABI and is not generated here.
 */
