@@ -58,10 +58,6 @@ export class AddressCoder extends Coder {
 	}
 
 	decode(reader: Reader): any {
-		// hexToAddress is a format conversion (0x-hex → Q + lowercase body).
-		// toChecksumAddress then restores the mixed-case form that ethers
-		// getAddress used to return for 20-byte addresses. ethers cannot be
-		// used here: it still hard-codes the 20-byte ETH layout.
 		return toChecksumAddress(
 			hexToAddress(hexZeroPad(reader.readValue().toHexString(), ADDRESS_BYTES)),
 		);
