@@ -75,18 +75,10 @@ export class Common extends EventEmitter {
 	 * Common.custom({chainId: 123})
 	 * ```
 	 *
-	 * There are also selected supported custom chains which can be initialized by using one of the
-	 * {@link CustomChains} for {@link chainParamsOrName}, e.g.:
+	 * Named {@link CustomChain} values are reserved for later use; pass a
+	 * parameter dictionary for a custom chain today.
 	 *
-	 * ```javascript
-	 * Common.custom(CustomChains.MaticMumbai)
-	 * ```
-	 *
-	 * Note that these supported custom chains only provide some base parameters (usually the chain and
-	 * network ID and a name) and can only be used for selected use cases (e.g. sending a tx with
-	 * the `web3-utils/tx` library to a Layer-2 chain).
-	 *
-	 * @param chainParamsOrName Custom parameter dict (`name` will default to `custom-chain`) or string with name of a supported custom chain
+	 * @param chainParamsOrName Custom parameter dict (`name` will default to `custom-chain`) or a {@link CustomChain} name
 	 * @param opts Custom chain options to set the {@link CustomCommonOpts.baseChain}, selected {@link CustomCommonOpts.hardfork} and others
 	 */
 	public static custom(
@@ -179,6 +171,9 @@ export class Common extends EventEmitter {
 			HARDFORK_SPECS[hf.name as HardforkSpecKeys],
 		]);
 		this._hardfork = this.DEFAULT_HARDFORK;
+		// Validate the chain default even when `opts.hardfork` is omitted.
+		// Otherwise `defaultHardfork: 'istanbul'` would be stored without a check.
+		this.setHardfork(this.DEFAULT_HARDFORK);
 		if (opts.hardfork !== undefined) {
 			this.setHardfork(opts.hardfork);
 		}
@@ -222,7 +217,7 @@ export class Common extends EventEmitter {
 
 	/**
 	 * Sets the hardfork to get params for
-	 * @param hardfork String identifier (e.g. 'byzantium') or {@link Hardfork} enum
+	 * @param hardfork String identifier (e.g. 'zond') or {@link Hardfork} enum
 	 */
 	public setHardfork(hardfork: string | Hardfork): void {
 		let existing = false;
@@ -424,7 +419,7 @@ export class Common extends EventEmitter {
 		// eslint-disable-next-line no-null/no-null
 		let value = null;
 		for (const hfChanges of this.HARDFORK_CHANGES) {
-			// QIP-referencing HF file (e.g. berlin.json)
+			// QIP-referencing HF file (e.g. zond.ts)
 			if ('qips' in hfChanges[1]) {
 				// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment
 				const hfQIPs = hfChanges[1].qips;
@@ -434,7 +429,7 @@ export class Common extends EventEmitter {
 					// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 					value = typeof valueQIP === 'bigint' ? valueQIP : value;
 				}
-				// Parameter-inlining HF file (e.g. istanbul.json)
+				// Parameter-inlining HF file (e.g. zond.ts)
 			} else {
 				// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
 				if (hfChanges[1][topic] === undefined) {
@@ -538,7 +533,8 @@ export class Common extends EventEmitter {
 		const blockNumber = toType(_blockNumber, TypeOutput.BigInt);
 		const hardfork = _hardfork ?? this._hardfork;
 		const hfBlock = this.hardforkBlock(hardfork);
-		if (typeof hfBlock === 'bigint' && hfBlock !== BigInt(0) && blockNumber >= hfBlock) {
+		// Block 0 is a valid activation (QRL is POS / zond from genesis).
+		if (typeof hfBlock === 'bigint' && blockNumber >= hfBlock) {
 			return true;
 		}
 		return false;
@@ -714,7 +710,7 @@ export class Common extends EventEmitter {
 			// eslint-disable-next-line no-null/no-null
 			blockOrTime = blockOrTime !== null ? Number(blockOrTime) : null;
 
-			// Skip for chainstart (0), not applied HFs (null) and
+			// Skip genesis (block 0), not applied HFs (null) and
 			// when already applied on same blockOrTime HFs
 			if (
 				typeof blockOrTime === 'number' &&

@@ -14,36 +14,30 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
-import { InvalidPropertiesForTransactionTypeError } from '@theqrl/web3-errors';
 
 import { detectTransactionType } from '../../src/utils/detect_transaction_type';
 import {
 	transactionType0x2,
 	transactionTypeUndefined,
-	transactionTypeValidationError,
+	transactionTypeUnsupportedHardfork,
 } from '../fixtures/detect_transaction_type';
 
 describe('detectTransactionType', () => {
-	describe('should override detectTransactionType method', () => {
-		it.skip('should call override method', () => {
-			const overrideFunction = jest.fn();
-			detectTransactionType(transactionTypeUndefined[0]);
-			expect(overrideFunction).toHaveBeenCalledWith(transactionTypeUndefined[0]);
-		});
-	});
-
 	describe('should detect transaction type 0x2', () => {
 		it.each(transactionType0x2)('%s', transaction => {
 			expect(detectTransactionType(transaction)).toBe('0x2');
 		});
 	});
 
-	// NOTE(rgeraldes24): test not valid atm
-	describe.skip('should throw validation error', () => {
-		it.each(transactionTypeValidationError)('%s', transaction => {
-			expect(() => detectTransactionType(transaction)).toThrow(
-				InvalidPropertiesForTransactionTypeError,
-			);
+	describe('should return undefined when type cannot be inferred', () => {
+		it.each(transactionTypeUndefined)('%s', transaction => {
+			expect(detectTransactionType(transaction)).toBeUndefined();
+		});
+	});
+
+	describe('should not treat an unsupported hardfork as type-2-capable', () => {
+		it.each(transactionTypeUnsupportedHardfork)('%s', transaction => {
+			expect(detectTransactionType(transaction)).toBeUndefined();
 		});
 	});
 });

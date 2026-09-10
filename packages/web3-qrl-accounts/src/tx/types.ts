@@ -33,7 +33,7 @@ export interface TxOptions {
 	 *
 	 * Default: {@link Common} object set to `mainnet` and the default hardfork as defined in the {@link Common} class.
 	 *
-	 * Current default hardfork: `istanbul`
+	 * Current default hardfork: `zond`
 	 */
 	common?: Common;
 	/**

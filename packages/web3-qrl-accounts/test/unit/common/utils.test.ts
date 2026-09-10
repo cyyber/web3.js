@@ -18,7 +18,7 @@ import { hexToBytes } from '@theqrl/web3-utils';
 import { Common } from '../../../src/common/common';
 import { Hardfork } from '../../../src/common';
 import { parseGqrlGenesis } from '../../../src/common/utils';
-import invalidSpuriousDragon from '../../fixtures/common/invalid-spurious-dragon.json';
+import invalidGenesis from '../../fixtures/common/invalid-genesis.json';
 import posExecGenesis from '../../fixtures/common/pos-exec-genesis.json';
 import noExtraData from '../../fixtures/common/no-extra-data.json';
 import gqrlGenesisKiln from '../../fixtures/common/gqrl-genesis-kiln.json';
@@ -28,9 +28,9 @@ describe('[Utils/Parse]', () => {
 		zond: '0xbcadf543',
 	};
 
-	it('should throw with invalid Spurious Dragon blocks', async () => {
+	it('should throw with an invalid genesis file', async () => {
 		expect(() => {
-			parseGqrlGenesis(invalidSpuriousDragon, 'bad_params');
+			parseGqrlGenesis(invalidGenesis, 'bad_params');
 		}).toThrow();
 	});
 
@@ -75,15 +75,10 @@ describe('[Utils/Parse]', () => {
 
 		expect(common.hardfork()).toEqual(Hardfork.Zond);
 
-		// Ok lets schedule zond at block 0, this should force merge to be scheduled at just after
-		// genesis if even mergeForkIdTransition is not confirmed to be post merge
-		// This will also check if the forks are being correctly sorted based on block
 		Object.assign(gqrlGenesisKiln.config, { zondTime: Math.floor(Date.now() / 1000) });
 		const common1 = Common.fromGqrlGenesis(gqrlGenesisKiln, {
 			chain: 'customChain',
 		});
-		// merge hardfork is now scheduled just after zond even if mergeForkIdTransition is not confirmed
-		// to be post merge
 		expect(common1.hardforks().map(hf => hf.name)).toEqual(['zond']);
 
 		expect(common1.hardfork()).toEqual(Hardfork.Zond);
@@ -101,7 +96,6 @@ describe('[Utils/Parse]', () => {
 		expect(common.getHardforkByBlockNumber(8)).toEqual(Hardfork.Zond);
 		expect(common.getHardforkByBlockNumber(8, BigInt(2))).toEqual(Hardfork.Zond);
 		expect(common.getHardforkByBlockNumber(8, 8)).toEqual(Hardfork.Zond);
-		// should be post merge at zond
 		expect(common.getHardforkByBlockNumber(8, 8)).toEqual(Hardfork.Zond);
 		expect(common.hardfork()).toEqual(Hardfork.Zond);
 	});

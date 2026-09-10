@@ -66,10 +66,6 @@ describe('[BaseTransaction]', () => {
 			tx = txType.class.fromTxData({}, { common: initCommon });
 			expect(tx.common.hardfork()).toBe('zond');
 
-			// NOTE(rgeraldes24): not valid since we don't have multiple forks
-			// initCommon.setHardfork(Hardfork.Byzantium);
-			// expect(tx.common.hardfork()).toBe('byzantium');
-
 			tx = txType.class.fromTxData({}, { common, freeze: false });
 			expect(!Object.isFrozen(tx)).toBe(true);
 

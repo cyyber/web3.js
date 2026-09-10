@@ -711,18 +711,18 @@ describe('defaults', () => {
 
 			// after set
 			web3QRL.setConfig({
-				defaultHardfork: 'dao',
+				defaultHardfork: 'zond',
 			});
-			expect(web3QRL.defaultHardfork).toBe('dao');
+			expect(web3QRL.defaultHardfork).toBe('zond');
 
 			// set by create new instance
 			qrl2 = new Web3QRL({
 				provider: web3QRL.provider,
 				config: {
-					defaultHardfork: 'istanbul',
+					defaultHardfork: 'zond',
 				},
 			});
-			expect(qrl2.defaultHardfork).toBe('istanbul');
+			expect(qrl2.defaultHardfork).toBe('zond');
 
 			const res = await prepareTransactionForSigning(
 				{
@@ -739,7 +739,7 @@ describe('defaults', () => {
 				},
 				qrl2,
 			);
-			expect(res.common.hardfork()).toBe('istanbul');
+			expect(res.common.hardfork()).toBe('zond');
 		});
 		it('defaultCommon', () => {
 			// default
@@ -888,7 +888,7 @@ describe('defaults', () => {
 			);
 			expect(accessListOverride).toBe('0x2');
 
-			const hardforkBerlinOverride = getTransactionType(
+			const unsupportedHardfork = getTransactionType(
 				{
 					from: 'Q0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000eb014f8c8b418db6b45774c326a0e64c78914dc0',
 					to: 'Q00000000000000000000000000000000000000000000000000000000000000000000000000000000000000003535353535353535353535353535353535353535',
@@ -898,30 +898,13 @@ describe('defaults', () => {
 					nonce: '0x4',
 					chainId: '0x1',
 					gasLimit: '0x5208',
-					hardfork: 'zond',
+					// @ts-expect-error unsupported QRL hardfork
+					hardfork: 'istanbul',
 				},
 				qrl2,
 			);
-			expect(hardforkBerlinOverride).toBe('0x2');
-
-			const commonBerlinOverride = getTransactionType(
-				{
-					from: 'Q0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000eb014f8c8b418db6b45774c326a0e64c78914dc0',
-					to: 'Q00000000000000000000000000000000000000000000000000000000000000000000000000000000000000003535353535353535353535353535353535353535',
-					value: '0x174876e800',
-					gas: '0x5208',
-					data: '0x0',
-					nonce: '0x4',
-					chainId: '0x1',
-					gasLimit: '0x5208',
-					common: {
-						customChain: { name: 'ropsten', networkId: '2', chainId: '0x1' },
-						hardfork: 'zond',
-					},
-				},
-				qrl2,
-			);
-			expect(commonBerlinOverride).toBe('0x2');
+			// Unknown hardforks do not infer type 0x2; the instance default is used.
+			expect(unsupportedHardfork).toBe('0x4444');
 		});
 		it('defaultMaxPriorityFeePerGas', async () => {
 			// default

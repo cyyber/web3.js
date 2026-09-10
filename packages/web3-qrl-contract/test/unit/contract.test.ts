@@ -624,7 +624,7 @@ describe('Contract', () => {
 			contract.defaultBlock = defaultBlock;
 			expect(contract.defaultBlock).toStrictEqual(defaultBlock);
 
-			const defaultHardfork = 'constantinople';
+			const defaultHardfork = 'zond';
 			expect(contract.defaultHardfork).toBe('zond');
 			contract.defaultHardfork = defaultHardfork;
 			expect(contract.defaultHardfork).toStrictEqual(defaultHardfork);
@@ -636,7 +636,7 @@ describe('Contract', () => {
 			const defaultCommonDifferentHardfork = {
 				customChain: { name: 'testnet', networkId: '5678', chainId: '5634' },
 				baseChain,
-				hardfork: 'petersburg' as Hardfork,
+				hardfork: 'unsupported' as Hardfork,
 			};
 			expect(contract.defaultCommon).toBeUndefined();
 
@@ -646,7 +646,7 @@ describe('Contract', () => {
 				contract.defaultCommon = defaultCommonDifferentHardfork;
 			}).toThrow(
 				new Error(
-					'Web3Config hardfork doesnt match in defaultHardfork constantinople and common.hardfork petersburg',
+					'Web3Config hardfork doesnt match in defaultHardfork zond and common.hardfork unsupported',
 				),
 			);
 
@@ -655,14 +655,14 @@ describe('Contract', () => {
 			// Should error when defaultCommon has different chain than defaultChain
 			const defaultCommonDifferentChain = {
 				customChain: { name: 'testnet', networkId: '5678', chainId: '5634' },
-				baseChain: 'sepolia' as ValidChains,
-				hardfork: 'constantinople' as Hardfork,
+				baseChain: 'testnet' as ValidChains,
+				hardfork: 'zond' as Hardfork,
 			};
 			expect(() => {
 				contract.defaultCommon = defaultCommonDifferentChain;
 			}).toThrow(
 				new Error(
-					'Web3Config chain doesnt match in defaultHardfork mainnet and common.hardfork sepolia',
+					'Web3Config chain doesnt match in defaultHardfork mainnet and common.hardfork testnet',
 				),
 			);
 
@@ -671,7 +671,7 @@ describe('Contract', () => {
 			const defaultCommon = {
 				customChain: { name: 'testnet', networkId: '5678', chainId: '5634' },
 				baseChain: 'mainnet' as ValidChains,
-				hardfork: 'constantinople' as Hardfork,
+				hardfork: 'zond' as Hardfork,
 			};
 			contract.defaultCommon = defaultCommon;
 			expect(contract.defaultCommon).toBe(defaultCommon);

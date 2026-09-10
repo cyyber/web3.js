@@ -32,7 +32,7 @@ export default {
 	gasPrices: {
 		base: {
 			v: 2,
-			d: 'Gas base cost, used e.g. for ChainID opcode (Istanbul)',
+			d: 'Gas base cost, used e.g. for ChainID opcode',
 		},
 		tierStep: {
 			v: [0, 2, 3, 5, 8, 10, 20],

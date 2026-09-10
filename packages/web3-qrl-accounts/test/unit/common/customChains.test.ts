@@ -14,7 +14,7 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
-import { Chain, Common, ConsensusType, /* CustomChain, */ Hardfork } from '../../../src/common';
+import { Chain, Common, ConsensusType, Hardfork } from '../../../src/common';
 
 import * as testnet from '../../fixtures/common/testnet.json';
 import * as testnet2 from '../../fixtures/common/testnet2.json';
@@ -26,8 +26,6 @@ describe('[Common]: Custom chains', () => {
 		expect(c.chainName()).toBe('testnet');
 		expect(c.chainId()).toEqual(BigInt(12345));
 		expect(c.networkId()).toEqual(BigInt(12345));
-		// NOTE(rgeraldes24): custom chains tbd
-		// expect(c.hardforks()[3]['block']).toBe(3);
 		expect(c.hardforks()[0]['block']).toBe(0);
 		expect(c.bootstrapNodes()![1].ip).toBe('10.0.0.2');
 	});
@@ -63,32 +61,12 @@ describe('[Common]: Custom chains', () => {
 		expect(customChainCommon.hardfork()).toBe('zond');
 	});
 
-	// NOTE(rgeraldes24): custom chains tbd
-	/*
-	it('custom() -> behavior', () => {
-		let common = Common.custom({ chainId: 123 });
-		expect(common.networkId()).toEqual(BigInt(1));
-		expect(common.chainName()).toBe('custom-chain');
-
-		common = Common.custom(CustomChain.PolygonMumbai);
-		expect(common.networkId()).toEqual(BigInt(80001));
-		for (const customChain of Object.values(CustomChain)) {
-			common = Common.custom(customChain);
-			expect(common.chainName()).toEqual(customChain);
-		}
-
-		common = Common.custom(CustomChain.PolygonMumbai);
-		expect(common.hardfork()).toEqual(common.DEFAULT_HARDFORK);
-
-		common = Common.custom(CustomChain.CustomQRL, { hardfork: Hardfork.Byzantium });
-		expect(common.hardfork()).toEqual(Hardfork.Byzantium);
-
+	it('custom() rejects an unsupported named chain', () => {
 		expect(() => {
 			// @ts-expect-error TypeScript complains, nevertheless do the test for JS behavior
 			Common.custom('this-chain-is-not-supported');
 		}).toThrow('not supported');
 	});
-	*/
 
 	it('customChains parameter: initialization exception', () => {
 		expect(() => {
@@ -106,14 +84,10 @@ describe('[Common]: Custom chains', () => {
 			customChains: [testnet],
 		});
 		expect(c.chainName()).toBe('mainnet');
-		// NOTE(rgeraldes24): custom chains tbd
-		// expect(c.hardforkBlock()!).toEqual(BigInt(4370000));
 		expect(c.hardforkBlock()!).toEqual(BigInt(0));
 
 		c.setChain('testnet');
 		expect(c.chainName()).toBe('testnet');
-		// NOTE(rgeraldes24): custom chains tbd
-		// expect(c.hardforkBlock()!).toEqual(BigInt(4));
 		expect(c.hardforkBlock()!).toEqual(BigInt(0));
 
 		c = new Common({
@@ -122,8 +96,6 @@ describe('[Common]: Custom chains', () => {
 			customChains: [testnet],
 		});
 		expect(c.chainName()).toBe('testnet');
-		// NOTE(rgeraldes24): custom chains tbd
-		// expect(c.hardforkBlock()!).toEqual(BigInt(4));
 		expect(c.hardforkBlock()!).toEqual(BigInt(0));
 
 		const customChains = [testnet, testnet2, testnet3];
@@ -133,8 +105,6 @@ describe('[Common]: Custom chains', () => {
 			customChains,
 		});
 		expect(c.chainName()).toBe('testnet2');
-		// NOTE(rgeraldes24): custom chains tbd
-		// expect(c.hardforkBlock()!).toEqual(BigInt(10));
 		expect(c.hardforkBlock()!).toEqual(BigInt(0));
 
 		c.setChain('testnet');
@@ -144,36 +114,32 @@ describe('[Common]: Custom chains', () => {
 });
 
 describe('custom chain setup with hardforks', () => {
-	const undefinedHardforks = [
-		{
-			name: 'chainstart',
-			block: 0,
-		},
-		{ name: 'homestead' },
-		// eslint-disable-next-line no-null/no-null
-		{ name: 'byzantium', block: null },
-		{ name: 'tangerineWhistle', block: 10 },
-	];
-	it('with undefined/null block numbers', () => {
+	it('rejects a hardfork list with an undefined block number', () => {
+		const undefinedHardforks = [
+			{
+				name: 'zond',
+				block: 0,
+			},
+			{ name: 'zond' },
+		];
 		expect(
 			// @ts-expect-error -- Disabling type check to verify that error is thrown
 			() => Common.custom({ hardforks: undefinedHardforks }),
 		).toThrow();
+	});
 
-		const nullHardforks = [
-			{
-				name: 'chainstart',
-				block: 0,
-			},
-			// eslint-disable-next-line no-null/no-null
-			{ name: 'homestead', block: null },
-			{ name: 'tangerineWhistle', block: 10 },
-		];
-
-		const common = Common.custom({ hardforks: nullHardforks });
+	it('keeps zond selected across block numbers', () => {
+		const common = Common.custom({
+			hardforks: [
+				{
+					name: 'zond',
+					block: 0,
+				},
+			],
+		});
 		common.setHardforkByBlockNumber(10);
-		expect('tangerineWhistle').toEqual(common.hardfork());
+		expect(common.hardfork()).toBe('zond');
 		common.setHardforkByBlockNumber(3);
-		expect('chainstart').toEqual(common.hardfork());
+		expect(common.hardfork()).toBe('zond');
 	});
 });

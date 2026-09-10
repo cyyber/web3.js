@@ -74,10 +74,9 @@ export const defaultTransactionTypeParser: TransactionTypeParser = transaction =
 	// EIP-2718 where transaction types are available
 	if (givenHardfork === undefined) return undefined;
 
-	const hardforkIndex = Object.keys(HardforksOrdered).indexOf(givenHardfork);
-
-	// Unknown hardfork
-	if (hardforkIndex === undefined) return undefined;
+	// `indexOf` returns -1 for an unknown name; only `zond` is supported.
+	const supportedHardforks = Object.values(HardforksOrdered) as string[];
+	if (!supportedHardforks.includes(givenHardfork)) return undefined;
 
 	return '0x2';
 };
