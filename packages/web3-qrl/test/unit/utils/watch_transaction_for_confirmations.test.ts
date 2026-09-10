@@ -168,7 +168,7 @@ describe('watchTransactionForConfirmations', () => {
 		);
 	});
 
-	describe('should call watchTransactionByPoolling when the provider does not support subscription', () => {
+	describe('should call watchTransactionByPolling when the provider does not support subscription', () => {
 		let web3Context: Web3Context<Web3QRLExecutionAPI>;
 
 		beforeAll(() => {
