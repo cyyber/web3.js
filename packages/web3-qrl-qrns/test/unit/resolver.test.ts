@@ -240,7 +240,8 @@ describe('resolver', () => {
 
 	describe('name', () => {
 		it('getName', async () => {
-			const address = `Q${'314159265dd8dbb310642f98f50c066173c1259b'}${'0'.repeat(88)}`;
+			const address =
+				'Q33380cd8b47eed92b0dcd1ccca2ee84efd0c8b87a4fe6ee4a918969cdd454c0b04ac9f03ffaafa765af0cbeab572d8c9dd514044aa94adee50fa5d361a3e4629';
 
 			const supportsInterfaceMock = jest
 				.spyOn(contract.methods, 'supportsInterface')
