@@ -45,7 +45,7 @@ export const methodsInInterface: { [T: string]: string } = {
 /**
  * An object holding the addressed of the QRNS registries on the different networks (mainnet).
  */
-// TODO(youtrack/theqrl/web3.js/1)
+// TODO(https://github.com/cyyber/web3.js/issues/103)
 export const registryAddresses: { [T: string]: string } = {
 	main: 'Q000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c2e074ec69a0dfb2997ba6c7d2e1e',
 };
