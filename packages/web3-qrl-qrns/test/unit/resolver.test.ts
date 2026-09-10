@@ -229,7 +229,7 @@ describe('resolver', () => {
 				interfaceIds[methodsInInterface.name],
 			);
 
-			const reverseName = `${address.slice(1).toLowerCase()}.addr.reverse`;
+			const reverseName = `${address.toLowerCase().substring(1)}.addr.reverse`;
 			expect(nameMock).toHaveBeenCalledWith(namehash(reverseName));
 		});
 	});

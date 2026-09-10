@@ -123,11 +123,7 @@ export class Resolver {
 	}
 
 	public async getName(address: string, checkInterfaceSupport = true) {
-		const hexBody =
-			address.startsWith('Q') || address.startsWith('q')
-				? address.slice(1)
-				: address.replace(/^0x/i, '');
-		const reverseName = `${hexBody.toLowerCase()}.addr.reverse`;
+		const reverseName = `${address.toLowerCase().substring(1)}.addr.reverse`;
 
 		const resolverContract = await this.getResolverContractAdapter(reverseName);
 
