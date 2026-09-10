@@ -62,11 +62,4 @@ for (const name of names) {
 			`0x${contract.qrvm.bytecode.object}`,
 		),
 	);
-	if (name === 'QRNSRegistry') {
-		const artifactFile = resolve(__dirname, 'QRNSRegistry.json');
-		const artifact = JSON.parse(readFileSync(artifactFile, 'utf8'));
-		artifact.bytecode = `0x${contract.qrvm.bytecode.object}`;
-		artifact.deployedBytecode = `0x${contract.qrvm.deployedBytecode.object}`;
-		writeFileSync(artifactFile, `${JSON.stringify(artifact, undefined, '\t')}\n`);
-	}
 }
