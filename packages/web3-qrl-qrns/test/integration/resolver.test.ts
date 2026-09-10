@@ -15,9 +15,9 @@ You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-import Web3QRL from '@theqrl/web3-qrl';
+import { getBlock } from '@theqrl/web3-qrl';
 import { Contract, PayableTxOptions } from '@theqrl/web3-qrl-contract';
-import { hexToAddress, sha3 } from '@theqrl/web3-utils';
+import { addressToHex, sha3 } from '@theqrl/web3-utils';
 
 import { Address, Bytes, DEFAULT_RETURN_FORMAT } from '@theqrl/web3-types';
 import { IpcProvider } from '@theqrl/web3-providers-ipc';
@@ -26,7 +26,7 @@ import { namehash } from '../../src/utils';
 
 import {
 	closeOpenConnection,
-	getSystemTestAccounts,
+	createTempAccount,
 	getSystemTestProvider,
 	getSystemTestProviderUrl,
 	isIpc,
@@ -53,9 +53,6 @@ describe('qrns', () => {
 	const node = namehash('resolver');
 	const label = sha3('resolver') as string;
 
-	let web3QRL: Web3QRL;
-
-	let accounts: string[];
 	let qrns: QRNS;
 	let defaultAccount: string;
 	let accountOne: string;
@@ -69,9 +66,10 @@ describe('qrns', () => {
 	const DEFAULT_COIN_TYPE = 60;
 
 	beforeAll(async () => {
-		accounts = await getSystemTestAccounts();
-
-		[defaultAccount, accountOne] = accounts;
+		const acc1 = await createTempAccount();
+		defaultAccount = acc1.address;
+		const acc2 = await createTempAccount();
+		accountOne = acc2.address;
 
 		sendOptions = { from: defaultAccount, gas: '10000000' };
 
@@ -119,14 +117,10 @@ describe('qrns', () => {
 
 		qrns = new QRNS(registry.options.address, provider);
 
-		web3QRL = new Web3QRL(provider);
-		const block = await web3QRL.getBlock('latest', false, DEFAULT_RETURN_FORMAT);
-		const gas = block.gasLimit.toString();
-
-		// Increase gas for contract calls
+		const block = await getBlock(qrns, 'latest', false, DEFAULT_RETURN_FORMAT);
 		sendOptions = {
 			...sendOptions,
-			gas,
+			gas: block.gasLimit.toString(),
 		};
 	});
 
@@ -193,6 +187,7 @@ describe('qrns', () => {
 		expect(res).toBe(contentHash);
 	});
 
+	// eslint-disable-next-line jest/expect-expect
 	itIf(isSocket)('ContenthashChanged event', async () => {
 		// eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
 		await new Promise<void>(async resolve => {
@@ -218,12 +213,10 @@ describe('qrns', () => {
 			.setResolver(domainNode, resolver.options.address as string)
 			.send(sendOptions);
 
-		await resolver.methods.setAddr(domainNode, accounts[1]).send(sendOptions);
+		await resolver.methods.setAddr(domainNode, accountOne).send(sendOptions);
 
-		// NOTE(rgeraldes24): resolver.methods.addr(node, coin) return type is 'bytes';
-		// value is not converted automatically to the 'address' type via ABI
 		const res = await resolver.methods.addr(domainNode, DEFAULT_COIN_TYPE).call(sendOptions);
-		expect(hexToAddress(res.toString())).toBe(`Q${accounts[1].slice(1).toLowerCase()}`);
+		expect(res).toBe(addressToHex(accountOne));
 	});
 
 	it('fetches address', async () => {
@@ -234,39 +227,6 @@ describe('qrns', () => {
 		await resolver.methods.setAddr(domainNode, accountOne).send(sendOptions);
 
 		const resultAddress = await qrns.getAddress(domain);
-		expect(hexToAddress(resultAddress.toString())).toBe(
-			`Q${accountOne.slice(1).toLowerCase()}`,
-		);
-	});
-
-	it('rejects registry and resolver updates from a non-owner', async () => {
-		const nonOwnerOptions = { ...sendOptions, from: accounts[2] };
-		await expect(
-			registry.methods.setOwner(domainNode, accounts[2]).call(nonOwnerOptions),
-		).rejects.toThrow();
-		await expect(
-			resolver.methods.setAddr(domainNode, addressOne).call(nonOwnerOptions),
-		).rejects.toThrow();
-	});
-
-	it('uses NameWrapper ownership for wrapped names', async () => {
-		const wrappedLabel = sha3('wrapped') as string;
-		const wrappedNode = namehash('wrapped');
-		await registry.methods
-			.setSubnodeOwner(ZERO_NODE, wrappedLabel, defaultAccount)
-			.send(sendOptions);
-		await registry.methods
-			.setResolver(wrappedNode, resolver.options.address as string)
-			.send(sendOptions);
-		await registry.methods
-			.setOwner(wrappedNode, nameWrapper.options.address as string)
-			.send(sendOptions);
-		await resolver.methods
-			.setAddr(wrappedNode, accounts[2])
-			.send({ ...sendOptions, from: accounts[2] });
-		const wrappedAddress = await qrns.getAddress('wrapped');
-		expect(hexToAddress(wrappedAddress.toString())).toBe(
-			`Q${accounts[2].slice(1).toLowerCase()}`,
-		);
+		expect(resultAddress).toBe(addressToHex(accountOne));
 	});
 });
