@@ -1,4 +1,4 @@
-﻿/*
+/*
 This file is part of web3.js.
 
 web3.js is free software: you can redistribute it and/or modify
@@ -15,8 +15,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Web3Validator } from '../../src/web3_validator';
-import { Json, JsonSchema, ValidationSchemaInput } from '../..';
+import { Web3Validator, Json, JsonSchema, ValidationSchemaInput } from '@theqrl/web3-validator';
 
 const abi = [
 	{ indexed: true, internalType: 'address', name: 'from', type: 'address' },
@@ -102,7 +101,7 @@ const { schema: hugeSchema1000, data: hugeData1000 } = createHugeSchema(
 	{ ...simpleData } as Json,
 	1000,
 );
-describe('instance of validator', () => {
+describe('validator', () => {
 	let validator: Web3Validator;
 	beforeAll(() => {
 		validator = new Web3Validator();
