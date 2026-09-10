@@ -17,10 +17,7 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 import { bytesToUint8Array, hexToBytes, uint8ArrayEquals } from '@theqrl/web3-utils';
 import { FeeMarketEIP1559Transaction } from '../../../src';
 import { Chain, Common, Hardfork, toUint8Array, uint8ArrayToBigInt } from '../../../src/common';
-import {
-	addressFromPublicKeyAndDescriptor,
-	newMLDSA87WalletFromExtendedSeed,
-} from '../../../src/qrl_wallet';
+import { newMLDSA87WalletFromExtendedSeed } from '../../../src/qrl_wallet';
 import { MAX_INTEGER, MAX_UINT64 } from '../../../src/tx/constants';
 
 import type { BaseTransaction } from '../../../src/tx/baseTransaction';
@@ -185,17 +182,12 @@ describe('[BaseTransaction]', () => {
 	it('getSenderAddress()', () => {
 		for (const txType of txTypes) {
 			for (const [i, tx] of txType.txs.entries()) {
-				const { seed } = txType.fixtures[i];
+				const { seed, sendersAddress } = txType.fixtures[i];
 				if (seed === undefined) {
 					continue;
 				}
 				const signedTx = tx.sign(hexToBytes(seed));
-				const wallet = newMLDSA87WalletFromExtendedSeed(seed);
-				const expectedAddress = addressFromPublicKeyAndDescriptor(
-					wallet.getPK(),
-					wallet.getDescriptor(),
-				);
-				expect(uint8ArrayEquals(signedTx.getSenderAddress().buf, expectedAddress)).toBe(true);
+				expect(signedTx.getSenderAddress().toString()).toBe(sendersAddress);
 			}
 		}
 	});
