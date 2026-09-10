@@ -33,7 +33,7 @@ export class Net extends Web3Context<Web3NetAPI> {
 	 * ```
 	 */
 	public async getId<ReturnFormat extends DataFormat = typeof DEFAULT_RETURN_FORMAT>(
-		returnFormat: ReturnFormat = DEFAULT_RETURN_FORMAT as ReturnFormat,
+		returnFormat: ReturnFormat = this.defaultReturnFormat as ReturnFormat,
 	) {
 		return rpcMethodsWrappers.getId(this, returnFormat);
 	}
@@ -51,7 +51,7 @@ export class Net extends Web3Context<Web3NetAPI> {
 	 * ```
 	 */
 	public async getPeerCount<ReturnFormat extends DataFormat = typeof DEFAULT_RETURN_FORMAT>(
-		returnFormat: ReturnFormat = DEFAULT_RETURN_FORMAT as ReturnFormat,
+		returnFormat: ReturnFormat = this.defaultReturnFormat as ReturnFormat,
 	) {
 		return rpcMethodsWrappers.getPeerCount(this, returnFormat);
 	}
