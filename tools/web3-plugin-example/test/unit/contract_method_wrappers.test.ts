@@ -32,7 +32,7 @@ describe('ContractMethodWrappersPlugin', () => {
 		web3.registerPlugin(
 			new ContractMethodWrappersPlugin(
 				SQRCTF1TokenAbi,
-				'Qcfec0cbee560cbd6ed89580204af71448f1fb8c577e60e9afc6e697019e2312cf3b24b98eb763627a1c38c96ecd7e7c20ba9774cb6c0a810b78e8ea529ccdc40',
+				'QCfeC0cbeE560cbD6ed89580204AF71448f1fB8c577e60e9afC6E697019E2312cF3B24B98Eb763627a1C38c96ecd7E7c20BA9774cb6c0a810B78E8ea529ccdc40',
 			),
 		);
 		expect(web3.contractMethodWrappersPlugin).toBeDefined();
@@ -40,8 +40,6 @@ describe('ContractMethodWrappersPlugin', () => {
 
 	describe('methods', () => {
 		const contractAddress =
-			'Qcfec0cbee560cbd6ed89580204af71448f1fb8c577e60e9afc6e697019e2312cf3b24b98eb763627a1c38c96ecd7e7c20ba9774cb6c0a810b78e8ea529ccdc40';
-		const checksumContractAddress =
 			'QCfeC0cbeE560cbD6ed89580204AF71448f1fB8c577e60e9afC6E697019E2312cF3B24B98Eb763627a1C38c96ecd7E7c20BA9774cb6c0a810B78E8ea529ccdc40';
 		const sender =
 			'Q33380cd8b47eed92b0dcd1ccca2ee84efd0c8b87a4fe6ee4a918969cdd454c0b04ac9f03ffaafa765af0cbeab572d8c9dd514044aa94adee50fa5d361a3e4629';
@@ -76,7 +74,7 @@ describe('ContractMethodWrappersPlugin', () => {
 				params: [
 					expect.objectContaining({
 						input: `0x70a08231${sender.slice(1)}`,
-						to: checksumContractAddress,
+						to: contractAddress,
 					}),
 					'latest',
 				],
@@ -115,7 +113,7 @@ describe('ContractMethodWrappersPlugin', () => {
 						from: sender,
 						maxFeePerGas: expectedMaxFeePerGas,
 						maxPriorityFeePerGas: expectedMaxPriorityFeePerGas,
-						to: checksumContractAddress,
+						to: contractAddress,
 					}),
 				],
 			});
