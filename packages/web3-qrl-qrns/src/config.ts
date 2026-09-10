@@ -29,7 +29,7 @@ export const interfaceIds: { [T: string]: string } = {
 };
 
 /**
- * An object holding the functionsthat are supported by the QRNS resolver contracts/interfaces.
+ * An object holding the functions that are supported by the QRNS resolver contracts/interfaces.
  */
 export const methodsInInterface: { [T: string]: string } = {
 	setAddr: 'addr',
