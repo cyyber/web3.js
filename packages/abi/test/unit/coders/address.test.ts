@@ -272,9 +272,6 @@ describe('AddressCoder', () => {
 		});
 
 		it('always decodes to the checksummed form', () => {
-			// Documented asymmetry: encode accepts lowercase/uppercase/checksummed
-			// input, but decode always returns the SHAKE256 mixed-case form — the
-			// same contract ethers getAddress had for 20-byte addresses.
 			const checksummed = toChecksumAddress(addr(abBody));
 			expect(checksummed).not.toBe(addr(abBody));
 			expect(decodeData(encodeData(addr(abBody)))).toBe(checksummed);
