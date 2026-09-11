@@ -958,9 +958,6 @@ abstract contract NameResolver is INameResolver, ResolverBase {
 }
 
 // resolvers/profiles/IPubkeyResolver.sol
-// QRL-native ML-DSA-87 record. Not EIP-619: pubkey(bytes32) keeps
-// selector 0xc8690233, but the interface id is XOR(pubkey, setPubkey)
-// because setPubkey(bytes32,bytes,bytes) is part of this interface.
 interface IPubkeyResolver {
     event PubkeyChanged(
         bytes32 indexed node,
@@ -970,10 +967,9 @@ interface IPubkeyResolver {
 
     /**
      * Returns the ML-DSA-87 public key and descriptor for a QRNS node.
-     * Unset records return empty bytes, not a zero secp256k1 point.
      * @param node The QRNS node to query
-     * @return publicKey 2592-byte ML-DSA-87 public key, or empty if unset
-     * @return descriptor 3-byte QRL descriptor, or empty if unset
+     * @return publicKey The ML-DSA-87 public key.
+     * @return descriptor The QRL descriptor.
      */
     function pubkey(bytes32 node)
         external
@@ -983,8 +979,8 @@ interface IPubkeyResolver {
     /**
      * Sets the ML-DSA-87 public key associated with a QRNS node.
      * @param node The QRNS node to update
-     * @param publicKey 2592-byte ML-DSA-87 public key
-     * @param descriptor 3-byte QRL descriptor (type ML_DSA_87, metadata zero)
+     * @param publicKey The ML-DSA-87 public key.
+     * @param descriptor The QRL descriptor.
      */
     function setPubkey(
         bytes32 node,
@@ -1007,8 +1003,9 @@ abstract contract PubkeyResolver is IPubkeyResolver, ResolverBase {
 
     /**
      * Sets the ML-DSA-87 public key associated with a QRNS node.
-     * Rejects unless publicKey is 2592 bytes and descriptor is a valid
-     * QRL descriptor (3 bytes, wallet type ML_DSA_87, reserved metadata zero).
+     * @param node The QRNS node to update
+     * @param publicKey The ML-DSA-87 public key.
+     * @param descriptor The QRL descriptor.
      */
     function setPubkey(
         bytes32 node,
@@ -1025,7 +1022,9 @@ abstract contract PubkeyResolver is IPubkeyResolver, ResolverBase {
 
     /**
      * Returns the ML-DSA-87 public key and descriptor for a QRNS node.
-     * This is not EIP-619.
+     * @param node The QRNS node to query
+     * @return publicKey The ML-DSA-87 public key.
+     * @return descriptor The QRL descriptor.
      */
     function pubkey(bytes32 node)
         external
