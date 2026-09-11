@@ -21,7 +21,6 @@ import { isSyncing } from '@theqrl/web3-qrl';
 import { Contract } from '@theqrl/web3-qrl-contract';
 import { getId } from '@theqrl/web3-net';
 import {
-	DEFAULT_RETURN_FORMAT,
 	QRLExecutionAPI,
 	FMT_NUMBER,
 	SupportedProviders,
@@ -206,7 +205,7 @@ export class QRNS extends Web3Context<QRLExecutionAPI & Web3NetAPI> {
 			return this._detectedAddress;
 		}
 		const networkType = await getId(this, {
-			...DEFAULT_RETURN_FORMAT,
+			...this.defaultReturnFormat,
 			number: FMT_NUMBER.HEX,
 		}); // get the network from provider
 		const addr = registryAddresses[networkIds[networkType]];
