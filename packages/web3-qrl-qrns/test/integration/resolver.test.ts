@@ -183,6 +183,12 @@ describe('qrns', () => {
 		expect(result.descriptor).toBe(descriptor);
 	});
 
+	it('rejects a malformed public key', async () => {
+		await expect(
+			resolver.methods.setPubkey(domainNode, '0x01', '0x010000').send(sendOptions),
+		).rejects.toMatchObject({ name: 'TransactionRevertedWithoutReasonError' });
+	});
+
 	it('sets contenthash', async () => {
 		await resolver.methods.setContenthash(domainNode, contentHash).send(sendOptions);
 
