@@ -175,7 +175,7 @@ export class QRNS extends Web3Context<QRLExecutionAPI & Web3NetAPI> {
 	}
 
 	/**
-	 * Returns the ML-DSA-87 public key and descriptor for the given name.
+	 * Returns the ML-DSA-87 public key and descriptor associated with a QRNS node.
 	 * @param QRNSName - The QRNS name
 	 * @returns - `{ publicKey, descriptor }`
 	 * @example

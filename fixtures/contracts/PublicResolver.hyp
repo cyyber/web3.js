@@ -966,7 +966,7 @@ interface IPubkeyResolver {
     );
 
     /**
-     * Returns the ML-DSA-87 public key and descriptor for a QRNS node.
+     * Returns the ML-DSA-87 public key and descriptor associated with a QRNS node.
      * @param node The QRNS node to query
      * @return publicKey The ML-DSA-87 public key.
      * @return descriptor The QRL descriptor.
@@ -1021,7 +1021,7 @@ abstract contract PubkeyResolver is IPubkeyResolver, ResolverBase {
     }
 
     /**
-     * Returns the ML-DSA-87 public key and descriptor for a QRNS node.
+     * Returns the ML-DSA-87 public key and descriptor associated with a QRNS node.
      * @param node The QRNS node to query
      * @return publicKey The ML-DSA-87 public key.
      * @return descriptor The QRL descriptor.
