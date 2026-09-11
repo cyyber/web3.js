@@ -1021,8 +1021,7 @@ abstract contract PubkeyResolver is IPubkeyResolver, ResolverBase {
         override
         returns (bytes memory publicKey, bytes memory descriptor)
     {
-        PublicKey storage key = pubkeys[node];
-        return (key.publicKey, key.descriptor);
+        return (pubkeys[node].publicKey, pubkeys[node].descriptor);
     }
 
     function supportsInterface(bytes4 interfaceID)
