@@ -975,18 +975,6 @@ interface IPubkeyResolver {
         external
         view
         returns (bytes memory publicKey, bytes memory descriptor);
-
-    /**
-     * Sets the ML-DSA-87 public key associated with a QRNS node.
-     * @param node The QRNS node to update
-     * @param publicKey The ML-DSA-87 public key.
-     * @param descriptor The QRL descriptor.
-     */
-    function setPubkey(
-        bytes32 node,
-        bytes calldata publicKey,
-        bytes calldata descriptor
-    ) external;
 }
 
 // resolvers/profiles/PubkeyResolver.sol
@@ -1011,7 +999,7 @@ abstract contract PubkeyResolver is IPubkeyResolver, ResolverBase {
         bytes32 node,
         bytes calldata publicKey,
         bytes calldata descriptor
-    ) external virtual override authorised(node) {
+    ) external virtual authorised(node) {
         require(publicKey.length == MLDSA87_PUBLIC_KEY_LENGTH);
         require(descriptor.length == 3);
         require(uint8(descriptor[0]) == WALLET_TYPE_ML_DSA_87);

@@ -23,7 +23,7 @@ export const interfaceIds: { [T: string]: string } = {
 	addr: '0x3b3b57de',
 	name: '0x691f3431',
 	abi: '0x2203ab56',
-	pubkey: '0xd8e01a0d',
+	pubkey: '0xc8690233',
 	text: '0x59d1d43c',
 	contenthash: '0xbc1c58d1',
 };

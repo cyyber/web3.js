@@ -147,8 +147,7 @@ describe('qrns', () => {
 		await expect(qrns.supportsInterface('resolver', '0xf1cb7e06')).resolves.toBeTruthy(); // IAddressResolver
 		await expect(qrns.supportsInterface('resolver', '0x691f3431')).resolves.toBeTruthy(); // INameResolver
 		await expect(qrns.supportsInterface('resolver', '0x2203ab56')).resolves.toBeTruthy(); // IABIResolver
-		await expect(qrns.supportsInterface('resolver', '0xd8e01a0d')).resolves.toBeTruthy(); // IPubkeyResolver (ML-DSA-87, not EIP-619)
-		await expect(qrns.supportsInterface('resolver', '0xc8690233')).resolves.toBeFalsy(); // EIP-619 IPubkeyResolver
+		await expect(qrns.supportsInterface('resolver', '0xc8690233')).resolves.toBeTruthy(); // IPubkeyResolver
 		await expect(qrns.supportsInterface('resolver', '0x59d1d43c')).resolves.toBeTruthy(); // ITextResolver
 		await expect(qrns.supportsInterface('resolver', '0xbc1c58d1')).resolves.toBeTruthy(); // IContentHashResolver
 		await expect(qrns.supportsInterface('resolver', '0xa8fa5682')).resolves.toBeTruthy(); // IDNSRecordResolver
