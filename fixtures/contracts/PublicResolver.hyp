@@ -959,57 +959,73 @@ abstract contract NameResolver is INameResolver, ResolverBase {
 
 // resolvers/profiles/IPubkeyResolver.sol
 interface IPubkeyResolver {
-    event PubkeyChanged(bytes32 indexed node, bytes32 x, bytes32 y);
+    event PubkeyChanged(
+        bytes32 indexed node,
+        bytes publicKey,
+        bytes descriptor
+    );
 
     /**
-     * Returns the SECP256k1 public key associated with an QRNS node.
-     * Defined in EIP 619.
+     * Returns the ML-DSA-87 public key and descriptor associated with a QRNS node.
      * @param node The QRNS node to query
-     * @return x The X coordinate of the curve point for the public key.
-     * @return y The Y coordinate of the curve point for the public key.
+     * @return publicKey The ML-DSA-87 public key.
+     * @return descriptor The QRL descriptor.
      */
-    function pubkey(bytes32 node) external view returns (bytes32 x, bytes32 y);
+    function pubkey(bytes32 node)
+        external
+        view
+        returns (bytes memory publicKey, bytes memory descriptor);
 }
 
 // resolvers/profiles/PubkeyResolver.sol
 abstract contract PubkeyResolver is IPubkeyResolver, ResolverBase {
+    uint256 private constant MLDSA87_PUBLIC_KEY_LENGTH = 2592;
+    uint256 private constant DESCRIPTOR_LENGTH = 3;
+    uint8 private constant WALLET_TYPE_ML_DSA_87 = 1;
+
     struct PublicKey {
-        bytes32 x;
-        bytes32 y;
+        bytes publicKey;
+        bytes descriptor;
     }
 
     mapping(bytes32 => PublicKey) pubkeys;
 
     /**
-     * Sets the SECP256k1 public key associated with an QRNS node.
+     * Sets the ML-DSA-87 public key associated with a QRNS node.
      * @param node The QRNS node to query
-     * @param x the X coordinate of the curve point for the public key.
-     * @param y the Y coordinate of the curve point for the public key.
+     * @param publicKey The ML-DSA-87 public key.
+     * @param descriptor The QRL descriptor.
      */
     function setPubkey(
         bytes32 node,
-        bytes32 x,
-        bytes32 y
+        bytes calldata publicKey,
+        bytes calldata descriptor
     ) external virtual authorised(node) {
-        pubkeys[node] = PublicKey(x, y);
-        emit PubkeyChanged(node, x, y);
+        require(publicKey.length == MLDSA87_PUBLIC_KEY_LENGTH);
+        require(
+            descriptor.length == DESCRIPTOR_LENGTH &&
+                uint8(descriptor[0]) == WALLET_TYPE_ML_DSA_87 &&
+                descriptor[1] == 0 &&
+                descriptor[2] == 0
+        );
+        pubkeys[node] = PublicKey(publicKey, descriptor);
+        emit PubkeyChanged(node, publicKey, descriptor);
     }
 
     /**
-     * Returns the SECP256k1 public key associated with an QRNS node.
-     * Defined in EIP 619.
+     * Returns the ML-DSA-87 public key and descriptor associated with a QRNS node.
      * @param node The QRNS node to query
-     * @return x The X coordinate of the curve point for the public key.
-     * @return y The Y coordinate of the curve point for the public key.
+     * @return publicKey The ML-DSA-87 public key.
+     * @return descriptor The QRL descriptor.
      */
     function pubkey(bytes32 node)
         external
         view
         virtual
         override
-        returns (bytes32 x, bytes32 y)
+        returns (bytes memory publicKey, bytes memory descriptor)
     {
-        return (pubkeys[node].x, pubkeys[node].y);
+        return (pubkeys[node].publicKey, pubkeys[node].descriptor);
     }
 
     function supportsInterface(bytes4 interfaceID)

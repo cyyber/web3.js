@@ -175,18 +175,18 @@ export class QRNS extends Web3Context<QRLExecutionAPI & Web3NetAPI> {
 	}
 
 	/**
-	 * Returns the X and Y coordinates of the curve point for the public key.
+	 * Returns the ML-DSA-87 public key and descriptor associated with a QRNS node.
 	 * @param QRNSName - The QRNS name
-	 * @returns - The X and Y coordinates of the curve point for the public key
+	 * @returns - `{ publicKey, descriptor }`
 	 * @example
 	 * ```ts
 	 * const key = await web3.qrl.qrns.getPubkey('qrl.qrns');
 	 * console.log(key);
 	 * > {
-	 * "0": "0x0000000000000000000000000000000000000000000000000000000000000000",
-	 * "1": "0x0000000000000000000000000000000000000000000000000000000000000000",
-	 * "x": "0x0000000000000000000000000000000000000000000000000000000000000000",
-	 * "y": "0x0000000000000000000000000000000000000000000000000000000000000000"
+	 * "0": "0x",
+	 * "1": "0x",
+	 * "publicKey": "0x",
+	 * "descriptor": "0x"
 	 * }
 	 * ```
 	 */
