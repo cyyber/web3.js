@@ -980,6 +980,7 @@ interface IPubkeyResolver {
 // resolvers/profiles/PubkeyResolver.sol
 abstract contract PubkeyResolver is IPubkeyResolver, ResolverBase {
     uint256 private constant MLDSA87_PUBLIC_KEY_LENGTH = 2592;
+    uint256 private constant DESCRIPTOR_LENGTH = 3;
     uint8 private constant WALLET_TYPE_ML_DSA_87 = 1;
 
     struct PublicKey {
@@ -1001,9 +1002,12 @@ abstract contract PubkeyResolver is IPubkeyResolver, ResolverBase {
         bytes calldata descriptor
     ) external virtual authorised(node) {
         require(publicKey.length == MLDSA87_PUBLIC_KEY_LENGTH);
-        require(descriptor.length == 3);
-        require(uint8(descriptor[0]) == WALLET_TYPE_ML_DSA_87);
-        require(uint8(descriptor[1]) == 0 && uint8(descriptor[2]) == 0);
+        require(
+            descriptor.length == DESCRIPTOR_LENGTH &&
+                uint8(descriptor[0]) == WALLET_TYPE_ML_DSA_87 &&
+                descriptor[1] == 0 &&
+                descriptor[2] == 0
+        );
         pubkeys[node] = PublicKey(publicKey, descriptor);
         emit PubkeyChanged(node, publicKey, descriptor);
     }
