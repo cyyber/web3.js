@@ -123,7 +123,7 @@ describe('AddressCoder', () => {
 			['all-ones', maxBody],
 			['alternating nibbles', abBody],
 		])('reads one 64-byte word back as %s', (_label, body) => {
-			expect(decodeData(`0x${body}`)).toBe(addr(body));
+			expect(decodeData(`0x${body}`)).toBe(toChecksumAddress(addr(body)));
 		});
 
 		it('consumes exactly one 64-byte word', () => {
@@ -135,8 +135,8 @@ describe('AddressCoder', () => {
 		it('decodes the second word independently of the first', () => {
 			const reader = new Reader(`0x${abBody}${oneBody}`, 64);
 			const coder = new AddressCoder('to');
-			expect(coder.decode(reader)).toBe(addr(abBody));
-			expect(coder.decode(reader)).toBe(addr(oneBody));
+			expect(coder.decode(reader)).toBe(toChecksumAddress(addr(abBody)));
+			expect(coder.decode(reader)).toBe(toChecksumAddress(addr(oneBody)));
 			expect(reader.consumed).toBe(128);
 		});
 
@@ -154,9 +154,9 @@ describe('AddressCoder', () => {
 
 	describe('round-trip', () => {
 		it.each([zeroBody, oneBody, maxBody, abBody, digitBody])(
-			'encode -> decode is the identity for Q%s',
+			'encode -> decode returns the checksummed form of Q%s',
 			body => {
-				expect(decodeData(encodeData(addr(body)))).toBe(addr(body));
+				expect(decodeData(encodeData(addr(body)))).toBe(toChecksumAddress(addr(body)));
 			},
 		);
 	});
@@ -210,7 +210,7 @@ describe('AddressCoder', () => {
 
 		it('normalises the prefix to uppercase "Q" on decode', () => {
 			// Asymmetry: "q..." is accepted on the way in, but decode always emits "Q...".
-			expect(decodeData(encodeData(`q${abBody}`))).toBe(`Q${abBody}`);
+			expect(decodeData(encodeData(`q${abBody}`))).toBe(toChecksumAddress(`Q${abBody}`));
 		});
 	});
 
@@ -271,12 +271,11 @@ describe('AddressCoder', () => {
 			expect(() => encodeData(flipped)).toThrow();
 		});
 
-		it('always decodes to the lowercase (non-checksummed) form', () => {
-			// Documented asymmetry: decode() goes through hexToAddress(), which
-			// lowercases. It never returns the mixed-case checksummed form.
+		it('always decodes to the checksummed form', () => {
 			const checksummed = toChecksumAddress(addr(abBody));
 			expect(checksummed).not.toBe(addr(abBody));
-			expect(decodeData(encodeData(checksummed))).toBe(addr(abBody));
+			expect(decodeData(encodeData(addr(abBody)))).toBe(checksummed);
+			expect(decodeData(encodeData(checksummed))).toBe(checksummed);
 		});
 	});
 

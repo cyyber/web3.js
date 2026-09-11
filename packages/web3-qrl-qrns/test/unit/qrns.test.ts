@@ -112,6 +112,18 @@ describe('qrns', () => {
 	});
 
 	describe('addr', () => {
+		it('setAddr valid', async () => {
+			// eslint-disable-next-line @typescript-eslint/no-empty-function
+			const send = jest.spyOn({ send: () => {} }, 'send');
+
+			const setAddressMock = jest.spyOn(qrns['_resolver'], 'setAddress').mockReturnValue({
+				send,
+			} as unknown as Web3PromiEvent<any, any>);
+
+			const sendOptions = { from: mockAddress };
+			await qrns.setAddress(QRNS_NAME, mockAddress, sendOptions);
+			expect(setAddressMock).toHaveBeenCalledWith(QRNS_NAME, mockAddress, sendOptions);
+		});
 		it('getAddress', async () => {
 			// eslint-disable-next-line @typescript-eslint/no-empty-function
 			const call = jest.spyOn({ call: () => {} }, 'call');
@@ -175,6 +187,37 @@ describe('qrns', () => {
 		});
 	});
 
+	describe('text', () => {
+		it('getText', async () => {
+			const getTextMock = jest.spyOn(qrns['_resolver'], 'getText').mockResolvedValue('value');
+
+			await qrns.getText(QRNS_NAME, 'url');
+			expect(getTextMock).toHaveBeenCalledWith(QRNS_NAME, 'url');
+		});
+
+		it('getText from address', async () => {
+			const getNameMock = jest
+				.spyOn(qrns['_resolver'], 'getName')
+				.mockResolvedValue(QRNS_NAME);
+			const getTextMock = jest.spyOn(qrns['_resolver'], 'getText').mockResolvedValue('value');
+
+			await qrns.getText(mockAddress, 'url');
+			expect(getNameMock).toHaveBeenCalledWith(mockAddress, false);
+			expect(getTextMock).toHaveBeenCalledWith(QRNS_NAME, 'url');
+		});
+	});
+
+	describe('name', () => {
+		it('getName', async () => {
+			const getNameMock = jest
+				.spyOn(qrns['_resolver'], 'getName')
+				.mockResolvedValue(QRNS_NAME);
+
+			await qrns.getName(mockAddress);
+			expect(getNameMock).toHaveBeenCalledWith(mockAddress, true);
+		});
+	});
+
 	it('supportsInterface', async () => {
 		const interfaceId = 'setAddr';
 		const supportsInterfaceMock = jest
@@ -233,6 +276,7 @@ describe('qrns', () => {
 
 		it('QRNSUnsupportedNetworkError', async () => {
 			// reset from previous check
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 			qrns['_detectedAddress'] = undefined;
 
 			const network = 'AnUnsupportedNetwork';

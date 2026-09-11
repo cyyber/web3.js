@@ -16,17 +16,25 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { Web3Context, Web3ContextObject } from '@theqrl/web3-core';
-import { QRNSNetworkNotSyncedError, QRNSUnsupportedNetworkError } from '@theqrl/web3-errors';
+import {
+	QRNSNetworkNotSyncedError,
+	QRNSUnsupportedNetworkError,
+	RevertInstructionError,
+} from '@theqrl/web3-errors';
 import { isSyncing } from '@theqrl/web3-qrl';
 import { Contract } from '@theqrl/web3-qrl-contract';
 import { getId } from '@theqrl/web3-net';
 import {
+	Address,
 	DEFAULT_RETURN_FORMAT,
 	QRLExecutionAPI,
 	FMT_NUMBER,
+	PayableCallOptions,
 	SupportedProviders,
+	TransactionReceipt,
 	Web3NetAPI,
 } from '@theqrl/web3-types';
+import { isAddressString } from '@theqrl/web3-validator';
 import { PublicResolverAbi } from './abi/qrns/PublicResolver.js';
 import { networkIds, registryAddresses } from './config.js';
 import { Registry } from './registry.js';
@@ -53,7 +61,7 @@ export class QRNS extends Web3Context<QRLExecutionAPI & Web3NetAPI> {
 	 * @example
 	 * ```ts
 	 * const qrns = new QRNS(
-	 * 	"Q000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c2e074ec69a0dfb2997ba6c7d2e1e",
+	 * 	"Q33380cd8b47eed92b0dcd1ccca2ee84efd0c8b87a4fe6ee4a918969cdd454c0b04ac9f03ffaafa765af0cbeab572d8c9dd514044aa94adee50fa5d361a3e4629",
 	 * 	"http://localhost:8545"
 	 * );
 	 *
@@ -138,11 +146,32 @@ export class QRNS extends Web3Context<QRLExecutionAPI & Web3NetAPI> {
 	 * ```ts
 	 * const address = await web3.qrl.qrns.getAddress('qrl.qrns');
 	 * console.log(address);
-	 * > 'Q693bA851060EFb980DACA536C4A1EF74585e1F14657DEa79e1f8f4655b543046e11c577AD9a2445443e9e3092AEeE55ecf99325f4ADd93BE6C23A2431F6065b9'
+	 * > '0x693ba851060efb980daca536c4a1ef74585e1f14657dea79e1f8f4655b543046e11c577ad9a2445443e9e3092aeee55ecf99325f4add93be6c23a2431f6065b9'
 	 * ```
 	 */
 	public async getAddress(QRNSName: string, coinType = 60) {
 		return this._resolver.getAddress(QRNSName, coinType);
+	}
+
+	/**
+	 * ERC-634 - Returns the text content stored in the resolver for the specified key.
+	 * @param QRNSNameOrAddr - The QRNS name to resolve, or a QRL address for reverse resolution
+	 * @param key - The key to resolve https://github.com/ethereum/ercs/blob/master/ERCS/erc-634.md#global-keys
+	 * @returns - The value content stored in the resolver for the specified key
+	 */
+	public async getText(QRNSNameOrAddr: string, key: string): Promise<string> {
+		if (isAddressString(QRNSNameOrAddr))
+			return this._resolver.getText(await this._resolver.getName(QRNSNameOrAddr, false), key);
+		return this._resolver.getText(QRNSNameOrAddr, key);
+	}
+
+	/**
+	 * Resolves the name of a QRNS node.
+	 * @param QRNSName - The node to resolve
+	 * @returns - The name
+	 */
+	public async getName(QRNSName: string, checkInterfaceSupport = true): Promise<string> {
+		return this._resolver.getName(QRNSName, checkInterfaceSupport);
 	}
 
 	/**
@@ -187,7 +216,7 @@ export class QRNS extends Web3Context<QRLExecutionAPI & Web3NetAPI> {
 	 * @example
 	 * ```ts
 	 * console.log(await web3.qrl.qrns.checkNetwork());
-	 * > 'Q000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c2e074ec69a0dfb2997ba6c7d2e1e'
+	 * > 'Q33380cd8b47eed92b0dcd1ccca2ee84efd0c8b87a4fe6ee4a918969cdd454c0b04ac9f03ffaafa765af0cbeab572d8c9dd514044aa94adee50fa5d361a3e4629'
 	 * ```
 	 */
 	public async checkNetwork() {
@@ -240,5 +269,23 @@ export class QRNS extends Web3Context<QRLExecutionAPI & Web3NetAPI> {
 	 */
 	public get events() {
 		return this._registry.events;
+	}
+
+	/**
+	 * Sets the address of a QRNS name in his resolver.
+	 * @param name - The QRNS name
+	 * @param address - The address to set
+	 * @param txConfig - (Optional) The transaction config
+	 * @returns - The transaction receipt
+	 * ```ts
+	 * const receipt = await qrns.setAddress('web3js.qrl','Q33380cd8b47eed92b0dcd1ccca2ee84efd0c8b87a4fe6ee4a918969cdd454c0b04ac9f03ffaafa765af0cbeab572d8c9dd514044aa94adee50fa5d361a3e4629');
+	 *```
+	 */
+	public async setAddress(
+		name: string,
+		address: Address,
+		txConfig: PayableCallOptions,
+	): Promise<TransactionReceipt | RevertInstructionError> {
+		return this._resolver.setAddress(name, address, txConfig);
 	}
 }

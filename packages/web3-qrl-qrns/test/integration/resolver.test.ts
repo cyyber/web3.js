@@ -15,9 +15,9 @@ You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-import Web3QRL from '@theqrl/web3-qrl';
+import { getBlock } from '@theqrl/web3-qrl';
 import { Contract, PayableTxOptions } from '@theqrl/web3-qrl-contract';
-import { hexToAddress, sha3 } from '@theqrl/web3-utils';
+import { addressToHex, sha3 } from '@theqrl/web3-utils';
 
 import { Address, Bytes, DEFAULT_RETURN_FORMAT } from '@theqrl/web3-types';
 import { IpcProvider } from '@theqrl/web3-providers-ipc';
@@ -26,7 +26,7 @@ import { namehash } from '../../src/utils';
 
 import {
 	closeOpenConnection,
-	getSystemTestAccounts,
+	createTempAccount,
 	getSystemTestProvider,
 	getSystemTestProviderUrl,
 	isIpc,
@@ -35,12 +35,9 @@ import {
 	itIf,
 } from '../fixtures/system_tests_utils';
 
-import { QRNSRegistryAbi } from '../fixtures/qrns/abi/QRNSRegistry';
-import { PublicResolverAbi } from '../fixtures/qrns/abi/PublicResolver';
-import { NameWrapperAbi } from '../fixtures/qrns/abi/NameWrapper';
-import { QRNSRegistryBytecode } from '../fixtures/qrns/bytecode/QRNSRegistryBytecode';
-import { NameWrapperBytecode } from '../fixtures/qrns/bytecode/NameWrapperBytecode';
-import { PublicResolverBytecode } from '../fixtures/qrns/bytecode/PublicResolverBytecode';
+import { NameWrapperAbi, NameWrapperBytecode } from '../shared_fixtures/build/NameWrapper';
+import { PublicResolverAbi, PublicResolverBytecode } from '../shared_fixtures/build/PublicResolver';
+import { QRNSRegistryAbi, QRNSRegistryBytecode } from '../shared_fixtures/build/QRNSRegistry';
 
 describe('qrns', () => {
 	let registry: Contract<typeof QRNSRegistryAbi>;
@@ -56,24 +53,23 @@ describe('qrns', () => {
 	const node = namehash('resolver');
 	const label = sha3('resolver') as string;
 
-	let web3QRL: Web3QRL;
-
-	let accounts: string[];
 	let qrns: QRNS;
 	let defaultAccount: string;
 	let accountOne: string;
 
 	const ZERO_NODE: Bytes = '0x0000000000000000000000000000000000000000000000000000000000000000';
-	const addressOne: Address = 'Q00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001';
+	const addressOne: Address =
+		'Q00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001';
 
 	const contentHash = '0x0000000000000000000000000000000000000000000000000000000000000001';
 
 	const DEFAULT_COIN_TYPE = 60;
 
 	beforeAll(async () => {
-		accounts = await getSystemTestAccounts();
-
-		[defaultAccount, accountOne] = accounts;
+		const acc1 = await createTempAccount();
+		defaultAccount = acc1.address;
+		const acc2 = await createTempAccount();
+		accountOne = acc2.address;
 
 		sendOptions = { from: defaultAccount, gas: '10000000' };
 
@@ -121,14 +117,10 @@ describe('qrns', () => {
 
 		qrns = new QRNS(registry.options.address, provider);
 
-		web3QRL = new Web3QRL(provider);
-		const block = await web3QRL.getBlock('latest', false, DEFAULT_RETURN_FORMAT);
-		const gas = block.gasLimit.toString();
-
-		// Increase gas for contract calls
+		const block = await getBlock(qrns, 'latest', false, DEFAULT_RETURN_FORMAT);
 		sendOptions = {
 			...sendOptions,
-			gas,
+			gas: block.gasLimit.toString(),
 		};
 	});
 
@@ -195,6 +187,7 @@ describe('qrns', () => {
 		expect(res).toBe(contentHash);
 	});
 
+	// eslint-disable-next-line jest/expect-expect
 	itIf(isSocket)('ContenthashChanged event', async () => {
 		// eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
 		await new Promise<void>(async resolve => {
@@ -220,12 +213,10 @@ describe('qrns', () => {
 			.setResolver(domainNode, resolver.options.address as string)
 			.send(sendOptions);
 
-		await resolver.methods.setAddr(domainNode, accounts[1]).send(sendOptions);
+		await resolver.methods.setAddr(domainNode, accountOne).send(sendOptions);
 
-		// NOTE(rgeraldes24): resolver.methods.addr(node, coin) return type is 'bytes';
-		// value is not converted automatically to the 'address' type via ABI
 		const res = await resolver.methods.addr(domainNode, DEFAULT_COIN_TYPE).call(sendOptions);
-		expect(hexToAddress(res.toString())).toBe(accounts[1]);
+		expect(res).toBe(addressToHex(accountOne));
 	});
 
 	it('fetches address', async () => {
@@ -235,9 +226,7 @@ describe('qrns', () => {
 
 		await resolver.methods.setAddr(domainNode, accountOne).send(sendOptions);
 
-		// NOTE(rgeraldes24): qrns.getAddress(domain) return type is 'bytes';
-		// value is not converted automatically to the 'address' type via ABI
 		const resultAddress = await qrns.getAddress(domain);
-		expect(hexToAddress(resultAddress.toString())).toBe(accountOne);
+		expect(resultAddress).toBe(addressToHex(accountOne));
 	});
 });

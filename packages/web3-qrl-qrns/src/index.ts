@@ -25,5 +25,4 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 import { registryAddresses } from './config.js';
 
 export * from './qrns.js';
-export { normalize, normalizeWithSource, namehash } from './utils.js';
 export { registryAddresses };

@@ -25,11 +25,8 @@ import { PublicResolverAbi } from './abi/qrns/PublicResolver.js';
 import { registryAddresses } from './config.js';
 import { namehash } from './utils.js';
 
-// A QRL address is 'Q' + 128 hex characters, so the zero address has 128 zeros.
 const QRL_ZERO_ADDRESS = `Q${'0'.repeat(128)}`;
 
-// Wrap a failed contract call in a typed error while preserving the original
-// cause (message and error object) instead of discarding it in an empty Error.
 const wrapContractCallError = (error: unknown): Error => {
 	const cause = error instanceof Error ? error : new Error(String(error));
 	const revertError = new TransactionRevertInstructionError(cause.message);
@@ -53,8 +50,6 @@ export class Registry {
 
 	public async getOwner(name: string) {
 		try {
-			// Await inside the try so async rejections are actually caught here
-			// rather than bypassing the catch block.
 			return await this.contract.methods.owner(namehash(name)).call();
 		} catch (error) {
 			throw wrapContractCallError(error);
@@ -80,15 +75,11 @@ export class Registry {
 	public async getResolver(name: string) {
 		let address: unknown;
 		try {
-			// Await inside the try so a failed/reverted call surfaces a
-			// cause-preserving typed error.
 			address = await this.contract.methods.resolver(namehash(name)).call();
 		} catch (error) {
 			throw wrapContractCallError(error);
 		}
 
-		// Validation happens outside the try so the specific messages below are
-		// not swallowed/re-wrapped as generic contract-call failures.
 		if (typeof address !== 'string') {
 			throw new Error('QRNS registry returned non-string resolver address');
 		}

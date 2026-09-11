@@ -17,6 +17,8 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 
 import { BigNumber } from '@ethersproject/bignumber';
 
+import { toChecksumAddress } from '@theqrl/web3-utils';
+
 import { AbiCoder, defaultAbiCoder } from '../../src/abi-coder.js';
 import { ParamType } from '../../src/fragments.js';
 
@@ -34,7 +36,7 @@ const word = (n: number | string) => {
 /** A 64-byte word holding `hex`, left-aligned (the encoding for byte data). */
 const bytesWord = (hex: string) => `${hex}${'0'.repeat(WORD * 2 - hex.length)}`;
 
-const ADDR_A = `Q${'ab'.repeat(64)}`;
+const ADDR_A = toChecksumAddress(`Q${'ab'.repeat(64)}`);
 const ADDR_B = `Q${'0'.repeat(127)}1`;
 const ADDR_ZERO = `Q${'0'.repeat(128)}`;
 
