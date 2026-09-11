@@ -176,7 +176,7 @@ describe('qrns', () => {
 		const publicKey = bytesToHex(wallet.getPK());
 		const descriptor = bytesToHex(wallet.getDescriptor().toBytes());
 
-		await qrns.setPubkey(domain, publicKey, descriptor, sendOptions);
+		await resolver.methods.setPubkey(domainNode, publicKey, descriptor).send(sendOptions);
 
 		const result = await qrns.getPubkey(domain);
 

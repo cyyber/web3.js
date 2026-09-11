@@ -183,34 +183,6 @@ describe('resolver', () => {
 			expect(pubkeyMock).toHaveBeenCalledWith(namehash(QRNS_NAME));
 		});
 
-		it('setPubkey', async () => {
-			const publicKey = `0x${'11'.repeat(2592)}`;
-			const descriptor = '0x010000';
-
-			const checkInterface = jest.spyOn(resolver, 'checkInterfaceSupport');
-
-			const setPubkeyMock = jest.spyOn(contract.methods, 'setPubkey').mockReturnValue({
-				send: jest.fn(),
-			} as unknown as NonPayableMethodObject<any, any>);
-
-			jest.spyOn(contract.methods, 'supportsInterface').mockReturnValue({
-				call: jest.fn().mockReturnValue(true),
-			} as unknown as NonPayableMethodObject<any, any>);
-
-			jest.spyOn(registry, 'getResolver').mockImplementation(async () => {
-				return new Promise(resolve => {
-					resolve(contract);
-				});
-			});
-
-			await resolver.setPubkey(QRNS_NAME, publicKey, descriptor, { from: mockAddress });
-			expect(checkInterface).toHaveBeenCalled();
-			expect(setPubkeyMock).toHaveBeenCalledWith(
-				namehash(QRNS_NAME),
-				publicKey,
-				descriptor,
-			);
-		});
 	});
 
 	describe('Contenthash', () => {

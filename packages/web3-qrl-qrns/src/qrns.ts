@@ -196,22 +196,6 @@ export class QRNS extends Web3Context<QRLExecutionAPI & Web3NetAPI> {
 	}
 
 	/**
-	 * Sets the ML-DSA-87 public key and descriptor for the given name.
-	 * @param name - The QRNS name
-	 * @param publicKey - 2592-byte ML-DSA-87 public key
-	 * @param descriptor - 3-byte QRL descriptor
-	 * @param txConfig - (Optional) The transaction config
-	 */
-	public async setPubkey(
-		name: string,
-		publicKey: string,
-		descriptor: string,
-		txConfig: PayableCallOptions,
-	): Promise<TransactionReceipt | RevertInstructionError> {
-		return this._resolver.setPubkey(name, publicKey, descriptor, txConfig);
-	}
-
-	/**
 	 * Returns the content hash object associated with a QRNS node.
 	 * @param QRNSName - The QRNS name
 	 * @returns - The content hash object associated with a QRNS node

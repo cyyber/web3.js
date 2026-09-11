@@ -172,25 +172,6 @@ describe('qrns', () => {
 			expect(pubkeyMock).toHaveBeenCalledWith(QRNS_NAME);
 		});
 
-		it('setPubkey', async () => {
-			// eslint-disable-next-line @typescript-eslint/no-empty-function
-			const send = jest.spyOn({ send: () => {} }, 'send');
-			const publicKey = `0x${'11'.repeat(2592)}`;
-			const descriptor = '0x010000';
-
-			const setPubkeyMock = jest.spyOn(qrns['_resolver'], 'setPubkey').mockReturnValue({
-				send,
-			} as unknown as Web3PromiEvent<any, any>);
-
-			const sendOptions = { from: mockAddress };
-			await qrns.setPubkey(QRNS_NAME, publicKey, descriptor, sendOptions);
-			expect(setPubkeyMock).toHaveBeenCalledWith(
-				QRNS_NAME,
-				publicKey,
-				descriptor,
-				sendOptions,
-			);
-		});
 
 		describe('Contenthash', () => {
 			it('getContenthash', async () => {

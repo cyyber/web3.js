@@ -608,27 +608,4 @@ export const PublicResolverAbi = [
 		stateMutability: 'nonpayable',
 		type: 'function',
 	},
-	{
-		inputs: [
-			{
-				internalType: 'bytes32',
-				name: 'node',
-				type: 'bytes32',
-			},
-			{
-				internalType: 'bytes',
-				name: 'publicKey',
-				type: 'bytes',
-			},
-			{
-				internalType: 'bytes',
-				name: 'descriptor',
-				type: 'bytes',
-			},
-		],
-		name: 'setPubkey',
-		outputs: [],
-		stateMutability: 'nonpayable',
-		type: 'function',
-	},
 ] as const;
