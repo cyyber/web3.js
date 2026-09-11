@@ -991,7 +991,7 @@ abstract contract PubkeyResolver is IPubkeyResolver, ResolverBase {
 
     /**
      * Sets the ML-DSA-87 public key associated with a QRNS node.
-     * @param node The QRNS node to update
+     * @param node The QRNS node to query
      * @param publicKey The ML-DSA-87 public key.
      * @param descriptor The QRL descriptor.
      */
