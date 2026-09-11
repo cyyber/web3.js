@@ -20,13 +20,6 @@ import { ens_normalize } from '@adraffy/ens-normalize';
 
 export const normalize = (name: string) => ens_normalize(name);
 
-// Returns both the input and the normalised form so callers can display the
-// canonical name for confirmation (homoglyph defence).
-export const normalizeWithSource = (name: string): { input: string; normalized: string } => ({
-	input: name,
-	normalized: ens_normalize(name),
-});
-
 export const namehash = (inputName: string) => {
 	// Reject empty names:
 	let node = '';

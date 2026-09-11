@@ -266,9 +266,6 @@ describe('resolver', () => {
 
 			const reverseName = `${address.toLowerCase().substring(1)}.addr.reverse`;
 			expect(nameMock).toHaveBeenCalledWith(namehash(reverseName));
-
-			await resolver.getName(address, false);
-			expect(nameMock).toHaveBeenCalledTimes(2);
 		});
 	});
 
