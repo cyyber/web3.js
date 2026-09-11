@@ -46,6 +46,7 @@ describe('qrns', () => {
 		expect(resolver.checkInterfaceSupport).toBeDefined();
 		expect(resolver.supportsInterface).toBeDefined();
 		expect(resolver.getPubkey).toBeDefined();
+		expect(resolver.setPubkey).toBeDefined();
 		expect(resolver.getContenthash).toBeDefined();
 		expect(resolver.getText).toBeDefined();
 		expect(resolver.getName).toBeDefined();
@@ -61,6 +62,7 @@ describe('qrns', () => {
 		expect(qrns.getOwner).toBeDefined();
 		expect(qrns.getAddress).toBeDefined();
 		expect(qrns.getPubkey).toBeDefined();
+		expect(qrns.setPubkey).toBeDefined();
 		expect(qrns.getContenthash).toBeDefined();
 		expect(qrns.getText).toBeDefined();
 		expect(qrns.getName).toBeDefined();

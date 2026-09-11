@@ -23,7 +23,9 @@ export const interfaceIds: { [T: string]: string } = {
 	addr: '0x3b3b57de',
 	name: '0x691f3431',
 	abi: '0x2203ab56',
-	pubkey: '0xc8690233',
+	// Not EIP-619 IPubkeyResolver (0xc8690233). XOR of pubkey(bytes32)
+	// and setPubkey(bytes32,bytes,bytes) on the ML-DSA-87 interface.
+	pubkey: '0xd8e01a0d',
 	text: '0x59d1d43c',
 	contenthash: '0xbc1c58d1',
 };

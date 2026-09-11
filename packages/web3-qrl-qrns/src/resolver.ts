@@ -96,6 +96,20 @@ export class Resolver {
 		return resolverContract.methods.pubkey(namehash(QRNSName)).call();
 	}
 
+	public async setPubkey(
+		QRNSName: string,
+		publicKey: string,
+		descriptor: string,
+		txConfig: PayableCallOptions,
+	) {
+		const resolverContract = await this.getResolverContractAdapter(QRNSName);
+		await this.checkInterfaceSupport(resolverContract, methodsInInterface.setPubkey);
+
+		return resolverContract.methods
+			.setPubkey(namehash(QRNSName), publicKey, descriptor)
+			.send(txConfig);
+	}
+
 	public async getContenthash(QRNSName: string) {
 		const resolverContract = await this.getResolverContractAdapter(QRNSName);
 

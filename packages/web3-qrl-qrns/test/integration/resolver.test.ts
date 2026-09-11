@@ -17,7 +17,8 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 
 import { getBlock } from '@theqrl/web3-qrl';
 import { Contract, PayableTxOptions } from '@theqrl/web3-qrl-contract';
-import { addressToHex, sha3 } from '@theqrl/web3-utils';
+import { addressToHex, bytesToHex, sha3 } from '@theqrl/web3-utils';
+import { newMLDSA87WalletFromExtendedSeed } from '../../../web3-qrl-accounts/src/qrl_wallet';
 
 import { Address, Bytes, DEFAULT_RETURN_FORMAT } from '@theqrl/web3-types';
 import { IpcProvider } from '@theqrl/web3-providers-ipc';
@@ -146,7 +147,8 @@ describe('qrns', () => {
 		await expect(qrns.supportsInterface('resolver', '0xf1cb7e06')).resolves.toBeTruthy(); // IAddressResolver
 		await expect(qrns.supportsInterface('resolver', '0x691f3431')).resolves.toBeTruthy(); // INameResolver
 		await expect(qrns.supportsInterface('resolver', '0x2203ab56')).resolves.toBeTruthy(); // IABIResolver
-		await expect(qrns.supportsInterface('resolver', '0xc8690233')).resolves.toBeTruthy(); // IPubkeyResolver
+		await expect(qrns.supportsInterface('resolver', '0xd8e01a0d')).resolves.toBeTruthy(); // IPubkeyResolver (ML-DSA-87, not EIP-619)
+		await expect(qrns.supportsInterface('resolver', '0xc8690233')).resolves.toBeFalsy(); // EIP-619 IPubkeyResolver
 		await expect(qrns.supportsInterface('resolver', '0x59d1d43c')).resolves.toBeTruthy(); // ITextResolver
 		await expect(qrns.supportsInterface('resolver', '0xbc1c58d1')).resolves.toBeTruthy(); // IContentHashResolver
 		await expect(qrns.supportsInterface('resolver', '0xa8fa5682')).resolves.toBeTruthy(); // IDNSRecordResolver
@@ -164,20 +166,22 @@ describe('qrns', () => {
 			.send(sendOptions);
 
 		const res = await qrns.getPubkey(domain);
-		expect(res.x).toBe('0x0000000000000000000000000000000000000000000000000000000000000000');
-		expect(res.y).toBe('0x0000000000000000000000000000000000000000000000000000000000000000');
+		expect(res.publicKey).toBe('0x');
+		expect(res.descriptor).toBe('0x');
 	});
 
 	it('permits setting public key by owner', async () => {
-		const x = '0x1000000000000000000000000000000000000000000000000000000000000000';
-		const y = '0x2000000000000000000000000000000000000000000000000000000000000000';
+		const acc = await createTempAccount();
+		const wallet = newMLDSA87WalletFromExtendedSeed(acc.seed);
+		const publicKey = bytesToHex(wallet.getPK());
+		const descriptor = bytesToHex(wallet.getDescriptor().toBytes());
 
-		await resolver.methods.setPubkey(domainNode, x, y).send(sendOptions);
+		await qrns.setPubkey(domain, publicKey, descriptor, sendOptions);
 
 		const result = await qrns.getPubkey(domain);
 
-		expect(result[0]).toBe(x);
-		expect(result[1]).toBe(y);
+		expect(result.publicKey).toBe(publicKey);
+		expect(result.descriptor).toBe(descriptor);
 	});
 
 	it('sets contenthash', async () => {
