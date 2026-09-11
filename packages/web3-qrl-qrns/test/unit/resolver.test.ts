@@ -182,7 +182,6 @@ describe('resolver', () => {
 			);
 			expect(pubkeyMock).toHaveBeenCalledWith(namehash(QRNS_NAME));
 		});
-
 	});
 
 	describe('Contenthash', () => {

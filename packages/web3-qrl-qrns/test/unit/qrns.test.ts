@@ -172,7 +172,6 @@ describe('qrns', () => {
 			expect(pubkeyMock).toHaveBeenCalledWith(QRNS_NAME);
 		});
 
-
 		describe('Contenthash', () => {
 			it('getContenthash', async () => {
 				const contenthashMock = jest
