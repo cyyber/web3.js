@@ -173,6 +173,7 @@ describe('qrns', () => {
 		});
 
 		it('setPubkey', async () => {
+			// eslint-disable-next-line @typescript-eslint/no-empty-function
 			const send = jest.spyOn({ send: () => {} }, 'send');
 			const publicKey = `0x${'11'.repeat(2592)}`;
 			const descriptor = '0x010000';
