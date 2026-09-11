@@ -17,9 +17,8 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 
 import { Contract, PayableTxOptions } from '@theqrl/web3-qrl-contract';
 import { sha3 } from '@theqrl/web3-utils';
-import { getBlock } from '@theqrl/web3-qrl';
 
-import { Address, Bytes, DEFAULT_RETURN_FORMAT } from '@theqrl/web3-types';
+import { Address, Bytes } from '@theqrl/web3-types';
 import { IpcProvider } from '@theqrl/web3-providers-ipc';
 import { QRNS } from '../../src';
 import { namehash } from '../../src/utils';
@@ -57,7 +56,6 @@ describeIf(isSocket)('qrns events', () => {
 	const node = namehash('resolver');
 	const label = sha3('resolver') as string;
 
-	let accounts: string[];
 	let qrns: QRNS;
 	let defaultAccount: string;
 	let accountOne: string;
@@ -67,9 +65,7 @@ describeIf(isSocket)('qrns events', () => {
 		'Q00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001';
 
 	beforeAll(async () => {
-		accounts = await getSystemTestAccounts();
-
-		[defaultAccount, accountOne] = accounts;
+		[defaultAccount, accountOne] = await getSystemTestAccounts();
 
 		sendOptions = { from: defaultAccount, gas: '10000000' };
 
@@ -116,15 +112,6 @@ describeIf(isSocket)('qrns events', () => {
 		else provider = new QRNS.providers.HttpProvider(clientUrl);
 
 		qrns = new QRNS(registry.options.address, provider);
-
-		const block = await getBlock(qrns, 'latest', false, DEFAULT_RETURN_FORMAT);
-		const gas = block.gasLimit.toString();
-
-		// Increase gas for contract calls
-		sendOptions = {
-			...sendOptions,
-			gas,
-		};
 	});
 
 	afterAll(async () => {
