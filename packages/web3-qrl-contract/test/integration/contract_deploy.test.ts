@@ -15,6 +15,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 import { Web3QRL } from '@theqrl/web3-qrl';
+import { FMT_BYTES, FMT_NUMBER } from '@theqrl/web3-types';
 import { Contract } from '../../src';
 import { sleep } from '../shared_fixtures/utils';
 import { SQRCTN1TokenAbi, SQRCTN1TokenBytecode } from '../shared_fixtures/build/SQRCTN1Token';
@@ -28,6 +29,7 @@ import {
 	signTxAndSendEIP1559,
 	// sendFewSampleTxs,
 	closeOpenConnection,
+	mapFormatToType,
 } from '../fixtures/system_test_utils';
 
 describe('contract', () => {
@@ -105,8 +107,33 @@ describe('contract', () => {
 						from: acc.address,
 						gas: '1000000',
 					});
+				expect(typeof estimatedGas).toBe('bigint');
 				expect(Number(estimatedGas)).toBeGreaterThan(0);
 			});
+			it.each(Object.values(FMT_NUMBER))(
+				'should return estimated gas of contract constructor %p with correct type',
+				async format => {
+					const returnFormat = { number: format as FMT_NUMBER, bytes: FMT_BYTES.HEX };
+
+					const estimatedGas = await new Contract(
+						GreeterAbi,
+						{
+							provider: getSystemTestProvider(),
+						},
+						returnFormat,
+					)
+						.deploy({
+							data: GreeterBytecode,
+							arguments: ['My Greeting'],
+						})
+						.estimateGas({
+							from: acc.address,
+							gas: '1000000',
+						});
+					expect(typeof estimatedGas).toBe(mapFormatToType[format as string]);
+					expect(Number(estimatedGas)).toBeGreaterThan(0);
+				},
+			);
 			it('should return estimated gas of contract constructor without arguments', async () => {
 				const estimatedGas = await new Contract(SQRCTN1TokenAbi, undefined, {
 					provider: getSystemTestProvider(),
