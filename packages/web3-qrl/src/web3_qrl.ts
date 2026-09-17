@@ -145,7 +145,7 @@ export class Web3QRL extends Web3Context<Web3QRLExecutionAPI, RegisteredSubscrip
 	 * ```
 	 */
 	public async getGasPrice<ReturnFormat extends DataFormat = typeof DEFAULT_RETURN_FORMAT>(
-		returnFormat: ReturnFormat = DEFAULT_RETURN_FORMAT as ReturnFormat,
+		returnFormat: ReturnFormat = this.defaultReturnFormat as ReturnFormat,
 	) {
 		return rpcMethodsWrappers.getGasPrice(this, returnFormat);
 	}
@@ -164,7 +164,7 @@ export class Web3QRL extends Web3Context<Web3QRLExecutionAPI, RegisteredSubscrip
 	 */
 	public async getMaxPriorityFeePerGas<
 		ReturnFormat extends DataFormat = typeof DEFAULT_RETURN_FORMAT,
-	>(returnFormat: ReturnFormat = DEFAULT_RETURN_FORMAT as ReturnFormat) {
+	>(returnFormat: ReturnFormat = this.defaultReturnFormat as ReturnFormat) {
 		return rpcMethodsWrappers.getMaxPriorityFeePerGas(this, returnFormat);
 	}
 
@@ -255,7 +255,7 @@ export class Web3QRL extends Web3Context<Web3QRLExecutionAPI, RegisteredSubscrip
 	 * ```
 	 */
 	public async getBlockNumber<ReturnFormat extends DataFormat = typeof DEFAULT_RETURN_FORMAT>(
-		returnFormat: ReturnFormat = DEFAULT_RETURN_FORMAT as ReturnFormat,
+		returnFormat: ReturnFormat = this.defaultReturnFormat as ReturnFormat,
 	) {
 		return rpcMethodsWrappers.getBlockNumber(this, returnFormat);
 	}
@@ -279,7 +279,7 @@ export class Web3QRL extends Web3Context<Web3QRLExecutionAPI, RegisteredSubscrip
 	public async getBalance<ReturnFormat extends DataFormat = typeof DEFAULT_RETURN_FORMAT>(
 		address: Address,
 		blockNumber: BlockNumberOrTag = this.defaultBlock,
-		returnFormat: ReturnFormat = DEFAULT_RETURN_FORMAT as ReturnFormat,
+		returnFormat: ReturnFormat = this.defaultReturnFormat as ReturnFormat,
 	) {
 		return rpcMethodsWrappers.getBalance(this, address, blockNumber, returnFormat);
 	}
@@ -315,7 +315,7 @@ export class Web3QRL extends Web3Context<Web3QRLExecutionAPI, RegisteredSubscrip
 		address: Address,
 		storageSlot: Numbers,
 		blockNumber: BlockNumberOrTag = this.defaultBlock,
-		returnFormat: ReturnFormat = DEFAULT_RETURN_FORMAT as ReturnFormat,
+		returnFormat: ReturnFormat = this.defaultReturnFormat as ReturnFormat,
 	) {
 		return rpcMethodsWrappers.getStorageAt(
 			this,
@@ -355,7 +355,7 @@ export class Web3QRL extends Web3Context<Web3QRLExecutionAPI, RegisteredSubscrip
 	public async getCode<ReturnFormat extends DataFormat = typeof DEFAULT_RETURN_FORMAT>(
 		address: Address,
 		blockNumber: BlockNumberOrTag = this.defaultBlock,
-		returnFormat: ReturnFormat = DEFAULT_RETURN_FORMAT as ReturnFormat,
+		returnFormat: ReturnFormat = this.defaultReturnFormat as ReturnFormat,
 	) {
 		return rpcMethodsWrappers.getCode(this, address, blockNumber, returnFormat);
 	}
@@ -417,7 +417,7 @@ export class Web3QRL extends Web3Context<Web3QRLExecutionAPI, RegisteredSubscrip
 	public async getBlock<ReturnFormat extends DataFormat = typeof DEFAULT_RETURN_FORMAT>(
 		block: HexString32Bytes | BlockNumberOrTag = this.defaultBlock,
 		hydrated = false,
-		returnFormat: ReturnFormat = DEFAULT_RETURN_FORMAT as ReturnFormat,
+		returnFormat: ReturnFormat = this.defaultReturnFormat as ReturnFormat,
 	) {
 		return rpcMethodsWrappers.getBlock(this, block, hydrated, returnFormat);
 	}
@@ -442,7 +442,7 @@ export class Web3QRL extends Web3Context<Web3QRLExecutionAPI, RegisteredSubscrip
 		ReturnFormat extends DataFormat = typeof DEFAULT_RETURN_FORMAT,
 	>(
 		block: HexString32Bytes | BlockNumberOrTag = this.defaultBlock,
-		returnFormat: ReturnFormat = DEFAULT_RETURN_FORMAT as ReturnFormat,
+		returnFormat: ReturnFormat = this.defaultReturnFormat as ReturnFormat,
 	) {
 		return rpcMethodsWrappers.getBlockTransactionCount(this, block, returnFormat);
 	}
@@ -501,7 +501,7 @@ export class Web3QRL extends Web3Context<Web3QRLExecutionAPI, RegisteredSubscrip
 	 */
 	public async getTransaction<ReturnFormat extends DataFormat = typeof DEFAULT_RETURN_FORMAT>(
 		transactionHash: Bytes,
-		returnFormat: ReturnFormat = DEFAULT_RETURN_FORMAT as ReturnFormat,
+		returnFormat: ReturnFormat = this.defaultReturnFormat as ReturnFormat,
 	) {
 		const response = await rpcMethodsWrappers.getTransaction(
 			this,
@@ -606,7 +606,7 @@ export class Web3QRL extends Web3Context<Web3QRLExecutionAPI, RegisteredSubscrip
 	 */
 	public async getPendingTransactions<
 		ReturnFormat extends DataFormat = typeof DEFAULT_RETURN_FORMAT,
-	>(returnFormat: ReturnFormat = DEFAULT_RETURN_FORMAT as ReturnFormat) {
+	>(returnFormat: ReturnFormat = this.defaultReturnFormat as ReturnFormat) {
 		return rpcMethodsWrappers.getPendingTransactions(this, returnFormat);
 	}
 
@@ -669,7 +669,7 @@ export class Web3QRL extends Web3Context<Web3QRLExecutionAPI, RegisteredSubscrip
 	>(
 		block: HexString32Bytes | BlockNumberOrTag = this.defaultBlock,
 		transactionIndex: Numbers,
-		returnFormat: ReturnFormat = DEFAULT_RETURN_FORMAT as ReturnFormat,
+		returnFormat: ReturnFormat = this.defaultReturnFormat as ReturnFormat,
 	) {
 		return rpcMethodsWrappers.getTransactionFromBlock(
 			this,
@@ -725,7 +725,7 @@ export class Web3QRL extends Web3Context<Web3QRLExecutionAPI, RegisteredSubscrip
 	 */
 	public async getTransactionReceipt<
 		ReturnFormat extends DataFormat = typeof DEFAULT_RETURN_FORMAT,
-	>(transactionHash: Bytes, returnFormat: ReturnFormat = DEFAULT_RETURN_FORMAT as ReturnFormat) {
+	>(transactionHash: Bytes, returnFormat: ReturnFormat = this.defaultReturnFormat as ReturnFormat) {
 		const response = await rpcMethodsWrappers.getTransactionReceipt(
 			this,
 			transactionHash,
@@ -760,7 +760,7 @@ export class Web3QRL extends Web3Context<Web3QRLExecutionAPI, RegisteredSubscrip
 	>(
 		address: Address,
 		blockNumber: BlockNumberOrTag = this.defaultBlock,
-		returnFormat: ReturnFormat = DEFAULT_RETURN_FORMAT as ReturnFormat,
+		returnFormat: ReturnFormat = this.defaultReturnFormat as ReturnFormat,
 	) {
 		return rpcMethodsWrappers.getTransactionCount(this, address, blockNumber, returnFormat);
 	}
@@ -875,7 +875,7 @@ export class Web3QRL extends Web3Context<Web3QRLExecutionAPI, RegisteredSubscrip
 			| TransactionWithFromLocalWalletIndex
 			| TransactionWithToLocalWalletIndex
 			| TransactionWithFromAndToLocalWalletIndex,
-		returnFormat: ReturnFormat = DEFAULT_RETURN_FORMAT as ReturnFormat,
+		returnFormat: ReturnFormat = this.defaultReturnFormat as ReturnFormat,
 		options?: SendTransactionOptions,
 	) {
 		return rpcMethodsWrappers.sendTransaction(this, transaction, returnFormat, options);
@@ -966,7 +966,7 @@ export class Web3QRL extends Web3Context<Web3QRLExecutionAPI, RegisteredSubscrip
 	 */
 	public sendSignedTransaction<ReturnFormat extends DataFormat = typeof DEFAULT_RETURN_FORMAT>(
 		transaction: Bytes,
-		returnFormat: ReturnFormat = DEFAULT_RETURN_FORMAT as ReturnFormat,
+		returnFormat: ReturnFormat = this.defaultReturnFormat as ReturnFormat,
 		options?: SendTransactionOptions,
 	) {
 		return rpcMethodsWrappers.sendSignedTransaction(this, transaction, returnFormat, options);
@@ -1002,7 +1002,7 @@ export class Web3QRL extends Web3Context<Web3QRLExecutionAPI, RegisteredSubscrip
 	public async sign<ReturnFormat extends DataFormat = typeof DEFAULT_RETURN_FORMAT>(
 		message: Bytes,
 		address: Address,
-		returnFormat: ReturnFormat = DEFAULT_RETURN_FORMAT as ReturnFormat,
+		returnFormat: ReturnFormat = this.defaultReturnFormat as ReturnFormat,
 	) {
 		return rpcMethodsWrappers.sign(this, message, address, returnFormat);
 	}
@@ -1065,7 +1065,7 @@ export class Web3QRL extends Web3Context<Web3QRLExecutionAPI, RegisteredSubscrip
 	 */
 	public async signTransaction<ReturnFormat extends DataFormat = typeof DEFAULT_RETURN_FORMAT>(
 		transaction: Transaction,
-		returnFormat: ReturnFormat = DEFAULT_RETURN_FORMAT as ReturnFormat,
+		returnFormat: ReturnFormat = this.defaultReturnFormat as ReturnFormat,
 	) {
 		return rpcMethodsWrappers.signTransaction(this, transaction, returnFormat);
 	}
@@ -1084,7 +1084,7 @@ export class Web3QRL extends Web3Context<Web3QRLExecutionAPI, RegisteredSubscrip
 	public async call<ReturnFormat extends DataFormat = typeof DEFAULT_RETURN_FORMAT>(
 		transaction: TransactionCall,
 		blockNumber: BlockNumberOrTag = this.defaultBlock,
-		returnFormat: ReturnFormat = DEFAULT_RETURN_FORMAT as ReturnFormat,
+		returnFormat: ReturnFormat = this.defaultReturnFormat as ReturnFormat,
 	) {
 		return rpcMethodsWrappers.call(this, transaction, blockNumber, returnFormat);
 	}
@@ -1118,7 +1118,7 @@ export class Web3QRL extends Web3Context<Web3QRLExecutionAPI, RegisteredSubscrip
 	public async estimateGas<ReturnFormat extends DataFormat = typeof DEFAULT_RETURN_FORMAT>(
 		transaction: Transaction,
 		blockNumber: BlockNumberOrTag = this.defaultBlock,
-		returnFormat: ReturnFormat = DEFAULT_RETURN_FORMAT as ReturnFormat,
+		returnFormat: ReturnFormat = this.defaultReturnFormat as ReturnFormat,
 	) {
 		return rpcMethodsWrappers.estimateGas(this, transaction, blockNumber, returnFormat);
 	}
@@ -1169,7 +1169,7 @@ export class Web3QRL extends Web3Context<Web3QRLExecutionAPI, RegisteredSubscrip
 	 */
 	public async getPastLogs<ReturnFormat extends DataFormat = typeof DEFAULT_RETURN_FORMAT>(
 		filter: Filter,
-		returnFormat: ReturnFormat = DEFAULT_RETURN_FORMAT as ReturnFormat,
+		returnFormat: ReturnFormat = this.defaultReturnFormat as ReturnFormat,
 	) {
 		return rpcMethodsWrappers.getLogs(this, filter, returnFormat);
 	}
@@ -1204,7 +1204,7 @@ export class Web3QRL extends Web3Context<Web3QRLExecutionAPI, RegisteredSubscrip
 	 * ```
 	 */
 	public async getChainId<ReturnFormat extends DataFormat = typeof DEFAULT_RETURN_FORMAT>(
-		returnFormat: ReturnFormat = DEFAULT_RETURN_FORMAT as ReturnFormat,
+		returnFormat: ReturnFormat = this.defaultReturnFormat as ReturnFormat,
 	) {
 		return rpcMethodsWrappers.getChainId(this, returnFormat);
 	}
@@ -1297,7 +1297,7 @@ export class Web3QRL extends Web3Context<Web3QRLExecutionAPI, RegisteredSubscrip
 		address: Address,
 		storageKeys: Bytes[],
 		blockNumber: BlockNumberOrTag = this.defaultBlock,
-		returnFormat: ReturnFormat = DEFAULT_RETURN_FORMAT as ReturnFormat,
+		returnFormat: ReturnFormat = this.defaultReturnFormat as ReturnFormat,
 	) {
 		return rpcMethodsWrappers.getProof(this, address, storageKeys, blockNumber, returnFormat);
 	}
@@ -1366,7 +1366,7 @@ export class Web3QRL extends Web3Context<Web3QRLExecutionAPI, RegisteredSubscrip
 		blockCount: Numbers,
 		newestBlock: BlockNumberOrTag = this.defaultBlock,
 		rewardPercentiles: Numbers[],
-		returnFormat: ReturnFormat = DEFAULT_RETURN_FORMAT as ReturnFormat,
+		returnFormat: ReturnFormat = this.defaultReturnFormat as ReturnFormat,
 	) {
 		return rpcMethodsWrappers.getFeeHistory(
 			this,
@@ -1412,7 +1412,7 @@ export class Web3QRL extends Web3Context<Web3QRLExecutionAPI, RegisteredSubscrip
 	public async createAccessList<ReturnFormat extends DataFormat = typeof DEFAULT_RETURN_FORMAT>(
 		transaction: TransactionForAccessList,
 		blockNumber: BlockNumberOrTag = this.defaultBlock,
-		returnFormat: ReturnFormat = DEFAULT_RETURN_FORMAT as ReturnFormat,
+		returnFormat: ReturnFormat = this.defaultReturnFormat as ReturnFormat,
 	) {
 		return rpcMethodsWrappers.createAccessList(this, transaction, blockNumber, returnFormat);
 	}
@@ -1433,7 +1433,7 @@ export class Web3QRL extends Web3Context<Web3QRLExecutionAPI, RegisteredSubscrip
 	public async signTypedData<ReturnFormat extends DataFormat = typeof DEFAULT_RETURN_FORMAT>(
 		address: Address,
 		typedData: QRLTypedData,
-		returnFormat: ReturnFormat = DEFAULT_RETURN_FORMAT as ReturnFormat,
+		returnFormat: ReturnFormat = this.defaultReturnFormat as ReturnFormat,
 	) {
 		return rpcMethodsWrappers.signTypedData(this, address, typedData, returnFormat);
 	}
@@ -1492,7 +1492,7 @@ export class Web3QRL extends Web3Context<Web3QRLExecutionAPI, RegisteredSubscrip
 	>(
 		name: T,
 		args?: ConstructorParameters<RegisteredSubscription[T]>[0],
-		returnFormat: ReturnType = DEFAULT_RETURN_FORMAT as ReturnType,
+		returnFormat: ReturnType = (this.defaultReturnFormat ?? DEFAULT_RETURN_FORMAT) as ReturnType,
 	): Promise<InstanceType<RegisteredSubscription[T]>> {
 		const subscription = await this.subscriptionManager?.subscribe(name, args, returnFormat);
 		if (

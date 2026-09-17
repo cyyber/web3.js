@@ -366,7 +366,7 @@ export class Contract<Abi extends ContractAbi>
 			? contextOrReturnFormat
 			: isDataFormat(optionsOrContextOrReturnFormat)
 			? optionsOrContextOrReturnFormat
-			: returnFormat ?? DEFAULT_RETURN_FORMAT;
+			: returnFormat ?? this.defaultReturnFormat;
 
 		const address =
 			typeof addressOrOptionsOrContext === 'string' ? addressOrOptionsOrContext : undefined;
@@ -379,6 +379,10 @@ export class Contract<Abi extends ContractAbi>
 				this.config.contractDataInputFill;
 		}
 		this._parseAndSetJsonInterface(jsonInterface, returnDataFormat);
+
+		if (this.defaultReturnFormat !== returnDataFormat) {
+			this.defaultReturnFormat = returnDataFormat;
+		}
 
 		if (!isNullish(address)) {
 			this._parseAndSetAddress(address, returnDataFormat);
@@ -650,7 +654,7 @@ export class Contract<Abi extends ContractAbi>
 			},
 			estimateGas: async <ReturnFormat extends DataFormat = typeof DEFAULT_RETURN_FORMAT>(
 				options?: PayableCallOptions,
-				returnFormat: ReturnFormat = DEFAULT_RETURN_FORMAT as ReturnFormat,
+				returnFormat: ReturnFormat = this.defaultReturnFormat as ReturnFormat,
 			) => {
 				const modifiedOptions = { ...options };
 				return this._contractMethodEstimateGas({
@@ -742,7 +746,7 @@ export class Contract<Abi extends ContractAbi>
 			? param1
 			: isDataFormat(param2)
 			? param2
-			: param3 ?? DEFAULT_RETURN_FORMAT;
+			: param3 ?? this.defaultReturnFormat;
 
 		const abi =
 			eventName === 'allEvents' || eventName === ALL_EVENTS
@@ -812,7 +816,7 @@ export class Contract<Abi extends ContractAbi>
 		return decodedLogs;
 	}
 
-	private _parseAndSetAddress(value?: Address, returnFormat: DataFormat = DEFAULT_RETURN_FORMAT) {
+	private _parseAndSetAddress(value?: Address, returnFormat: DataFormat = this.defaultReturnFormat) {
 		this._address = value
 			? toChecksumAddress(format({ format: 'address' }, value, returnFormat))
 			: value;
@@ -820,7 +824,7 @@ export class Contract<Abi extends ContractAbi>
 
 	private _parseAndSetJsonInterface(
 		abis: ContractAbi,
-		returnFormat: DataFormat = DEFAULT_RETURN_FORMAT,
+		returnFormat: DataFormat = this.defaultReturnFormat,
 	) {
 		this._functions = {};
 		this._methods = {} as ContractMethodsInterface<Abi>;
@@ -972,7 +976,7 @@ export class Contract<Abi extends ContractAbi>
 
 				estimateGas: async <ReturnFormat extends DataFormat = typeof DEFAULT_RETURN_FORMAT>(
 					options?: PayableCallOptions | NonPayableCallOptions,
-					returnFormat: ReturnFormat = DEFAULT_RETURN_FORMAT as ReturnFormat,
+					returnFormat: ReturnFormat = this.defaultReturnFormat as ReturnFormat,
 				) =>
 					this._contractMethodEstimateGas({
 						abi: methodAbi,
@@ -1029,7 +1033,7 @@ export class Contract<Abi extends ContractAbi>
 			},
 		});
 		try {
-			const result = await call(this, tx, block, DEFAULT_RETURN_FORMAT);
+			const result = await call(this, tx, block, this.defaultReturnFormat);
 			return decodeMethodReturn(abi, result);
 		} catch (error: unknown) {
 			if (error instanceof ContractExecutionError) {
@@ -1060,7 +1064,7 @@ export class Contract<Abi extends ContractAbi>
 		});
 
 		try {
-			return await createAccessList(this, tx, block, DEFAULT_RETURN_FORMAT);
+			return await createAccessList(this, tx, block, this.defaultReturnFormat);
 		} catch (error: unknown) {
 			if (error instanceof ContractExecutionError) {
 				// this will parse the error data by trying to decode the ABI error inputs according to EIP-838
@@ -1089,7 +1093,7 @@ export class Contract<Abi extends ContractAbi>
 			options: { ...options, dataInputFill: this.config.contractDataInputFill },
 			contractOptions: modifiedContractOptions,
 		});
-		const transactionToSend = sendTransaction(this, tx, DEFAULT_RETURN_FORMAT, {
+		const transactionToSend = sendTransaction(this, tx, this.defaultReturnFormat, {
 			// TODO Should make this configurable by the user
 			checkRevertBeforeSending: false,
 		});
@@ -1120,7 +1124,7 @@ export class Contract<Abi extends ContractAbi>
 			options: { ...options, dataInputFill: this.config.contractDataInputFill },
 			contractOptions: modifiedContractOptions,
 		});
-		return sendTransaction(this, tx, DEFAULT_RETURN_FORMAT, {
+		return sendTransaction(this, tx, this.defaultReturnFormat, {
 			transactionResolver: receipt => {
 				if (receipt.status === BigInt(0)) {
 					throw new Web3ContractError("code couldn't be stored", receipt);
@@ -1163,7 +1167,7 @@ export class Contract<Abi extends ContractAbi>
 
 	private _createContractEvent(
 		abi: AbiEventFragment & { signature: HexString },
-		returnFormat: DataFormat = DEFAULT_RETURN_FORMAT,
+		returnFormat: DataFormat = this.defaultReturnFormat,
 	): ContractBoundEvent {
 		return (...params: unknown[]) => {
 			const { topics, fromBlock } = encodeEventABI(

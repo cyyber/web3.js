@@ -107,7 +107,7 @@ export const getTransactionFromOrToAttr = (
 export const getTransactionNonce = async <ReturnFormat extends DataFormat>(
 	web3Context: Web3Context<QRLExecutionAPI>,
 	address?: Address,
-	returnFormat: ReturnFormat = DEFAULT_RETURN_FORMAT as ReturnFormat,
+	returnFormat: ReturnFormat = web3Context.defaultReturnFormat as ReturnFormat,
 ) => {
 	if (isNullish(address)) {
 		// TODO if (web3.qrl.accounts.wallet) use address from local wallet

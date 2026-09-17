@@ -94,7 +94,7 @@ export async function getRevertReason<
 	web3Context: Web3Context<QRLExecutionAPI>,
 	transaction: TransactionCall,
 	contractAbi?: ContractAbi,
-	returnFormat: ReturnFormat = DEFAULT_RETURN_FORMAT as ReturnFormat,
+	returnFormat: ReturnFormat = web3Context.defaultReturnFormat as ReturnFormat,
 ): Promise<undefined | RevertReason | RevertReasonWithCustomError | string> {
 	try {
 		await call(web3Context, transaction, web3Context.defaultBlock, returnFormat);
