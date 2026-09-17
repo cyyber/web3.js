@@ -42,6 +42,8 @@ import {
 	TransactionReceipt,
 	Web3APISpec,
 	Web3QRLExecutionAPI,
+	FMT_NUMBER,
+	FMT_BYTES,
 } from '@theqrl/web3-types';
 import HttpProvider from '@theqrl/web3-providers-http';
 import { IpcProvider } from '@theqrl/web3-providers-ipc';
@@ -460,3 +462,12 @@ export const objectBigintToString = (obj: object): object =>
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-return
 		JSON.stringify(obj, (_, value) => (typeof value === 'bigint' ? value.toString() : value)),
 	);
+
+export const mapFormatToType: { [key: string]: string } = {
+	[FMT_NUMBER.NUMBER]: 'number',
+	[FMT_NUMBER.HEX]: 'string',
+	[FMT_NUMBER.STR]: 'string',
+	[FMT_NUMBER.BIGINT]: 'bigint',
+	[FMT_BYTES.HEX]: 'string',
+	[FMT_BYTES.UINT8ARRAY]: 'object',
+};
