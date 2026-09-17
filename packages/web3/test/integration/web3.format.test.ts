@@ -23,7 +23,6 @@ import {
 	closeOpenConnection,
 	getSystemTestProvider,
 	createNewAccount,
-	createTempAccount,
 	mapFormatToType,
 } from '../shared_fixtures/system_tests_utils';
 import { BasicAbi, BasicBytecode } from '../shared_fixtures/build/Basic';
@@ -41,17 +40,18 @@ describe('format', () => {
 		web3 = new Web3({
 			provider: clientUrl,
 			config: {
-				transactionPollingTimeout: 15000,
+				transactionPollingTimeout: 20000,
 			},
 		});
+		const [from] = await web3.qrl.getAccounts();
+		tempAcc = { address: from, seed: '' };
 		contract = new web3.qrl.Contract(BasicAbi);
 
 		deployOptions = {
 			data: BasicBytecode,
 			arguments: [10, 'string init value'],
 		};
-		tempAcc = await createTempAccount();
-		sendOptions = { from: tempAcc.address };
+		sendOptions = { from: tempAcc.address, type: BigInt(2) };
 
 		contractDeployed = await contract.deploy(deployOptions).send(sendOptions);
 	});

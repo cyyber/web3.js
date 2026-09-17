@@ -24,7 +24,6 @@ import {
 	closeOpenConnection,
 	getSystemTestProvider,
 	createNewAccount,
-	createTempAccount,
 	mapFormatToType,
 } from '../fixtures/system_test_utils';
 import { BasicAbi, BasicBytecode } from '../shared_fixtures/build/Basic';
@@ -42,7 +41,7 @@ describe('format', () => {
 		web3QRL = new Web3QRL({
 			provider: clientUrl,
 			config: {
-				transactionPollingTimeout: 15000,
+				transactionPollingTimeout: 20000,
 			},
 		});
 		contract = new Contract(BasicAbi, undefined, {
@@ -53,8 +52,9 @@ describe('format', () => {
 			data: BasicBytecode,
 			arguments: [10, 'string init value'],
 		};
-		tempAcc = await createTempAccount();
-		sendOptions = { from: tempAcc.address };
+		const [from] = await web3QRL.getAccounts();
+		tempAcc = { address: from, seed: '' };
+		sendOptions = { from: tempAcc.address, type: BigInt(2) };
 
 		contractDeployed = await contract.deploy(deployOptions).send(sendOptions);
 	});
