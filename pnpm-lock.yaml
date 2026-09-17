@@ -720,8 +720,8 @@ importers:
   packages/web3-qrl:
     dependencies:
       '@theqrl/wallet.js':
-        specifier: 6.2.3
-        version: 6.2.3
+        specifier: 6.3.0
+        version: 6.3.0
       '@theqrl/web3-core':
         specifier: workspace:^
         version: link:../web3-core
@@ -802,8 +802,8 @@ importers:
         specifier: workspace:^
         version: link:../abi
       '@theqrl/wallet.js':
-        specifier: 6.2.3
-        version: 6.2.3
+        specifier: 6.3.0
+        version: 6.3.0
       '@theqrl/web3-errors':
         specifier: workspace:^
         version: link:../web3-errors
@@ -869,14 +869,14 @@ importers:
         specifier: 10.1.1
         version: 10.1.1
       '@theqrl/mldsa87':
-        specifier: 2.1.3
-        version: 2.1.3
+        specifier: 2.2.0
+        version: 2.2.0
       '@theqrl/qrl-cryptography':
-        specifier: 0.3.0
-        version: 0.3.0
+        specifier: 0.3.3
+        version: 0.3.3
       '@theqrl/wallet.js':
-        specifier: 6.2.3
-        version: 6.2.3
+        specifier: 6.3.0
+        version: 6.3.0
       '@theqrl/web3-errors':
         specifier: workspace:^
         version: link:../web3-errors
@@ -1149,8 +1149,8 @@ importers:
   packages/web3-utils:
     dependencies:
       '@theqrl/qrl-cryptography':
-        specifier: 0.3.0
-        version: 0.3.0
+        specifier: 0.3.3
+        version: 0.3.3
       '@theqrl/web3-errors':
         specifier: workspace:^
         version: link:../web3-errors
@@ -1201,8 +1201,8 @@ importers:
   packages/web3-validator:
     dependencies:
       '@theqrl/qrl-cryptography':
-        specifier: 0.3.0
-        version: 0.3.0
+        specifier: 0.3.3
+        version: 0.3.3
       '@theqrl/web3-errors':
         specifier: workspace:^
         version: link:../web3-errors
@@ -3175,8 +3175,8 @@ packages:
     resolution: {integrity: sha512-V1JJ1WTRUqHHrOSh597hURcMqVKVGL/ea3kv0gSnEdsEZ0/+VyPghM1lMNGc00z7CIQorSvbKpuJkxvuHbvdbg==}
     engines: {node: '>= 16'}
 
-  '@noble/hashes@2.2.0':
-    resolution: {integrity: sha512-IYqDGiTXab6FniAgnSdZwgWbomxpy9FtYvLKs7wCUs2a8RkITG+DFGO1DM9cr+E3/RgADRpFjrKVaJ1z6sjtEg==}
+  '@noble/hashes@2.4.0':
+    resolution: {integrity: sha512-X5XaVWZIBCT7HHZGm5I7ZQXDwLG+bGXuSrMQAW+7Zvl87h1kmc1ZB1VSRJcpUfoUrGQp4Fkoxm5kZ+Ms+aW+eA==}
     engines: {node: '>= 20.19.0'}
 
   '@noble/secp256k1@1.7.1':
@@ -3620,20 +3620,20 @@ packages:
     resolution: {integrity: sha512-XsP7hETJdlmmdGtmp/K5ZtTcz3EzZaP+WhjuOTf4PmhE+6oijN271H10htYHvBo95ED2OYiuUCYucYNw7Q6mfQ==}
     hasBin: true
 
-  '@theqrl/mldsa87@2.1.3':
-    resolution: {integrity: sha512-sQxeMZTeJG84v8lK8gRztuHHC2hB6RG2yWQc7oHv19lExG6vB4qvn8nk8/0ffseYXMqfqU5dmZ4jdabk9P3TEg==}
+  '@theqrl/mldsa87@2.2.0':
+    resolution: {integrity: sha512-rujMGT6vdMTQbtVyMiOL1Q3e7VxLrNZqP/disR4m20+nen4e+bjR4wvt/av8M5e0qDNVjO7sjGctlzC81/qVgw==}
     engines: {node: '>=20.19.0'}
 
   '@theqrl/qrl-contracts@https://codeload.github.com/theQRL/qrl-contracts/tar.gz/d3c84eedac4e051f6e99892397c5e42f0f0a2266':
     resolution: {tarball: https://codeload.github.com/theQRL/qrl-contracts/tar.gz/d3c84eedac4e051f6e99892397c5e42f0f0a2266}
     version: 0.1.0
 
-  '@theqrl/qrl-cryptography@0.3.0':
-    resolution: {integrity: sha512-2d7QcK/ZQKOmphnj0lSRJLyeXO3o0degg0mjEMHH+5g4LXvrgoVV1i/bTqzS78DgGRB4Mn3kUPXg6QW3KO712w==}
+  '@theqrl/qrl-cryptography@0.3.3':
+    resolution: {integrity: sha512-jdfGQrvrlkjz/YFf15aDEwb/2X436XaTlA+JYFcuKHDjpouHHKv8sbkPtPUpjB/b0y+VX2XoMZBwHhZt0UFwkQ==}
     engines: {node: '>=20.19'}
 
-  '@theqrl/wallet.js@6.2.3':
-    resolution: {integrity: sha512-1wQcPKDqtLpM5sn6NKEbn4UIJwZ9BWVqG1TbrW1zBRuw8NUaiejjDZQcKwoHrnNV3TQe9dJ1jnu+PLxq9LOqyw==}
+  '@theqrl/wallet.js@6.3.0':
+    resolution: {integrity: sha512-zTZsLIQKm4CaRAs4sfnalunVrFotxRIY6adwDCN01Ts55TrYn0qp8Jbs6Tv3/9cQDGJzEYszN1oIw49WcUActg==}
     engines: {node: '>=20.19'}
 
   '@tsconfig/docusaurus@2.0.9':
@@ -13189,7 +13189,7 @@ snapshots:
 
   '@noble/hashes@1.4.0': {}
 
-  '@noble/hashes@2.2.0': {}
+  '@noble/hashes@2.4.0': {}
 
   '@noble/secp256k1@1.7.1': {}
 
@@ -13789,21 +13789,21 @@ snapshots:
     transitivePeerDependencies:
       - debug
 
-  '@theqrl/mldsa87@2.1.3':
+  '@theqrl/mldsa87@2.2.0':
     dependencies:
-      '@noble/hashes': 2.2.0
+      '@noble/hashes': 2.4.0
 
   '@theqrl/qrl-contracts@https://codeload.github.com/theQRL/qrl-contracts/tar.gz/d3c84eedac4e051f6e99892397c5e42f0f0a2266': {}
 
-  '@theqrl/qrl-cryptography@0.3.0':
+  '@theqrl/qrl-cryptography@0.3.3':
     dependencies:
-      '@noble/hashes': 2.2.0
-      '@theqrl/mldsa87': 2.1.3
+      '@noble/hashes': 2.4.0
+      '@theqrl/mldsa87': 2.2.0
 
-  '@theqrl/wallet.js@6.2.3':
+  '@theqrl/wallet.js@6.3.0':
     dependencies:
-      '@noble/hashes': 2.2.0
-      '@theqrl/mldsa87': 2.1.3
+      '@noble/hashes': 2.4.0
+      '@theqrl/mldsa87': 2.2.0
 
   '@tsconfig/docusaurus@2.0.9': {}
 
