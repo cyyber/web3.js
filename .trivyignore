@@ -8,4 +8,11 @@
 #
 #   CVE-0000-00000  # unreachable: <reason>; revisit by <date>
 
-# (none)
+# image-size 2.0.2 (dev-only, reached through the Docusaurus docs build, which
+# only reads images committed to this repository): DoS via crafted image
+# buffers. No source-backed fix: the advisories list no patched version, and
+# the 2.0.3/2.0.4 releases on npm have no matching tag or commit upstream, so
+# they are not adopted under the quarantine policy. Revisit by 2026-10-17 or
+# when a tagged release lands.
+CVE-2025-71329  # unreachable: docs-build only, repository-authored images; revisit by 2026-10-17
+CVE-2025-71330  # unreachable: docs-build only, repository-authored images; revisit by 2026-10-17

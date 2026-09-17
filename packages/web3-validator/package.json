@@ -51,7 +51,7 @@
 		"test:integration": "jest --config=./test/integration/jest.config.js --passWithNoTests"
 	},
 	"dependencies": {
-		"@theqrl/qrl-cryptography": "0.3.0",
+		"@theqrl/qrl-cryptography": "0.3.3",
 		"@theqrl/web3-errors": "workspace:^",
 		"@theqrl/web3-types": "workspace:^",
 		"util": "0.12.5",
