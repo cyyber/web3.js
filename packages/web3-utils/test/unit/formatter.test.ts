@@ -397,6 +397,12 @@ describe('formatter', () => {
 
 	describe('format', () => {
 		describe('scalar values', () => {
+			it('should default returnFormat to DEFAULT_RETURN_FORMAT', () => {
+				expect(format({ format: 'uint' }, 10)).toEqual(
+					format({ format: 'uint' }, 10, DEFAULT_RETURN_FORMAT),
+				);
+			});
+
 			it('should not format non-formatable scalar type', () => {
 				expect(format({ format: 'boolean' }, true, DEFAULT_RETURN_FORMAT)).toBe(true);
 			});

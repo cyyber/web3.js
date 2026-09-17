@@ -29,7 +29,6 @@ import {
 	Web3NetAPI,
 	Numbers,
 	DataFormat,
-	DEFAULT_RETURN_FORMAT,
 	QRL_DATA_FORMAT,
 } from '@theqrl/web3-types';
 import { Web3Context } from '@theqrl/web3-core';
@@ -45,11 +44,7 @@ import {
 import { seedToAccount } from '@theqrl/web3-qrl-accounts';
 import { bytesToHex, format, toChecksumAddress } from '@theqrl/web3-utils';
 import { NUMBER_DATA_FORMAT } from '../constants.js';
-import {
-	getChainId,
-	getTransactionCount,
-	estimateGas,
-} from './rpc_method_wrappers_readers.js';
+import { getChainId, getTransactionCount, estimateGas } from './rpc_method_wrappers_readers.js';
 import { transactionSchema } from '../schemas.js';
 import { InternalTransaction } from '../types.js';
 import { getTransactionGasPricing } from './get_transaction_gas_pricing.js';
@@ -129,7 +124,7 @@ export async function defaultTransactionBuilder<ReturnType = Transaction>(option
 	let populatedTransaction = format(
 		transactionSchema,
 		options.transaction,
-		DEFAULT_RETURN_FORMAT,
+		options.web3Context.defaultReturnFormat,
 	) as InternalTransaction;
 
 	if (isNullish(populatedTransaction.from)) {

@@ -22,21 +22,29 @@ import { netRpcMethods } from '@theqrl/web3-rpc-methods';
 
 export async function getId<ReturnFormat extends DataFormat>(
 	web3Context: Web3Context<Web3NetAPI>,
-	returnFormat: ReturnFormat,
+	returnFormat: ReturnFormat = web3Context.defaultReturnFormat as ReturnFormat,
 ) {
 	const response = await netRpcMethods.getId(web3Context.requestManager);
 
-	return format({ format: 'uint' }, response as unknown as number, returnFormat);
+	return format(
+		{ format: 'uint' },
+		response as unknown as number,
+		returnFormat ?? (web3Context.defaultReturnFormat as ReturnFormat),
+	);
 }
 
 export async function getPeerCount<ReturnFormat extends DataFormat>(
 	web3Context: Web3Context<Web3NetAPI>,
-	returnFormat: ReturnFormat,
+	returnFormat: ReturnFormat = web3Context.defaultReturnFormat as ReturnFormat,
 ) {
 	const response = await netRpcMethods.getPeerCount(web3Context.requestManager);
 
 	// Data returned is number in hex format
-	return format({ format: 'uint' }, response as unknown as number, returnFormat);
+	return format(
+		{ format: 'uint' },
+		response as unknown as number,
+		returnFormat ?? (web3Context.defaultReturnFormat as ReturnFormat),
+	);
 }
 
 export const isListening = async (web3Context: Web3Context<Web3NetAPI>) =>

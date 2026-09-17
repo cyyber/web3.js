@@ -638,10 +638,7 @@ export class Contract<Abi extends ContractAbi>
 			arguments: args,
 			send: (
 				options?: PayableTxOptions,
-			): Web3PromiEvent<
-				Contract<Abi>,
-				SendTransactionEvents<typeof DEFAULT_RETURN_FORMAT>
-			> => {
+			): Web3PromiEvent<Contract<Abi>, SendTransactionEvents<DataFormat>> => {
 				const modifiedOptions = { ...options };
 
 				// eslint-disable-next-line @typescript-eslint/no-unsafe-return
@@ -669,7 +666,11 @@ export class Contract<Abi extends ContractAbi>
 				encodeMethodABI(
 					abi as AbiFunctionFragment,
 					args as unknown[],
-					format({ format: 'bytes' }, deployData as Bytes, DEFAULT_RETURN_FORMAT),
+					format(
+						{ format: 'bytes' },
+						deployData as Bytes,
+						this.defaultReturnFormat as typeof DEFAULT_RETURN_FORMAT,
+					),
 				),
 		};
 	}
@@ -1033,7 +1034,12 @@ export class Contract<Abi extends ContractAbi>
 			},
 		});
 		try {
-			const result = await call(this, tx, block, this.defaultReturnFormat);
+			const result = await call(
+				this,
+				tx,
+				block,
+				this.defaultReturnFormat as typeof DEFAULT_RETURN_FORMAT,
+			);
 			return decodeMethodReturn(abi, result);
 		} catch (error: unknown) {
 			if (error instanceof ContractExecutionError) {

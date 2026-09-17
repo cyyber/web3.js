@@ -51,11 +51,15 @@ import { formatTransaction } from './format_transaction.js';
  */
 export async function getBlockNumber<ReturnFormat extends DataFormat>(
 	web3Context: Web3Context<QRLExecutionAPI>,
-	returnFormat: ReturnFormat,
+	returnFormat: ReturnFormat = web3Context.defaultReturnFormat as ReturnFormat,
 ) {
 	const response = await qrlRpcMethods.getBlockNumber(web3Context.requestManager);
 
-	return format({ format: 'uint' }, response as Numbers, returnFormat);
+	return format(
+		{ format: 'uint' },
+		response as Numbers,
+		returnFormat ?? (web3Context.defaultReturnFormat as ReturnFormat),
+	);
 }
 
 /**
@@ -66,7 +70,7 @@ export async function getBlock<ReturnFormat extends DataFormat>(
 	web3Context: Web3Context<QRLExecutionAPI>,
 	block: Bytes | BlockNumberOrTag = web3Context.defaultBlock,
 	hydrated = false,
-	returnFormat: ReturnFormat,
+	returnFormat: ReturnFormat = web3Context.defaultReturnFormat as ReturnFormat,
 ) {
 	let response;
 	if (isBytes(block)) {
@@ -86,7 +90,11 @@ export async function getBlock<ReturnFormat extends DataFormat>(
 			hydrated,
 		);
 	}
-	return format(blockSchema, response as unknown as Block, returnFormat);
+	return format(
+		blockSchema,
+		response as unknown as Block,
+		returnFormat ?? (web3Context.defaultReturnFormat as ReturnFormat),
+	);
 }
 
 /**
@@ -96,7 +104,7 @@ export async function getBlock<ReturnFormat extends DataFormat>(
 export async function getTransactionReceipt<ReturnFormat extends DataFormat>(
 	web3Context: Web3Context<QRLExecutionAPI>,
 	transactionHash: Bytes,
-	returnFormat: ReturnFormat,
+	returnFormat: ReturnFormat = web3Context.defaultReturnFormat as ReturnFormat,
 ) {
 	const transactionHashFormatted = format(
 		{ format: 'bytes32' },
@@ -113,8 +121,8 @@ export async function getTransactionReceipt<ReturnFormat extends DataFormat>(
 		: (format(
 				transactionReceiptSchema,
 				response as unknown as TransactionReceipt,
-				returnFormat,
-		  ) as TransactionReceipt);
+				returnFormat ?? (web3Context.defaultReturnFormat as ReturnFormat),
+			) as TransactionReceipt);
 }
 
 /**
@@ -125,7 +133,7 @@ export async function getTransactionCount<ReturnFormat extends DataFormat>(
 	web3Context: Web3Context<QRLExecutionAPI>,
 	address: Address,
 	blockNumber: BlockNumberOrTag = web3Context.defaultBlock,
-	returnFormat: ReturnFormat,
+	returnFormat: ReturnFormat = web3Context.defaultReturnFormat as ReturnFormat,
 ) {
 	const blockNumberFormatted = isBlockTag(blockNumber as string)
 		? (blockNumber as BlockTag)
@@ -136,7 +144,11 @@ export async function getTransactionCount<ReturnFormat extends DataFormat>(
 		blockNumberFormatted,
 	);
 
-	return format({ format: 'uint' }, response as Numbers, returnFormat);
+	return format(
+		{ format: 'uint' },
+		response as Numbers,
+		returnFormat ?? (web3Context.defaultReturnFormat as ReturnFormat),
+	);
 }
 
 // TODO - Investigate whether response is padded as 1.x docs suggest
@@ -148,7 +160,7 @@ export async function estimateGas<ReturnFormat extends DataFormat>(
 	web3Context: Web3Context<QRLExecutionAPI>,
 	transaction: Transaction,
 	blockNumber: BlockNumberOrTag = web3Context.defaultBlock,
-	returnFormat: ReturnFormat,
+	returnFormat: ReturnFormat = web3Context.defaultReturnFormat as ReturnFormat,
 ) {
 	const transactionFormatted = formatTransaction(transaction, QRL_DATA_FORMAT);
 	const blockNumberFormatted = isBlockTag(blockNumber as string)
@@ -161,7 +173,11 @@ export async function estimateGas<ReturnFormat extends DataFormat>(
 		blockNumberFormatted,
 	);
 
-	return format({ format: 'uint' }, response as Numbers, returnFormat);
+	return format(
+		{ format: 'uint' },
+		response as Numbers,
+		returnFormat ?? (web3Context.defaultReturnFormat as ReturnFormat),
+	);
 }
 
 /**
@@ -170,7 +186,7 @@ export async function estimateGas<ReturnFormat extends DataFormat>(
  */
 export async function getChainId<ReturnFormat extends DataFormat>(
 	web3Context: Web3Context<QRLExecutionAPI>,
-	returnFormat: ReturnFormat,
+	returnFormat: ReturnFormat = web3Context.defaultReturnFormat as ReturnFormat,
 ) {
 	const response = await qrlRpcMethods.getChainId(web3Context.requestManager);
 
@@ -178,7 +194,7 @@ export async function getChainId<ReturnFormat extends DataFormat>(
 		{ format: 'uint' },
 		// Response is number in hex formatted string
 		response as unknown as number,
-		returnFormat,
+		returnFormat ?? (web3Context.defaultReturnFormat as ReturnFormat),
 	);
 }
 
@@ -192,7 +208,7 @@ export async function call<ReturnFormat extends DataFormat>(
 	web3Context: Web3Context<QRLExecutionAPI>,
 	transaction: TransactionCall,
 	blockNumber: BlockNumberOrTag = web3Context.defaultBlock,
-	returnFormat: ReturnFormat,
+	returnFormat: ReturnFormat = web3Context.defaultReturnFormat as ReturnFormat,
 ) {
 	const blockNumberFormatted = isBlockTag(blockNumber as string)
 		? (blockNumber as BlockTag)
@@ -204,5 +220,9 @@ export async function call<ReturnFormat extends DataFormat>(
 		blockNumberFormatted,
 	);
 
-	return format({ format: 'bytes' }, response as Bytes, returnFormat);
+	return format(
+		{ format: 'bytes' },
+		response as Bytes,
+		returnFormat ?? (web3Context.defaultReturnFormat as ReturnFormat),
+	);
 }

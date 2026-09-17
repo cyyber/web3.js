@@ -53,4 +53,19 @@ describe('getGasPrice', () => {
 		const result = await getGasPrice(web3Context, expectedReturnFormat);
 		expect(result).toBe(expectedFormattedResult);
 	});
+
+	it('should format using context defaultReturnFormat when omitted', async () => {
+		const context = new Web3Context<Web3QRLExecutionAPI>('http://127.0.0.1:8545');
+		context.defaultReturnFormat = { number: FMT_NUMBER.STR, bytes: FMT_BYTES.UINT8ARRAY };
+		const mockRpcResponse = '0x1dfd14000';
+		const expectedFormattedResult = format(
+			{ format: 'uint' },
+			mockRpcResponse,
+			context.defaultReturnFormat,
+		);
+		(qrlRpcMethods.getGasPrice as jest.Mock).mockResolvedValueOnce(mockRpcResponse);
+
+		const result = await getGasPrice(context);
+		expect(result).toBe(expectedFormattedResult);
+	});
 });

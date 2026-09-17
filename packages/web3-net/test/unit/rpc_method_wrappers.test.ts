@@ -15,6 +15,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 import { netRpcMethods } from '@theqrl/web3-rpc-methods';
+import { FMT_BYTES, FMT_NUMBER } from '@theqrl/web3-types';
 
 import { Net } from '../../src';
 import { getIdValidData, getPeerCountValidData } from '../fixtures/rpc_method_wrappers';
@@ -41,6 +42,14 @@ describe('rpc_method_wrappers', () => {
 					expect(netRpcMethods.getId).toHaveBeenCalledWith(web3Net.requestManager);
 				},
 			);
+
+			it('should format using context defaultReturnFormat when omitted', async () => {
+				const net = new Net('http://127.0.0.1:8545');
+				net.defaultReturnFormat = { number: FMT_NUMBER.STR, bytes: FMT_BYTES.HEX };
+				(netRpcMethods.getId as jest.Mock).mockResolvedValueOnce('3');
+
+				expect(await getId(net)).toBe('3');
+			});
 		});
 
 		describe('getPeerCount', () => {
