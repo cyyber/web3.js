@@ -111,9 +111,9 @@ one once every dependent has released a compatible fixed version.
 | `brace-expansion@>=5.0.0 <5.0.9` | `5.0.9` | CVE-2026-69152 unbounded intermediate-array DoS (high), brace-expansion 5 line. |
 | `undici@<6.27.0` | `6.27.0` | Patch floor for the Undici 6 line. |
 | `undici@>=7.0.0 <7.28.0` | `7.28.0` | Patch floor for the Undici 7 line; also the version required for Node 20 compatibility in CI. |
-| `fast-uri@<3.1.5` | `3.1.5` | Patched release for GHSA-7p8r-x3mc-p8w7; also quarantine-excluded so the fix can land inside the seven-day window. |
+| `fast-uri@<3.1.6` | `3.1.6` | Patched release for GHSA-fph4-wmhf-6fwf, GHSA-5jgf-p345-68v8, GHSA-f65p-4m7j-42xc and GHSA-jqff-g426-hqxp (SSRF and host confusion, high); also quarantine-excluded so a fix can land inside the seven-day window. |
 | `postcss@<8.5.18` | `8.5.18` | Patched release for GHSA-r28c-9q8g-f849; quarantine-excluded for the security update. |
-| `svgo@>=3.0.0 <3.3.4` | `3.3.4` | Patched 3.x release for GHSA-2p49-hgcm-8545; quarantine-excluded for the security update. |
+| `svgo@>=3.0.0 <3.3.5` | `3.3.5` | Patched 3.x release for GHSA-2p49-hgcm-8545 and GHSA-w27v-7q3p-w38r (removeScripts executable links, high); quarantine-excluded for the security update. |
 | `shell-quote@<1.8.4` | `1.9.0` | Newline-escaping advisory (critical). |
 | `ws@>=7.0.0 <7.5.11` | `7.5.11` | Memory-exhaustion DoS advisory (high), ws 7 line. |
 | `ws@>=8.0.0 <8.21.0` | `8.21.0` | Memory-exhaustion DoS advisory (high), ws 8 line. |
@@ -143,8 +143,9 @@ they execute on developer and CI machines, so they are remediated the same way.
 | `launch-editor@<2.14.1` | `2.14.1` | Patch floor. |
 | `webpack-dev-server@<5.2.5` | `5.2.6` | Patch floor. |
 | `uuid@<11.1.1` | `11.1.1` | Patch floor. |
-| `js-yaml@>=3.0.0 <4.0.0` | `3.15.0` | Patch floor, js-yaml 3 line. |
-| `js-yaml@>=4.0.0 <4.2.0` | `4.3.0` | Patch floor, js-yaml 4 line. |
+| `js-yaml@>=3.0.0 <3.15.2` | `3.15.2` | GHSA-2883-xcg3-v3hh and GHSA-5p4m-2wfm-xmqj parsing DoS (high), js-yaml 3 line. |
+| `js-yaml@>=4.0.0 <4.3.2` | `4.3.2` | GHSA-2883-xcg3-v3hh and GHSA-5p4m-2wfm-xmqj parsing DoS (high), js-yaml 4 line. |
+| `nanoid@<3.3.18` | `3.3.18` | GHSA-2v37-7h3g-55p8 and GHSA-28wg-ghj8-5hjv DoS (high); via the Docusaurus/webpack graph. |
 
 ### Resolution pins
 
@@ -176,8 +177,8 @@ seven-day `minimumReleaseAge` quarantine.
 | `@docusaurus/utils` | `3.10.1` | Docusaurus release-line pin. |
 | `@docusaurus/utils-common` | `3.10.1` | Docusaurus release-line pin. |
 | `@docusaurus/utils-validation` | `3.10.1` | Docusaurus release-line pin. |
-| `baseline-browser-mapping` | `2.8.9` | Keeps browser-target resolution on reviewed metadata. |
-| `browserslist` | `4.26.3` | Keeps browser-target resolution on reviewed metadata. |
+| `baseline-browser-mapping` | `2.11.21` | Keeps browser-target resolution on reviewed metadata; the floor browserslist 4.28.x requires. |
+| `browserslist` | `4.28.9` | Keeps browser-target resolution on reviewed metadata; 4.28.7 is the patched floor for GHSA-73wf-gq98-2v4g and GHSA-c83g-rgw3-j3cx (prototype pollution and DoS, high). |
 | `es-module-lexer` | `2.0.0` | Holds webpack's lexer dependency on a reviewed version. |
 | `express` | `5.2.1` | Holds the docs/dev-server graph on one reviewed Express release. |
 | `loader-runner` | `4.3.1` | Holds webpack's loader runner on a reviewed version. |
