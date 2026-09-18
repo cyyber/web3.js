@@ -31,6 +31,7 @@ import {
 	BlockBase,
 	LogBase,
 	HexString3Bytes,
+	SyncStatusBase,
 } from '../qrl_types.js';
 import { HexString } from '../primitives_types.js';
 
@@ -120,9 +121,7 @@ export type TransactionReceiptAPI = TransactionReceiptBase<
 >;
 
 // https://github.com/ethereum/execution-apis/blob/main/src/schemas/client.yaml#L2
-export type SyncingStatusAPI =
-	| { startingBlock: Uint; currentBlock: Uint; highestBlock: Uint }
-	| boolean;
+export type SyncingStatusAPI = SyncStatusBase<Uint> | boolean;
 
 // https://github.com/ethereum/execution-apis/blob/main/src/eth/fee_market.yaml#L42
 export type FeeHistoryResultAPI = FeeHistoryBase<Uint>;
