@@ -228,6 +228,7 @@ export type AccessList = AccessListEntry[];
 export type AccessListResult = {
 	readonly accessList?: AccessList;
 	readonly gasUsed?: Numbers;
+	readonly error?: string;
 };
 
 export type ValidChains = 'mainnet';

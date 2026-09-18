@@ -15,7 +15,13 @@ You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 import { Web3Context } from '@theqrl/web3-core';
-import { Web3QRLExecutionAPI, QRL_DATA_FORMAT, FMT_BYTES, FMT_NUMBER } from '@theqrl/web3-types';
+import {
+	Web3QRLExecutionAPI,
+	QRL_DATA_FORMAT,
+	DEFAULT_RETURN_FORMAT,
+	FMT_BYTES,
+	FMT_NUMBER,
+} from '@theqrl/web3-types';
 import { isNullish } from '@theqrl/web3-validator';
 import { format } from '@theqrl/web3-utils';
 import { qrlRpcMethods } from '@theqrl/web3-rpc-methods';
@@ -80,4 +86,22 @@ describe('createAccessList', () => {
 			expect(result).toStrictEqual(expectedFormattedResult);
 		},
 	);
+
+	it('should keep the error gqrl reports for a reverted access list creation', async () => {
+		const [inputTransaction, inputBlockNumber] = testData[0][1];
+		const mockErrorResponse = {
+			accessList: [],
+			gasUsed: '0x5208',
+			error: 'execution reverted',
+		};
+		(qrlRpcMethods.createAccessList as jest.Mock).mockResolvedValueOnce(mockErrorResponse);
+
+		const result = await createAccessList(
+			web3Context,
+			inputTransaction,
+			inputBlockNumber,
+			DEFAULT_RETURN_FORMAT,
+		);
+		expect(result).toStrictEqual(mockErrorResponse);
+	});
 });
