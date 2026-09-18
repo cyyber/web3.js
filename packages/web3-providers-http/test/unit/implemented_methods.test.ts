@@ -21,7 +21,6 @@ import fetchMock from 'jest-fetch-mock';
 jest.setMock('cross-fetch', fetchMock);
 
 import { Web3APIPayload, QRLExecutionAPI } from '@theqrl/web3-types';
-import { ResponseError } from '@theqrl/web3-errors';
 import HttpProvider from '../../src/index';
 import { mockGetBalanceResponse } from '../fixtures/test_data';
 
@@ -59,7 +58,10 @@ describe('HttpProvider - implemented methods', () => {
 		it('should return ResponseError', async () => {
 			fetchMock.mockResponseOnce(JSON.stringify(mockGetBalanceResponse), { status: 400 });
 
-			await expect(httpProvider.request(jsonRpcPayload)).rejects.toThrow(ResponseError);
+			await expect(httpProvider.request(jsonRpcPayload)).rejects.toMatchObject({
+				name: 'ResponseError',
+				statusCode: 400,
+			});
 		});
 	});
 });

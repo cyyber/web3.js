@@ -378,6 +378,9 @@ export default class HttpProvider<
 			if (!response.ok) {
 				throw new ResponseError(
 					(await this.parseBoundedJson(response, requestComposition.signal)) as never,
+					undefined,
+					undefined,
+					response.status,
 				);
 			}
 
