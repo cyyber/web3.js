@@ -45,6 +45,9 @@ export const accessListResultSchema = {
 		gasUsed: {
 			type: 'string',
 		},
+		error: {
+			type: 'string',
+		},
 	},
 };
 
