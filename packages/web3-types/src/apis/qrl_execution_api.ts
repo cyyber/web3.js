@@ -88,6 +88,7 @@ export type TransactionInfoAPI = TransactionSignedAPI & {
 	readonly from: Address;
 	readonly hash: HexString32Bytes;
 	readonly transactionIndex?: Uint;
+	readonly gasPrice: Uint;
 };
 
 export interface SignedTransactionInfoAPI {

@@ -91,6 +91,7 @@ export type TransactionOutput = {
 	readonly transactionIndex?: Numbers;
 	maxPriorityFeePerGas: Numbers;
 	maxFeePerGas: Numbers;
+	gasPrice?: Numbers;
 };
 
 export interface LogsInput {
@@ -341,6 +342,7 @@ export interface TransactionInfo extends Transaction {
 	readonly from: Address;
 	readonly hash: Bytes;
 	readonly transactionIndex?: Numbers;
+	readonly gasPrice?: Numbers;
 }
 
 export interface PopulatedUnsignedEip1559Transaction {

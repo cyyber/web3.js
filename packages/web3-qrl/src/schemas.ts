@@ -166,6 +166,9 @@ export const transactionInfoSchema = {
 		transactionIndex: {
 			format: 'uint',
 		},
+		gasPrice: {
+			format: 'uint',
+		},
 		from: {
 			format: 'address',
 		},
