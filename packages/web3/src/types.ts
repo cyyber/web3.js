@@ -39,6 +39,8 @@ import { Contract } from '@theqrl/web3-qrl-contract';
 import { QRNS } from '@theqrl/web3-qrl-qrns';
 import { Net } from '@theqrl/web3-net';
 
+export type { Web3Account, Wallet } from '@theqrl/web3-qrl-accounts';
+
 /**
  * The QRL interface for main web3 object. It provides extra methods in addition to `web3-qrl` interface.
  *

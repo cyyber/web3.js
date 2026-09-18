@@ -17,9 +17,8 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 
 import * as qrl from '@theqrl/web3-qrl';
 import * as qrlAccounts from '@theqrl/web3-qrl-accounts';
-import { SignTransactionResult, Web3Account } from '@theqrl/web3-qrl-accounts';
-import { Web3QRLInterface } from '../../src/types';
-import { Web3 } from '../../src';
+import { SignTransactionResult } from '@theqrl/web3-qrl-accounts';
+import { Web3, type Wallet, type Web3Account, type Web3QRLInterface } from '../../src';
 
 jest.mock('@theqrl/web3-qrl-accounts');
 jest.mock('@theqrl/web3-qrl');
@@ -40,6 +39,14 @@ describe('test new Web3().qrl.accounts', () => {
 	});
 	afterEach(() => {
 		jest.clearAllMocks();
+	});
+
+	it('re-exports Web3Account and Wallet from the root package', () => {
+		const account: Web3Account | undefined = undefined;
+		const wallet: Wallet | undefined = undefined;
+
+		expect(account).toBeUndefined();
+		expect(wallet).toBeUndefined();
 	});
 
 	it('`signTransaction` should call the original `prepareTransactionForSigning` and `signTransaction`', async () => {
