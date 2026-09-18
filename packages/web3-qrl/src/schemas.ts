@@ -540,7 +540,7 @@ export const storageProofSchema = {
 		proof: {
 			type: 'array',
 			items: {
-				format: 'bytes32',
+				format: 'bytes',
 			},
 		},
 	},
@@ -549,6 +549,9 @@ export const storageProofSchema = {
 export const accountSchema = {
 	type: 'object',
 	properties: {
+		address: {
+			format: 'address',
+		},
 		balance: {
 			format: 'uint',
 		},
@@ -564,7 +567,7 @@ export const accountSchema = {
 		accountProof: {
 			type: 'array',
 			items: {
-				format: 'bytes32',
+				format: 'bytes',
 			},
 		},
 		storageProof: {

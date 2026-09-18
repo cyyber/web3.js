@@ -84,4 +84,21 @@ describe('getProof', () => {
 			expect(result).toStrictEqual(expectedFormattedResult);
 		},
 	);
+
+	it('should keep the account address and full-length proof nodes', async () => {
+		const [inputAddress, inputStorageKeys, inputBlockNumber] = testData[0][1];
+		(qrlRpcMethods.getProof as jest.Mock).mockResolvedValueOnce(mockRpcResponse);
+
+		const result = await getProof(
+			web3Context,
+			inputAddress,
+			inputStorageKeys,
+			inputBlockNumber,
+			DEFAULT_RETURN_FORMAT,
+		);
+
+		expect(result.address).toBe(mockRpcResponse.address);
+		expect(result.accountProof).toStrictEqual(mockRpcResponse.accountProof);
+		expect(result.accountProof[0].length).toBeGreaterThan(66);
+	});
 });

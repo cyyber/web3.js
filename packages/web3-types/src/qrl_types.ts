@@ -415,6 +415,7 @@ export interface StorageProof {
 }
 
 export interface AccountObject {
+	readonly address: Address;
 	readonly balance: Numbers;
 	readonly codeHash: Bytes;
 	readonly nonce: Numbers;
