@@ -4106,4 +4106,6 @@ export const mainnetBlockHydrated = {
 		},
 	],
 	transactionsRoot: '0x2b0f787500743395385ad4a4142693bffd51d508cae1fdd675d269842b9bc2b0',
+	withdrawalsRoot: '0x56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421',
+	withdrawals: [],
 };

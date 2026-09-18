@@ -39,6 +39,16 @@ export const mockRpcResponse: Block = {
 	],
 	hash: '0xdc0818cf78f21a8e70579cb46a43643f78291264dda342ae31049421c82d21ae',
 	baseFeePerGas: '0x13afe8b904',
+	withdrawalsRoot: '0x1d8b7a2e1d3ceb4f4a8b4b7d67e7d0ae5c8ee0ee2b5a5ad3f2f6a6e5c1b2d3e4',
+	withdrawals: [
+		{
+			index: '0x1a',
+			validatorIndex: '0x3',
+			address:
+				'Q3268305Ca04D8742fEEe646e4cC5936463E12197162f086D72b85f8F2DAFea881B291ce929E87d9D518D7664Db23989d42c355B6A4590BAA9f571c4614fFa232',
+			amount: '0x2fa7e8',
+		},
+	],
 };
 const hydratedTransaction: TransactionInfo = {
 	blockHash: '0x1d59ff54b1eb26b013ce3cb5fc9dab3705b415a67127a003c3e61eb445bb8df2',

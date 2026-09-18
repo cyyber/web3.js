@@ -98,6 +98,8 @@ describe('defaultTransactionBuilder', () => {
 		],
 		hash: '0xdc0818cf78f21a8e70579cb46a43643f78291264dda342ae31049421c82d21ae',
 		baseFeePerGas: expectedBaseFeePerGas,
+		withdrawalsRoot: '0x56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421',
+		withdrawals: [],
 	};
 	let web3Context: Web3Context<QRLExecutionAPI>;
 	let getTransactionCountSpy: jest.SpyInstance;

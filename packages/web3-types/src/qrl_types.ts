@@ -140,12 +140,14 @@ export interface BlockOutput {
 	readonly parentHash?: HexString32Bytes;
 }
 
-export interface Withdrawals {
-	readonly index: Numbers;
-	readonly validatorIndex: Numbers;
-	readonly address: Address;
-	readonly amount: Numbers;
+export interface WithdrawalsBase<NumberType, AddressType> {
+	readonly index: NumberType;
+	readonly validatorIndex: NumberType;
+	readonly address: AddressType;
+	readonly amount: NumberType;
 }
+
+export type Withdrawals = WithdrawalsBase<Numbers, Address>;
 
 export interface BlockHeaderOutput {
 	readonly hash?: HexString32Bytes;
@@ -377,6 +379,7 @@ export interface BlockBase<
 	readonly stateRoot: ByteType;
 	readonly transactionsRoot: ByteType;
 	readonly receiptsRoot: ByteType;
+	readonly withdrawalsRoot: ByteType;
 	readonly logsBloom?: logsBloomType;
 	readonly number: NumberType;
 	readonly gasLimit: NumberType;
@@ -387,6 +390,7 @@ export interface BlockBase<
 	readonly baseFeePerGas: NumberType;
 	readonly size: NumberType;
 	readonly transactions: TransactionTypes;
+	readonly withdrawals: WithdrawalsBase<NumberType, QPrefixedHexStringType>[];
 	readonly hash?: ByteType;
 }
 
