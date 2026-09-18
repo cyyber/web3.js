@@ -384,6 +384,17 @@ describe('converters', () => {
 		it.each([...hexToNumberValidData, [123, 123], ['123', 123]])('%s', (input, output) => {
 			expect(toNumber(input)).toEqual(output);
 		});
+
+		it('uses BigInt for numbers greater than 1e20 to avoid scientific notation', () => {
+			const warn = jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+			const result = toNumber(1e21);
+
+			expect(typeof result).toBe('bigint');
+			expect(String(result).includes('e')).toBe(false);
+			expect(warn).toHaveBeenCalled();
+
+			warn.mockRestore();
+		});
 	});
 
 	describe('fromPlanck', () => {
