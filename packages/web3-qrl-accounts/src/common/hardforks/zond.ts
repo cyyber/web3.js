@@ -25,7 +25,7 @@ export default {
 			d: 'Maximum block gas target elasticity',
 		},
 		initialBaseFee: {
-			v: 1000000000,
+			v: 100000000000,
 			d: 'Initial base fee on first EIP1559 block',
 		},
 	},
