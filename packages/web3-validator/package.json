@@ -12,9 +12,9 @@
 			"types": "./lib/types/index.d.ts",
 			"import": "./lib/esm/index.js",
 			"require": "./lib/commonjs/index.js"
-		}
+		},
+		"./dist/web3-validator.min.js": "./dist/web3-validator.min.js"
 	},
-	"browser": "./dist/web3-validator.min.js",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/theQRL/web3.js",

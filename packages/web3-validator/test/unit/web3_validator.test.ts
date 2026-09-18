@@ -14,6 +14,7 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
+import { SchemaFormatError } from '@theqrl/web3-errors';
 import { abiToJsonSchemaCases } from '../fixtures/abi_to_json_schema';
 import { Web3Validator } from '../../src/web3_validator';
 import { Web3ValidatorError } from '../../src/errors';
@@ -100,6 +101,20 @@ describe('web3-validator', () => {
 						['Qd5812f6cf4a0f645aa620cd57319a0ed649dd8f5519a9dde7770ae5b0e49e547985f35eb972a2a07041561aa39c65a3991478f9b1e6749e05277dcf58a9a8b72'],
 					),
 				).toBeUndefined();
+			});
+
+			it('should throw due to unsupported format', () => {
+				expect(() => {
+					validator.validateJSONSchema(
+						{
+							type: 'array',
+							items: [{ $id: 'a', format: 'unsupportedFormat', required: true }],
+							minItems: 1,
+							maxItems: 1,
+						},
+						['Qd5812f6cf4a0f645aa620cd57319a0ed649dd8f5519a9dde7770ae5b0e49e547985f35eb972a2a07041561aa39c65a3991478f9b1e6749e05277dcf58a9a8b72'],
+					);
+				}).toThrow(SchemaFormatError);
 			});
 		});
 

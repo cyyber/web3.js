@@ -360,6 +360,16 @@ exports[`errors TransactionOutOfGasError should have valid json structure 1`] = 
 }
 `;
 
+exports[`errors SchemaFormatError should have valid json structure 1`] = `
+{
+  "code": 1200,
+  "innerError": undefined,
+  "message": "Format for the type unsupported is unsupported",
+  "name": "SchemaFormatError",
+  "type": "unsupported",
+}
+`;
+
 exports[`errors TransactionRevertInstructionError should have valid json structure 1`] = `
 {
   "code": 402,
