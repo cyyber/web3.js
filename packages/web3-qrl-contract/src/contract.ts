@@ -112,7 +112,11 @@ type ContractBoundMethod<
 	Abi extends AbiFunctionFragment,
 	Method extends ContractMethod<Abi> = ContractMethod<Abi>,
 > = (
-	...args: Method['Inputs']
+	...args: Abi extends undefined
+		? any[]
+		: Method['Inputs'] extends never
+		? any[]
+		: Method['Inputs']
 ) => Method['Abi']['stateMutability'] extends 'payable' | 'pure'
 	? PayableMethodObject<Method['Inputs'], Method['Outputs']>
 	: NonPayableMethodObject<Method['Inputs'], Method['Outputs']>;
