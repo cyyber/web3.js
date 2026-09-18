@@ -18,7 +18,7 @@ import { FeeHistoryResultAPI, BlockNumberOrTag, BlockTags, Numbers } from '@theq
 
 export const mockRpcResponse: FeeHistoryResultAPI = {
 	oldestBlock: '0xa30950',
-	baseFeePerGas: '0x9',
+	baseFeePerGas: ['0x9'],
 	reward: [],
 	gasUsedRatio: ['0'],
 };
