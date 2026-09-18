@@ -188,21 +188,32 @@ export interface ReceiptOutput {
 	readonly effectiveGasPrice?: bigint | number;
 }
 
-export interface SyncInput {
-	readonly startingBlock: HexString;
-	readonly currentBlock: HexString;
-	readonly highestBlock: HexString;
-	readonly knownStates?: HexString;
-	readonly pulledStates?: HexString;
+// Mirrors gqrl's SyncProgress: the three block counters plus the snap sync
+// counters. knownStates/pulledStates are legacy fast-sync fields that gqrl
+// still carries (always zero) on the syncing subscription payload.
+export interface SyncStatusBase<NumberType> {
+	readonly startingBlock: NumberType;
+	readonly currentBlock: NumberType;
+	readonly highestBlock: NumberType;
+	readonly knownStates?: NumberType;
+	readonly pulledStates?: NumberType;
+	readonly syncedAccounts?: NumberType;
+	readonly syncedAccountBytes?: NumberType;
+	readonly syncedBytecodes?: NumberType;
+	readonly syncedBytecodeBytes?: NumberType;
+	readonly syncedStorage?: NumberType;
+	readonly syncedStorageBytes?: NumberType;
+	readonly healedTrienodes?: NumberType;
+	readonly healedTrienodeBytes?: NumberType;
+	readonly healedBytecodes?: NumberType;
+	readonly healedBytecodeBytes?: NumberType;
+	readonly healingTrienodes?: NumberType;
+	readonly healingBytecode?: NumberType;
 }
 
-export interface SyncOutput {
-	readonly startingBlock: Numbers;
-	readonly currentBlock: Numbers;
-	readonly highestBlock: Numbers;
-	readonly knownStates?: Numbers;
-	readonly pulledStates?: Numbers;
-}
+export type SyncInput = SyncStatusBase<HexString>;
+
+export type SyncOutput = SyncStatusBase<Numbers>;
 
 export type Receipt = Record<string, unknown>;
 

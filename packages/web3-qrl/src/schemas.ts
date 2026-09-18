@@ -430,6 +430,42 @@ export const syncSchema = {
 		pulledStates: {
 			format: 'string',
 		},
+		syncedAccounts: {
+			format: 'string',
+		},
+		syncedAccountBytes: {
+			format: 'string',
+		},
+		syncedBytecodes: {
+			format: 'string',
+		},
+		syncedBytecodeBytes: {
+			format: 'string',
+		},
+		syncedStorage: {
+			format: 'string',
+		},
+		syncedStorageBytes: {
+			format: 'string',
+		},
+		healedTrienodes: {
+			format: 'string',
+		},
+		healedTrienodeBytes: {
+			format: 'string',
+		},
+		healedBytecodes: {
+			format: 'string',
+		},
+		healedBytecodeBytes: {
+			format: 'string',
+		},
+		healingTrienodes: {
+			format: 'string',
+		},
+		healingBytecode: {
+			format: 'string',
+		},
 	},
 };
 
