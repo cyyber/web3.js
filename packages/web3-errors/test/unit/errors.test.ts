@@ -326,6 +326,13 @@ describe('errors', () => {
 				} as JsonRpcError<contractErrors.ProviderErrorData>).toJSON(),
 			).toMatchSnapshot();
 		});
+		it('should return correctly when data is undefined', () => {
+			expect(
+				new contractErrors.Eip838ExecutionError({
+					data: undefined,
+				} as JsonRpcError<contractErrors.ProviderErrorData>).toJSON(),
+			).toMatchSnapshot();
+		});
 	});
 
 	describe('ResponseError', () => {
@@ -363,6 +370,21 @@ describe('errors', () => {
 						error: { code: 124, message: 'error message', data: { c: '30', d: '40' } },
 					},
 				]).toJSON(),
+			).toMatchSnapshot();
+		});
+
+		it('should include an optional HTTP statusCode', () => {
+			expect(
+				new responseErrors.ResponseError(
+					{
+						id: 1,
+						jsonrpc: '2.0',
+						error: { code: 123, message: 'error message' },
+					},
+					undefined,
+					undefined,
+					502,
+				).toJSON(),
 			).toMatchSnapshot();
 		});
 	});
