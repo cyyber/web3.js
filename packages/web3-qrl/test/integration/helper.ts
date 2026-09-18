@@ -110,6 +110,8 @@ export const validateBlock = (b: Block) => {
 	expect(b.baseFeePerGas).toBeDefined();
 	expect(b.size).toBeDefined();
 	expect(Array.isArray(b.transactions)).toBe(true);
+	expect(b.withdrawalsRoot).toMatch(regexHex32);
+	expect(Array.isArray(b.withdrawals)).toBe(true);
 };
 export const validateReceipt = (r: TransactionReceipt) => {
 	expect(r.transactionHash).toMatch(regexHex32);

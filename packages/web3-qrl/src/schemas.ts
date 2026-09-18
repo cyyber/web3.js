@@ -220,6 +220,24 @@ export const transactionInfoSchema = {
 	},
 };
 
+export const withdrawalsSchema = {
+	type: 'object',
+	properties: {
+		index: {
+			format: 'uint',
+		},
+		validatorIndex: {
+			format: 'uint',
+		},
+		address: {
+			format: 'address',
+		},
+		amount: {
+			format: 'uint',
+		},
+	},
+};
+
 export const blockSchema = {
 	type: 'object',
 	properties: {
@@ -236,6 +254,9 @@ export const blockSchema = {
 			format: 'bytes32',
 		},
 		receiptsRoot: {
+			format: 'bytes32',
+		},
+		withdrawalsRoot: {
 			format: 'bytes32',
 		},
 		logsBloom: {
@@ -281,26 +302,14 @@ export const blockSchema = {
 				},
 			],
 		},
+		withdrawals: {
+			type: 'array',
+			items: {
+				...withdrawalsSchema,
+			},
+		},
 		hash: {
 			format: 'bytes32',
-		},
-	},
-};
-
-export const withdrawalsSchema = {
-	type: 'object',
-	properties: {
-		index: {
-			format: 'uint',
-		},
-		validatorIndex: {
-			format: 'uint',
-		},
-		address: {
-			format: 'bytes32',
-		},
-		amount: {
-			format: 'uint',
 		},
 	},
 };
@@ -321,7 +330,7 @@ export const blockHeaderSchema = {
 			format: 'bytes32',
 		},
 		miner: {
-			format: 'bytes',
+			format: 'address',
 		},
 		stateRoot: {
 			format: 'bytes32',
