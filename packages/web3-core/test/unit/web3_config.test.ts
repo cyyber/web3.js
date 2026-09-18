@@ -105,6 +105,15 @@ describe('Web3Config', () => {
 		},
 	);
 
+	it('setConfig applies maxListenersWarningThreshold to the event emitter', () => {
+		const obj = new MyConfigObject();
+
+		obj.setConfig({ maxListenersWarningThreshold: 5 });
+
+		expect(obj.maxListenersWarningThreshold).toBe(5);
+		expect(obj.getMaxListeners()).toBe(5);
+	});
+
 	it('Updating transactionPollingInterval should update transactionReceiptPollingInterval and transactionConfirmationPollingInterval', () => {
 		const obj = new MyConfigObject();
 		const configChange = jest.fn();
