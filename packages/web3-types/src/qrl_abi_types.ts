@@ -306,7 +306,9 @@ export type ContractMethodOutputParameters<Params extends ReadonlyArray<unknown>
 		: [];
 
 export type ContractMethodInputParameters<Params extends ReadonlyArray<unknown> | undefined> =
-	Params extends readonly []
+	Params extends undefined
+		? any[]
+		: Params extends readonly []
 		? []
 		: Params extends readonly [infer H, ...infer R]
 		? H extends AbiParameter
