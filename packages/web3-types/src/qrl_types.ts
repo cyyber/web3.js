@@ -213,7 +213,7 @@ export interface Filter {
 	readonly fromBlock?: BlockNumberOrTag;
 	readonly toBlock?: BlockNumberOrTag;
 	readonly address?: Address | Address[];
-	readonly blockHash?: Address;
+	readonly blockHash?: HexString32Bytes;
 	// Using "null" type intentionally to match specifications
 	readonly topics?: (null | Topic | Topic[])[];
 	readonly filter?: FilterOption;
