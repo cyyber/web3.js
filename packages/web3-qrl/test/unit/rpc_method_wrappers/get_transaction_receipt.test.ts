@@ -81,6 +81,7 @@ describe('getTransactionReceipt', () => {
 	// gqrl serialises "to" as null on contract creation receipts and contractAddress as
 	// null everywhere else; the formatter drops null members, so both surface as undefined.
 	it('should not expose "to" on a contract creation receipt', async () => {
+		// eslint-disable-next-line no-null/no-null
 		const creationReceipt = { ...mockRpcResponse, to: null };
 		(qrlRpcMethods.getTransactionReceipt as jest.Mock).mockResolvedValueOnce(creationReceipt);
 
@@ -94,6 +95,7 @@ describe('getTransactionReceipt', () => {
 	});
 
 	it('should not expose contractAddress on a regular receipt', async () => {
+		// eslint-disable-next-line no-null/no-null
 		const callReceipt = { ...mockRpcResponse, contractAddress: null };
 		(qrlRpcMethods.getTransactionReceipt as jest.Mock).mockResolvedValueOnce(callReceipt);
 
