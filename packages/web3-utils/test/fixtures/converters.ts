@@ -255,6 +255,20 @@ export const toHexValidData: [Numbers | Bytes | Address | boolean, [HexString, V
 	],
 	['-0x01', ['-0x1', 'int512']],
 	['123c', ['0x123c', 'bytes']],
+	[
+		new Uint8Array([
+			221, 128, 128, 128, 148, 186, 248, 242, 159, 130, 231, 84, 254, 199, 252, 69, 21, 58,
+			104, 102, 201, 137, 255, 3, 196, 10, 128, 128, 128, 128,
+		]),
+		['0xdd80808094baf8f29f82e754fec7fc45153a6866c989ff03c40a80808080', 'bytes'],
+	],
+	[
+		Buffer.from([
+			221, 128, 128, 128, 148, 186, 248, 242, 159, 130, 231, 84, 254, 199, 252, 69, 21, 58,
+			104, 102, 201, 137, 255, 3, 196, 10, 128, 128, 128, 128,
+		]),
+		['0xdd80808094baf8f29f82e754fec7fc45153a6866c989ff03c40a80808080', 'bytes'],
+	],
 ];
 
 export const toHexInvalidData: [any, string][] = [
@@ -300,6 +314,8 @@ const conversionBaseData: [[Numbers, QRLUnits], string][] = [
 export const fromPlanckValidData: [[Numbers, QRLUnits], string][] = [
 	...conversionBaseData,
 	[['0xff', 'planck'], '255'],
+	[['0', 'kplanck'], '0'],
+	[['0', 'quanta'], '0'],
 ];
 
 export const toPlanckValidData: [[Numbers, QRLUnits], string][] = [
@@ -355,6 +371,7 @@ export const bytesToUint8ArrayValidData: [Bytes, Uint8Array][] = [
 	['0X00', new Uint8Array([0])],
 	['0x1234', new Uint8Array([18, 52])],
 	[new Uint8Array(hexToBytes('0c12')), new Uint8Array(hexToBytes('0c12'))],
+	[Buffer.from([72]), new Uint8Array([72])],
 ];
 
 export const toBigIntValidData: [any, bigint][] = [

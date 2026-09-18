@@ -35,6 +35,11 @@ import {
 	InvalidUnitError,
 } from '@theqrl/web3-errors';
 
+import { isUint8Array } from './uint8array.js';
+
+const PrecisionLossWarning =
+	'Warning: Using type `number` with values that are large or contain many decimals may cause loss of precision, it is recommended to use type `string` or `BigInt` when using conversion methods';
+
 const base = BigInt(10);
 const expo10 = (expo: number) => base ** BigInt(expo);
 const ADDRESS_BYTES = 64;
@@ -80,7 +85,7 @@ export type QRLUnits = keyof typeof qrlUnitMap;
 export const bytesToUint8Array = (data: Bytes): Uint8Array | never => {
 	validator.validate(['bytes'], [data]);
 
-	if (data instanceof Uint8Array) {
+	if (isUint8Array(data)) {
 		return data;
 	}
 
@@ -392,6 +397,10 @@ export const toHex = (
 		return returnType ? 'bigint' : numberToHex(value);
 	}
 
+	if (isUint8Array(value)) {
+		return returnType ? 'bytes' : bytesToHex(value);
+	}
+
 	if (typeof value === 'object' && !!value) {
 		return returnType ? 'string' : utf8ToHex(JSON.stringify(value));
 	}
@@ -441,6 +450,14 @@ export const toHex = (
  */
 export const toNumber = (value: Numbers): number | bigint => {
 	if (typeof value === 'number') {
+		if (value > 1e20) {
+			console.warn(PrecisionLossWarning);
+			// JavaScript converts numbers >= 10^21 to scientific notation when coerced to strings,
+			// leading to potential parsing errors and incorrect representations.
+			// For instance, String(10000000000000000000000) yields '1e+22'.
+			// Using BigInt prevents this
+			return BigInt(value);
+		}
 		return value;
 	}
 
@@ -541,7 +558,7 @@ export const fromPlanck = (number: Numbers, unit: QRLUnits): string => {
 	const fraction = rawFraction.slice(0, fractionEnd);
 
 	if (integer === '') {
-		return `0.${fraction}`;
+		return fraction ? `0.${fraction}` : '0';
 	}
 
 	if (fraction === '') {
