@@ -158,7 +158,7 @@ const formatArrayResToObject = (data: Result): DecodedParams => {
  * Should be used to decode list of params
  */
 export const decodeParametersWith = (
-	abis: AbiInput[],
+	abis: AbiInput[] | ReadonlyArray<AbiInput>,
 	bytes: HexString,
 	loose: boolean,
 ): { [key: string]: unknown; __length__: number } => {
@@ -288,7 +288,7 @@ export const decodeParametersWith = (
  * ```
  */
 export const decodeParameters = (
-	abi: AbiInput[],
+	abi: AbiInput[] | ReadonlyArray<AbiInput>,
 	bytes: HexString,
 ): { [key: string]: unknown; __length__: number } => decodeParametersWith(abi, bytes, false);
 

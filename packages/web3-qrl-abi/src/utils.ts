@@ -106,7 +106,7 @@ export const mapStructToCoderFormat = (struct: AbiStruct): Array<AbiCoderStruct>
  * Map types if simplified format is used
  */
 export const mapTypes = (
-	types: AbiInput[],
+	types: AbiInput[] | ReadonlyArray<AbiInput>,
 ): Array<string | AbiParameter | Record<string, unknown>> => {
 	const mappedTypes: Array<string | AbiParameter | Record<string, unknown>> = [];
 
