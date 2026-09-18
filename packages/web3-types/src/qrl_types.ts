@@ -402,7 +402,7 @@ export type Block = BlockBase<
 
 export interface FeeHistoryBase<NumberType> {
 	readonly oldestBlock: NumberType;
-	readonly baseFeePerGas: NumberType;
+	readonly baseFeePerGas: NumberType[];
 	readonly reward: NumberType[][];
 	readonly gasUsedRatio: NumberType[];
 }
