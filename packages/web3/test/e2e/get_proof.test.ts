@@ -72,6 +72,7 @@ describe(`${getSystemTestBackend()} tests - getProof`, () => {
 			expect(result).toEqual(expectedProof);
 		} else {
 			expect(result).toMatchObject<AccountObject>({
+				address: expect.any(String),
 				accountProof: expect.any(Array<string>),
 				balance: expect.any(BigInt),
 				codeHash: expect.any(String),
