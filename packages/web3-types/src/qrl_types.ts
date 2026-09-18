@@ -268,8 +268,8 @@ export interface TransactionReceiptBase<numberType, hashByteType, logsBloomByteT
 	readonly contractAddress?: Address;
 	readonly logs: logsType[];
 	readonly logsBloom: logsBloomByteType;
-	readonly root: hashByteType;
-	readonly status: numberType;
+	readonly root?: hashByteType;
+	readonly status?: numberType;
 	readonly type?: numberType;
 }
 
