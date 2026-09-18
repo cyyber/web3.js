@@ -331,22 +331,6 @@ export async function getTransactionReceipt(
 	});
 }
 
-export async function getCompilers(requestManager: Web3RequestManager) {
-	return requestManager.send({
-		method: 'qrl_getCompilers',
-		params: [],
-	});
-}
-
-export async function compileHyperion(requestManager: Web3RequestManager, code: string) {
-	validator.validate(['string'], [code]);
-
-	return requestManager.send({
-		method: 'qrl_compileHyperion',
-		params: [code],
-	});
-}
-
 export async function newFilter(requestManager: Web3RequestManager, filter: Filter) {
 	validator.validate(['filter'], [filter]);
 
