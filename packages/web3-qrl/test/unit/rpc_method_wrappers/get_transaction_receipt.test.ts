@@ -20,6 +20,7 @@ import {
 	DEFAULT_RETURN_FORMAT,
 	FMT_BYTES,
 	FMT_NUMBER,
+	TransactionReceipt,
 	Web3QRLExecutionAPI,
 } from '@theqrl/web3-types';
 import { qrlRpcMethods } from '@theqrl/web3-rpc-methods';
@@ -76,4 +77,34 @@ describe('getTransactionReceipt', () => {
 			expect(result).toStrictEqual(expectedFormattedResult);
 		},
 	);
+
+	// gqrl serialises "to" as null on contract creation receipts and contractAddress as
+	// null everywhere else; the formatter drops null members, so both surface as undefined.
+	it('should not expose "to" on a contract creation receipt', async () => {
+		// eslint-disable-next-line no-null/no-null
+		const creationReceipt = { ...mockRpcResponse, to: null };
+		(qrlRpcMethods.getTransactionReceipt as jest.Mock).mockResolvedValueOnce(creationReceipt);
+
+		const result = (await getTransactionReceipt(
+			web3Context,
+			...testData[0][1],
+			DEFAULT_RETURN_FORMAT,
+		)) as TransactionReceipt;
+		expect(result.to).toBeUndefined();
+		expect(result.contractAddress).toBe(mockRpcResponse.contractAddress);
+	});
+
+	it('should not expose contractAddress on a regular receipt', async () => {
+		// eslint-disable-next-line no-null/no-null
+		const callReceipt = { ...mockRpcResponse, contractAddress: null };
+		(qrlRpcMethods.getTransactionReceipt as jest.Mock).mockResolvedValueOnce(callReceipt);
+
+		const result = (await getTransactionReceipt(
+			web3Context,
+			...testData[0][1],
+			DEFAULT_RETURN_FORMAT,
+		)) as TransactionReceipt;
+		expect(result.contractAddress).toBeUndefined();
+		expect(result.to).toBe(mockRpcResponse.to);
+	});
 });
