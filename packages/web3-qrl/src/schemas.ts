@@ -475,9 +475,6 @@ export const transactionReceiptSchema = {
 		logsBloom: {
 			format: 'bytes',
 		},
-		root: {
-			format: 'bytes',
-		},
 		status: {
 			format: 'uint',
 		},
