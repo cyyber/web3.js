@@ -33,7 +33,6 @@ export const expectedTransactionReceipt: TransactionReceipt = {
 	contractAddress: 'QD8F502CC8badCef9404bd264433E127071f782BDb9A6667CbE04e038578886D806C425E62d4Fcdf3819F4fA124c5C3F7e72b7A36558b030B9DD9ff48f2559825',
 	logs: [],
 	logsBloom: '0x0016bef3b2913cc883e2993a12f1a2859e7b627c9d71048115232c92fe4e5d2f',
-	root: '0x0016bef3b2913cc883e2993a12f1a2859e7b627c9d71048115232c92fe4e5d2f',
 	status: '0x1',
 	type: '0x2',
 };
