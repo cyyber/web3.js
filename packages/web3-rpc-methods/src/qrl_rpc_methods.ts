@@ -30,13 +30,6 @@ import {
 } from '@theqrl/web3-types';
 import { validator } from '@theqrl/web3-validator';
 
-export async function getProtocolVersion(requestManager: Web3RequestManager) {
-	return requestManager.send({
-		method: 'qrl_protocolVersion',
-		params: [],
-	});
-}
-
 export async function getSyncing(requestManager: Web3RequestManager) {
 	return requestManager.send({
 		method: 'qrl_syncing',

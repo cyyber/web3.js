@@ -85,11 +85,6 @@ describe('rpc', () => {
 	});
 
 	describe('methods', () => {
-		itIf(!['gqrl'].includes(getSystemTestBackend()))('getProtocolVersion', async () => {
-			const version = await web3QRL.getProtocolVersion();
-			expect(parseInt(version, 16)).toBeGreaterThan(0);
-		});
-
 		// TODO:in beta,  test qrl_syncing during sync mode with return obj having ( startingblock, currentBlock, heighestBlock )
 		it('isSyncing', async () => {
 			const isSyncing = await web3QRL.isSyncing();

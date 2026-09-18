@@ -171,7 +171,6 @@ export type QRLExecutionAPI = {
 	) => TransactionReceiptAPI | undefined;
 
 	// https://github.com/ethereum/execution-apis/blob/main/src/eth/client.yaml
-	qrl_protocolVersion: () => string;
 	qrl_syncing: () => SyncingStatusAPI;
 	qrl_accounts: () => Address[];
 	qrl_blockNumber: () => Uint;

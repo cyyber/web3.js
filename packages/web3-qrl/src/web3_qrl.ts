@@ -99,18 +99,6 @@ export class Web3QRL extends Web3Context<Web3QRLExecutionAPI, RegisteredSubscrip
 		});
 	}
 
-	/**
-	 * @returns Returns the qrl protocol version of the node.
-	 *
-	 * ```ts
-	 * web3.qrl.getProtocolVersion().then(console.log);
-	 * > "63"
-	 * ```
-	 */
-	public async getProtocolVersion() {
-		return qrlRpcMethods.getProtocolVersion(this.requestManager);
-	}
-
 	// TODO Add returnFormat parameter
 	/**
 	 * Checks if the node is currently syncing.
