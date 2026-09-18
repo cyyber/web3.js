@@ -90,6 +90,15 @@ describe('parameters_api', () => {
 			);
 		});
 
+		it('accepts a readonly ABI array', () => {
+			const [abi, bytes] = validDecodeParametersData[0].input;
+			const readonlyAbi = [...abi] as const;
+
+			expect(JSON.parse(JSON.stringify(decodeParameters(readonlyAbi, bytes)))).toEqual(
+				validDecodeParametersData[0].outputResult,
+			);
+		});
+
 		describe('invalid data', () => {
 			it.each(inValidDecodeParametersData)(
 				'%#: should not pass for invalid values: %j',

@@ -41,6 +41,29 @@ describe('logs_api', () => {
 			expect(decoded.value).toBe(value);
 		});
 
+		it('accepts a readonly ABI array', () => {
+			const { data, topics } = validDecodeLogsData[0].input;
+			const abi = [
+				{
+					type: 'string',
+					name: 'myString',
+				},
+				{
+					type: 'uint256',
+					name: 'myNumber',
+					indexed: true,
+				},
+				{
+					type: 'uint8',
+					name: 'mySmallNumber',
+					indexed: true,
+				},
+			] as const;
+
+			const expected = decodeLog(abi, data, topics);
+			expect(JSON.parse(JSON.stringify(expected))).toEqual(validDecodeLogsData[0].output);
+		});
+
 		describe('valid data', () => {
 			it.each(validDecodeLogsData)(
 				'should pass for valid values: %j',
