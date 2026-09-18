@@ -261,7 +261,7 @@ export interface TransactionReceiptBase<numberType, hashByteType, logsBloomByteT
 	readonly blockHash: hashByteType;
 	readonly blockNumber: numberType;
 	readonly from: Address;
-	readonly to: Address;
+	readonly to?: Address;
 	readonly cumulativeGasUsed: numberType;
 	readonly gasUsed: numberType;
 	readonly effectiveGasPrice?: numberType;

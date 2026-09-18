@@ -452,7 +452,7 @@ export const transactionReceiptSchema = {
 			format: 'address',
 		},
 		to: {
-			format: 'address',
+			oneOf: [{ format: 'address' }, { type: 'null' }],
 		},
 		cumulativeGasUsed: {
 			format: 'uint',
@@ -464,7 +464,7 @@ export const transactionReceiptSchema = {
 			format: 'uint',
 		},
 		contractAddress: {
-			format: 'address',
+			oneOf: [{ format: 'address' }, { type: 'null' }],
 		},
 		logs: {
 			type: 'array',
