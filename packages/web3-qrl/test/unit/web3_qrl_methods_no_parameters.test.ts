@@ -28,11 +28,6 @@ describe('web3_qrl_methods_no_parameters', () => {
 	});
 
 	describe('should call RPC method with only request manager parameter', () => {
-		it('getProtocolVersion', async () => {
-			await web3QRL.getProtocolVersion();
-			expect(qrlRpcMethods.getProtocolVersion).toHaveBeenCalledWith(web3QRL.requestManager);
-		});
-
 		it('isSyncing', async () => {
 			await web3QRL.isSyncing();
 			expect(qrlRpcMethods.getSyncing).toHaveBeenCalledWith(web3QRL.requestManager);

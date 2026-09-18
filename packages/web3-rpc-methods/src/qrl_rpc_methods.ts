@@ -30,13 +30,6 @@ import {
 } from '@theqrl/web3-types';
 import { validator } from '@theqrl/web3-validator';
 
-export async function getProtocolVersion(requestManager: Web3RequestManager) {
-	return requestManager.send({
-		method: 'qrl_protocolVersion',
-		params: [],
-	});
-}
-
 export async function getSyncing(requestManager: Web3RequestManager) {
 	return requestManager.send({
 		method: 'qrl_syncing',
@@ -335,22 +328,6 @@ export async function getTransactionReceipt(
 	return requestManager.send({
 		method: 'qrl_getTransactionReceipt',
 		params: [transactionHash],
-	});
-}
-
-export async function getCompilers(requestManager: Web3RequestManager) {
-	return requestManager.send({
-		method: 'qrl_getCompilers',
-		params: [],
-	});
-}
-
-export async function compileHyperion(requestManager: Web3RequestManager, code: string) {
-	validator.validate(['string'], [code]);
-
-	return requestManager.send({
-		method: 'qrl_compileHyperion',
-		params: [code],
 	});
 }
 

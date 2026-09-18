@@ -100,13 +100,6 @@ export {
 	call,
 } from './utils/rpc_method_wrappers_readers.js';
 
-/**
- * View additional documentations here: {@link Web3QRL.getProtocolVersion}
- * @param web3Context ({@link Web3Context}) Web3 configuration object that contains things such as the provider, request manager, wallet, etc.
- */
-export const getProtocolVersion = async (web3Context: Web3Context<QRLExecutionAPI>) =>
-	qrlRpcMethods.getProtocolVersion(web3Context.requestManager);
-
 // TODO Add returnFormat parameter
 /**
  * View additional documentations here: {@link Web3QRL.isSyncing}

@@ -130,23 +130,6 @@ export type FeeHistoryResultAPI = FeeHistoryBase<Uint>;
 // https://github.com/ethereum/execution-apis/blob/main/src/schemas/filter.yaml#L2
 export type FilterResultsAPI = HexString32Bytes[] | LogAPI[];
 
-export interface CompileResultAPI {
-	readonly code: HexStringBytes;
-	readonly info: {
-		readonly source: string;
-		readonly language: string;
-		readonly languageVersion: string;
-		readonly compilerVersion: string;
-		readonly abiDefinition: Record<string, unknown>[];
-		readonly userDoc: {
-			readonly methods: Record<string, unknown>;
-		};
-		readonly developerDoc: {
-			readonly methods: Record<string, unknown>;
-		};
-	};
-}
-
 export type QRLExecutionAPI = {
 	// https://github.com/ethereum/execution-apis/blob/main/src/eth/block.yaml
 	qrl_getBlockByHash: (blockHash: HexString32Bytes, hydrated: boolean) => BlockAPI;
@@ -171,7 +154,6 @@ export type QRLExecutionAPI = {
 	) => TransactionReceiptAPI | undefined;
 
 	// https://github.com/ethereum/execution-apis/blob/main/src/eth/client.yaml
-	qrl_protocolVersion: () => string;
 	qrl_syncing: () => SyncingStatusAPI;
 	qrl_accounts: () => Address[];
 	qrl_blockNumber: () => Uint;
@@ -232,7 +214,4 @@ export type QRLExecutionAPI = {
 	) => HexString;
 	qrl_unsubscribe: (subscriptionId: HexString) => HexString;
 	qrl_clearSubscriptions: (keepSyncing?: boolean) => void;
-	// Non-supported by execution-apis specs
-	qrl_getCompilers: () => string[];
-	qrl_compileHyperion: (code: string) => CompileResultAPI;
 };
