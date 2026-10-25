@@ -69,7 +69,7 @@ export interface ProviderBoundsOptions {
 	 */
 	requestTimeout?: number;
 	/**
-	 * Maximum decoded response bytes accepted from the node.
+	 * Maximum decoded response bytes accepted from the node, at most 536,870,888.
 	 * @defaultValue {@link DEFAULT_MAX_RESPONSE_BYTES} (10 MiB)
 	 */
 	maxResponseBytes?: number;
@@ -140,12 +140,23 @@ export const validateTimeout = (value: number, optionName: string): number => {
  * @returns the validated bound
  */
 export const validatePositiveInteger = (value: number, optionName: string): number => {
-	if (typeof value !== 'number' || !Number.isInteger(value) || value <= 0) {
+	if (typeof value !== 'number' || !Number.isSafeInteger(value) || value <= 0) {
 		throw new ProviderError(
 			`Invalid ${optionName}: expected a positive integer, got ${String(value)}.`,
 		);
 	}
 
+	return value;
+};
+
+/** Maximum decoded response size supported by the JavaScript string parser. */
+export const MAX_RESPONSE_BYTES = 536_870_888;
+
+export const validateMaxResponseBytes = (value: number): number => {
+	validatePositiveInteger(value, 'maxResponseBytes');
+	if (value > MAX_RESPONSE_BYTES) {
+		throw new ProviderError(`Invalid maxResponseBytes: must not exceed ${MAX_RESPONSE_BYTES}.`);
+	}
 	return value;
 };
 
@@ -158,9 +169,7 @@ export const validatePositiveInteger = (value: number, optionName: string): numb
  * @param options - user-supplied bounds, if any
  * @returns every bound resolved to a validated value
  */
-export const resolveProviderBounds = (
-	options?: ProviderBoundsOptions,
-): ResolvedProviderBounds => ({
+export const resolveProviderBounds = (options?: ProviderBoundsOptions): ResolvedProviderBounds => ({
 	connectionTimeout: validateTimeout(
 		options?.connectionTimeout ?? DEFAULT_CONNECTION_TIMEOUT,
 		'connectionTimeout',
@@ -169,9 +178,8 @@ export const resolveProviderBounds = (
 		options?.requestTimeout ?? DEFAULT_REQUEST_TIMEOUT,
 		'requestTimeout',
 	),
-	maxResponseBytes: validatePositiveInteger(
+	maxResponseBytes: validateMaxResponseBytes(
 		options?.maxResponseBytes ?? DEFAULT_MAX_RESPONSE_BYTES,
-		'maxResponseBytes',
 	),
 	maxInFlightRequests: validatePositiveInteger(
 		options?.maxInFlightRequests ?? DEFAULT_MAX_IN_FLIGHT_REQUESTS,

@@ -24,7 +24,12 @@ import {
 	Log,
 	Web3APISpec,
 } from '@theqrl/web3-types';
-import { BaseWeb3Error, ProviderError, SubscriptionError } from '@theqrl/web3-errors';
+import {
+	BaseWeb3Error,
+	InvalidResponseError,
+	ProviderError,
+	SubscriptionError,
+} from '@theqrl/web3-errors';
 import { isNullish, waitWithTimeout } from '@theqrl/web3-utils';
 import { isSupportSubscriptions } from './utils.js';
 import { Web3EventEmitter } from './web3_event_emitter.js';
@@ -127,8 +132,9 @@ export class Web3SubscriptionManager<
 		InstanceType<RegisteredSubs[keyof RegisteredSubs]>,
 		Promise<void>
 	>();
-	private readonly _pendingRegistrations = new Set<
-		InstanceType<RegisteredSubs[keyof RegisteredSubs]>
+	private readonly _pendingRegistrations = new Map<
+		InstanceType<RegisteredSubs[keyof RegisteredSubs]>,
+		symbol
 	>();
 	private readonly _subscriptionConnections = new WeakMap<ManagedSubscription, number>();
 	private _resubscribeTask?: Promise<void>;
@@ -496,6 +502,8 @@ export class Web3SubscriptionManager<
 		const providerAtRequest = this.requestManager.provider;
 		const generation = this._generation;
 		let connection = this._connectionGeneration;
+		const registration = Symbol('subscription registration');
+		const ownsRegistration = () => this._pendingRegistrations.get(sub) === registration;
 		const release = (id: string) => {
 			if (
 				providerAtRequest !== this.requestManager.provider ||
@@ -506,11 +514,15 @@ export class Web3SubscriptionManager<
 					manager.send({ method: 'qrl_unsubscribe', params: [id] }),
 					UNSUBSCRIBE_ON_PROVIDER_CHANGE_TIMEOUT,
 					new SubscriptionError('Timed out releasing a superseded subscription'),
-				).catch(error => this._reportSubscriptionError(managed, id, error));
+				).catch(error => {
+					// A superseded id may already be gone on a custom provider's new connection.
+					if (!(error instanceof InvalidResponseError) || !error.innerError)
+						this._reportSubscriptionError(managed, id, error);
+				});
 			}
 		};
 		this._intendedSubscriptions.add(sub);
-		this._pendingRegistrations.add(sub);
+		this._pendingRegistrations.set(sub, registration);
 		this._attachProviderListener();
 		this._subscribesInFlight += 1;
 
@@ -518,6 +530,7 @@ export class Web3SubscriptionManager<
 		try {
 			createdId = await managed.sendSubscriptionRequest();
 			if (
+				ownsRegistration() &&
 				connection !== this._connectionGeneration &&
 				this.requestManager.provider === providerAtRequest &&
 				!this._disposed &&
@@ -534,23 +547,29 @@ export class Web3SubscriptionManager<
 			}
 		} catch (error) {
 			this._subscribesInFlight -= 1;
-			this._pendingRegistrations.delete(sub);
-			this._intendedSubscriptions.delete(sub);
+			if (ownsRegistration()) {
+				this._pendingRegistrations.delete(sub);
+				this._intendedSubscriptions.delete(sub);
+			}
 			this._detachProviderListenerWhenIdle();
 			throw error;
 		}
 		this._subscribesInFlight -= 1;
-		this._pendingRegistrations.delete(sub);
+		const currentRegistration = ownsRegistration();
+		if (currentRegistration) this._pendingRegistrations.delete(sub);
 
 		if (
+			!currentRegistration ||
 			this.requestManager.provider !== providerAtRequest ||
 			this._disposed ||
 			generation !== this._generation ||
 			connection !== this._connectionGeneration ||
 			!this._intendedSubscriptions.has(sub)
 		) {
-			this._intendedSubscriptions.delete(sub);
-			managed._markUnsubscribed();
+			if (currentRegistration) {
+				this._intendedSubscriptions.delete(sub);
+				managed._markUnsubscribed();
+			}
 			this._detachProviderListenerWhenIdle();
 			release(createdId);
 			throw new SubscriptionError(
@@ -604,7 +623,7 @@ export class Web3SubscriptionManager<
 			return id;
 		}
 
-		if (isNullish(id)) {
+		if (this._pendingRegistrations.delete(sub) || isNullish(id)) {
 			if (this._intendedSubscriptions.delete(sub)) {
 				this._deleteSubscriptionIds(sub);
 				(sub as unknown as ManagedSubscription)._markUnsubscribed();
@@ -621,7 +640,10 @@ export class Web3SubscriptionManager<
 		}
 
 		const managed = sub as unknown as ManagedSubscription;
-		const stale = this._subscriptionConnections.get(managed) !== this._connectionGeneration;
+		const provider = this.requestManager.provider as unknown as ListenableProvider;
+		const stale =
+			this._subscriptionConnections.get(managed) !== this._connectionGeneration ||
+			provider?.isConnected?.() === false;
 		// Remove owner intent before the await, so a queued recovery skips this entry.
 		this._intendedSubscriptions.delete(sub);
 		this._deleteSubscriptionIds(sub);
@@ -674,7 +696,11 @@ export class Web3SubscriptionManager<
 	private async _unsubscribeAllForProviderChange(): Promise<void> {
 		const pending: Promise<void>[] = [];
 		this._generation += 1;
+		for (const sub of this._pendingRegistrations.keys()) {
+			(sub as unknown as ManagedSubscription)._markUnsubscribed();
+		}
 		this._intendedSubscriptions.clear();
+		this._pendingRegistrations.clear();
 		this._resubscribeAgain = false;
 
 		for (const [id, sub] of [...this._subscriptions.entries()]) {
@@ -761,6 +787,7 @@ export class Web3SubscriptionManager<
 		}
 		this._intendedSubscriptions.clear();
 		this._subscriptions.clear();
+		this._pendingRegistrations.clear();
 		this._resubscribeOnConnect = false;
 		this._detachProviderListener();
 	}

@@ -103,7 +103,11 @@ export abstract class Web3Subscription<
 	) {
 		if (data?.data) {
 			// for EIP-1193 provider
-			this._processSubscriptionResult(data?.data?.result ?? data?.data);
+			this._processSubscriptionResult(
+				Object.prototype.hasOwnProperty.call(data.data, 'result')
+					? data.data.result
+					: data.data,
+			);
 		} else if (
 			data &&
 			jsonRpc.isResponseWithNotification(

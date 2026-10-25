@@ -75,6 +75,20 @@ describe('PromiEvent error helpers', () => {
 			expect(warn).not.toHaveBeenCalled();
 		});
 
+		it('contains a throwing watcher error listener and reports only the original failure', () => {
+			const warn = jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+			const listener = jest.fn(() => {
+				throw new Error('listener boom');
+			});
+			promiEvent.on('error', listener);
+			expect(() => reportWatcherError(promiEvent, new Error('watcher failed'))).not.toThrow();
+			expect(listener).toHaveBeenCalledTimes(1);
+			expect(listener.mock.calls[0]).toEqual([
+				expect.objectContaining({ message: 'watcher failed' }),
+			]);
+			expect(warn).toHaveBeenCalledTimes(1);
+		});
+
 		it('warns instead of throwing when no error listener is attached', () => {
 			const warn = jest.spyOn(console, 'warn').mockImplementation(() => undefined);
 			const error = new Error('header not found');

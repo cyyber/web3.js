@@ -104,3 +104,19 @@ describe.each([
 		expect(() => encodeParameter('bytes2', '0x')).toThrow(AbiError);
 	});
 });
+
+test.each([
+	['uint256', Number.MAX_SAFE_INTEGER],
+	['int256', -Number.MAX_SAFE_INTEGER],
+	['uint64', Number.MAX_SAFE_INTEGER],
+] as const)('encodes safe boundary %s %s exactly', (type, value) => {
+	const encoded = encodeParameter(type, value);
+	expect(encoded).toBe(encodeParameter(type, BigInt(value)));
+	expect(decodeParameter(type, encoded)).toBe(BigInt(value));
+});
+test.each([2 ** 53, -(2 ** 53), 1.5, NaN, Infinity])(
+	'rejects unsafe numeric ABI input %s',
+	value => {
+		expect(() => encodeParameter('int256', value)).toThrow(AbiError);
+	},
+);

@@ -14,12 +14,17 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
-import { QRLExecutionAPI, Bytes, Web3BaseProvider, BlockHeaderOutput } from '@theqrl/web3-types';
+import {
+	QRLExecutionAPI,
+	Bytes,
+	Web3BaseProvider,
+	BlockHeaderOutput,
+	QRL_DATA_FORMAT,
+} from '@theqrl/web3-types';
 import { Web3Context } from '@theqrl/web3-core';
 import { rejectIfConditionAtInterval } from '@theqrl/web3-utils';
 
 import { TransactionBlockTimeoutError } from '@theqrl/web3-errors';
-import { NUMBER_DATA_FORMAT } from '../constants.js';
 import { isValidUnsignedHexNumber } from './hex_guards.js';
 import { getBlockNumber } from './rpc_method_wrappers_readers.js';
 import { NewHeadsSubscription } from '../web3_subscriptions.js';
@@ -30,19 +35,19 @@ export interface ResourceCleaner {
 
 function resolveByPolling(
 	web3Context: Web3Context<QRLExecutionAPI>,
-	starterBlockNumber: number,
+	starterBlockNumber: bigint,
 	transactionHash?: Bytes,
 ): [Promise<never>, ResourceCleaner] {
 	const pollingInterval = web3Context.transactionPollingInterval;
 	const [intervalId, promiseToError] = rejectIfConditionAtInterval(async () => {
 		let lastBlockNumber;
 		try {
-			lastBlockNumber = await getBlockNumber(web3Context, NUMBER_DATA_FORMAT);
+			lastBlockNumber = await getBlockNumber(web3Context, QRL_DATA_FORMAT);
 		} catch (error) {
 			console.warn('An error happen while trying to get the block number', error);
 			return undefined;
 		}
-		const numberOfBlocks = lastBlockNumber - starterBlockNumber;
+		const numberOfBlocks = BigInt(lastBlockNumber) - starterBlockNumber;
 		if (numberOfBlocks >= web3Context.transactionBlockTimeout) {
 			return new TransactionBlockTimeoutError({
 				starterBlockNumber,
@@ -62,7 +67,7 @@ function resolveByPolling(
 
 async function resolveBySubscription(
 	web3Context: Web3Context<QRLExecutionAPI>,
-	starterBlockNumber: number,
+	starterBlockNumber: bigint,
 	transactionHash?: Bytes,
 ): Promise<[Promise<never>, ResourceCleaner]> {
 	// The following variable will stay true except if the data arrived,
@@ -140,7 +145,7 @@ async function resolveBySubscription(
 					return;
 				}
 				needToWatchLater = false;
-				const numberOfBlocks = Number(BigInt(headerNumber) - BigInt(starterBlockNumber));
+				const numberOfBlocks = BigInt(headerNumber) - starterBlockNumber;
 
 				if (numberOfBlocks >= web3Context.transactionBlockTimeout) {
 					// Transaction Block Timeout is known to be reached by subscribing to new heads
@@ -173,7 +178,7 @@ export async function rejectIfBlockTimeout(
 ): Promise<[Promise<never>, ResourceCleaner]> {
 	const { provider } = web3Context.requestManager;
 	let callingRes: [Promise<never>, ResourceCleaner];
-	const starterBlockNumber = await getBlockNumber(web3Context, NUMBER_DATA_FORMAT);
+	const starterBlockNumber = BigInt(await getBlockNumber(web3Context, QRL_DATA_FORMAT));
 	// TODO: once https://github.com/web3/web3.js/issues/5521 is implemented, remove checking for `enableExperimentalFeatures.useSubscriptionWhenCheckingBlockTimeout`
 	if (
 		(provider as Web3BaseProvider).supportsSubscriptions?.() &&

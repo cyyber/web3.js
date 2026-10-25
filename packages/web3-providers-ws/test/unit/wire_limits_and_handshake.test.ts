@@ -17,6 +17,7 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 
 jest.unmock('isomorphic-ws');
 /* eslint-disable jest/no-conditional-expect -- each table case has a distinct transport verdict */
+import { ProviderError } from '@theqrl/web3-errors';
 import { AddressInfo } from 'net';
 import { WebSocketServer, RawData } from 'ws';
 import { JsonRpcRequest } from '@theqrl/web3-types';
@@ -185,7 +186,7 @@ describe('WebSocket wire limits and handshake (pass-5 audit)', () => {
 	});
 });
 
-test.each([2 ** 28 + 1, 2 ** 29, 2 ** 30 + 1, 2 ** 31 + 100])(
+test.each([2 ** 28 + 1, 536_870_888])(
 	'caps the real ws receiver before string conversion for maxResponseBytes=%s',
 	async maxResponseBytes => {
 		const server = new WebSocketServer({ host: '127.0.0.1', port: 0 });
@@ -204,7 +205,7 @@ test.each([2 ** 28 + 1, 2 ** 29, 2 ** 30 + 1, 2 ** 31 + 100])(
 		);
 		const provider = new WebSocketProvider(
 			`ws://127.0.0.1:${(server.address() as AddressInfo).port}`,
-			{},
+			{ maxPayload: undefined },
 			{ autoReconnect: false },
 			{ maxResponseBytes },
 		);
@@ -228,6 +229,6 @@ test.each([-1, NaN, Number.MAX_SAFE_INTEGER + 1])(
 		expect(
 			() =>
 				new WebSocketProvider('ws://127.0.0.1:1', { maxPayload }, { autoReconnect: false }),
-		).toThrow();
+		).toThrow(ProviderError);
 	},
 );

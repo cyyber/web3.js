@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Pass 7 audit corrections
+
+- Replay historical logs only after live subscription succeeds, report terminal setup failure once, and release late subscription replies. getPastEvents skips topic-count mismatches while retaining other valid logs; live/backfill errors include the log identity (P7-CT-1/2/3).
+
 ### Pass 6 audit corrections
 
 - Keep request/subscription managers shared by clone() and deployment results so provider changes continue to propagate. Explicit constructor provider overrides still create independent managers (P6-CT-1).

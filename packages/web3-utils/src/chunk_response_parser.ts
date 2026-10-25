@@ -17,7 +17,7 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 import { JsonRpcId, JsonRpcResponse } from '@theqrl/web3-types';
 import { InvalidResponseError, ResponseTooLargeError } from '@theqrl/web3-errors';
 import type { EventEmitterLike } from './event_emitter.js';
-import { DEFAULT_MAX_RESPONSE_BYTES, validatePositiveInteger } from './provider_bounds.js';
+import { DEFAULT_MAX_RESPONSE_BYTES, validateMaxResponseBytes } from './provider_bounds.js';
 import { isNullish } from './validation.js';
 
 const CHUNK_TIMEOUT_MS = 15 * 1000;
@@ -175,9 +175,8 @@ export class ChunkResponseParser {
 		this.eventEmitter = eventEmitter;
 		this.framed = options.framed ?? false;
 		// Validated here as well: an unusable bound must fail loudly, not disable the check.
-		this.maxBytes = validatePositiveInteger(
+		this.maxBytes = validateMaxResponseBytes(
 			options.maxResponseBytes ?? DEFAULT_MAX_RESPONSE_BYTES,
-			'maxResponseBytes',
 		);
 	}
 
@@ -310,30 +309,26 @@ export class ChunkResponseParser {
 				if (this.depth === 0) {
 					const piece = data.slice(start, i + 1);
 					const length = this.messageLength + piece.length;
-					if (this.discarding) {
-						// Only the retained prefix can still name the requests it answers.
-						this.reportOversized(this.pendingParts.join(''), length);
-					} else if (length > this.maxBytes) {
-						this.reportOversized(this.pendingParts.join('') + piece, length);
+					const prefix = this.messagePrefix(piece);
+					const parts = this.pendingParts;
+					const oversized = this.discarding || length > this.maxBytes;
+					// Release the old message before any allocation or error callback can throw.
+					this.reset();
+					if (oversized) {
+						this.reportOversized(prefix, length);
 					} else {
-						const text =
-							this.pendingParts.length > 0
-								? this.pendingParts.join('') + piece
-								: piece;
 						try {
+							const text = parts.length > 0 ? parts.join('') + piece : piece;
 							// The text is bracket balanced and starts with `{` or `[`, so a
 							// successful parse is always an object or an array.
 							results.push(JSON.parse(text) as JsonRpcResponse);
-						} catch {
-							malformed = true;
+						} catch (error) {
+							if (error instanceof RangeError) this.reportOversized(prefix, length);
+							else malformed = true;
 						}
 					}
 					// The message that owned the timer is finished either way. A message that
 					// opens later in this call gets a fresh deadline below.
-					this.clearChunkTimeout();
-					this.pendingParts = [];
-					this.messageLength = 0;
-					this.discarding = false;
 				}
 			}
 		}
@@ -350,7 +345,7 @@ export class ChunkResponseParser {
 				// resynchronise it), but its text is dropped apart from the prefix that may name
 				// the requests it answers.
 				this.discarding = true;
-				this.pendingParts = [(this.pendingParts.join('') + piece).slice(0, ID_SCAN_LIMIT)];
+				this.pendingParts = [this.messagePrefix(piece)];
 			} else {
 				this.pendingParts.push(piece);
 			}
@@ -375,5 +370,14 @@ export class ChunkResponseParser {
 		if (malformed) this.emitError('Malformed JSON-RPC message received from the node');
 		if (garbage) this.emitError('Non-object JSON-RPC message received from the node');
 		return results;
+	}
+
+	private messagePrefix(piece: string): string {
+		let prefix = '';
+		for (const part of this.pendingParts) {
+			prefix += part.slice(0, ID_SCAN_LIMIT - prefix.length);
+			if (prefix.length === ID_SCAN_LIMIT) return prefix;
+		}
+		return prefix + piece.slice(0, ID_SCAN_LIMIT - prefix.length);
 	}
 }

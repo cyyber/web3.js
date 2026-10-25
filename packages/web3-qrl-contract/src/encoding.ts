@@ -306,6 +306,9 @@ export const encodeEventABI = (
 const malformedLog = (log: unknown, reason: string): ResponseError =>
 	new ResponseError(log as JsonRpcResponse, `Malformed log in the node reply: ${reason}`);
 
+/** A signature may be shared by events with different indexed arguments. */
+export class EventTopicCountError extends AbiError {}
+
 export const decodeEventABI = (
 	event: AbiEventFragment & { signature: string },
 	data: LogsInput,
@@ -356,7 +359,9 @@ export const decodeEventABI = (
 	if (!modifiedEvent.anonymous) {
 		const indexedInputs = modifiedEvent.inputs.filter(input => input.indexed).length;
 		if (topics.length !== indexedInputs + 1) {
-			throw new AbiError('Event topic count does not match the ABI');
+			throw new EventTopicCountError(
+				`Event topic count does not match the ABI (transactionHash: ${String(data.transactionHash)}, logIndex: ${String(data.logIndex)})`,
+			);
 		}
 	}
 

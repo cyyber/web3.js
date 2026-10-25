@@ -44,6 +44,7 @@ const setup = async (failHandshake = false) => {
 	let connections = 0;
 	let counter = 0;
 	let holdAccounts = false;
+	let rejectProbes = failHandshake;
 	const pendingAccounts: (() => void)[] = [];
 	const live = new Map<WebSocket, Set<string>>();
 	const requests: { connection: number; method: string }[] = [];
@@ -59,7 +60,10 @@ const setup = async (failHandshake = false) => {
 				socket.send(JSON.stringify({ jsonrpc: '2.0', id: request.id, result }));
 			if (request.method === 'qrl_accounts' && holdAccounts) {
 				pendingAccounts.push(() => reply([]));
-			} else if (request.method === 'qrl_accounts' && failHandshake) {
+			} else if (
+				(request.method === 'qrl_accounts' || request.method === 'qrl_chainId') &&
+				rejectProbes
+			) {
 				socket.send(
 					JSON.stringify({
 						jsonrpc: '2.0',
@@ -74,7 +78,7 @@ const setup = async (failHandshake = false) => {
 				setImmediate(() => reply(id));
 			} else if (request.method === 'qrl_unsubscribe') {
 				reply(ids.delete((request.params as string[])[0]));
-			} else reply(request.method === 'qrl_accounts' ? [] : '0x1');
+			} else reply(request.method === 'qrl_accounts' ? ['0xaa'] : '0x1');
 		});
 	});
 	const provider = new WebSocketProvider(
@@ -97,6 +101,9 @@ const setup = async (failHandshake = false) => {
 			holdAccounts = true;
 		},
 		connections: () => connections,
+		setRejectProbes: (value: boolean) => {
+			rejectProbes = value;
+		},
 		close: async () => {
 			manager.dispose();
 			provider.disconnect();
@@ -159,7 +166,7 @@ test('recovers live subscriptions when a gateway rejects qrl_accounts', async ()
 		const oldId = sub.id;
 		for (const socket of test.server.clients) socket.terminate();
 		await until(() => test.connections() === 2 && sub.id !== oldId && sub.id !== undefined);
-		expect(test.errors).toHaveBeenCalledTimes(2);
+		expect(test.errors).toHaveBeenCalledTimes(4);
 		expect(test.manager.subscriptions.get(sub.id!)).toBe(sub);
 		await sub.unsubscribe();
 	} finally {
@@ -186,6 +193,35 @@ test('manual connect cancels the reconnect timer and sends requests immediately'
 		).resolves.toHaveProperty('result', '0x1');
 		await new Promise<void>(resolve => setTimeout(resolve, 100));
 		expect(test.connections()).toBe(2);
+	} finally {
+		await test.close();
+	}
+});
+
+test('keeps known chain and accounts and reconnects even when a probe error listener throws', async () => {
+	const test = await setup();
+	try {
+		await new Promise<void>(resolve => test.provider.once('connect', () => resolve()));
+		const sub = await test.manager.subscribe('heads');
+		const chainChanged = jest.fn();
+		const accountsChanged = jest.fn();
+		const connected = jest.fn();
+		test.provider.on('chainChanged', chainChanged);
+		test.provider.on('accountsChanged', accountsChanged);
+		test.provider.on('connect', connected);
+		test.provider.on('error', () => {
+			throw new Error('consumer error listener');
+		});
+		test.setRejectProbes(true);
+		for (const socket of test.server.clients) socket.terminate();
+		await until(() => connected.mock.calls.length === 1 && sub.id !== '0x1');
+		expect(test.provider.isConnected()).toBe(true);
+		expect(connected).toHaveBeenLastCalledWith({ chainId: '0x1' });
+		test.setRejectProbes(false);
+		for (const socket of test.server.clients) socket.terminate();
+		await until(() => connected.mock.calls.length === 2);
+		expect(chainChanged).not.toHaveBeenCalled();
+		expect(accountsChanged).not.toHaveBeenCalled();
 	} finally {
 		await test.close();
 	}

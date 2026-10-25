@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Pass 7 audit corrections
+
+- Resolve all 21 pass-7 findings across dependency policy, subscription cancellation and handshake recovery, transport bounds, receipt formatting, event backfills and ABI inputs. Doctor verifies the effective override sources and minimum install safeguards; hygiene rejects alternate workspace policy files.
+
 ### Pass 6 audit corrections
 
 - Fix pass-6 subscription registration/reconnect races, confirmation formatting, VM64 proof values, contract clone provider sharing, WebSocket payload bounds, event decoding, typed-data validation, and release policy checks.

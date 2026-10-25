@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Pass 7 audit corrections
+
+- Keep the last known chain id and accounts when handshake probes fail, without spurious change events. Throwing probe-error listeners cannot suppress connect or reject the handshake task (P7-CORE-2/5).
+- Limit maxResponseBytes to 536,870,888; bound oversized-message prefix assembly and reset stream state on allocation failure. Re-arm automatic recovery if a manual connect fails during backoff (P7-TR-1/2).
+
 ### Pass 6 audit corrections
 
 - Emit `connect` after the current handshake settles even when a gateway rejects its RPC probes; failed fields use an empty chain id or account list, and failures are reported on `error`. Stale handshakes stay suppressed. `isConnected()` reports whether the current connection emitted `connect` (P6-CORE-2).

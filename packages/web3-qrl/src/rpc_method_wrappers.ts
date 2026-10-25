@@ -60,7 +60,6 @@ import {
 	accountSchema,
 	feeHistorySchema,
 	logSchema,
-	transactionReceiptSchema,
 	accessListResultSchema,
 	SignatureObjectSchema,
 } from './schemas.js';
@@ -93,6 +92,7 @@ import {
 	expectTransactionHashReply,
 	invalidResponseError,
 } from './utils/invalid_response_error.js';
+import { formatReceiptForSend } from './utils/format_receipt_for_send.js';
 import { isBlockHash } from './utils/hex_guards.js';
 
 /** A block number given as a number, bigint or decimal string is sent as a hex quantity. */
@@ -569,11 +569,8 @@ export function sendTransaction<
 							QRL_DATA_FORMAT,
 						);
 
-						const transactionReceiptFormatted = format(
-							transactionReceiptSchema,
-							transactionReceipt,
-							returnFormat,
-						);
+						const { receipt: transactionReceiptFormatted, receiptFormat } =
+							formatReceiptForSend(transactionReceipt, returnFormat, promiEvent);
 
 						emitAfterBroadcast('receipt', transactionReceiptFormatted);
 
@@ -606,7 +603,7 @@ export function sendTransaction<
 									promiEvent,
 									transactionReceiptFormatted as TransactionReceipt,
 									transactionHash,
-									returnFormat,
+									receiptFormat,
 								);
 							} catch (error) {
 								// The PromiEvent has settled; a receipt the watcher cannot use
@@ -809,11 +806,8 @@ export function sendSignedTransaction<
 							QRL_DATA_FORMAT,
 						);
 
-						const transactionReceiptFormatted = format(
-							transactionReceiptSchema,
-							transactionReceipt,
-							returnFormat,
-						);
+						const { receipt: transactionReceiptFormatted, receiptFormat } =
+							formatReceiptForSend(transactionReceipt, returnFormat, promiEvent);
 
 						emitAfterBroadcast('receipt', transactionReceiptFormatted);
 
@@ -844,7 +838,7 @@ export function sendSignedTransaction<
 									promiEvent,
 									transactionReceiptFormatted as TransactionReceipt,
 									transactionHash,
-									returnFormat,
+									receiptFormat,
 								);
 							} catch (error) {
 								reportWatcherError(promiEvent, error);

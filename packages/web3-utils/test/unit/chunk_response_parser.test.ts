@@ -470,3 +470,21 @@ describe('ChunkResponseParser', () => {
 		});
 	});
 });
+
+test('recovers within the same chunk when joining response fragments fails', () => {
+	const emitter = new EventEmitter();
+	const errors = jest.fn();
+	emitter.on('error', errors);
+	const parser = new ChunkResponseParser(emitter, false);
+	parser.parseResponse('{"jsonrpc":"2.0","id":1,"result":"');
+	const state = parser as unknown as { pendingParts: string[]; lastChunkTimeout?: unknown };
+	jest.spyOn(state.pendingParts, 'join').mockImplementation(() => {
+		throw new RangeError('Invalid string length');
+	});
+	const next = { jsonrpc: '2.0', id: 2, result: 'ok' };
+	expect(parser.parseResponse(`big"}${JSON.stringify(next)}`)).toEqual([next]);
+	expect(errors).toHaveBeenCalledWith(expect.any(ResponseTooLargeError));
+	expect(state.pendingParts).toEqual([]);
+	expect(state.lastChunkTimeout).toBeUndefined();
+	expect(parser.parseResponse(JSON.stringify(next))).toEqual([next]);
+});

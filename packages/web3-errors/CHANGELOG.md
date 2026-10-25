@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Pass 7 audit corrections
+
+- TransactionBlockTimeoutError accepts bigint block heights and distances to retain precision above 2^53.
+
 ### Pass 6 audit corrections
 
 - Error messages now distinguish simulation/broadcast rejection from mined reverts when no receipt exists. MissingGasError, InvalidMaxPriorityFeePerGasOrMaxFeePerGas, TransactionMissingReceiptOrBlockHashError and ConfigChainMismatchError also have updated messages; consumers should use error types/codes instead of matching text.

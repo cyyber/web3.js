@@ -56,7 +56,14 @@ export const reportWatcherError = <ReturnFormat extends DataFormat, ResolveType>
 	error: unknown,
 ): void => {
 	if (promiEvent.listenerCount('error') > 0) {
-		promiEvent.emit('error', toTransactionError(error));
+		try {
+			promiEvent.emit('error', toTransactionError(error));
+		} catch (listenerError) {
+			console.warn(
+				'An "error" listener threw while a transaction watcher failure was being reported',
+				listenerError,
+			);
+		}
 		return;
 	}
 	console.warn(

@@ -193,3 +193,43 @@ describe('getEncodedQRLTypedData: malformed payloads are rejected, not hashed (I
 		).toThrow(/expected an object for type 'P'/);
 	});
 });
+
+describe('optional typed-data keys and safe integer boundaries (pass-7)', () => {
+	const base = {
+		types: {
+			QRLTypedDataDomain: [{ name: 'name', type: 'string' }],
+			T: [{ name: 'value', type: 'int256' }],
+		},
+		primaryType: 'T',
+		domain: { name: 'D' },
+		message: { value: Number.MAX_SAFE_INTEGER },
+	};
+	it('hashes the safe integer number exactly like its decimal form', () => {
+		expect(getEncodedQRLTypedData(base)).toBe(
+			getEncodedQRLTypedData({
+				...base,
+				message: { value: String(Number.MAX_SAFE_INTEGER) },
+			}),
+		);
+	});
+	// eslint-disable-next-line no-null/no-null -- exercise explicit null from untyped callers
+	it.each([{ verifyingContract: undefined }, { version: '' }, { chainId: null }])(
+		'ignores empty undeclared domain keys: %p',
+		extra => {
+			expect(
+				getEncodedQRLTypedData({ ...base, domain: { ...base.domain, ...extra } } as never),
+			).toBe(getEncodedQRLTypedData(base));
+		},
+	);
+	it('ignores undefined message extras, while still rejecting nonempty extras and missing fields', () => {
+		expect(
+			getEncodedQRLTypedData({ ...base, message: { ...base.message, extra: undefined } }),
+		).toBe(getEncodedQRLTypedData(base));
+		expect(() =>
+			getEncodedQRLTypedData({ ...base, message: { ...base.message, extra: 1 } }),
+		).toThrow(AbiError);
+		expect(() => getEncodedQRLTypedData({ ...base, message: { value: undefined } })).toThrow(
+			AbiError,
+		);
+	});
+});

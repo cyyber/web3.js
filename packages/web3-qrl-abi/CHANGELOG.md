@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Pass 7 audit corrections
+
+- Accept Number.MAX_SAFE_INTEGER and its negative through ABI and typed-data encoding. Ignore undefined extra keys and empty undeclared domain keys while still requiring declared fields (P7-ABI-1/2).
+- Uint8Array and Buffer inputs for string parameters now produce a typed AbiError instead of encoding their hexadecimal spelling as text (pass-6 behavior clarification).
+
 ### Pass 6 audit corrections
 
 - Reject byte-like integer arguments in raw ABI encoding. Typed-data bool values must be JSON booleans; domains must be nonempty and declared domain fields cannot contain empty strings, matching go-qrl signing rules (P6-ABI-1, P6-ABI-2).

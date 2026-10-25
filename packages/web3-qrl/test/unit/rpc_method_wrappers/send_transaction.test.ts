@@ -87,6 +87,57 @@ describe('sendTransaction', () => {
 
 	afterEach(() => jest.resetAllMocks());
 
+	it.each(['0x1', '0x0'])(
+		'preserves the wire verdict with an unrepresentable NUMBER receipt (%s)',
+		async status => {
+			const receipt = {
+				...expectedTransactionReceipt,
+				status,
+				effectiveGasPrice: '0x1000000000000000',
+			};
+			(qrlRpcMethods.getBlockNumber as jest.Mock).mockResolvedValue('0x20000000000000');
+			(WaitForTransactionReceipt.waitForTransactionReceipt as jest.Mock).mockResolvedValue(
+				receipt,
+			);
+			const errors = jest.fn();
+			const received = jest.fn();
+			const promi = sendTransaction(web3Context, testData[0][1], {
+				number: FMT_NUMBER.NUMBER,
+				bytes: FMT_BYTES.HEX,
+			})
+				.on('error', errors)
+				.on('receipt', received)
+				.on('confirmation', jest.fn());
+			const outcome: unknown = await promi.catch((error: unknown) => error);
+			const expected = {
+				'0x1': expect.objectContaining({
+					status: '0x1',
+					effectiveGasPrice: receipt.effectiveGasPrice,
+				}),
+				'0x0': expect.any(TransactionRevertedWithoutReasonError),
+			};
+			expect(outcome).toEqual(expected[status as keyof typeof expected]);
+			expect(received).toHaveBeenCalledWith(
+				expect.objectContaining({ status, effectiveGasPrice: receipt.effectiveGasPrice }),
+			);
+			expect(errors.mock.calls[0][0]).toMatchObject({
+				receipt: expect.objectContaining({
+					status,
+					effectiveGasPrice: receipt.effectiveGasPrice,
+				}),
+			});
+			expect(
+				WatchTransactionForConfirmations.watchTransactionForConfirmations,
+			).toHaveBeenCalledWith(
+				web3Context,
+				promi,
+				expect.objectContaining({ status }),
+				expect.any(String),
+				QRL_DATA_FORMAT,
+			);
+		},
+	);
+
 	it.each(testData)(
 		`getTransactionGasPricing is called only when expected\n ${testMessage}`,
 		async (_, inputTransaction, sendTransactionOptions) => {

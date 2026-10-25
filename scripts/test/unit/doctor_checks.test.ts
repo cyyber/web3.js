@@ -18,6 +18,9 @@ import { readFileSync } from 'fs';
 import { join, resolve } from 'path';
 
 interface DoctorChecks {
+	manifestPolicyFailures: (manifest: object) => string[];
+	workspacePolicyFailures: (text: string) => string[];
+	overridePolicyFailures: (workspace: string, lockfile: string) => string[];
 	npmrcPolicyFailures: (text: string) => string[];
 	allowBuildsFailures: (workspaceYaml: string, lockfileText: string) => string[];
 	listWorkspaceBlockItems: (workspaceYaml: string, blockName: string) => string[] | undefined;
@@ -348,5 +351,65 @@ describe('pass-6 workspace policy parsing', () => {
 				'# minimum-release-age-exclude[]=lodash\nengine-strict=true\nregistry=https://registry.npmjs.org/',
 			),
 		).toEqual([]);
+	});
+});
+
+describe('pass-7 install policy sources', () => {
+	// eslint-disable-next-line no-null/no-null -- exercise explicit null from untyped callers
+	it.each([{ pnpm: { overrides: { lodash: '1.0.0' } } }, { resolutions: {} }, { pnpm: null }])(
+		'refuses root manifest policy even when empty',
+		manifest => {
+			expect(doctorChecks.manifestPolicyFailures(manifest)).toHaveLength(1);
+		},
+	);
+	it('checks lockfile override values and keys, independent of order', () => {
+		const workspace = 'overrides: {a: "1.0.0", b: "2.0.0"}';
+		expect(
+			doctorChecks.overridePolicyFailures(workspace, 'overrides: {b: "2.0.0", a: "1.0.0"}'),
+		).toEqual([]);
+		for (const other of [
+			'overrides: {a: "1.0.0"}',
+			'overrides: {a: "1.0.1", b: "2.0.0"}',
+			'packages: {}',
+		]) {
+			expect(doctorChecks.overridePolicyFailures(workspace, other)).toHaveLength(1);
+		}
+		expect(
+			doctorChecks.overridePolicyFailures(
+				read('pnpm-workspace.yaml'),
+				read('pnpm-lock.yaml'),
+			),
+		).toEqual([]);
+	});
+	it.each([
+		'%YAML 1.1\n---\n!!merge : {minimumReleaseAgeExclude: [lodash]}',
+		'\uFEFF%YAML 1.1\n---\nminimumReleaseAge: 10080',
+		'!!merge : {minimumReleaseAgeExclude: [lodash]}',
+		'%TAG !x! tag:yaml.org,2002:\n---\n!x!merge : {minimumReleaseAgeExclude: [lodash]}',
+		'unknown: !unresolved value',
+		'123: value',
+	])('rejects ambiguous YAML: %s', yaml => {
+		expect(() => minimumReleaseAgeExcludeFailures(yaml)).toThrow();
+	});
+	it.each(['dangerously-allow-all-builds', 'only-built-dependencies[]', 'pnpmfile', 'lockfile'])(
+		'rejects bare npmrc policy key %s',
+		key => {
+			expect(doctorChecks.npmrcPolicyFailures(`engine-strict=true\n${key}\n`)).toHaveLength(
+				1,
+			);
+		},
+	);
+	it('requires a seven-day quarantine and both install safeguards', () => {
+		const valid = 'minimumReleaseAge: 10080\nblockExoticSubdeps: true\nstrictDepBuilds: true\n';
+		expect(doctorChecks.workspacePolicyFailures(valid)).toEqual([]);
+		for (const age of ['0', '10079', '10080.5', '"10080"']) {
+			expect(doctorChecks.workspacePolicyFailures(valid.replace('10080', age))).toHaveLength(
+				1,
+			);
+		}
+		expect(doctorChecks.workspacePolicyFailures('{}')).toHaveLength(3);
+		expect(doctorChecks.workspacePolicyFailures(valid.replace(/true/g, 'false'))).toHaveLength(
+			2,
+		);
 	});
 });

@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Pass 7 audit corrections
+
+- Contain throwing watcher error listeners and validate log, header, pending-hash and syncing notifications before delivery (P7-QRL-1/2).
+- If a mined receipt cannot be represented in the requested number format, emit a FormatterError carrying the exact wire receipt in receipt, then deliver the receipt and settle according to its wire status. Receipt and confirmation fields use hex wire format for this send, even when NUMBER was requested. Block-timeout tracking uses bigint, including heads above 2^53 (P7-QRL-3).
+
 ### Pass 6 audit corrections
 
 - Detect reorg execution-status changes in decimal-string receipts as well as the other number formats; both polling and new-head watchers report the error and stop (P6R-2).

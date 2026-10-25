@@ -476,8 +476,8 @@ export class TransactionBlockTimeoutError extends BaseWeb3Error {
 	public code = ERR_TX_BLOCK_TIMEOUT;
 
 	public constructor(value: {
-		starterBlockNumber: number;
-		numberOfBlocks: number;
+		starterBlockNumber: number | bigint;
+		numberOfBlocks: number | bigint;
 		transactionHash?: Bytes;
 	}) {
 		super(

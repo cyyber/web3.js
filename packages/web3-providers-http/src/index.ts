@@ -577,9 +577,18 @@ export default class HttpProvider<
 			...restRequestOptions,
 		};
 		if (typeof globalThis.fetch === 'function' && 'agent' in providerOptionsCombined) {
-			throw new ProviderCapabilityError(
+			throw new ProviderError(
 				'Native fetch does not support agent; use an undici dispatcher for proxy or TLS options',
 			);
+		}
+		const { dispatcher } = providerOptionsCombined;
+		if (
+			dispatcher !== undefined &&
+			(isNullish(dispatcher) ||
+				typeof dispatcher !== 'object' ||
+				typeof (dispatcher as { dispatch?: unknown }).dispatch !== 'function')
+		) {
+			throw new ProviderError('dispatcher must be an object with a dispatch function');
 		}
 		const {
 			signal: callerSignal,

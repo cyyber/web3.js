@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Pass 7 audit corrections
+
+- Allow immediate re-subscription after cancelling a pending registration; late replies cannot remove the replacement. Treat unsubscribe during socket backoff as stale cleanup, and ignore remote refusals when releasing superseded ids while retaining transport errors (P7-CORE-1/3/4).
+- Preserve explicit null notification results for validation instead of forwarding their envelope.
+
 ### Pass 6 audit corrections
 
 - Retry an initial registration once when it spans a reconnect, releasing the uncertain id first. A second connection change reports a specific retryable error. Completed retries are skipped by queued recovery, and cancellation or provider replacement never restarts a registration (P6R-1).

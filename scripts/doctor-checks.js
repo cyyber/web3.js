@@ -28,16 +28,25 @@ const leadingSpaces = line => /^ */.exec(line)[0].length;
 // All checks consume the same parsed mapping, including multi-line flow mappings.
 function parseWorkspace(workspaceYaml) {
 	if (typeof workspaceYaml !== 'string') return workspaceYaml;
+	if (/^\uFEFF?%(?:YAML|TAG)\b/m.test(workspaceYaml)) {
+		throw new Error('pnpm-workspace.yaml must not use YAML directives');
+	}
 	const { parseDocument, visit, isScalar } = require('yaml');
 	const document = parseDocument(workspaceYaml);
 	if (document.errors.length) throw document.errors[0];
+	if (document.warnings.length) throw document.warnings[0];
 	visit(document, {
 		Alias() {
 			throw new Error('pnpm-workspace.yaml must not use YAML aliases');
 		},
 		Pair(_key, pair) {
-			if (isScalar(pair.key) && pair.key.value === '<<') {
-				throw new Error('pnpm-workspace.yaml must not use YAML merge keys');
+			if (
+				!isScalar(pair.key) ||
+				typeof pair.key.value !== 'string' ||
+				pair.key.value === '<<' ||
+				pair.key.tag === 'tag:yaml.org,2002:merge'
+			) {
+				throw new Error('pnpm-workspace.yaml must use string keys without YAML merge tags');
 			}
 		},
 	});
@@ -80,13 +89,20 @@ function npmrcPolicyFailures(npmrc) {
 		'dangerouslyallowallbuilds',
 		'strictdepbuilds',
 		'ignoredepscripts',
+		'blockexoticsubdeps',
+		'verifystoreintegrity',
+		'lockfile',
+		'trustpolicy',
+		'pnpmfile',
+		'ignorepnpmfile',
 	]);
 	return npmrc.split(/\r?\n/).flatMap(line => {
-		if (/^\s*[#;]/.test(line) || !line.includes('=')) return [];
-		const key = line
-			.slice(0, line.indexOf('='))
+		if (/^\s*(?:[#;]|$)/.test(line)) return [];
+		const key = (
+			line.includes('=') ? line.slice(0, line.indexOf('=')) : line.replace(/\s*[#;].*$/, '')
+		)
 			.trim()
-			.replace(/['"\[\]_-]/g, '')
+			.replace(/['"[\]_-]/g, '')
 			.toLowerCase();
 		return controlled.has(key)
 			? [
@@ -94,6 +110,38 @@ function npmrcPolicyFailures(npmrc) {
 				]
 			: [];
 	});
+}
+
+function manifestPolicyFailures(manifest) {
+	return ['resolutions', 'pnpm']
+		.filter(key => Object.prototype.hasOwnProperty.call(manifest, key))
+		.map(
+			key =>
+				`Root package.json must not declare ${key}; keep install policy in pnpm-workspace.yaml`,
+		);
+}
+
+function workspacePolicyFailures(workspaceYaml) {
+	const workspace = parseWorkspace(workspaceYaml);
+	const failures = [];
+	if (!Number.isSafeInteger(workspace.minimumReleaseAge) || workspace.minimumReleaseAge < 10080) {
+		failures.push('pnpm-workspace.yaml must set minimumReleaseAge to an integer >= 10080');
+	}
+	for (const key of ['blockExoticSubdeps', 'strictDepBuilds']) {
+		if (workspace[key] !== true) failures.push(`pnpm-workspace.yaml must set ${key}: true`);
+	}
+	return failures;
+}
+
+function overridePolicyFailures(workspaceYaml, lockfileYaml) {
+	const workspace = parseWorkspace(workspaceYaml);
+	const lockfile = parseWorkspace(lockfileYaml);
+	const { isDeepStrictEqual } = require('node:util');
+	return listWorkspaceBlockKeys(workspace, 'overrides') &&
+		listWorkspaceBlockKeys(lockfile, 'overrides') &&
+		isDeepStrictEqual(workspace.overrides, lockfile.overrides)
+		? []
+		: ['pnpm-lock.yaml overrides must match pnpm-workspace.yaml exactly'];
 }
 
 // True when the lockfile carries a `packages:` entry for the package, i.e. a
@@ -258,6 +306,9 @@ function trivyActionSettings(workflowYaml) {
 }
 
 module.exports = {
+	manifestPolicyFailures,
+	workspacePolicyFailures,
+	overridePolicyFailures,
 	parseWorkspace,
 	npmrcPolicyFailures,
 	allowBuildsFailures,

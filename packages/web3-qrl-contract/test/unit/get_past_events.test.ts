@@ -166,13 +166,13 @@ describe('getPastEvents', () => {
 		expect(events[0].returnValues.value).toBe(BigInt(99));
 	});
 
-	it('rejects a log whose custom topics do not match the requested ABI topic count', async () => {
+	it('drops a log whose custom topics do not match the requested ABI topic count', async () => {
 		logs = [approvalLog];
 		await expect(
 			contract.getPastEvents('Transfer' as never, {
 				topics: [topicOf('Approval(address,uint256)')],
 			}),
-		).rejects.toThrow('Event topic count does not match the ABI');
+		).resolves.toEqual([]);
 	});
 
 	it.each([20, '20', BigInt(20), '0x14'])(

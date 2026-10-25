@@ -223,6 +223,9 @@ function checkWorkspaceTree() {
 
 		// Symlinks first, before any name-based rule: a link named like an
 		// excluded directory or a generated file is still a link.
+		if (baseName === '.pnpmfile.cjs' || (baseName === 'pnpm-workspace.yaml' && posixPath !== 'pnpm-workspace.yaml')) {
+			fail(`${posixPath} can override the root install policy and must not exist`);
+		}
 		if (entry.isSymbolicLink()) {
 			checkSymlink(relativePath, absolutePath, posixPath);
 			return;

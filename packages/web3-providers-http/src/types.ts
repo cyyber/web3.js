@@ -21,6 +21,8 @@ import { ProviderBoundsOptions, RequestBoundsOptions } from '@theqrl/web3-utils'
  * Constructor options for `HttpProvider`.
  *
  * Native Node fetch uses an undici `dispatcher` for proxy and TLS configuration.
+ * This is a Node-only option: browser fetch does not support custom dispatchers.
+ * A dispatcher must be an object with a `dispatch` function; undefined uses the default.
  * A node-fetch `agent` is rejected when native fetch is available.
  *
  * The transport bounds (`connectionTimeout`, `requestTimeout`, `maxResponseBytes`) come

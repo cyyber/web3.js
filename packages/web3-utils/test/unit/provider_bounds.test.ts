@@ -120,3 +120,15 @@ describe('provider_bounds', () => {
 		});
 	});
 });
+
+test.each([536_870_889, 2 ** 53, 1e300])(
+	'rejects unsupported response size %s',
+	maxResponseBytes => {
+		expect(() => resolveProviderBounds({ maxResponseBytes })).toThrow(ProviderError);
+	},
+);
+test('accepts the maximum supported response size', () => {
+	expect(resolveProviderBounds({ maxResponseBytes: 536_870_888 }).maxResponseBytes).toBe(
+		536_870_888,
+	);
+});

@@ -31,6 +31,7 @@ import {
 } from '@theqrl/web3-types';
 import { Web3Subscription } from '@theqrl/web3-core';
 import { blockHeaderSchema, logSchema, syncSchema } from './schemas.js';
+import { assertRpcResult } from './utils/invalid_response_error.js';
 
 /**
  * Base of the QRL subscriptions: a subscription error (a notification the subscription cannot
@@ -85,12 +86,17 @@ export class LogsSubscription extends QRLSubscription<
 				? this.args
 				: {
 						...this.args,
-						fromBlock: format({ format: 'uint' }, fromBlock as Numbers, QRL_DATA_FORMAT),
-				  };
+						fromBlock: format(
+							{ format: 'uint' },
+							fromBlock as Numbers,
+							QRL_DATA_FORMAT,
+						),
+					};
 		return ['logs', args];
 	}
 
 	protected formatSubscriptionResult(data: LogsOutput) {
+		assertRpcResult('qrl_subscription', data, logSchema);
 		return format(logSchema, data, super.returnFormat);
 	}
 }
@@ -114,6 +120,7 @@ export class NewPendingTransactionsSubscription extends QRLSubscription<{
 	}
 
 	protected formatSubscriptionResult(data: string) {
+		assertRpcResult('qrl_subscription', data, { format: 'bytes32' });
 		return format({ format: 'string' }, data, super.returnFormat);
 	}
 }
@@ -153,6 +160,7 @@ export class NewHeadsSubscription extends QRLSubscription<{
 	}
 
 	protected formatSubscriptionResult(data: BlockHeaderOutput): BlockHeaderOutput {
+		assertRpcResult('qrl_subscription', data, blockHeaderSchema);
 		return format(blockHeaderSchema, data, super.returnFormat);
 	}
 }
@@ -224,6 +232,7 @@ export class SyncingSubscription extends QRLSubscription<{
 					value,
 				]),
 			) as unknown as SyncOutput;
+			assertRpcResult('qrl_subscription', mappedData, syncSchema);
 			formatted = format(syncSchema, mappedData, super.returnFormat);
 		} catch (error) {
 			this._processSubscriptionError(error as Error);

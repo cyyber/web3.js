@@ -45,7 +45,13 @@ export class NumberCoder extends Coder {
 		) {
 			this._throwError('expected a number, bigint, BigNumber or integer string', value);
 		}
-		let v = BigNumber.from(value);
+		if (typeof value === 'number' && !Number.isSafeInteger(value)) {
+			this._throwError(
+				'expected a safe integer number; use a bigint or integer string for larger values',
+				value,
+			);
+		}
+		let v = BigNumber.from(typeof value === 'number' ? BigInt(value) : value);
 
 		// Check bounds are safe for encoding
 		const maxUintValue = MaxUint512.mask(writer.wordSize * 8);

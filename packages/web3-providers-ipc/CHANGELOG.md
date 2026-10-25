@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Pass 7 audit corrections
+
+- Recover queued requests after a manual connect fails during reconnect backoff. Reject maxResponseBytes above 536,870,888 and recover parser state immediately on an allocation failure (P7-TR-1/2).
+
 ### Pass 6 audit corrections
 
 - Validate the path before replacing an explicitly reconnected live socket, preserving in-flight requests when validation fails. Explicit connect cancels any pending reconnect timer (P6-TR-2, P6-TR-5).

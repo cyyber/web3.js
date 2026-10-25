@@ -292,6 +292,7 @@ export abstract class SocketProvider<
 	 * waiting for a connection stay queued and are written once the new socket opens.
 	 */
 	public connect(): void {
+		const cancelledReconnect = this._reconnectTimer !== undefined;
 		if (this._reconnectTimer !== undefined) this._cancelReconnect();
 		this._invalidateConnection();
 		try {
@@ -307,6 +308,7 @@ export abstract class SocketProvider<
 			this._clearConnectionTimer();
 			if (!this.isReconnecting) {
 				this._connectionStatus = 'disconnected';
+				if (cancelledReconnect) this._reconnect();
 				if (e && (e as Error).message) {
 					// The socket path may be a `ws://user:password@host/path` URL: credentials
 					// and path never belong in an error message (L-48), and neither does the

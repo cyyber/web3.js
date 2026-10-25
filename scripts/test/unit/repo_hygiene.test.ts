@@ -70,6 +70,15 @@ describe('repository hygiene (P4-L-45, P4-L-46, P4-L-50)', () => {
 		expect(result.stdout).toContain('Repository hygiene checks passed');
 	});
 
+	it.each(['.pnpmfile.cjs', 'packages/foo/.pnpmfile.cjs', 'packages/foo/pnpm-workspace.yaml'])(
+		'rejects alternate install policy at %s even when untracked', name => {
+			write(name, '{}');
+			const result = hygiene();
+			expect(result.status).toBe(1);
+			expect(result.stderr).toContain(`${name} can override the root install policy`);
+		},
+	);
+
 	it('checks tracked symlinks named like excluded directories (dist, node_modules)', () => {
 		link('packages/foo/dist', '/etc');
 		link('packages/foo/node_modules', '../../../../../../../../..');

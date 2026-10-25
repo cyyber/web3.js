@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Pass 7 audit corrections
+
+- Validate maxPayload before connecting with ProviderError; explicit undefined uses the default. maxResponseBytes cannot exceed 536,870,888 (P7-TR-1/3).
+
 ### Pass 6 audit corrections
 
 - Cap the default wire limit at min(2 × maxResponseBytes, 536,870,888 bytes), below the ws int32 and V8 string ceilings. Explicit maxPayload values, including zero (unlimited), also respect that ceiling; invalid values are rejected (P6-TR-1).

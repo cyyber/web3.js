@@ -18,7 +18,7 @@ import { Web3SubscriptionManager } from '@theqrl/web3-core';
 import { InvalidResponseError, SubscriptionError } from '@theqrl/web3-errors';
 import { Web3BaseProvider } from '@theqrl/web3-types';
 import * as rpcMethodWrappers from '../../src/rpc_method_wrappers';
-import { LogsSubscription, SyncingSubscription } from '../../src';
+import { LogsSubscription, SyncingSubscription, NewHeadsSubscription, NewPendingTransactionsSubscription } from '../../src';
 import { Web3QRL } from '../../src/web3_qrl';
 import { mockRpcResponse as mockGetLogsRpcResponse } from './rpc_method_wrappers/fixtures/get_logs';
 import { sleep } from '../shared_fixtures/utils';
@@ -263,5 +263,43 @@ describe('Web3QRL subscribe and clear subscriptions', () => {
 				{ fromBlock: expected, address },
 			]);
 		});
+	});
+});
+
+describe('subscription notification shapes (pass-7)', () => {
+	it.each([
+	// eslint-disable-next-line no-null/no-null -- exercise explicit null from untyped callers
+		[LogsSubscription, null],
+		[LogsSubscription, { topics: 'bad' }],
+		[LogsSubscription, { blockNumber: '-1' }],
+		[LogsSubscription, { address: 123 }],
+		[NewHeadsSubscription, []],
+		[NewHeadsSubscription, { hash: 7 }],
+		[NewHeadsSubscription, { number: 'abc' }],
+		[NewHeadsSubscription, { timestamp: '-1' }],
+		[NewPendingTransactionsSubscription, 42],
+		[NewPendingTransactionsSubscription, '0x1234'],
+	])('drops malformed notification and reports a typed error', (Subscription, result) => {
+		const manager = new Web3SubscriptionManager({ on: jest.fn() } as never, {});
+		const sub = new (Subscription as typeof LogsSubscription)(
+			{},
+			{ subscriptionManager: manager },
+		);
+		const data = jest.fn();
+		const errors = jest.fn();
+		sub.on('data', data);
+		sub.on('error', errors);
+		sub.processSubscriptionData({ data: { subscription: '0x1', result } } as never);
+		expect(data).not.toHaveBeenCalled();
+		expect(errors).toHaveBeenCalledWith(expect.any(InvalidResponseError));
+	});
+	it('delivers a valid pending transaction hash', () => {
+		const manager = new Web3SubscriptionManager({ on: jest.fn() } as never, {});
+		const sub = new NewPendingTransactionsSubscription({}, { subscriptionManager: manager });
+		const data = jest.fn();
+		sub.on('data', data);
+		const hash = `0x${'ab'.repeat(32)}`;
+		sub._processSubscriptionResult(hash);
+		expect(data).toHaveBeenCalledWith(hash);
 	});
 });

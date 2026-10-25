@@ -379,3 +379,89 @@ describe('pass-6 registration races', () => {
 		provider.heldUnsubscribes.shift()!();
 	});
 });
+
+describe('pass-7 cancelled registration ownership', () => {
+	it('does not install a late id after provider replacement without a new registration', async () => {
+		const { provider, manager, requests } = setup();
+		provider.hold = true;
+		const sub = new ExampleSubscription({ param1: 'x' }, {
+			subscriptionManager: manager as unknown as Web3SubscriptionManager,
+		});
+		const result = sub.subscribe().catch((error: unknown) => error);
+		requests.setProvider(new RaceProvider() as never);
+		provider.held.shift()!.resolve('0x9');
+		expect(await result).toBeInstanceOf(Error);
+		expect(sub.id).toBeUndefined();
+		expect(provider.live.size).toBe(0);
+		expect(manager.subscriptions.size).toBe(0);
+	});
+	it.each(['old-first', 'new-first', 'old-rejects'])(
+		'allows immediate re-subscription without losing the new id (%s)',
+		async order => {
+			const { provider, manager } = setup();
+			provider.hold = true;
+			const sub = new ExampleSubscription({ param1: 'x' }, { subscriptionManager: manager as unknown as Web3SubscriptionManager });
+			const first = sub.subscribe().catch((error: unknown) => error);
+			await sub.unsubscribe();
+			const second = sub.subscribe();
+			expect(provider.held).toHaveLength(2);
+			const [old, fresh] = provider.held.splice(0);
+			if (order === 'old-first') {
+				old.resolve('0x9');
+				await flush();
+			}
+			fresh.resolve('0xa');
+			await expect(second).resolves.toBe('0xa');
+			if (order === 'new-first') old.resolve('0x9');
+			if (order === 'old-rejects') old.reject(new Error('old request failed'));
+			expect(await first).toBeInstanceOf(Error);
+			await flush();
+			expect(sub.id).toBe('0xa');
+			expect([...manager.subscriptions.keys()]).toEqual(['0xa']);
+			expect([...provider.live]).toEqual(['0xa']);
+			await sub.unsubscribe();
+			expect(provider.listenerCount('message')).toBe(0);
+		},
+	);
+	it('removes a stale subscription during backoff before any connect event', async () => {
+		const { provider, manager, subscribe } = setup();
+		const sub = await subscribe();
+		Object.assign(provider, { isConnected: () => false });
+		jest.spyOn(provider, 'request').mockRejectedValue(new Error('subscription not found'));
+		await expect(sub.unsubscribe()).resolves.toBeUndefined();
+		expect(manager.subscriptions.size).toBe(0);
+		expect(sub.id).toBeUndefined();
+	});
+	it.each([true, false])(
+		'ignores only remote refusal when releasing a superseded id (%s)',
+		async remoteRefusal => {
+			const { provider, manager } = setup();
+			provider.hold = true;
+			const sub = new ExampleSubscription({ param1: 'x' }, { subscriptionManager: manager as unknown as Web3SubscriptionManager });
+			const errors = jest.fn();
+			sub.on('error', errors);
+			const original = provider.request.bind(provider);
+			jest.spyOn(provider, 'request').mockImplementation(async payload => {
+				if (payload.method === 'qrl_unsubscribe') {
+					provider.live.delete((payload.params as string[])[0]);
+					if (remoteRefusal)
+						return {
+							jsonrpc: '2.0',
+							id: payload.id,
+							error: { code: -32000, message: 'subscription not found' },
+						};
+					throw new Error('transport failed');
+				}
+				return original(payload);
+			});
+			const pending = sub.subscribe();
+			provider.emit('connect', {});
+			provider.held.shift()!.resolve('0x9');
+			await flush();
+			provider.held.shift()!.resolve('0xa');
+			await expect(pending).resolves.toBe('0xa');
+			expect(errors).toHaveBeenCalledTimes(remoteRefusal ? 0 : 1);
+			manager.clear();
+		},
+	);
+});

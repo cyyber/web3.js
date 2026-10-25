@@ -193,6 +193,13 @@ compatible fixed version.
 `pnpm-workspace.yaml` is the source of truth for the inventory below. Keep the
 two in step when an override is added or removed: `pnpm run doctor` fails when
 this table lists an override that no longer exists, or omits one that does.
+Doctor also compares the lockfile's override keys and values with the workspace
+mapping, rejects root `package.json` `resolutions` and `pnpm` fields, and requires
+an integer `minimumReleaseAge` of at least 10080 minutes, `blockExoticSubdeps: true`
+and `strictDepBuilds: true`. Workspace YAML directives, warnings, aliases and
+merge tags are rejected. Bare `.npmrc` policy keys are checked like `key=true`.
+Hygiene rejects `.pnpmfile.cjs` and nested `pnpm-workspace.yaml` files, including
+untracked files, because they can replace the root install policy.
 
 <!-- overrides:start -->
 

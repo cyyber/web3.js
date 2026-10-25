@@ -1486,3 +1486,34 @@ describe('SocketProvider', () => {
 		});
 	});
 });
+
+test('re-arms a cancelled reconnect when manual connect fails, preserving queued work', async () => {
+	jest.useFakeTimers();
+	const provider = new TestProvider('socket', {}, { autoReconnect: true, delay: 10 });
+	const internals = provider as unknown as { _reconnect(): void; _openSocketConnection(): void };
+	try {
+		provider.setStatus('disconnected');
+		internals._reconnect();
+		const queued = provider.request({
+			jsonrpc: '2.0',
+			id: 900,
+			method: 'qrl_blockNumber',
+			params: [],
+		});
+		const settled = jest.fn();
+		void queued.then(settled, settled);
+		jest.spyOn(internals, '_openSocketConnection').mockImplementationOnce(() => {
+			throw new Error('path missing');
+		});
+		expect(() => provider.connect()).toThrow();
+		expect(provider['isReconnecting']).toBe(true);
+		await jest.advanceTimersByTimeAsync(20);
+		provider.simulateOpen();
+		provider.message([{ jsonrpc: '2.0', id: 900, result: '0x1' }]);
+		await expect(queued).resolves.toHaveProperty('result', '0x1');
+		expect(settled).toHaveBeenCalledTimes(1);
+	} finally {
+		provider.disconnect();
+		jest.useRealTimers();
+	}
+});

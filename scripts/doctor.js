@@ -7,6 +7,9 @@ const path = require('node:path');
 const { checkPackageDependencies } = require('./check-package-dependencies');
 const {
 	parseWorkspace,
+	manifestPolicyFailures,
+	workspacePolicyFailures,
+	overridePolicyFailures,
 	npmrcPolicyFailures,
 	allowBuildsFailures,
 	listWorkspaceBlockKeys,
@@ -136,6 +139,7 @@ if (!satisfiesFloor(process.versions.node, expectedNodeFloor)) {
 }
 
 const rootPackage = readJson('package.json');
+for (const message of manifestPolicyFailures(rootPackage)) fail(message);
 if (rootPackage.packageManager !== expectedPackageManager) {
 	fail(`Root packageManager must be ${expectedPackageManager}`);
 }
@@ -161,6 +165,7 @@ if (!exists('pnpm-workspace.yaml')) {
 	fail('Missing pnpm-workspace.yaml');
 } else {
 	const workspaceYaml = workspaceConfig;
+	for (const message of workspacePolicyFailures(workspaceConfig)) fail(message);
 	for (const [key, value] of Object.entries({
 		linkWorkspacePackages: true,
 		nodeLinker: 'hoisted',
@@ -203,6 +208,8 @@ if (!exists('pnpm-workspace.yaml')) {
 // allowBuilds is reviewed per lockfile: an entry for a package that the
 // lockfile no longer contains would pre-approve a future install script.
 if (exists('pnpm-workspace.yaml') && exists('pnpm-lock.yaml')) {
+	for (const message of overridePolicyFailures(workspaceConfig, readText('pnpm-lock.yaml')))
+		fail(message);
 	for (const message of allowBuildsFailures(workspaceConfig, readText('pnpm-lock.yaml'))) {
 		fail(message);
 	}

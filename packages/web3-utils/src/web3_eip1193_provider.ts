@@ -82,13 +82,22 @@ export abstract class Eip1193Provider<
 
 	protected _onConnect() {
 		const generation = ++this._connectionGeneration;
+		const reportError = (error: unknown) => {
+			try {
+				this._emitError(error);
+			} catch {
+				// Consumer error listeners must not interrupt the handshake or reject its task.
+			}
+		};
 		Promise.allSettled([this._getChainId(), this._getAccounts()])
 			.then(([chainResult, accountsResult]) => {
 				if (generation !== this._connectionGeneration) return;
-				const chainId = chainResult.status === 'fulfilled' ? chainResult.value : '';
-				const accounts = accountsResult.status === 'fulfilled' ? accountsResult.value : [];
+				const chainId =
+					chainResult.status === 'fulfilled' ? chainResult.value : this._chainId;
+				const accounts =
+					accountsResult.status === 'fulfilled' ? accountsResult.value : this._accounts;
 				for (const result of [chainResult, accountsResult]) {
-					if (result.status === 'rejected') this._emitError(result.reason);
+					if (result.status === 'rejected') reportError(result.reason);
 				}
 				if (generation !== this._connectionGeneration) return;
 				if (chainId !== this._chainId) {
@@ -108,7 +117,7 @@ export abstract class Eip1193Provider<
 					chainId: this._chainId,
 				} as ProviderConnectInfo);
 			})
-			.catch(err => this._emitError(err));
+			.catch(reportError);
 	}
 
 	// todo this must be ProvideRpcError with a message too

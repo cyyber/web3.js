@@ -35,3 +35,6 @@
 /templates/ @theQRL/devops
 /eslint.config.cjs @theQRL/devops
 /tools/eslint-config-base-web3/ @theQRL/devops
+/docs/supply-chain-security.md @theQRL/devops
+/scripts/test/ @theQRL/devops
+**/tsconfig*.json @theQRL/devops

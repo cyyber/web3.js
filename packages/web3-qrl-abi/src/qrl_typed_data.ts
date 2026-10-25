@@ -308,7 +308,14 @@ const encodeData = (
 		throw new AbiError(`Cannot encode data: expected an object for type '${type}'`);
 	}
 	const fieldNames = new Set(fields.map(field => field.name));
-	if (Object.keys(data).some(key => !fieldNames.has(key))) {
+	if (
+		Object.keys(data).some(
+			key =>
+				!fieldNames.has(key) &&
+				data[key] !== undefined &&
+				!(type === 'QRLTypedDataDomain' && (data[key] === '' || isNullish(data[key]))),
+		)
+	) {
 		throw new AbiError(`Cannot encode data: extra data provided in '${type}'`);
 	}
 

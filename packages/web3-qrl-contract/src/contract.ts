@@ -97,6 +97,7 @@ import {
 import { ALL_EVENTS, ALL_EVENTS_ABI, TOPIC_HEX_LENGTH } from './constants.js';
 import {
 	decodeEventABI,
+	EventTopicCountError,
 	decodeMethodReturn,
 	encodeEventABI,
 	encodeIndexedTopic,
@@ -984,8 +985,8 @@ export class Contract<Abi extends ContractAbi>
 								),
 					];
 				} catch (error) {
-					if (!onDecodeError) throw error;
-					onDecodeError(error as Error);
+					if (!onDecodeError && !(error instanceof EventTopicCountError)) throw error;
+					onDecodeError?.(error as Error);
 					return [];
 				}
 			});
@@ -1553,7 +1554,11 @@ export class Contract<Abi extends ContractAbi>
 			// `subscribed`, which is handled here so that nobody has to await it.
 			const report = (error: SubscriptionError): SubscriptionError => {
 				if (sub.listenerCount('error') > 0) {
-					sub.emit('error', error);
+					try {
+						sub.emit('error', error);
+					} catch (listenerError) {
+						console.warn('A contract subscription error listener threw', listenerError);
+					}
 				}
 				return error;
 			};
@@ -1563,32 +1568,32 @@ export class Contract<Abi extends ContractAbi>
 				queueMicrotask(() => {
 					// The bound fragment is replayed, not whichever overload the name resolves
 					// to (P4-L-26).
+					let failed = false;
 					const backfill = isNullish(fromBlock)
-						? Promise.resolve()
+						? Promise.resolve([])
 						: this._getPastEventsForAbi(
 								abi,
 								{ fromBlock, topics },
 								returnFormat,
-								error => sub._processSubscriptionError(error),
-							).then(
-								logs => {
-									logs.forEach(log => sub.emit('data', log as EventLog));
+								error => {
+									if (!failed) sub._processSubscriptionError(error);
 								},
-								(error: Error) => {
-									throw report(
-										new SubscriptionError('Failed to get past events.', error),
-									);
-								},
-							);
-					const subscribe = this.subscriptionManager.addSubscription(sub).then(
-						id => id,
-						(error: Error) => {
-							throw report(new SubscriptionError('Failed to subscribe.', error));
-						},
-					);
-					Promise.all([subscribe, backfill]).then(
-						([id]) => resolve(id),
-						error => {
+							).catch((error: Error) => {
+								throw new SubscriptionError('Failed to get past events.', error);
+							});
+					const subscribe = this.subscriptionManager
+						.addSubscription(sub)
+						.catch((error: Error) => {
+							throw new SubscriptionError('Failed to subscribe.', error);
+						});
+					void Promise.all([subscribe, backfill])
+						.then(([id, logs]) => {
+							logs.forEach(log => sub.emit('data', log as EventLog));
+							resolve(id);
+						})
+						.catch((error: SubscriptionError) => {
+							failed = true;
+							reject(error);
 							void sub
 								.unsubscribe()
 								.catch(cleanupError =>
@@ -1599,9 +1604,8 @@ export class Contract<Abi extends ContractAbi>
 										),
 									),
 								);
-							reject(error);
-						},
-					);
+							report(error);
+						});
 				});
 			});
 			void sub.subscribed.catch(() => {

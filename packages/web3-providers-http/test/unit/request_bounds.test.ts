@@ -776,3 +776,28 @@ describe('HttpProvider - request lifecycle bounds', () => {
 		});
 	});
 });
+
+describe('dispatcher option validation (pass-7)', () => {
+	// eslint-disable-next-line no-null/no-null -- exercise explicit null from untyped callers
+	it.each([null, {}, 'dispatcher', { dispatch: true }])(
+		'rejects an invalid dispatcher before fetch: %p',
+		async dispatcher => {
+			mockFetch.mockClear();
+			const provider = new HttpProvider('http://127.0.0.1:8545');
+			await expect(provider.request(payload, { dispatcher })).rejects.toBeInstanceOf(
+				ProviderError,
+			);
+			expect(mockFetch).not.toHaveBeenCalled();
+		},
+	);
+});
+
+
+test.each([undefined, { dispatch: jest.fn() }])('accepts an optional native dispatcher: %p', async dispatcher => {
+	mockFetch.mockReset();
+	const { stream } = countingStream([encoder.encode(JSON.stringify({ jsonrpc: '2.0', id: 42, result: '0x1' }))]);
+	mockFetch.mockResolvedValue(fakeResponse({ body: stream }));
+	const provider = new HttpProvider('http://127.0.0.1:8545', { providerOptions: { dispatcher } });
+	await expect(provider.request(payload)).resolves.toHaveProperty('result', '0x1');
+	expect(mockFetch).toHaveBeenCalledWith(expect.any(String), expect.objectContaining({ dispatcher }));
+});

@@ -82,7 +82,7 @@ const serializePayload = (payload: unknown): string => {
  * `providerOptions.maxResponseBytes` (10 MiB by default) bounds every message the node sends.
  * Messages exceeding this parser bound are dropped and identified requests fail with
  * `ResponseTooLargeError`; notifications do not fail unrelated requests. The default
- * `ws` wire limit (`maxPayload`) is twice this bound. Exceeding the wire limit closes the
+ * `ws` wire limit (`maxPayload`) is min(2 × this bound, 536,870,888 bytes). Exceeding the wire limit closes the
  * connection with code 1009 and fails all outstanding requests with `ResponseTooLargeError`,
  * since the frame is unavailable for request correlation.
  *
@@ -177,6 +177,10 @@ export default class WebSocketProvider<
 		reconnectOptions?: Partial<ReconnectOptions>,
 		providerOptions?: SocketProviderOptions,
 	) {
+		const maxPayload = (socketOptions as ClientOptions | undefined)?.maxPayload;
+		if (maxPayload !== undefined && (!Number.isSafeInteger(maxPayload) || maxPayload < 0)) {
+			throw new ProviderError('maxPayload must be a non-negative safe integer');
+		}
 		super(socketPath, socketOptions, reconnectOptions, providerOptions);
 		WebSocketProvider.warnIfCleartext(socketPath);
 	}
@@ -239,9 +243,7 @@ export default class WebSocketProvider<
 		const merged = { ...defaults, ...(userOptions ?? {}) } as ClientOptions;
 		// ws truncates maxPayload to int32 and converts text to a V8 string before
 		// our handler runs. Even an explicit unlimited setting must respect that ceiling.
-		if (!Number.isSafeInteger(merged.maxPayload) || (merged.maxPayload ?? 0) < 0) {
-			throw new ProviderError('maxPayload must be a non-negative safe integer');
-		}
+		merged.maxPayload ??= defaults.maxPayload;
 		merged.maxPayload =
 			merged.maxPayload === 0
 				? 536_870_888
