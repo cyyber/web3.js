@@ -130,3 +130,119 @@ test('encodes a safe boundary number through the contract API', () => {
 		contract.methods.big(String(Number.MAX_SAFE_INTEGER)).encodeABI(),
 	);
 });
+
+test.each([
+	['Value', false],
+	['allEvents', false],
+	['Value', true],
+	['allEvents', true],
+] as const)(
+	'selects matching indexed layout for a shared signature (%s, reversed=%s)',
+	async (name, reversed) => {
+		const indexed = {
+			...event,
+			inputs: [{ name: 'value', type: 'uint256', indexed: true }],
+		} as const;
+		const indexedLog = { ...log, topics: [...log.topics, `0x${uintWord(8)}`], data: '0x' };
+		const provider = new FakeProvider(
+			method =>
+				method === 'qrl_getLogs'
+					? [log, indexedLog]
+					: method === 'qrl_subscribe'
+						? '0x1'
+						: undefined,
+			true,
+		);
+		const contract = new Contract(reversed ? [indexed, event] : [event, indexed], ADDR, {
+			provider: provider.asProvider(),
+		});
+		const past = await contract.getPastEvents(name);
+		expect(past.map(entry => (entry as EventLog).returnValues.value)).toEqual([
+			BigInt(7),
+			BigInt(8),
+		]);
+		const sub = contract.events[name]();
+		const data = jest.fn();
+		sub.on('data', data);
+		await sub.subscribed;
+		provider.notify('0x1', log);
+		provider.notify('0x1', indexedLog);
+		expect(data.mock.calls.map(([entry]) => (entry as EventLog).returnValues.value)).toEqual([
+			BigInt(7),
+			BigInt(8),
+		]);
+		await sub.unsubscribe();
+	},
+);
+
+test('anonymous events exclude declared signatures and require exact indexed counts', async () => {
+	const anonymous = {
+		type: 'event',
+		name: 'Anon',
+		anonymous: true,
+		inputs: [{ name: 'value', type: 'uint256', indexed: true }],
+	} as const;
+	const ping = { type: 'event', name: 'Ping', anonymous: false, inputs: [] } as const;
+	const anonLog = { ...log, topics: [`0x${uintWord(7)}`], data: '0x' };
+	const candidates = [
+		anonLog,
+		{ ...anonLog, topics: [topicOf('Ping()')] },
+		{ ...anonLog, topics: [...log.topics, `0x${uintWord(9)}`] },
+		{ ...anonLog, topics: [] },
+	];
+	const provider = new FakeProvider(
+		method =>
+			method === 'qrl_getLogs' ? candidates : method === 'qrl_subscribe' ? '0x1' : undefined,
+		true,
+	);
+	const contract = new Contract([anonymous, ping, event], ADDR, {
+		provider: provider.asProvider(),
+	});
+	const past = await contract.getPastEvents('Anon');
+	expect(past).toHaveLength(1);
+	expect((past[0] as EventLog).returnValues.value).toBe(BigInt(7));
+	const sub = contract.events.Anon();
+	const data = jest.fn();
+	sub.on('data', data);
+	sub.on('error', jest.fn());
+	await sub.subscribed;
+	for (const candidate of candidates) provider.notify('0x1', candidate);
+	expect(data).toHaveBeenCalledTimes(1);
+	await sub.unsubscribe();
+});
+
+test('throwing replay listeners do not suppress other listeners, valid logs or the live subscription', async () => {
+	const warn = jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+	const provider = new FakeProvider(
+		method =>
+			method === 'qrl_getLogs'
+				? [log, { ...log, data: '0x01' }, { ...log, data: `0x${uintWord(9)}` }]
+				: method === 'qrl_subscribe'
+					? '0x1'
+					: undefined,
+		true,
+	);
+	const contract = new Contract([event], ADDR, { provider: provider.asProvider() });
+	const sub = contract.events.Value({ fromBlock: 0 });
+	const data = jest.fn();
+	sub.on('data', () => {
+		throw new Error('consumer data');
+	});
+	sub.on('data', data);
+	sub.on('error', () => {
+		throw new Error('consumer error');
+	});
+	try {
+		await expect(sub.subscribed).resolves.toBe('0x1');
+		expect(data.mock.calls.map(([entry]) => (entry as EventLog).returnValues.value)).toEqual([
+			BigInt(7),
+			BigInt(9),
+		]);
+		expect(contract.subscriptionManager.subscriptions.get('0x1')).toBe(sub);
+		expect(() => provider.notify('0x1', log)).not.toThrow();
+		expect(data).toHaveBeenCalledTimes(3);
+		await sub.unsubscribe();
+	} finally {
+		warn.mockRestore();
+	}
+});

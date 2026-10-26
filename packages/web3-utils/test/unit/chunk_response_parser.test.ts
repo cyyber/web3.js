@@ -488,3 +488,39 @@ test('recovers within the same chunk when joining response fragments fails', () 
 	expect(state.lastChunkTimeout).toBeUndefined();
 	expect(parser.parseResponse(JSON.stringify(next))).toEqual([next]);
 });
+
+/* eslint-disable jest/no-conditional-expect -- framed and stream transports have distinct delivery steps */
+test.each([true, false])(
+	'bounds nested JSON before allocation and contains throwing error listeners (framed=%s)',
+	framed => {
+		const emitter = new EventEmitter();
+		const warn = jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+		emitter.on('error', () => {
+			throw new Error('consumer');
+		});
+		const parser = new ChunkResponseParser(emitter, false, { framed });
+		const fail = jest.fn();
+		parser.onError(fail);
+		const nested =
+			'{"jsonrpc":"2.0","id":7,"result":' +
+			'['.repeat(524288) +
+			'0' +
+			']'.repeat(524288) +
+			'}';
+		const good = '{"jsonrpc":"2.0","id":8,"result":"ok"}';
+		try {
+			if (framed) {
+				expect(parser.parseResponse(nested)).toEqual([]);
+				expect(parser.parseResponse(good)).toEqual([JSON.parse(good)]);
+			} else {
+				expect(parser.parseResponse(nested.slice(0, 2048))).toEqual([]);
+				expect(parser.parseResponse(nested.slice(2048) + good)).toEqual([JSON.parse(good)]);
+			}
+			expect(fail).toHaveBeenCalledWith(expect.any(InvalidResponseError), [7]);
+			expect(fail.mock.calls[0][0].message).toContain('nesting depth');
+		} finally {
+			parser.reset();
+			warn.mockRestore();
+		}
+	},
+);

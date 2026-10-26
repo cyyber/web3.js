@@ -21,6 +21,7 @@ import { isAddressString } from '@theqrl/web3-validator';
 import {
 	AbiConstructorFragment,
 	AbiEventFragment,
+	AbiFragment,
 	AbiFunctionFragment,
 	AbiParameter,
 	Bytes,
@@ -53,7 +54,7 @@ import { blockSchema, logSchema } from '@theqrl/web3-qrl';
 import { AbiError, ResponseError, Web3ContractError } from '@theqrl/web3-errors';
 
 import { ALL_EVENTS, TOPIC_HEX_LENGTH } from './constants.js';
-import { ContractOptions, ContractAbiWithSignature, EventLog } from './types.js';
+import { ContractOptions, EventLog } from './types.js';
 
 type Writeable<T> = { -readonly [P in keyof T]: T[P] };
 
@@ -309,10 +310,14 @@ const malformedLog = (log: unknown, reason: string): ResponseError =>
 /** A signature may be shared by events with different indexed arguments. */
 export class EventTopicCountError extends AbiError {}
 
+// Public callers can pass ordinary ABI JSON without Contract's signature annotations.
+const eventSignature = (event: AbiEventFragment & { signature?: HexString }): HexString =>
+	event.signature ?? encodeEventSignature(jsonInterfaceMethodToString(event));
+
 export const decodeEventABI = (
-	event: AbiEventFragment & { signature: string },
+	event: AbiEventFragment & { signature?: HexString },
 	data: LogsInput,
-	jsonInterface: ContractAbiWithSignature,
+	jsonInterface: ReadonlyArray<AbiFragment & { signature?: HexString }>,
 	returnFormat: DataFormat = DEFAULT_RETURN_FORMAT,
 ): EventLog => {
 	// The log is node supplied: anything but an object cannot be decoded.
@@ -331,34 +336,43 @@ export const decodeEventABI = (
 	const topics: string[] = Array.isArray(data.topics) ? data.topics : [];
 	const topic0 = typeof topics[0] === 'string' ? topics[0].toLowerCase() : undefined;
 
-	// if allEvents get the right event: only event fragments qualify. A function selector is
-	// 4 bytes and, right-padded, a perfectly valid topic, so a same-named function used to be
-	// picked as the event (L-60).
-	if (modifiedEvent.name === ALL_EVENTS) {
-		const matchedEvent =
-			topic0 === undefined
-				? undefined
-				: jsonInterface.find(
-						j =>
-							isAbiEventFragment(j) &&
-							rightPad(j.signature, TOPIC_HEX_LENGTH).toLowerCase() === topic0,
-					);
-		if (matchedEvent) {
-			modifiedEvent = matchedEvent as AbiEventFragment & { signature: string };
-		} else {
+	// A signature does not encode which inputs are indexed. Select the compatible
+	// fragment when an ABI contains both ERC-20 and ERC-721 forms of an event.
+	const candidates = jsonInterface.filter(
+		j =>
+			isAbiEventFragment(j) &&
+			!j.anonymous &&
+			topic0 !== undefined &&
+			rightPad(eventSignature(j), TOPIC_HEX_LENGTH).toLowerCase() === topic0,
+	) as (AbiEventFragment & { signature?: HexString })[];
+	if (modifiedEvent.anonymous && candidates.length > 0) {
+		throw new EventTopicCountError(
+			`A declared non-anonymous event cannot be decoded as ${modifiedEvent.name} (transactionHash: ${String(data.transactionHash)}, logIndex: ${String(data.logIndex)})`,
+		);
+	}
+	if (
+		modifiedEvent.name === ALL_EVENTS ||
+		(!modifiedEvent.anonymous &&
+			rightPad(eventSignature(modifiedEvent), TOPIC_HEX_LENGTH).toLowerCase() === topic0)
+	) {
+		const matched =
+			candidates.find(
+				j => (j.inputs ?? []).filter(input => input.indexed).length + 1 === topics.length,
+			) ?? candidates[0];
+		if (matched) modifiedEvent = matched;
+		else if (modifiedEvent.name === ALL_EVENTS) {
 			modifiedEvent = { anonymous: true } as unknown as AbiEventFragment & {
 				signature: string;
 			};
 		}
 	}
 
-	// create empty inputs if none are present (e.g. anonymous events on allEvents)
 	modifiedEvent.inputs = modifiedEvent.inputs ?? event.inputs ?? [];
-
-	// A matching signature with a different topic count is malformed, not anonymous.
-	if (!modifiedEvent.anonymous) {
+	// Unknown allEvents entries remain raw; declared anonymous fragments have no signature
+	// topic and must match their indexed count exactly.
+	if (event.name !== ALL_EVENTS || !modifiedEvent.anonymous) {
 		const indexedInputs = modifiedEvent.inputs.filter(input => input.indexed).length;
-		if (topics.length !== indexedInputs + 1) {
+		if (topics.length !== indexedInputs + (modifiedEvent.anonymous ? 0 : 1)) {
 			throw new EventTopicCountError(
 				`Event topic count does not match the ABI (transactionHash: ${String(data.transactionHash)}, logIndex: ${String(data.logIndex)})`,
 			);

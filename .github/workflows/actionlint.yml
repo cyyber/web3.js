@@ -45,7 +45,6 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read # checkout repository
-      security-events: write # upload SARIF to GitHub Advanced Security
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -55,5 +54,6 @@ jobs:
       - name: Run zizmor
         uses: zizmorcore/zizmor-action@6fc4b006235f201fdab3722e17240ab420d580e5 # v0.6.1
         with:
+          advanced-security: false # Findings fail this required status check.
           persona: pedantic
           config: .github/zizmor.yml

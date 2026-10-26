@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Pass 8 audit corrections
+
+- Bound JSON nesting and contain throwing provider/parser listeners. Failed manual reconnects during backoff preserve the automatic attempt budget.
+
 ### Pass 7 audit corrections
 
 - Recover queued requests after a manual connect fails during reconnect backoff. Reject maxResponseBytes above 536,870,888 and recover parser state immediately on an allocation failure (P7-TR-1/2).

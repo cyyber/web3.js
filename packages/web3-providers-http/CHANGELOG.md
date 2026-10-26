@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Pass 8 audit corrections
+
+- Correct redirect opt-in documentation: native fetch strips credential headers on an origin change (including port), while custom API-key headers can reach any redirect target (P8-TR-4).
+
 ### Pass 7 audit corrections
 
 - Reject malformed dispatcher options and unsupported native-fetch agent options with ProviderError before fetch. Dispatchers are a Node-only native-fetch option (P7-TR-4).

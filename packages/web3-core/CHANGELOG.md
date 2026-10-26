@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Pass 8 audit corrections
+
+- Install subscription ids before emitting connected; contain synchronous and asynchronous listener failures per listener. Buffer early notifications during registration/recovery (128 notifications and 1,048,576 serialized UTF-16 code units per manager), delivering them after awaiting subscribers can attach listeners. Cancellation and provider changes discard pending notifications. Buffer overflow is reported on the manager error event.
+- Treat connection-loss errors during an already-written unsubscribe as successful local removal (P8-CORE-1–4).
+
 ### Pass 7 audit corrections
 
 - Allow immediate re-subscription after cancelling a pending registration; late replies cannot remove the replacement. Treat unsubscribe during socket backoff as stale cleanup, and ignore remote refusals when releasing superseded ids while retaining transport errors (P7-CORE-1/3/4).

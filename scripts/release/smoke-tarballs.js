@@ -64,7 +64,7 @@ const releasedPackages = readFileSync(releasedPackagesPath, 'utf8')
 	});
 
 if (releasedPackages.length === 0) {
-	console.log('No released packages to smoke test');
+	console.info('No released packages to smoke test');
 	process.exit(0);
 }
 
@@ -84,6 +84,7 @@ const run = (command, commandArgs, cwd) => {
 		stdio: 'inherit',
 		env: {
 			...process.env,
+			NODE_PATH: '',
 			npm_config_audit: 'false',
 			npm_config_fund: 'false',
 			npm_config_ignore_scripts: 'true',
@@ -92,8 +93,7 @@ const run = (command, commandArgs, cwd) => {
 	});
 };
 
-// `file:` specifiers relative to the lock directory. The smoke projects are
-// created next to it, so the same relative paths resolve from there too.
+// The artifact lockfile uses portable file: specifiers relative to its directory.
 const toPosix = value => value.split(sep).join('/');
 const dependencies = Object.fromEntries(
 	releasedPackages.map((pkg, index) => [pkg.name, `file:${toPosix(relative(lockDirectory, tarballs[index]))}`]),
@@ -106,13 +106,13 @@ const lockManifestPath = join(lockDirectory, 'package.json');
 const resolveLockfile = () => {
 	mkdirSync(lockDirectory, { recursive: true });
 	rmSync(lockfilePath, { force: true });
-	writeFileSync(lockManifestPath, `${JSON.stringify(smokeManifest, null, 2)}\n`);
+	writeFileSync(lockManifestPath, `${JSON.stringify(smokeManifest, undefined, 2)}\n`);
 	run(npm, ['install', '--package-lock-only', '--ignore-scripts', '--no-audit', '--no-fund'], lockDirectory);
 	if (!existsSync(lockfilePath)) {
 		console.error(`npm did not write ${lockfilePath}`);
 		process.exit(1);
 	}
-	console.log(`Resolved the smoke-test dependency tree into ${lockfilePath}`);
+	console.info(`Resolved the smoke-test dependency tree into ${lockfilePath}`);
 };
 
 if (!existsSync(lockfilePath)) {
@@ -129,32 +129,55 @@ if (!existsSync(lockfilePath)) {
 		);
 		process.exit(1);
 	}
-	console.log(`Installing the dependency tree pinned by ${lockfilePath}`);
+	console.info(`Installing the dependency tree pinned by ${lockfilePath}`);
 }
 
 if (resolveOnly) {
 	process.exit(0);
 }
 
+// Keep runtime module resolution away from the checkout's node_modules. Rebase only
+// the pinned local tarballs; registry resolutions and integrity hashes stay unchanged.
+const smokeRoot = mkdtempSync(join(tmpdir(), 'web3-release-smoke-'));
+const smokeTarballs = join(smokeRoot, 'tarballs');
+mkdirSync(smokeTarballs);
+const relocated = new Map(tarballs.map(tarball => {
+	copyFileSync(tarball, join(smokeTarballs, basename(tarball)));
+	return [tarball, `file:../tarballs/${basename(tarball)}`];
+}));
+const rebase = value => {
+	if (typeof value === 'string' && value.startsWith('file:')) {
+		const target = relocated.get(resolve(lockDirectory, value.slice(5)));
+		if (!target) throw new Error(`Unexpected local dependency in smoke lockfile: ${value}`);
+		return target;
+	}
+	if (Array.isArray(value)) return value.map(rebase);
+	if (value && typeof value === 'object')
+		return Object.fromEntries(Object.entries(value).map(([key, entry]) => [key, rebase(entry)]));
+	return value;
+};
 const makeProject = type => {
-	const directory = resolve(lockDirectory, '..', `smoke-${type}`);
-	rmSync(directory, { recursive: true, force: true });
-	mkdirSync(directory, { recursive: true });
-	const manifest = JSON.parse(readFileSync(lockManifestPath, 'utf8'));
-	writeFileSync(join(directory, 'package.json'), `${JSON.stringify({ ...manifest, type }, null, 2)}\n`);
-	copyFileSync(lockfilePath, join(directory, 'package-lock.json'));
+	const directory = join(smokeRoot, `smoke-${type}`);
+	mkdirSync(directory);
+	const manifest = rebase(JSON.parse(readFileSync(lockManifestPath, 'utf8')));
+	const lockfile = rebase(JSON.parse(readFileSync(lockfilePath, 'utf8')));
+	writeFileSync(join(directory, 'package.json'), `${JSON.stringify({ ...manifest, type }, undefined, 2)}\n`);
+	writeFileSync(join(directory, 'package-lock.json'), `${JSON.stringify(lockfile, undefined, 2)}\n`);
 	run(npm, ['ci', '--ignore-scripts', '--no-audit', '--no-fund'], directory);
 	return directory;
 };
+console.info(`Isolated smoke projects: ${smokeRoot}`);
 
 const cjsProject = makeProject('commonjs');
 writeFileSync(
 	resolve(cjsProject, 'smoke.cjs'),
-	`const packages = ${JSON.stringify(releasedPackages.map(pkg => pkg.name), null, 2)};
+	`const packages = ${JSON.stringify(releasedPackages.map(pkg => pkg.name), undefined, 2)};
 for (const name of packages) {
+\tconst path = require('node:path');
+\tif (!require.resolve(name).startsWith(path.join(__dirname, 'node_modules') + path.sep)) throw new Error(\`Package resolved outside smoke project: \${name}\`);
 \tconst mod = require(name);
 \tif (mod == null) throw new Error(\`No CommonJS export for \${name}\`);
-\tconsole.log(\`required \${name}\`);
+\tconsole.info(\`required \${name}\`);
 }
 `,
 );
@@ -163,17 +186,18 @@ run(process.execPath, ['smoke.cjs'], cjsProject);
 const esmProject = makeProject('module');
 writeFileSync(
 	resolve(esmProject, 'smoke.mjs'),
-	`const packages = ${JSON.stringify(releasedPackages.map(pkg => pkg.name), null, 2)};
+	`const packages = ${JSON.stringify(releasedPackages.map(pkg => pkg.name), undefined, 2)};
 for (const name of packages) {
+\tif (!import.meta.resolve(name).startsWith(new URL('./node_modules/', import.meta.url).href)) throw new Error(\`Package resolved outside smoke project: \${name}\`);
 \tconst mod = await import(name);
 \tif (mod == null) throw new Error(\`No ESM export for \${name}\`);
-\tconsole.log(\`imported \${name}\`);
+\tconsole.info(\`imported \${name}\`);
 }
 `,
 );
 run(process.execPath, ['smoke.mjs'], esmProject);
 
-console.log(
+console.info(
 	`Smoke-tested ${releasedPackages.length} package tarball${releasedPackages.length === 1 ? '' : 's'} from ${basename(
 		dirname(tarballs[0]),
 	)}`,

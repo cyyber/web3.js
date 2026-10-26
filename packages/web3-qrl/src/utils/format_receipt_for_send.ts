@@ -15,7 +15,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { DataFormat, FormatType, QRL_DATA_FORMAT, TransactionReceipt } from '@theqrl/web3-types';
+import { DataFormat, FormatType, FMT_NUMBER, TransactionReceipt } from '@theqrl/web3-types';
 import { FormatterError } from '@theqrl/web3-errors';
 import { format } from '@theqrl/web3-utils';
 import { transactionReceiptSchema } from '../schemas.js';
@@ -35,11 +35,12 @@ export const formatReceiptForSend = <ReturnFormat extends DataFormat, ResolveTyp
 	} catch (error) {
 		if (!(error instanceof FormatterError)) throw error;
 		// Keep an exact receipt available both on the error and on the successful send result.
-		const wireReceipt = format(transactionReceiptSchema, receipt, QRL_DATA_FORMAT);
+		const receiptFormat = { number: FMT_NUMBER.HEX, bytes: returnFormat.bytes };
+		const wireReceipt = format(transactionReceiptSchema, receipt, receiptFormat);
 		reportWatcherError(promiEvent, Object.assign(error, { receipt: wireReceipt }));
 		return {
 			receipt: wireReceipt as FormatType<TransactionReceipt, ReturnFormat>,
-			receiptFormat: QRL_DATA_FORMAT as ReturnFormat,
+			receiptFormat: receiptFormat as ReturnFormat,
 		};
 	}
 };

@@ -81,6 +81,8 @@ exports[`Web3Context getContextObject should return correct context object 1`] =
     "_beforeProviderChangeListener": [Function],
     "_connectionGeneration": 0,
     "_disposed": false,
+    "_earlyNotificationBytes": 0,
+    "_earlyNotifications": [],
     "_emitter": EventEmitter {
       "_events": Map {},
       "_warned": Set {},

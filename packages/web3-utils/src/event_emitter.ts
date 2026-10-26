@@ -70,7 +70,10 @@ export class EventEmitter implements EventEmitterLike {
 		return this._addListener(eventName, listener, true, false);
 	}
 
-	public prependOnceListener(eventName: EventEmitterEventName, listener: EventEmitterListener): this {
+	public prependOnceListener(
+		eventName: EventEmitterEventName,
+		listener: EventEmitterListener,
+	): this {
 		return this._addListener(eventName, listener, true, true);
 	}
 
@@ -109,6 +112,23 @@ export class EventEmitter implements EventEmitterLike {
 	 * (returns `false`) instead of being thrown.
 	 */
 	public emit(eventName: EventEmitterEventName, ...args: unknown[]): boolean {
+		return this._emit(eventName, args);
+	}
+
+	/** Isolates each consumer callback while preserving once/removal semantics. */
+	public emitSafe(
+		eventName: EventEmitterEventName,
+		onError: (error: unknown) => void,
+		...args: unknown[]
+	): boolean {
+		return this._emit(eventName, args, onError);
+	}
+
+	private _emit(
+		eventName: EventEmitterEventName,
+		args: unknown[],
+		onError?: (error: unknown) => void,
+	): boolean {
 		const registered = this._events.get(eventName);
 		if (!registered || registered.length === 0) return false;
 		// Iterate over a snapshot so listeners may add or remove listeners while emitting.
@@ -117,7 +137,13 @@ export class EventEmitter implements EventEmitterLike {
 			// a function registered with both `once()` and `on()` keeps its `on()` registration,
 			// as with Node's emitter (P4-L-22).
 			if (entry.once) this._removeEntry(eventName, entry);
-			entry.listener(...args);
+			try {
+				const result: unknown = entry.listener(...args);
+				if (onError && result !== undefined) void Promise.resolve(result).catch(onError);
+			} catch (error) {
+				if (!onError) throw error;
+				onError(error);
+			}
 		}
 		return true;
 	}

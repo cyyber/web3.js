@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Pass 8 audit corrections
+
+- Address the 18 pass-8 findings: correct sync progress and receipt formatting, isolate subscription/provider callbacks, retain coalesced notifications, bound JSON nesting, distinguish event layouts, and close alternate install-policy sources. Document backfill delivery limits, isolate tarball smoke installs from the workspace, restore release evidence, and make the zizmor check enforce findings.
+
 ### Pass 7 audit corrections
 
 - Resolve all 21 pass-7 findings across dependency policy, subscription cancellation and handshake recovery, transport bounds, receipt formatting, event backfills and ABI inputs. Doctor verifies the effective override sources and minimum install safeguards; hygiene rejects alternate workspace policy files.
@@ -24,7 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Pass-5 validation hardening: typed-data schemas reject fixed/multidimensional array declarations and unhashed extra message fields to match go-qrl. Validator calls allow at most 64 nesting levels, retain at most 100 issues, and use Zod 4.6.6. An aggregate value limit is opt-in through `maxEntries` for untrusted data; ordinary caller arguments, including large contract batches, have no value-count cap (P5R-1). `FeeHistory.gasUsedRatio` is `number[]`, unaffected by quantity formatting. See `docs/audit-remediation-2026-10-24.md` for the finding-by-finding changes and compatibility limits.
+- Pass-5 validation hardening: typed-data schemas reject fixed/multidimensional array declarations and unhashed extra message fields to match go-qrl. Validator calls allow at most 64 nesting levels, retain at most 100 issues, and use Zod 4.6.6. An aggregate value limit is opt-in through `maxEntries` for untrusted data; ordinary caller arguments, including large contract batches, have no value-count cap (P5R-1). `FeeHistory.gasUsedRatio` is `number[]`, unaffected by quantity formatting. See `docs/audit-evidence.md` for the finding-by-finding changes and compatibility limits.
 - **Breaking, VM64 / Hyperion 0.2.0 alignment** (the type-level changes of this cycle, listed here in one place):
   - Typed data: `Eip712TypedData` / `Eip712TypeDetails` are `QRLTypedData` / `QRLTypedDataTypeDetails`, `getEncodedEip712Data` is `getEncodedQRLTypedData`, the validator format `eip712TypedData` is `qrlTypedData`, and the required domain type is `QRLTypedDataDomain` instead of `EIP712Domain`. Typed-data hashes change accordingly.
   - `Topic` is `HexString64Bytes` (a 64-byte QRVM log topic) and `logSchema.topics` is formatted as `bytes64`; `encodeEventSignature` returns the 64-byte topic (see Fixed). A decoded `EventLog.signature`, and `decodeLog` for hashed indexed parameters, return the 32-byte keccak hash.
@@ -83,7 +87,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Pass 5 audit: deployment transactions cannot inherit an existing contract address; event backfills and indexed tuple/array filters use the correct ABI; named tuple decoding visits aliases once.
 - Subscription reconnects are serialized, respect cancellation/provider changes/disposal, retain failed subscriptions for retry, and ignore stale unsubscribe acknowledgements. RPC envelopes, provider error codes, configuration batches and explicit timeouts are validated consistently.
 - Wallet signing uses the calling module configuration. Post-broadcast block-timeout setup failures are retried; fee caps and RPC result fields fail with typed errors. Reorg watchers tolerate transient missing receipts and report changed execution outcomes. Revert diagnostics use the preceding block as an approximation and preserve broadcast rejection data.
-- Socket oversized replies/notifications and HTTP body failures have bounded, typed handling; diagnostic messages are truncated and error JSON renders bigint values safely. Updated security dependencies, bounded validator work, protected secrets-file permissions, and corrected release build dependency edges. Details and compatibility notes: [pass 5 remediation](docs/audit-remediation-2026-10-24.md).
+- Socket oversized replies/notifications and HTTP body failures have bounded, typed handling; diagnostic messages are truncated and error JSON renders bigint values safely. Updated security dependencies, bounded validator work, protected secrets-file permissions, and corrected release build dependency edges. Details and compatibility notes: [pass 5 remediation](docs/audit-evidence.md).
 
 - Subscription ids returned by `qrl_subscribe` must be `0x` hex strings; any other reply rejects the subscription with a `SubscriptionError` instead of being stored and later crashing the process on a provider change, and the provider-change cleanup can no longer produce an unhandled rejection (P4-M-1).
 - The subscription manager counts `qrl_subscribe` requests in flight before detaching its provider listener and re-attaches it after registering, re-subscribes live subscriptions after a socket reconnect (also on the auto-reconnect path, which re-opens the socket without a `disconnect` event; the old server-side id is released best-effort), rejects a subscription whose provider was replaced while subscribing, ignores a late `qrl_unsubscribe` acknowledgement for a re-subscribed id, and `resubscribe()` tolerates a node that no longer knows the id (P4-M-4, P4-L-1, P4-L-2, P4-L-3).

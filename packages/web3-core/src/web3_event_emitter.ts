@@ -49,6 +49,14 @@ export class Web3EventEmitter<T extends Web3EventMap> implements Web3Emitter<T> 
 		this._emitter.emit(eventName, params);
 	}
 
+	protected emitSafe<K extends Web3EventKey<T>>(
+		eventName: K,
+		params: T[K],
+		onError: (error: unknown) => void,
+	) {
+		this._emitter.emitSafe(eventName, onError, params);
+	}
+
 	public listenerCount<K extends Web3EventKey<T>>(eventName: K) {
 		return this._emitter.listenerCount(eventName);
 	}

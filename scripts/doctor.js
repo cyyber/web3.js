@@ -9,6 +9,7 @@ const {
 	parseWorkspace,
 	manifestPolicyFailures,
 	workspacePolicyFailures,
+	lockfilePolicyFailures,
 	overridePolicyFailures,
 	npmrcPolicyFailures,
 	allowBuildsFailures,
@@ -208,6 +209,7 @@ if (!exists('pnpm-workspace.yaml')) {
 // allowBuilds is reviewed per lockfile: an entry for a package that the
 // lockfile no longer contains would pre-approve a future install script.
 if (exists('pnpm-workspace.yaml') && exists('pnpm-lock.yaml')) {
+	for (const message of lockfilePolicyFailures(readText('pnpm-lock.yaml'))) fail(message);
 	for (const message of overridePolicyFailures(workspaceConfig, readText('pnpm-lock.yaml')))
 		fail(message);
 	for (const message of allowBuildsFailures(workspaceConfig, readText('pnpm-lock.yaml'))) {

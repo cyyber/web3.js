@@ -28,6 +28,11 @@ The required status checks for `main` must include:
 - `Lint workflow files`
 - `zizmor (Actions security analysis)`
 
+The zizmor action runs with `advanced-security: false` so findings fail the
+required status check, as described in the [action documentation](https://github.com/zizmorcore/zizmor-action#usage-without-github-advanced-security).
+The release workflow's same-commit reusable CI call has one narrowly scoped
+`self-repository` exception with its rationale inline; all other findings remain gated.
+
 `Package Inspection` is release-relevant: it builds packages, builds browser
 bundles, inspects package metadata, packs tarballs, and smoke-tests the packed
 CommonJS and ESM installs. Do not remove it from required checks while package

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Pass 8 audit corrections
+
+- Return false for odd-length hexadecimal bloom membership values instead of throwing InvalidBytesError.
+
 ### Pass 6 audit corrections
 
 - Preserve the total validation issue count and omitted-issue count while retaining at most 100 errors (P6-VAL-1).

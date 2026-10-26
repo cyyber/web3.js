@@ -52,7 +52,7 @@ export const isBloom = (bloom: ValidInputTypes): boolean => {
  * note: false positives are possible.
  */
 export const isInBloom = (bloom: string, value: string | Uint8Array): boolean => {
-	if (typeof value === 'string' && !isHexStrict(value)) {
+	if (typeof value === 'string' && (!isHexStrict(value) || value.length % 2 !== 0)) {
 		return false;
 	}
 
@@ -73,7 +73,7 @@ export const isInBloom = (bloom: string, value: string | Uint8Array): boolean =>
 		// test if bitpos in bloom is active
 		const code = codePointToInt(bloom.charCodeAt(bloom.length - 1 - Math.floor(bitpos / 4)));
 
-		const offset = 1 << bitpos % 4;
+		const offset = 1 << (bitpos % 4);
 
 		if ((code & offset) !== offset) {
 			return false;

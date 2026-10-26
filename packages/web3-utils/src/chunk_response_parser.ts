@@ -16,11 +16,12 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 import { JsonRpcId, JsonRpcResponse } from '@theqrl/web3-types';
 import { InvalidResponseError, ResponseTooLargeError } from '@theqrl/web3-errors';
-import type { EventEmitterLike } from './event_emitter.js';
+import { EventEmitter, EventEmitterLike } from './event_emitter.js';
 import { DEFAULT_MAX_RESPONSE_BYTES, validateMaxResponseBytes } from './provider_bounds.js';
 import { isNullish } from './validation.js';
 
 const CHUNK_TIMEOUT_MS = 15 * 1000;
+export const MAX_RESPONSE_DEPTH = 1024;
 
 /**
  * Longest prefix of an oversized message that is searched for request ids. JSON-RPC servers
@@ -137,7 +138,7 @@ export type ChunkResponseParserErrorHandler = (
  * Stream mode finds message boundaries with a single linear scan that tracks string
  * literals (with escapes) and bracket depth: a message is complete exactly when the depth
  * returns to zero. `JSON.parse` runs once per complete message, never on a growing prefix,
- * so the cost is linear in the number of bytes received whatever the peer sends. An earlier
+ * with nesting limited to 1024 levels before parsing to bound structural allocation. An earlier
  * version split on `}{`-like delimiters and re-parsed the accumulated text after every
  * fragment, which let a peer block the event loop for minutes with a few hundred KB of
  * unparseable output.
@@ -158,6 +159,7 @@ export class ChunkResponseParser {
 	private messageLength = 0;
 	/** The open message exceeded the bound: only its boundaries are tracked, its text dropped. */
 	private discarding = false;
+	private depthExceeded = false;
 	private depth = 0;
 	private inString = false;
 	private escaped = false;
@@ -196,6 +198,7 @@ export class ChunkResponseParser {
 	 * next one.
 	 */
 	public reset(): void {
+		this.depthExceeded = false;
 		this.clearChunkTimeout();
 		this.pendingParts = [];
 		this.messageLength = 0;
@@ -229,9 +232,35 @@ export class ChunkResponseParser {
 			error: { code: 2, message },
 		});
 		if (clearQueues) this._onProtocolError?.(error);
-		if (this.eventEmitter.listenerCount('error') > 0) {
-			this.eventEmitter.emit('error', error);
+		this.emitParserError(error);
+	}
+
+	private emitParserError(error: Error): void {
+		const report = (listenerError: unknown) =>
+			console.warn('A parser error listener threw', listenerError);
+		if (this.eventEmitter instanceof EventEmitter) {
+			this.eventEmitter.emitSafe('error', report, error);
+		} else if (this.eventEmitter.listenerCount('error') > 0) {
+			try {
+				this.eventEmitter.emit('error', error);
+			} catch (listenerError) {
+				report(listenerError);
+			}
 		}
+	}
+
+	private reportDepth(text: string): void {
+		const error = new InvalidResponseError({
+			jsonrpc: '2.0',
+			id: 1,
+			error: {
+				code: 2,
+				message: `JSON-RPC message exceeds maximum nesting depth ${MAX_RESPONSE_DEPTH}`,
+			},
+		});
+		const { ids, notification } = inspectEnvelopePrefix(text);
+		if (!notification) this._onProtocolError?.(error, ids);
+		this.emitParserError(error);
 	}
 
 	/**
@@ -243,9 +272,7 @@ export class ChunkResponseParser {
 		const error = new ResponseTooLargeError(this.maxBytes, length);
 		const { ids, notification } = inspectEnvelopePrefix(text);
 		if (!notification) this._onProtocolError?.(error, ids);
-		if (this.eventEmitter.listenerCount('error') > 0) {
-			this.eventEmitter.emit('error', error);
-		}
+		this.emitParserError(error);
 	}
 
 	private parseFrame(data: string): JsonRpcResponse[] {
@@ -254,6 +281,23 @@ export class ChunkResponseParser {
 			return [];
 		}
 		let result: unknown;
+		let depth = 0;
+		let inString = false;
+		let escaped = false;
+		for (const c of data) {
+			if (inString) {
+				if (escaped) escaped = false;
+				else if (c === '\\') escaped = true;
+				else if (c === '"') inString = false;
+			} else if (c === '"') inString = true;
+			else if (c === '{' || c === '[') {
+				depth += 1;
+				if (depth > MAX_RESPONSE_DEPTH) {
+					this.reportDepth(data);
+					return [];
+				}
+			} else if (c === '}' || c === ']') depth -= 1;
+		}
 		try {
 			result = JSON.parse(data);
 		} catch {
@@ -304,17 +348,27 @@ export class ChunkResponseParser {
 				this.inString = true;
 			} else if (c === OPEN_BRACE || c === OPEN_BRACKET) {
 				this.depth += 1;
+				if (this.depth > MAX_RESPONSE_DEPTH && !this.depthExceeded) {
+					this.depthExceeded = true;
+					this.discarding = true;
+					this.pendingParts = [this.messagePrefix(data.slice(start, i + 1))];
+				}
 			} else if (c === CLOSE_BRACE || c === CLOSE_BRACKET) {
 				this.depth -= 1;
 				if (this.depth === 0) {
 					const piece = data.slice(start, i + 1);
 					const length = this.messageLength + piece.length;
-					const prefix = this.messagePrefix(piece);
+					const prefix = this.depthExceeded
+						? this.pendingParts[0]
+						: this.messagePrefix(piece);
 					const parts = this.pendingParts;
 					const oversized = this.discarding || length > this.maxBytes;
+					const depthExceeded = this.depthExceeded;
 					// Release the old message before any allocation or error callback can throw.
 					this.reset();
-					if (oversized) {
+					if (depthExceeded) {
+						this.reportDepth(prefix);
+					} else if (oversized) {
 						this.reportOversized(prefix, length);
 					} else {
 						try {

@@ -95,6 +95,11 @@ function npmrcPolicyFailures(npmrc) {
 		'trustpolicy',
 		'pnpmfile',
 		'ignorepnpmfile',
+		'globalpnpmfile',
+		'packageextensions',
+		'patcheddependencies',
+		'configdependencies',
+		'supportedarchitectures',
 	]);
 	return npmrc.split(/\r?\n/).flatMap(line => {
 		if (/^\s*(?:[#;]|$)/.test(line)) return [];
@@ -130,7 +135,27 @@ function workspacePolicyFailures(workspaceYaml) {
 	for (const key of ['blockExoticSubdeps', 'strictDepBuilds']) {
 		if (workspace[key] !== true) failures.push(`pnpm-workspace.yaml must set ${key}: true`);
 	}
+	// These alternate policy sources bypass the reviewed allowBuilds/overrides mapping.
+	const forbidden = new Set([
+		'pnpmfile', 'globalpnpmfile', 'ignorepnpmfile', 'packageextensions',
+		'patcheddependencies', 'configdependencies', 'supportedarchitectures',
+		'dangerouslyallowallbuilds', 'onlybuiltdependencies', 'onlybuiltdependenciesfile',
+		'neverbuiltdependencies', 'ignoredbuiltdependencies', 'ignoredepscripts',
+		'verifystoreintegrity', 'lockfile', 'trustpolicy',
+	]);
+	for (const key of Object.keys(workspace)) {
+		if (forbidden.has(key.replace(/[-_]/g, '').toLowerCase())) {
+			failures.push(`pnpm-workspace.yaml must not declare alternate install policy ${key}`);
+		}
+	}
 	return failures;
+}
+
+function lockfilePolicyFailures(lockfileYaml) {
+	const lockfile = parseWorkspace(lockfileYaml);
+	return ['pnpmfileChecksum', 'packageExtensionsChecksum', 'patchedDependencies']
+		.filter(key => Object.prototype.hasOwnProperty.call(lockfile, key))
+		.map(key => `pnpm-lock.yaml must not contain alternate install policy ${key}`);
 }
 
 function overridePolicyFailures(workspaceYaml, lockfileYaml) {
@@ -306,6 +331,7 @@ function trivyActionSettings(workflowYaml) {
 }
 
 module.exports = {
+	lockfilePolicyFailures,
 	manifestPolicyFailures,
 	workspacePolicyFailures,
 	overridePolicyFailures,

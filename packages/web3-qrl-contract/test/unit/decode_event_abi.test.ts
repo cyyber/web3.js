@@ -16,9 +16,41 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 import { AbiError } from '@theqrl/web3-errors';
 import { AbiEventFragment, DEFAULT_RETURN_FORMAT, LogsInput } from '@theqrl/web3-types';
+import { encodeEventSignature, encodeParameter } from '@theqrl/web3-qrl-abi';
 import { decodeEventABI } from '../../src/encoding';
 
 type EventWithSignature = AbiEventFragment & { signature: string };
+
+describe('decodeEventABI with unannotated public ABI fragments', () => {
+	const event: AbiEventFragment = {
+		type: 'event',
+		name: 'StringEvent',
+		anonymous: false,
+		inputs: [{ name: 'value', type: 'string', indexed: false }],
+	};
+	const signature = encodeEventSignature(event);
+	const log = { topics: [signature], data: encodeParameter('string', 'hello') } as LogsInput;
+
+	it.each([false, true])('decodes a raw named fragment with registry=%s', withRegistry => {
+		const decoded = decodeEventABI(event, log, withRegistry ? [event] : []);
+		expect(decoded.returnValues.value).toBe('hello');
+		expect(decoded.signature).toBe(signature.slice(0, 66));
+		expect(event).not.toHaveProperty('signature');
+	});
+
+	it('resolves a raw event fragment on the allEvents path', () => {
+		const decoded = decodeEventABI({ type: 'event', name: 'ALLEVENTS', inputs: [] }, log, [
+			event,
+		]);
+		expect(decoded.event).toBe('StringEvent');
+		expect(decoded.returnValues.value).toBe('hello');
+		expect(event).not.toHaveProperty('signature');
+	});
+
+	it('still rejects a raw named fragment with the wrong topic count', () => {
+		expect(() => decodeEventABI(event, { ...log, topics: [] }, [])).toThrow(AbiError);
+	});
+});
 
 describe('decodeEventABI with a log that carries no topics', () => {
 	// What a node delivers for a log, minus `topics`.

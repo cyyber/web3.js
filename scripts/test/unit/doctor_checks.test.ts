@@ -18,6 +18,7 @@ import { readFileSync } from 'fs';
 import { join, resolve } from 'path';
 
 interface DoctorChecks {
+	lockfilePolicyFailures: (text: string) => string[];
 	manifestPolicyFailures: (manifest: object) => string[];
 	workspacePolicyFailures: (text: string) => string[];
 	overridePolicyFailures: (workspace: string, lockfile: string) => string[];
@@ -411,5 +412,47 @@ describe('pass-7 install policy sources', () => {
 		expect(doctorChecks.workspacePolicyFailures(valid.replace(/true/g, 'false'))).toHaveLength(
 			2,
 		);
+	});
+});
+
+describe('pass-8 alternate install policy', () => {
+	it.each([
+		'pnpmfile',
+		'globalPnpmfile',
+		'ignorePnpmfile',
+		'packageExtensions',
+		'patchedDependencies',
+		'configDependencies',
+		'supportedArchitectures',
+		'dangerouslyAllowAllBuilds',
+		'onlyBuiltDependencies',
+		'onlyBuiltDependenciesFile',
+		'neverBuiltDependencies',
+		'ignoredBuiltDependencies',
+		'ignoreDepScripts',
+		'verifyStoreIntegrity',
+		'lockfile',
+		'trustPolicy',
+	])('refuses workspace policy source %s even when empty', key => {
+		const valid = 'minimumReleaseAge: 10080\nblockExoticSubdeps: true\nstrictDepBuilds: true\n';
+		expect(doctorChecks.workspacePolicyFailures(`${valid}${key}: {}\n`)).toHaveLength(1);
+	});
+	it.each(['pnpmfileChecksum', 'packageExtensionsChecksum', 'patchedDependencies'])(
+		'refuses lockfile evidence of %s',
+		key => {
+			expect(doctorChecks.lockfilePolicyFailures(`${key}: ""\n`)).toHaveLength(1);
+		},
+	);
+	it.each([
+		'global-pnpmfile',
+		'config-dependencies',
+		'package-extensions',
+		'patched-dependencies',
+	])('refuses npmrc alternate policy %s', key => {
+		expect(doctorChecks.npmrcPolicyFailures(`${key}=hooks.cjs`)).toHaveLength(1);
+	});
+	it('accepts the committed lockfile and workspace', () => {
+		expect(doctorChecks.lockfilePolicyFailures(read('pnpm-lock.yaml'))).toEqual([]);
+		expect(doctorChecks.workspacePolicyFailures(read('pnpm-workspace.yaml'))).toEqual([]);
 	});
 });

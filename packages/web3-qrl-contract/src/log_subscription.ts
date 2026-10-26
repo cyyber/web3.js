@@ -27,6 +27,13 @@ import { isLogOf } from './utils.js';
 /**
  * LogSubscription to be used to subscribe to events logs.
  *
+ * With `fromBlock`, historical lookup and live registration run concurrently. Live logs can
+ * precede replay, overlap it, or leave a gap before registration; this is not an ordered or
+ * exactly-once stream. Deduplicate by blockHash/transactionHash/logIndex (treat `removed`
+ * separately), and use checkpointed getPastEvents queries to reconcile gaps and reconnects.
+ * Anonymous events with indistinguishable indexed/data layouts cannot be disambiguated;
+ * logs matching a declared non-anonymous signature are excluded from anonymous decoding.
+ *
  * Following events are supported and can be accessed with either {@link LogsSubscription.once} or ${@link LogsSubscription.on} methods.
  *
  * - **connected**: Emitted when the subscription is connected.

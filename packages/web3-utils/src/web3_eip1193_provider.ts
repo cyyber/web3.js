@@ -23,7 +23,7 @@ import {
 	Web3APISpec,
 	Web3BaseProvider,
 } from '@theqrl/web3-types';
-import { EventEmitter, EventEmitterLike } from './event_emitter.js';
+import { EventEmitter } from './event_emitter.js';
 import { EIP1193ProviderRpcError, InvalidResponseError } from '@theqrl/web3-errors';
 import { toPayload } from './json_rpc.js';
 
@@ -33,7 +33,7 @@ import { toPayload } from './json_rpc.js';
 export abstract class Eip1193Provider<
 	API extends Web3APISpec = QRLExecutionAPI,
 > extends Web3BaseProvider<API> {
-	protected readonly _eventEmitter: EventEmitterLike = new EventEmitter();
+	protected readonly _eventEmitter = new EventEmitter();
 	private _chainId: HexString = '';
 	private _accounts: HexString[] = [];
 	private _connectionGeneration = 0;
@@ -50,9 +50,18 @@ export abstract class Eip1193Provider<
 	}
 
 	protected _emitError(error: unknown): void {
-		if (this._eventEmitter.listenerCount('error') > 0) {
-			this._eventEmitter.emit('error', error);
-		}
+		this._emit('error', error);
+	}
+
+	protected _emit(event: string, value: unknown): void {
+		this._eventEmitter.emitSafe(
+			event,
+			error => {
+				if (event === 'error') console.warn('A provider error listener threw', error);
+				else this._emitError(error);
+			},
+			value,
+		);
 	}
 
 	private async _getChainId(): Promise<HexString> {
@@ -102,7 +111,7 @@ export abstract class Eip1193Provider<
 				if (generation !== this._connectionGeneration) return;
 				if (chainId !== this._chainId) {
 					this._chainId = chainId;
-					this._eventEmitter.emit('chainChanged', chainId);
+					this._emit('chainChanged', chainId);
 				}
 				const unchanged =
 					this._accounts.length === accounts.length &&
@@ -113,7 +122,7 @@ export abstract class Eip1193Provider<
 				}
 				if (generation !== this._connectionGeneration) return;
 				this._connected = true;
-				this._eventEmitter.emit('connect', {
+				this._emit('connect', {
 					chainId: this._chainId,
 				} as ProviderConnectInfo);
 			})
@@ -123,11 +132,11 @@ export abstract class Eip1193Provider<
 	// todo this must be ProvideRpcError with a message too
 	protected _onDisconnect(code: number, data?: unknown) {
 		this._invalidateConnection();
-		this._eventEmitter.emit('disconnect', new EIP1193ProviderRpcError(code, data));
+		this._emit('disconnect', new EIP1193ProviderRpcError(code, data));
 	}
 
 	private _onAccountsChanged() {
 		// get chainId and safe to local
-		this._eventEmitter.emit('accountsChanged', this._accounts);
+		this._emit('accountsChanged', this._accounts);
 	}
 }

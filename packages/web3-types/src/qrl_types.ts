@@ -213,7 +213,7 @@ export interface SyncInput {
 	readonly healingBytecode?: HexString;
 }
 
-/** The `qrl_syncing` progress object as go-qrl reports it (`SyncProgress`). */
+/** Sync progress from the RPC or a syncing subscription. */
 export interface SyncOutput {
 	readonly startingBlock: Numbers;
 	readonly currentBlock: Numbers;
@@ -230,6 +230,9 @@ export interface SyncOutput {
 	readonly healedBytecodeBytes?: Numbers;
 	readonly healingTrienodes?: Numbers;
 	readonly healingBytecode?: Numbers;
+	/** State counters included by syncing subscriptions. */
+	readonly pulledStates?: Numbers;
+	readonly knownStates?: Numbers;
 }
 
 export type Receipt = Record<string, unknown>;

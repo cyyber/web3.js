@@ -181,7 +181,12 @@ export default class WebSocketProvider<
 		if (maxPayload !== undefined && (!Number.isSafeInteger(maxPayload) || maxPayload < 0)) {
 			throw new ProviderError('maxPayload must be a non-negative safe integer');
 		}
-		super(socketPath, socketOptions, reconnectOptions, providerOptions);
+		super(
+			socketPath,
+			socketOptions === undefined ? undefined : { ...socketOptions },
+			reconnectOptions,
+			providerOptions,
+		);
 		WebSocketProvider.warnIfCleartext(socketPath);
 	}
 

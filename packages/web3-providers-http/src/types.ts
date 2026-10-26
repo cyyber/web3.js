@@ -48,9 +48,9 @@ export interface HttpProviderOptions extends ProviderBoundsOptions {
 	 * refused rather than followed (the request rejects with a `ConnectionError`), so the
 	 * request body and any custom authentication headers are never re-sent to another host.
 	 * Set `redirect: 'follow'` to opt in explicitly, knowing what that costs: the underlying
-	 * `fetch` re-sends the body and every custom header, `authorization`, `x-api-key` and
-	 * `cookie` included, to a redirect target on the **same host** (another port or path
-	 * counts as the same host); only a redirect to a different hostname drops them.
+	 * native `fetch` drops `authorization`, `proxy-authorization`, `cookie` and `host` when
+	 * the target's origin (scheme, hostname or port) differs. Other headers, including
+	 * `x-api-key`, can be sent to any redirect target; 307/308 redirects also retain the body.
 	 */
 	providerOptions?: RequestInit & { dispatcher?: unknown };
 }

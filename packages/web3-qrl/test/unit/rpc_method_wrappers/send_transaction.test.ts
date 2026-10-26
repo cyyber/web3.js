@@ -87,9 +87,14 @@ describe('sendTransaction', () => {
 
 	afterEach(() => jest.resetAllMocks());
 
-	it.each(['0x1', '0x0'])(
+	it.each([
+		['0x1', FMT_BYTES.HEX],
+		['0x0', FMT_BYTES.HEX],
+		['0x1', FMT_BYTES.UINT8ARRAY],
+		['0x0', FMT_BYTES.UINT8ARRAY],
+	] as const)(
 		'preserves the wire verdict with an unrepresentable NUMBER receipt (%s)',
-		async status => {
+		async (status, bytes) => {
 			const receipt = {
 				...expectedTransactionReceipt,
 				status,
@@ -103,7 +108,7 @@ describe('sendTransaction', () => {
 			const received = jest.fn();
 			const promi = sendTransaction(web3Context, testData[0][1], {
 				number: FMT_NUMBER.NUMBER,
-				bytes: FMT_BYTES.HEX,
+				bytes,
 			})
 				.on('error', errors)
 				.on('receipt', received)
@@ -117,6 +122,9 @@ describe('sendTransaction', () => {
 				'0x0': expect.any(TransactionRevertedWithoutReasonError),
 			};
 			expect(outcome).toEqual(expected[status as keyof typeof expected]);
+			expect(received.mock.calls[0][0].blockHash).toEqual(
+				format({ format: 'bytes32' }, receipt.blockHash, { number: FMT_NUMBER.HEX, bytes }),
+			);
 			expect(received).toHaveBeenCalledWith(
 				expect.objectContaining({ status, effectiveGasPrice: receipt.effectiveGasPrice }),
 			);
@@ -133,7 +141,7 @@ describe('sendTransaction', () => {
 				promi,
 				expect.objectContaining({ status }),
 				expect.any(String),
-				QRL_DATA_FORMAT,
+				{ number: FMT_NUMBER.HEX, bytes },
 			);
 		},
 	);

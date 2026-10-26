@@ -528,6 +528,11 @@ export class Contract<Abi extends ContractAbi>
 	 * `subscription.subscribed`, which otherwise resolves with the subscription id. Nothing is
 	 * thrown into the process when no `error` listener is attached.
 	 *
+	 * With `fromBlock`, live delivery and historical lookup overlap: events may arrive out of
+	 * order, repeat, or leave a gap before live registration. Reconcile using checkpointed
+	 * `getPastEvents` queries and deduplicate by blockHash/transactionHash/logIndex, handling
+	 * removed logs separately. See {@link LogsSubscription} for the delivery contract.
+	 *
 	 * @returns - When individual event is accessed will returns {@link ContractBoundEvent} object
 	 */
 	public get events() {
@@ -1178,13 +1183,23 @@ export class Contract<Abi extends ContractAbi>
 					exactContractMethod as never;
 			} else if (isAbiEventFragment(abi)) {
 				const eventName = jsonInterfaceMethodToString(abi);
-				// An identical event fragment is registered once as well (P4-M-8).
+				const eventSignature = encodeEventSignature(eventName);
+				abi.signature = eventSignature;
+				// Keep distinct indexed layouts for decoding a shared signature. The public
+				// keys still bind to the first fragment; exact duplicates remain collapsed.
 				if (eventName in this._events) {
+					const duplicate = result.some(
+						item =>
+							isAbiEventFragment(item) &&
+							jsonInterfaceMethodToString(item) === eventName &&
+							Boolean(item.anonymous) === Boolean(abi.anonymous) &&
+							(item.inputs ?? []).map(input => Boolean(input.indexed)).join(',') ===
+								(abi.inputs ?? []).map(input => Boolean(input.indexed)).join(','),
+					);
+					if (!duplicate) result = [...result, abi];
 					continue;
 				}
-				const eventSignature = encodeEventSignature(eventName);
 				const event = this._createContractEvent(abi, returnFormat);
-				abi.signature = eventSignature;
 
 				// It's a private type and we don't want to expose it and no need to check
 				this._events[eventName as keyof ContractEventsInterface<Abi>] = event as never;

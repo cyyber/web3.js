@@ -16,7 +16,7 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 jest.unmock('isomorphic-ws');
-import { AddressInfo } from 'net';
+import { AddressInfo, Socket } from 'net';
 import { WebSocketServer, WebSocket } from 'ws';
 import { Web3RequestManager, Web3SubscriptionManager, Web3Subscription } from '../../src';
 import { JsonRpcRequest } from '@theqrl/web3-types';
@@ -38,7 +38,7 @@ const until = async (check: () => boolean) => {
 	}
 };
 
-const setup = async (failHandshake = false) => {
+const setup = async (failHandshake = false, coalesced = false, dropUnsubscribe = false) => {
 	const server = new WebSocketServer({ host: '127.0.0.1', port: 0 });
 	await new Promise<void>(resolve => server.once('listening', resolve));
 	let connections = 0;
@@ -75,9 +75,23 @@ const setup = async (failHandshake = false) => {
 				const id = `0x${++counter}`;
 				ids.add(id);
 				for (const release of pendingAccounts.splice(0)) release();
-				setImmediate(() => reply(id));
+				setImmediate(() => {
+					const wire = (socket as unknown as { _socket: Socket })._socket;
+					wire.cork();
+					reply(id);
+					if (coalesced)
+						socket.send(
+							JSON.stringify({
+								jsonrpc: '2.0',
+								method: 'qrl_subscription',
+								params: { subscription: id, result: `first-${id}` },
+							}),
+						);
+					wire.uncork();
+				});
 			} else if (request.method === 'qrl_unsubscribe') {
-				reply(ids.delete((request.params as string[])[0]));
+				if (dropUnsubscribe) socket.terminate();
+				else reply(ids.delete((request.params as string[])[0]));
 			} else reply(request.method === 'qrl_accounts' ? ['0xaa'] : '0x1');
 		});
 	});
@@ -222,6 +236,74 @@ test('keeps known chain and accounts and reconnects even when a probe error list
 		await until(() => connected.mock.calls.length === 2);
 		expect(chainChanged).not.toHaveBeenCalled();
 		expect(accountsChanged).not.toHaveBeenCalled();
+	} finally {
+		await test.close();
+	}
+});
+
+test('delivers coalesced first WS notifications after initial and recovery registration', async () => {
+	const test = await setup(false, true);
+	try {
+		await new Promise<void>(resolve => test.provider.once('connect', () => resolve()));
+		const sub = await test.manager.subscribe('heads');
+		const data = jest.fn();
+		sub.on('data', data);
+		await until(() => data.mock.calls.length === 1);
+		for (const socket of test.server.clients) socket.terminate();
+		await until(() => data.mock.calls.length === 2);
+		expect(data.mock.calls).toEqual([['first-0x1'], ['first-0x2']]);
+		await sub.unsubscribe();
+	} finally {
+		await test.close();
+	}
+});
+
+test('contains throwing provider callbacks and keeps receiver and recovery live', async () => {
+	const warn = jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+	const test = await setup();
+	try {
+		for (const event of [
+			'connect',
+			'disconnect',
+			'chainChanged',
+			'accountsChanged',
+			'message',
+			'error',
+		] as const) {
+			test.provider.on(event, () => {
+				throw new Error(`consumer ${event}`);
+			});
+		}
+		await new Promise<void>(resolve => test.provider.once('connect', () => resolve()));
+		expect(test.provider.isConnected()).toBe(true);
+		const sub = await test.manager.subscribe('heads');
+		for (const socket of test.server.clients) socket.send('null');
+		await expect(
+			test.provider.request({
+				jsonrpc: '2.0',
+				id: 999,
+				method: 'qrl_blockNumber',
+				params: [],
+			}),
+		).resolves.toHaveProperty('result', '0x1');
+		for (const socket of test.server.clients) socket.terminate();
+		await until(() => sub.id === '0x2');
+		expect(test.manager.subscriptions.get('0x2')).toBe(sub);
+		expect(() => test.provider.disconnect()).not.toThrow();
+	} finally {
+		await test.close();
+		warn.mockRestore();
+	}
+});
+
+test('treats an unsubscribe written before connection loss as completed local removal', async () => {
+	const test = await setup(false, false, true);
+	try {
+		await new Promise<void>(resolve => test.provider.once('connect', () => resolve()));
+		const sub = await test.manager.subscribe('heads');
+		await expect(sub.unsubscribe()).resolves.toBeUndefined();
+		expect(sub.id).toBeUndefined();
+		expect(test.manager.subscriptions.size).toBe(0);
 	} finally {
 		await test.close();
 	}

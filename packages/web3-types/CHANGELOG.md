@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Pass 8 audit corrections
+
+- Include optional pulledStates and knownStates counters in SyncOutput for go-qrl syncing notifications.
+
 ### Fixed
 
 - `FeeHistory.gasUsedRatio` is a JSON floating-point `number[]`, independent of quantity formatting, matching go-qrl (P5-QRL-6).

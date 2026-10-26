@@ -46,6 +46,7 @@ import {
 	TransactionForAccessList,
 	AccessListResult,
 	QRLTypedData,
+	SyncOutput,
 } from '@theqrl/web3-types';
 import { Web3Context, Web3PromiEvent } from '@theqrl/web3-core';
 import { format, hexToBytes, bytesToUint8Array, sha3Raw } from '@theqrl/web3-utils';
@@ -56,6 +57,7 @@ import { qrlRpcMethods } from '@theqrl/web3-rpc-methods';
 
 import { decodeSignedTransaction } from './utils/decode_signed_transaction.js';
 import {
+	syncSchema,
 	transactionInfoSchema,
 	accountSchema,
 	feeHistorySchema,
@@ -115,13 +117,19 @@ export {
 	call,
 } from './utils/rpc_method_wrappers_readers.js';
 
-// TODO Add returnFormat parameter
 /**
  * View additional documentations here: {@link Web3QRL.isSyncing}
  * @param web3Context ({@link Web3Context}) Web3 configuration object that contains things such as the provider, request manager, wallet, etc.
  */
-export const isSyncing = async (web3Context: Web3Context<QRLExecutionAPI>) =>
-	qrlRpcMethods.getSyncing(web3Context.requestManager);
+export async function isSyncing<ReturnFormat extends DataFormat = typeof DEFAULT_RETURN_FORMAT>(
+	web3Context: Web3Context<QRLExecutionAPI>,
+	returnFormat: ReturnFormat = DEFAULT_RETURN_FORMAT as ReturnFormat,
+): Promise<false | FormatType<SyncOutput, ReturnFormat>> {
+	const response = await qrlRpcMethods.getSyncing(web3Context.requestManager);
+	if (response === false) return false;
+	assertRpcResult('qrl_syncing', response, syncSchema);
+	return format(syncSchema, response as SyncOutput, returnFormat);
+}
 
 /**
  * View additional documentations here: {@link Web3QRL.getGasPrice}

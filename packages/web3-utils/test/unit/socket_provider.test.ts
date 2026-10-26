@@ -15,7 +15,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { EventEmitter } from 'stream';
 import {
 	Web3APIPayload,
 	QRLExecutionAPI,
@@ -119,7 +118,9 @@ describe('SocketProvider', () => {
 			);
 
 			it('reports, rather than throws, a null entry in a response batch', () => {
-				const provider = new TestProvider(socketPath, socketOption, { autoReconnect: true });
+				const provider = new TestProvider(socketPath, socketOption, {
+					autoReconnect: true,
+				});
 				const errors: unknown[] = [];
 				provider.on('error', (error: unknown) => {
 					errors.push(error);
@@ -137,13 +138,17 @@ describe('SocketProvider', () => {
 			});
 
 			it('does not throw on malformed entries when no error listener is attached', () => {
-				const provider = new TestProvider(socketPath, socketOption, { autoReconnect: false });
+				const provider = new TestProvider(socketPath, socketOption, {
+					autoReconnect: false,
+				});
 				// eslint-disable-next-line no-null/no-null
 				expect(() => provider.message([null, 1, 'x', true, [null]])).not.toThrow();
 			});
 
 			it('reports, rather than throws, when the transport cannot parse the event', () => {
-				const provider = new TestProvider(socketPath, socketOption, { autoReconnect: true });
+				const provider = new TestProvider(socketPath, socketOption, {
+					autoReconnect: true,
+				});
 				const errors: unknown[] = [];
 				provider.on('error', (error: unknown) => {
 					errors.push(error);
@@ -164,7 +169,9 @@ describe('SocketProvider', () => {
 			});
 
 			it('still settles the matching request after a malformed entry in the same event', async () => {
-				const provider = new TestProvider(socketPath, socketOption, { autoReconnect: false });
+				const provider = new TestProvider(socketPath, socketOption, {
+					autoReconnect: false,
+				});
 				provider.on('error', () => undefined);
 				provider.setStatus('connected');
 				const payload = {
@@ -183,7 +190,9 @@ describe('SocketProvider', () => {
 			});
 
 			it('accepts 0 as a request id', () => {
-				const provider = new TestProvider(socketPath, socketOption, { autoReconnect: false });
+				const provider = new TestProvider(socketPath, socketOption, {
+					autoReconnect: false,
+				});
 				provider.setStatus('connected');
 				const payload = {
 					jsonrpc: '2.0',
@@ -289,7 +298,9 @@ describe('SocketProvider', () => {
 
 				// What `ws` throws for a URL it cannot parse.
 				const withCode = connectError(
-					Object.assign(new SyntaxError(`Invalid URL: ${url}`), { code: 'ERR_INVALID_URL' }),
+					Object.assign(new SyntaxError(`Invalid URL: ${url}`), {
+						code: 'ERR_INVALID_URL',
+					}),
 				);
 				expect(withCode).toBe(
 					'Error while connecting to ws://***@127.0.0.1:99999/[redacted]. Reason: SyntaxError (ERR_INVALID_URL)',
@@ -302,9 +313,9 @@ describe('SocketProvider', () => {
 				).toBe(
 					'Error while connecting to ws://***@127.0.0.1:99999/[redacted]. Reason: TypeError',
 				);
-				expect(
-					connectError(Object.assign(new Error(url), { name: '', code: 42 })),
-				).toBe('Error while connecting to ws://***@127.0.0.1:99999/[redacted]. Reason: Error');
+				expect(connectError(Object.assign(new Error(url), { name: '', code: 42 }))).toBe(
+					'Error while connecting to ws://***@127.0.0.1:99999/[redacted]. Reason: Error',
+				);
 				// One of this library's errors is already safe to echo (the IPC provider refuses
 				// a bad socket path with one).
 				expect(connectError(new InvalidClientError(url))).toBe(
@@ -371,7 +382,7 @@ describe('SocketProvider', () => {
 				const funcBSpy = jest
 					// @ts-expect-error run protected method
 					.spyOn(provider._eventEmitter, 'removeListener')
-					.mockReturnValue(new EventEmitter());
+					.mockReturnThis();
 				const event = 'message';
 				const func = () => {
 					// ...
@@ -393,7 +404,7 @@ describe('SocketProvider', () => {
 						),
 						'_onDisconnect',
 					)
-					.mockReturnValue(new EventEmitter());
+					.mockReturnThis();
 				const code = 0;
 				const data = '0x0';
 				provider.disconnect(code, data);
@@ -603,7 +614,10 @@ describe('SocketProvider', () => {
 		it('rejects a requestTimeout of Infinity rather than allowing an unbounded request', async () => {
 			const provider = makeConnectedProvider();
 			await expect(
-				provider.request({ id: 1, method: 'qrl_blockNumber' }, { requestTimeout: Infinity }),
+				provider.request(
+					{ id: 1, method: 'qrl_blockNumber' },
+					{ requestTimeout: Infinity },
+				),
 			).rejects.toThrow(ProviderError);
 
 			expectNoResidue(provider);
@@ -647,9 +661,7 @@ describe('SocketProvider', () => {
 			const provider = makeConnectedProvider();
 			const promise = provider.request({ id: 1, method: 'qrl_blockNumber' });
 
-			provider.message([
-				{ jsonrpc: '2.0', id: 1, error: { code: -32000, message: 'boom' } },
-			]);
+			provider.message([{ jsonrpc: '2.0', id: 1, error: { code: -32000, message: 'boom' } }]);
 
 			await expect(promise).resolves.toMatchObject({ id: 1 });
 			expectNoResidue(provider);
@@ -696,7 +708,10 @@ describe('SocketProvider', () => {
 			// A request waiting for the new connection survives a further connect().
 			const parked = provider.request({ id: 2, method: 'qrl_blockNumber' });
 			provider.connect();
-			expect(provider.getDiagnostics()).toMatchObject({ pendingRequests: 1, sentRequests: 0 });
+			expect(provider.getDiagnostics()).toMatchObject({
+				pendingRequests: 1,
+				sentRequests: 0,
+			});
 
 			provider.simulateOpen();
 			expect(provider.sentPayloads).toHaveLength(2);
@@ -1086,9 +1101,9 @@ describe('SocketProvider', () => {
 				const provider = makeConnectedProvider();
 				provider.sendError = new Error('socket is gone');
 
-				await expect(provider.request({ id: 1, method: 'qrl_blockNumber' })).rejects.toThrow(
-					'socket is gone',
-				);
+				await expect(
+					provider.request({ id: 1, method: 'qrl_blockNumber' }),
+				).rejects.toThrow('socket is gone');
 
 				// The failed send must not leave its id, its deadline, or its listener behind.
 				expectNoResidue(provider);
@@ -1459,7 +1474,13 @@ describe('SocketProvider', () => {
 	describe('accountsChanged (L-23)', () => {
 		it('emits accountsChanged whenever the accounts differ, not only when their number differs', async () => {
 			const provider = new TestProvider(socketPath, socketOption, { autoReconnect: false });
-			const served: string[][] = [['Qaaa'], ['Qbbb'], ['Qbbb'], ['Qccc', 'Qddd'], ['Qeee', 'Qfff']];
+			const served: string[][] = [
+				['Qaaa'],
+				['Qbbb'],
+				['Qbbb'],
+				['Qccc', 'Qddd'],
+				['Qeee', 'Qfff'],
+			];
 			let connection = 0;
 			jest.spyOn(provider, 'request').mockImplementation(
 				(payload: { id?: unknown; method: string }) =>
@@ -1502,10 +1523,14 @@ test('re-arms a cancelled reconnect when manual connect fails, preserving queued
 		});
 		const settled = jest.fn();
 		void queued.then(settled, settled);
-		jest.spyOn(internals, '_openSocketConnection').mockImplementationOnce(() => {
+		const open = jest.spyOn(internals, '_openSocketConnection').mockImplementation(() => {
 			throw new Error('path missing');
 		});
-		expect(() => provider.connect()).toThrow();
+		for (let i = 0; i < 5; i += 1) {
+			expect(() => provider.connect()).toThrow();
+			expect(provider['_reconnectAttempts']).toBe(1);
+		}
+		open.mockRestore();
 		expect(provider['isReconnecting']).toBe(true);
 		await jest.advanceTimersByTimeAsync(20);
 		provider.simulateOpen();

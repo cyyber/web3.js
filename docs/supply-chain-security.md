@@ -199,7 +199,11 @@ an integer `minimumReleaseAge` of at least 10080 minutes, `blockExoticSubdeps: t
 and `strictDepBuilds: true`. Workspace YAML directives, warnings, aliases and
 merge tags are rejected. Bare `.npmrc` policy keys are checked like `key=true`.
 Hygiene rejects `.pnpmfile.cjs` and nested `pnpm-workspace.yaml` files, including
-untracked files, because they can replace the root install policy.
+untracked files, because they can replace the root install policy. Doctor also
+rejects setting-named local/global pnpm hooks, dependency extensions/patches/config
+packages, alternate build allow-lists and store-policy overrides in workspace or
+npmrc configuration. Lockfiles carrying hook/extension checksums or patches fail
+policy checks even if the corresponding setting has been removed.
 
 <!-- overrides:start -->
 
@@ -309,7 +313,7 @@ for CVE-2023-54404. Exact security versions are listed in `minimumReleaseAgeExcl
 flow and block YAML sequences and mappings receive the same doctor checks. Merge keys
 and aliases are rejected, and install/quarantine overrides in `.npmrc` fail doctor.
 The validator limits nesting depth to 64 and keeps at most 100 bounded issue messages.
-Total input traversal has no value-count cap by default; callers may opt into `maxEntries`. See [pass 5 evidence](audit-remediation-2026-10-24.md).
+Total input traversal has no value-count cap by default; callers may opt into `maxEntries`. See [pass 5 evidence](audit-evidence.md).
 
 
 Pass 6 removed expired quarantine exemptions; only the first-party scope and the

@@ -55,7 +55,9 @@ describe('qrns utils', () => {
 
 		it('returns the root node for an empty name', () => {
 			expect(namehash('')).toBe(`0x${'0'.repeat(64)}`);
-			expect(namehash(undefined as unknown as string)).toBe(`0x${'0'.repeat(64)}`);
+			expect(() => namehash(undefined as unknown as string)).toThrow(InvalidStringError);
+			// eslint-disable-next-line no-null/no-null -- invalid caller input
+			expect(() => namehash(null as unknown as string)).toThrow(InvalidStringError);
 		});
 
 		it('rejects a name that is not a string with a typed error (L-26)', () => {

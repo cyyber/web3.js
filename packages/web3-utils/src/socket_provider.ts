@@ -308,7 +308,11 @@ export abstract class SocketProvider<
 			this._clearConnectionTimer();
 			if (!this.isReconnecting) {
 				this._connectionStatus = 'disconnected';
-				if (cancelledReconnect) this._reconnect();
+				if (cancelledReconnect) {
+					// Reuse the cancelled slot; a failed manual call is not an automatic attempt.
+					this._reconnectAttempts -= 1;
+					this._reconnect();
+				}
 				if (e && (e as Error).message) {
 					// The socket path may be a `ws://user:password@host/path` URL: credentials
 					// and path never belong in an error message (L-48), and neither does the
@@ -367,10 +371,10 @@ export abstract class SocketProvider<
 			// A handshake that never completes must not strand the requests queued behind
 			// it, whether or not their own 120s deadline has elapsed.
 			this._rejectAllRequests(error);
-			this._emitError(error);
 			if (this._reconnectOptions.autoReconnect) {
 				this._reconnect();
 			}
+			this._emitError(error);
 			this._closeSocketConnection(NORMAL_CLOSE_CODE, 'connection timeout');
 		}, duration);
 
@@ -1002,9 +1006,9 @@ export abstract class SocketProvider<
 			// An established subscription's stream is exempt from the per-request
 			// deadline: notifications carry no request id, hold no queue slot and arm no
 			// timer. The `*_subscribe` call that established it was bounded like any
-			// other request; from here the stream is governed by heartbeat / reconnect /
-			// unsubscribe / disconnect semantics instead.
-			this._eventEmitter.emit('message', response);
+			// other request; from here the stream is governed by reconnect, unsubscribe,
+			// and disconnect semantics. There is no built-in idle heartbeat.
+			this._emit('message', response);
 			return;
 		}
 
@@ -1040,7 +1044,7 @@ export abstract class SocketProvider<
 			// leave the request to fail by deadline although its reply arrived (P4-L-20). The
 			// throw is reported by the caller's per-response catch.
 			this._settleRequest(requestId, { resolve: response });
-			this._eventEmitter.emit('message', response);
+			this._emit('message', response);
 		} else {
 			// Malformed but id-matching. This used to drop the map entry without
 			// settling, stranding the caller's promise permanently.

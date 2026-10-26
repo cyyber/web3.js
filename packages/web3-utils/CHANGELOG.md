@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Pass 8 audit corrections
+
+- Reject JSON messages nested beyond 1024 levels before JSON.parse in frame and stream modes; attribute the typed error to ids in the retained prefix and continue parsing subsequent messages. Discarded size-limited streams may use a non-contiguous retained prefix plus closing-piece head to identify requests.
+- Isolate provider callbacks per listener, including rejected async callbacks, so error/change/connect/disconnect/message handlers cannot prevent recovery or wedge a receiver. Manual connect failures during backoff reuse the automatic attempt slot without increasing its exponential delay (P8-TR-1–3, P8-CORE-2).
+
 ### Pass 7 audit corrections
 
 - Keep the last known chain id and accounts when handshake probes fail, without spurious change events. Throwing probe-error listeners cannot suppress connect or reject the handshake task (P7-CORE-2/5).

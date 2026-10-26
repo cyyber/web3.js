@@ -29,6 +29,7 @@ describe('web3_qrl_methods_no_parameters', () => {
 
 	describe('should call RPC method with only request manager parameter', () => {
 		it('isSyncing', async () => {
+			(qrlRpcMethods.getSyncing as jest.Mock).mockResolvedValueOnce(false);
 			await web3QRL.isSyncing();
 			expect(qrlRpcMethods.getSyncing).toHaveBeenCalledWith(web3QRL.requestManager);
 		});

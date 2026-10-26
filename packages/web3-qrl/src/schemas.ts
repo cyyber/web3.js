@@ -440,55 +440,65 @@ export const logSchema = {
 	},
 };
 // The fields of go-qrl's `qrl_syncing` reply (`internal/qrlapi/api.go`); Ethereum's
-// `knownStates`/`pulledStates`, which go-qrl never sends, are no longer declared (L-73).
+// `knownStates`/`pulledStates` occur only in subscription progress, not this RPC reply.
 export const syncSchema = {
 	type: 'object',
 	properties: {
 		startingBlock: {
-			format: 'string',
+			format: 'uint',
 		},
 		currentBlock: {
-			format: 'string',
+			format: 'uint',
 		},
 		highestBlock: {
-			format: 'string',
+			format: 'uint',
 		},
 		syncedAccounts: {
-			format: 'string',
+			format: 'uint',
 		},
 		syncedAccountBytes: {
-			format: 'string',
+			format: 'uint',
 		},
 		syncedBytecodes: {
-			format: 'string',
+			format: 'uint',
 		},
 		syncedBytecodeBytes: {
-			format: 'string',
+			format: 'uint',
 		},
 		syncedStorage: {
-			format: 'string',
+			format: 'uint',
 		},
 		syncedStorageBytes: {
-			format: 'string',
+			format: 'uint',
 		},
 		healedTrienodes: {
-			format: 'string',
+			format: 'uint',
 		},
 		healedTrienodeBytes: {
-			format: 'string',
+			format: 'uint',
 		},
 		healedBytecodes: {
-			format: 'string',
+			format: 'uint',
 		},
 		healedBytecodeBytes: {
-			format: 'string',
+			format: 'uint',
 		},
 		healingTrienodes: {
-			format: 'string',
+			format: 'uint',
 		},
 		healingBytecode: {
-			format: 'string',
+			format: 'uint',
 		},
+	},
+};
+
+// downloader.SyncingResult uses JSON numbers and includes the two state counters.
+export const syncSubscriptionSchema = {
+	...syncSchema,
+	properties: {
+		...syncSchema.properties,
+		knownStates: { format: 'uint' },
+		pulledStates: { format: 'uint' },
 	},
 };
 

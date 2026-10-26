@@ -163,9 +163,33 @@ describe('EventEmitter', () => {
 
 			expect(() => emitter.setMaxListeners(-1)).toThrow(RangeError);
 			expect(() => emitter.setMaxListeners(Number.NaN)).toThrow(RangeError);
-			expect(() => emitter.on('e', 'not a function' as unknown as () => void)).toThrow(TypeError);
+			expect(() => emitter.on('e', 'not a function' as unknown as () => void)).toThrow(
+				TypeError,
+			);
 		} finally {
 			warn.mockRestore();
 		}
 	});
+});
+
+test('safe emission isolates synchronous and asynchronous failures and preserves once listeners', async () => {
+	const emitter = new EventEmitter();
+	const errors = jest.fn();
+	const data = jest.fn();
+	emitter.once('data', () => {
+		throw new Error('once');
+	});
+	// eslint-disable-next-line @typescript-eslint/no-misused-promises -- exercise a consumer's rejected async listener
+	emitter.on('data', async () => {
+		await Promise.resolve();
+		throw new Error('async');
+	});
+	emitter.on('data', data);
+	emitter.emitSafe('data', errors, 1);
+	emitter.emitSafe('data', errors, 2);
+	await Promise.resolve();
+	await Promise.resolve();
+	expect(data.mock.calls).toEqual([[1], [2]]);
+	expect(errors).toHaveBeenCalledTimes(3);
+	expect(emitter.listenerCount('data')).toBe(2);
 });

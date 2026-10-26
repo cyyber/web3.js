@@ -384,9 +384,12 @@ describe('pass-7 cancelled registration ownership', () => {
 	it('does not install a late id after provider replacement without a new registration', async () => {
 		const { provider, manager, requests } = setup();
 		provider.hold = true;
-		const sub = new ExampleSubscription({ param1: 'x' }, {
-			subscriptionManager: manager as unknown as Web3SubscriptionManager,
-		});
+		const sub = new ExampleSubscription(
+			{ param1: 'x' },
+			{
+				subscriptionManager: manager as unknown as Web3SubscriptionManager,
+			},
+		);
 		const result = sub.subscribe().catch((error: unknown) => error);
 		requests.setProvider(new RaceProvider() as never);
 		provider.held.shift()!.resolve('0x9');
@@ -400,7 +403,10 @@ describe('pass-7 cancelled registration ownership', () => {
 		async order => {
 			const { provider, manager } = setup();
 			provider.hold = true;
-			const sub = new ExampleSubscription({ param1: 'x' }, { subscriptionManager: manager as unknown as Web3SubscriptionManager });
+			const sub = new ExampleSubscription(
+				{ param1: 'x' },
+				{ subscriptionManager: manager as unknown as Web3SubscriptionManager },
+			);
 			const first = sub.subscribe().catch((error: unknown) => error);
 			await sub.unsubscribe();
 			const second = sub.subscribe();
@@ -437,7 +443,10 @@ describe('pass-7 cancelled registration ownership', () => {
 		async remoteRefusal => {
 			const { provider, manager } = setup();
 			provider.hold = true;
-			const sub = new ExampleSubscription({ param1: 'x' }, { subscriptionManager: manager as unknown as Web3SubscriptionManager });
+			const sub = new ExampleSubscription(
+				{ param1: 'x' },
+				{ subscriptionManager: manager as unknown as Web3SubscriptionManager },
+			);
 			const errors = jest.fn();
 			sub.on('error', errors);
 			const original = provider.request.bind(provider);
@@ -464,4 +473,48 @@ describe('pass-7 cancelled registration ownership', () => {
 			manager.clear();
 		},
 	);
+});
+
+test('throwing connected and data listeners cannot orphan a registered id', async () => {
+	const { provider, manager } = setup();
+	const sub = new ExampleSubscription(
+		{ param1: 'x' },
+		{ subscriptionManager: manager as unknown as Web3SubscriptionManager },
+	);
+	const errors = jest.fn();
+	const connected = jest.fn();
+	const data = jest.fn();
+	sub.on('error', errors);
+	sub.on('connected', () => {
+		throw new Error('consumer connected');
+	});
+	sub.on('connected', connected);
+	sub.on('data', () => {
+		throw new Error('consumer data');
+	});
+	sub.on('data', data);
+	await sub.subscribe();
+	expect(manager.subscriptions.get(sub.id!)).toBe(sub);
+	provider.emit('connect', {});
+	await flush();
+	expect(manager.subscriptions.get(sub.id!)).toBe(sub);
+	expect(connected).toHaveBeenCalledTimes(2);
+	provider.emit('message', { data: { subscription: sub.id, result: { value: 1 } } });
+	expect(data).toHaveBeenCalledTimes(1);
+	expect(errors).toHaveBeenCalledTimes(3);
+	await sub.unsubscribe();
+	expect(provider.live.size).toBe(0);
+});
+
+test('drops buffered notifications when pending registration is cancelled or fails', async () => {
+	const { provider, manager, subscribe } = setup();
+	provider.hold = true;
+	const pending = subscribe().catch((error: unknown) => error);
+	provider.emit('message', { data: { subscription: '0x9', result: { value: 1 } } });
+	manager.clear();
+	provider.held.shift()!.resolve('0x9');
+	expect(await pending).toBeInstanceOf(Error);
+	await new Promise(resolve => setTimeout(resolve, 10));
+	expect(manager.subscriptions.size).toBe(0);
+	expect(provider.live.size).toBe(0);
 });

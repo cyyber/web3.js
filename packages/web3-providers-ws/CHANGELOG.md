@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Pass 8 audit corrections
+
+- Contain throwing provider listeners and reject excessively nested JSON before parsing. Copy socket options at construction so later caller mutation cannot remove the validated wire limit. Failed manual reconnects preserve the automatic attempt budget.
+
 ### Pass 7 audit corrections
 
 - Validate maxPayload before connecting with ProviderError; explicit undefined uses the default. maxResponseBytes cannot exceed 536,870,888 (P7-TR-1/3).

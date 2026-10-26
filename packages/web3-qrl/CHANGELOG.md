@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Pass 8 audit corrections
+
+- Accept and format go-qrl syncing notifications with Go-cased numeric fields, including PulledStates/KnownStates. isSyncing now validates RPC responses and accepts a returnFormat; its default numeric output is bigint (P8-QRL-1/3).
+- Receipt-overflow fallback changes only the numeric dimension to HEX. Receipt events, error.receipt, confirmations, resolved receipts and transactionResolver inputs preserve the requested byte format (P8-QRL-2).
+
 ### Pass 7 audit corrections
 
 - Contain throwing watcher error listeners and validate log, header, pending-hash and syncing notifications before delivery (P7-QRL-1/2).

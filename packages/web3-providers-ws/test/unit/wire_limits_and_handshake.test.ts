@@ -203,14 +203,19 @@ test.each([2 ** 28 + 1, 536_870_888])(
 				);
 			}),
 		);
+		const socketOptions = { maxPayload: undefined as number | undefined };
 		const provider = new WebSocketProvider(
 			`ws://127.0.0.1:${(server.address() as AddressInfo).port}`,
-			{ maxPayload: undefined },
+			socketOptions,
 			{ autoReconnect: false },
 			{ maxResponseBytes },
 		);
 		try {
 			await new Promise<void>(resolve => provider.once('connect', () => resolve()));
+			socketOptions.maxPayload = NaN;
+			const ready = new Promise<void>(resolve => provider.once('connect', () => resolve()));
+			provider.connect();
+			await ready;
 			const socket = provider.SocketConnection as unknown as {
 				_receiver: { _maxPayload: number };
 			};

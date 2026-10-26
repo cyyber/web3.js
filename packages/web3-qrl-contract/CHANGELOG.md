@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Pass 8 audit corrections
+
+- Preserve public `decodeEventABI` support for raw ABI fragments: derive a missing signature for both the named event and interface candidates without modifying caller input (P8R-2).
+
+- Require exact indexed-topic counts for declared anonymous events and exclude signatures of declared non-anonymous events. Choose the matching indexed layout when fragments share a signature (P8-CT-1/5).
+- Throwing data/error listeners no longer abort replay or live delivery, skip other listeners, or tear down the subscription (P8-CT-3/4).
+- Document fromBlock delivery as concurrent historical/live streams that can overlap, arrive out of order or leave a pre-registration gap; consumers must reconcile checkpoints and deduplicate log identities (P8-CT-2).
+
 ### Pass 7 audit corrections
 
 - Replay historical logs only after live subscription succeeds, report terminal setup failure once, and release late subscription replies. getPastEvents skips topic-count mismatches while retaining other valid logs; live/backfill errors include the log identity (P7-CT-1/2/3).

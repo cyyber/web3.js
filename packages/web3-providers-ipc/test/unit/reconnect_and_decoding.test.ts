@@ -160,6 +160,30 @@ describe('IpcProvider over real sockets', () => {
 		fs.rmSync(dir, { recursive: true, force: true });
 	});
 
+	it('contains always-throwing IPC error/disconnect callbacks and keeps parsing', async () => {
+		const warn = jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+		const server = await startServer(path.join(dir, 'safe.ipc'));
+		const provider = new IpcProvider(path.join(dir, 'safe.ipc'), {}, { autoReconnect: false });
+		provider.on('error', () => {
+			throw new Error('consumer error');
+		});
+		provider.on('disconnect', () => {
+			throw new Error('consumer disconnect');
+		});
+		try {
+			await new Promise<void>(resolve => provider.once('connect', () => resolve()));
+			server.clients[0].write('garbage');
+			await expect(
+				provider.request(payload(901, 'qrl_blockNumber') as never),
+			).resolves.toHaveProperty('result', '0x5');
+			expect(() => provider.disconnect()).not.toThrow();
+		} finally {
+			provider.disconnect();
+			await server.close();
+			warn.mockRestore();
+		}
+	});
+
 	describe('stream decoding and listener accounting (L-24)', () => {
 		it('replaces a connected socket once and settles work sent on the old socket (P5-TR-3)', async () => {
 			const socketPath = path.join(dir, 's.ipc');

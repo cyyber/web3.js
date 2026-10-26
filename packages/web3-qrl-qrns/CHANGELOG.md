@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Pass 8 audit corrections
+
+- Reject null/undefined names with InvalidStringError; only an empty string selects the root node.
+
 ### Added
 
 - Added `getText(name, key)`, `getName(address)` with forward verification, and `setAddress(name, address, txConfig)`.

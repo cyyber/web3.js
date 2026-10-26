@@ -221,13 +221,17 @@ export const createAccountProvider = (context: Web3Context<QRLExecutionAPI>) => 
 };
 
 export const refillAccount = async (from: string, to: string, value: string | number) => {
-	const web3QRL = new Web3QRL(getSystemTestProviderUrl());
+	const web3QRL = new Web3QRL(getSystemTestProvider());
 
-	await web3QRL.sendTransaction({
-		from,
-		to,
-		value,
-	});
+	try {
+		await web3QRL.sendTransaction({
+			from,
+			to,
+			value,
+		});
+	} finally {
+		await closeOpenConnection(web3QRL);
+	}
 };
 
 let mainAcc: string;
@@ -237,12 +241,14 @@ export const createNewAccount = async (config?: {
 }): Promise<{ address: string; seed: string }> => {
 	const acc = config?.seed ? seedToAccount(config?.seed) : _createAccount();
 
-	const clientUrl = getSystemTestProviderUrl();
-
 	if (config?.refill) {
-		const web3QRL = new Web3QRL(clientUrl);
 		if (!mainAcc) {
-			[mainAcc] = await web3QRL.getAccounts();
+			const web3QRL = new Web3QRL(getSystemTestProvider());
+			try {
+				[mainAcc] = await web3QRL.getAccounts();
+			} finally {
+				await closeOpenConnection(web3QRL);
+			}
 		}
 		await refillAccount(mainAcc, acc.address, '10000000000000000000');
 	}
@@ -342,9 +348,7 @@ export const signAndSendContractMethodEIP1559 = async (
 export const createLocalAccount = async (web3: ReturnType<typeof createWeb3>) => {
 	const account = web3.qrl.accounts.create();
 	await refillAccount(
-		(
-			await createTempAccount()
-		).address,
+		(await createTempAccount()).address,
 		account.address,
 		'100000000000000000000',
 	);
@@ -401,20 +405,13 @@ const waitForSocketStatus = async <ResultType>(
 };
 
 export const waitForSocketConnect = async (provider: SocketProvider<any, any, any>) =>
-	waitForSocketStatus(
-		provider,
-		'connected',
-		'connect',
-		{} as ProviderConnectInfo,
-	);
+	waitForSocketStatus(provider, 'connected', 'connect', {} as ProviderConnectInfo);
 
 export const waitForSocketDisconnect = async (provider: SocketProvider<any, any, any>) =>
-	waitForSocketStatus(
-		provider,
-		'disconnected',
-		'disconnect',
-		{ code: 1000, message: '' } as ProviderRpcError,
-	);
+	waitForSocketStatus(provider, 'disconnected', 'disconnect', {
+		code: 1000,
+		message: '',
+	} as ProviderRpcError);
 
 export const waitForOpenSocketConnection = async (provider: SocketProvider<any, any, any>) =>
 	waitForSocketConnect(provider);
@@ -433,7 +430,7 @@ export const waitForEvent = async (
 	});
 
 export const sendFewSampleTxs = async (cnt = 1) => {
-	const web3 = createWeb3(getSystemTestProviderUrl());
+	const web3 = createWeb3(getSystemTestProvider());
 	const fromAcc = await createLocalAccount(web3);
 	const toAcc = createAccount();
 	const res: TransactionReceipt[] = [];

@@ -16,9 +16,14 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 import { Web3SubscriptionManager } from '@theqrl/web3-core';
 import { InvalidResponseError, SubscriptionError } from '@theqrl/web3-errors';
-import { Web3BaseProvider } from '@theqrl/web3-types';
+import { Web3BaseProvider, FMT_NUMBER, FMT_BYTES } from '@theqrl/web3-types';
 import * as rpcMethodWrappers from '../../src/rpc_method_wrappers';
-import { LogsSubscription, SyncingSubscription, NewHeadsSubscription, NewPendingTransactionsSubscription } from '../../src';
+import {
+	LogsSubscription,
+	SyncingSubscription,
+	NewHeadsSubscription,
+	NewPendingTransactionsSubscription,
+} from '../../src';
 import { Web3QRL } from '../../src/web3_qrl';
 import { mockRpcResponse as mockGetLogsRpcResponse } from './rpc_method_wrappers/fixtures/get_logs';
 import { sleep } from '../shared_fixtures/utils';
@@ -116,7 +121,6 @@ describe('Web3QRL subscribe and clear subscriptions', () => {
 	};
 
 	describe('logs backfill failures (M-7d)', () => {
-
 		const backfillError = () =>
 			new InvalidResponseError({
 				jsonrpc: '2.0',
@@ -199,9 +203,9 @@ describe('Web3QRL subscribe and clear subscriptions', () => {
 
 			expect(changed.mock.calls).toStrictEqual([[true], [true]]);
 			expect(data).toHaveBeenCalledWith({
-				startingBlock: '0x1',
-				currentBlock: '0x2',
-				highestBlock: '0x3',
+				startingBlock: BigInt(1),
+				currentBlock: BigInt(2),
+				highestBlock: BigInt(3),
 			});
 			expect(error).not.toHaveBeenCalled();
 		});
@@ -215,22 +219,25 @@ describe('Web3QRL subscribe and clear subscriptions', () => {
 			['abc'],
 			[42],
 			[{ syncing: 'yes', status: 'nope' }],
-		])('reports the malformed notification %p on the error event instead of throwing', notification => {
-			const subscription = makeSubscription();
-			const changed = jest.fn();
-			const data = jest.fn();
-			const error = jest.fn<void, [Error]>();
-			subscription.on('changed', changed);
-			subscription.on('data', data);
-			subscription.on('error', error);
+		])(
+			'reports the malformed notification %p on the error event instead of throwing',
+			notification => {
+				const subscription = makeSubscription();
+				const changed = jest.fn();
+				const data = jest.fn();
+				const error = jest.fn<void, [Error]>();
+				subscription.on('changed', changed);
+				subscription.on('data', data);
+				subscription.on('error', error);
 
-			expect(() => subscription._processSubscriptionResult(notification)).not.toThrow();
+				expect(() => subscription._processSubscriptionResult(notification)).not.toThrow();
 
-			expect(error).toHaveBeenCalledTimes(1);
-			expect(error.mock.calls[0][0]).toBeInstanceOf(SubscriptionError);
-			expect(changed).not.toHaveBeenCalled();
-			expect(data).not.toHaveBeenCalled();
-		});
+				expect(error).toHaveBeenCalledTimes(1);
+				expect(error.mock.calls[0][0]).toBeInstanceOf(SubscriptionError);
+				expect(changed).not.toHaveBeenCalled();
+				expect(data).not.toHaveBeenCalled();
+			},
+		);
 
 		it('warns instead of throwing when no error listener is attached', () => {
 			const warn = jest.spyOn(console, 'warn').mockImplementation(() => undefined);
@@ -268,7 +275,7 @@ describe('Web3QRL subscribe and clear subscriptions', () => {
 
 describe('subscription notification shapes (pass-7)', () => {
 	it.each([
-	// eslint-disable-next-line no-null/no-null -- exercise explicit null from untyped callers
+		// eslint-disable-next-line no-null/no-null -- exercise explicit null from untyped callers
 		[LogsSubscription, null],
 		[LogsSubscription, { topics: 'bad' }],
 		[LogsSubscription, { blockNumber: '-1' }],
@@ -303,3 +310,43 @@ describe('subscription notification shapes (pass-7)', () => {
 		expect(data).toHaveBeenCalledWith(hash);
 	});
 });
+
+test.each([FMT_NUMBER.BIGINT, FMT_NUMBER.HEX, FMT_NUMBER.STR, FMT_NUMBER.NUMBER])(
+	'formats go-qrl numeric syncing notifications as %s',
+	number => {
+		const manager = new Web3SubscriptionManager({ on: jest.fn() } as never, {});
+		const sub = new SyncingSubscription(undefined, {
+			subscriptionManager: manager,
+			returnFormat: { number, bytes: FMT_BYTES.HEX },
+		});
+		const data = jest.fn();
+		const errors = jest.fn();
+		sub.on('data', data);
+		sub.on('error', errors);
+		// encoding/json shape of downloader.SyncingResult and qrl.SyncProgress.
+		sub._processSubscriptionResult({
+			syncing: true,
+			status: {
+				StartingBlock: 0,
+				CurrentBlock: 416,
+				HighestBlock: 1000,
+				PulledStates: 2,
+				KnownStates: 3,
+			},
+		});
+		const expected = {
+			[FMT_NUMBER.BIGINT]: BigInt(416),
+			[FMT_NUMBER.HEX]: '0x1a0',
+			[FMT_NUMBER.STR]: '416',
+			[FMT_NUMBER.NUMBER]: 416,
+		};
+		expect(data).toHaveBeenCalledWith(
+			expect.objectContaining({
+				currentBlock: expected[number],
+				pulledStates: expect.anything(),
+				knownStates: expect.anything(),
+			}),
+		);
+		expect(errors).not.toHaveBeenCalled();
+	},
+);

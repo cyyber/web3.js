@@ -32,7 +32,7 @@ import { jsonRpc } from '@theqrl/web3-utils';
 import { BaseWeb3Error, SubscriptionError } from '@theqrl/web3-errors';
 
 import { Web3SubscriptionManager } from './web3_subscription_manager.js';
-import { Web3EventEmitter, Web3EventMap } from './web3_event_emitter.js';
+import { Web3EventEmitter, Web3EventMap, Web3EventKey } from './web3_event_emitter.js';
 import { Web3RequestManager } from './web3_request_manager.js';
 
 type CommonSubscriptionEvents = {
@@ -87,6 +87,16 @@ export abstract class Web3Subscription<
 		return this._id;
 	}
 
+	public emit<K extends Web3EventKey<CombinedEventMap>>(
+		eventName: K,
+		params: CombinedEventMap[K],
+	) {
+		this.emitSafe(eventName, params, error => {
+			if (eventName === 'error') console.warn('A subscription error listener threw', error);
+			else this._processSubscriptionError(error as Error);
+		});
+	}
+
 	public get lastBlock() {
 		return this._lastBlock;
 	}
@@ -138,7 +148,6 @@ export abstract class Web3Subscription<
 
 		if (version === this._idVersion) {
 			this._id = result;
-			this.emit('connected', result);
 		}
 		return result;
 	}

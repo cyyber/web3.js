@@ -16,7 +16,7 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { InvalidStringError } from '@theqrl/web3-errors';
-import { bytesToHex, hexToBytes, isNullish, keccak256 } from '@theqrl/web3-utils';
+import { bytesToHex, hexToBytes, keccak256 } from '@theqrl/web3-utils';
 import { ens_normalize } from '@adraffy/ens-normalize';
 
 export const normalize = (name: string) => ens_normalize(name);
@@ -30,8 +30,7 @@ const keccak256Text = (text: string): Uint8Array =>
 /**
  * Computes the QRNS node (the ENS `namehash`) of a name: every label is normalized and hashed
  * as UTF-8 text, so `0x6162.qrl` and `ab.qrl` are different names and an odd-length
- * hex-looking label is just a label (M-11). An empty, `undefined` or `null` name is the root
- * node (32 zero bytes).
+ * hex-looking label is just a label (M-11). An empty string is the root node (32 zero bytes); nullish inputs are rejected.
  *
  * @param inputName - The name, for example `web3js.qrl`.
  * @returns The 32-byte node as a `0x`-prefixed hex string.
@@ -40,7 +39,7 @@ const keccak256Text = (text: string): Uint8Array =>
 export const namehash = (inputName: string) => {
 	let node: Uint8Array = new Uint8Array(HASH_BYTES);
 
-	if (isNullish(inputName) || inputName === '') {
+	if (inputName === '') {
 		return bytesToHex(node);
 	}
 	if (typeof inputName !== 'string') {

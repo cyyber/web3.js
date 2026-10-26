@@ -29,6 +29,8 @@ import {
 	InvalidResponseError,
 	ProviderError,
 	SubscriptionError,
+	PendingRequestsOnReconnectingError,
+	ConnectionNotOpenError,
 } from '@theqrl/web3-errors';
 import { isNullish, waitWithTimeout } from '@theqrl/web3-utils';
 import { isSupportSubscriptions } from './utils.js';
@@ -142,6 +144,9 @@ export class Web3SubscriptionManager<
 	private _generation = 0;
 	private _connectionGeneration = 0;
 	private _disposed = false;
+	private _earlyNotifications: { id: string; data: ProviderNotification; size: number }[] = [];
+	private _earlyNotificationBytes = 0;
+	private _notificationTimer?: ReturnType<typeof setTimeout>;
 
 	private readonly _beforeProviderChangeListener: () => void;
 	private readonly _providerChangedListener: () => void;
@@ -231,6 +236,7 @@ export class Web3SubscriptionManager<
 			provider.isConnected?.() ??
 			(typeof provider.getStatus === 'function' && provider.getStatus() === 'connected');
 		const disconnectListener = () => {
+			this._clearEarlyNotifications();
 			this._connectionGeneration += 1;
 			this._providerConnected = false;
 			if (this._intendedSubscriptions.size > 0) {
@@ -244,6 +250,7 @@ export class Web3SubscriptionManager<
 			if (!reconnected || this._intendedSubscriptions.size === 0) {
 				return;
 			}
+			this._clearEarlyNotifications();
 			this._connectionGeneration += 1;
 			this._resubscribeAll().catch((error: unknown) => {
 				this._reportManagerError(error);
@@ -399,12 +406,63 @@ export class Web3SubscriptionManager<
 			this._deleteSubscriptionIds(sub);
 			this._subscriptions.set(sub.id, sub);
 			this._subscriptionConnections.set(managed, connection);
+			sub.emit('connected', sub.id);
 		} catch (error) {
 			// Keep owner intent on failure: the next stable connect retries it.
 			this._reportSubscriptionError(managed, oldId ?? '', error);
 		} finally {
 			this._subscribesInFlight -= 1;
+			this._flushEarlyNotificationsSoon();
 		}
+	}
+
+	private _clearEarlyNotifications(): void {
+		if (this._notificationTimer !== undefined) clearTimeout(this._notificationTimer);
+		this._notificationTimer = undefined;
+		this._earlyNotifications = [];
+		this._earlyNotificationBytes = 0;
+	}
+
+	private _flushEarlyNotificationsSoon(): void {
+		if (this._notificationTimer !== undefined || this._earlyNotifications.length === 0) return;
+		// Let await subscribe() callers attach their data listeners before the first delivery.
+		this._notificationTimer = setTimeout(() => {
+			this._notificationTimer = undefined;
+			const pending = this._earlyNotifications;
+			this._earlyNotifications = [];
+			this._earlyNotificationBytes = 0;
+			for (const entry of pending) {
+				const sub = this._subscriptions.get(entry.id);
+				if (sub) sub.processSubscriptionData(entry.data);
+				else if (this._subscribesInFlight > 0) {
+					this._earlyNotifications.push(entry);
+					this._earlyNotificationBytes += entry.size;
+				}
+			}
+		}, 0);
+	}
+
+	private _queueEarlyNotification(id: string, data: ProviderNotification): void {
+		// Unknown ids are untrusted. Bound both count and retained serialized size while
+		// registration is in flight; never let a silent subscribe retain arbitrary traffic.
+		let size: number;
+		try {
+			size = JSON.stringify(data).length;
+		} catch {
+			return;
+		}
+		if (
+			this._earlyNotifications.length >= 128 ||
+			this._earlyNotificationBytes + size > 1024 * 1024
+		) {
+			this._reportManagerError(
+				new SubscriptionError('Subscription notification buffer limit exceeded'),
+			);
+			return;
+		}
+		this._earlyNotifications.push({ id, data, size });
+		this._earlyNotificationBytes += size;
+		this._flushEarlyNotificationsSoon();
 	}
 
 	public hasSubscription(sub: InstanceType<RegisteredSubs[keyof RegisteredSubs]>): boolean {
@@ -427,7 +485,12 @@ export class Web3SubscriptionManager<
 		// Process if the received data is related to a subscription
 		if (typeof subscriptionId === 'string') {
 			const sub = this._subscriptions.get(subscriptionId);
-			sub?.processSubscriptionData(data);
+			if (
+				(!sub && this._subscribesInFlight > 0) ||
+				this._earlyNotifications.some(entry => entry.id === subscriptionId)
+			) {
+				this._queueEarlyNotification(subscriptionId, data);
+			} else sub?.processSubscriptionData(data);
 		}
 	}
 	/**
@@ -552,9 +615,11 @@ export class Web3SubscriptionManager<
 				this._intendedSubscriptions.delete(sub);
 			}
 			this._detachProviderListenerWhenIdle();
+			this._flushEarlyNotificationsSoon();
 			throw error;
 		}
 		this._subscribesInFlight -= 1;
+		this._flushEarlyNotificationsSoon();
 		const currentRegistration = ownsRegistration();
 		if (currentRegistration) this._pendingRegistrations.delete(sub);
 
@@ -600,7 +665,9 @@ export class Web3SubscriptionManager<
 		// Idempotent: re-attaches the listener if a concurrent removal detached it meanwhile.
 		this._attachProviderListener();
 
-		return sub.id;
+		const id = sub.id;
+		sub.emit('connected', id);
+		return id;
 	}
 
 	/**
@@ -651,7 +718,12 @@ export class Web3SubscriptionManager<
 			await managed.sendUnsubscribeRequest();
 		} catch (error) {
 			// An id from a previous connection may already have disappeared on the node.
-			if (!stale) throw error;
+			if (
+				!stale &&
+				!(error instanceof PendingRequestsOnReconnectingError) &&
+				!(error instanceof ConnectionNotOpenError)
+			)
+				throw error;
 		} finally {
 			// A stale entry would keep dispatching notifications to a subscription its owner has
 			// let go of, and `sub.id` would claim it is still live (M-7f).
@@ -694,6 +766,7 @@ export class Web3SubscriptionManager<
 	 * rejection would terminate the process (M-7f).
 	 */
 	private async _unsubscribeAllForProviderChange(): Promise<void> {
+		this._clearEarlyNotifications();
 		const pending: Promise<void>[] = [];
 		this._generation += 1;
 		for (const sub of this._pendingRegistrations.keys()) {
@@ -746,11 +819,13 @@ export class Web3SubscriptionManager<
 		if (this.listenerCount('error') === 0) {
 			return;
 		}
-		this.emit(
+		this.emitSafe(
 			'error',
 			error instanceof Error
 				? error
 				: new SubscriptionError(BaseWeb3Error.convertToString(error)),
+			listenerError =>
+				console.warn('A subscription manager error listener threw', listenerError),
 		);
 	}
 
@@ -771,7 +846,7 @@ export class Web3SubscriptionManager<
 		}
 
 		if (this.listenerCount('error') > 0) {
-			this.emit('error', reason);
+			this._reportManagerError(reason);
 		}
 	}
 
@@ -780,6 +855,7 @@ export class Web3SubscriptionManager<
 	 * provider listener.
 	 */
 	public clear() {
+		this._clearEarlyNotifications();
 		this._generation += 1;
 		this._resubscribeAgain = false;
 		for (const sub of this._intendedSubscriptions) {

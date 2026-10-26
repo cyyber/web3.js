@@ -71,7 +71,13 @@ describe('schemas keep every go-qrl reply field (L-73)', () => {
 	it('accountSchema keeps the proof address', () => {
 		const account = format(
 			accountSchema,
-			{ address: Q_ADDRESS, balance: '0x1', nonce: '0x0', accountProof: [], storageProof: [] },
+			{
+				address: Q_ADDRESS,
+				balance: '0x1',
+				nonce: '0x0',
+				accountProof: [],
+				storageProof: [],
+			},
 			DEFAULT_RETURN_FORMAT,
 		);
 		expect(account.address).toBe(Q_ADDRESS);
@@ -101,7 +107,11 @@ describe('schemas keep every go-qrl reply field (L-73)', () => {
 			{ ...goQrlStatus, knownStates: '0x10', pulledStates: '0x11' },
 			DEFAULT_RETURN_FORMAT,
 		);
-		expect(status).toStrictEqual(goQrlStatus);
+		expect(status).toStrictEqual(
+			Object.fromEntries(
+				Object.entries(goQrlStatus).map(([key, value]) => [key, BigInt(value)]),
+			),
+		);
 	});
 
 	it('types withdrawals.address and blockHeader.miner as addresses', () => {

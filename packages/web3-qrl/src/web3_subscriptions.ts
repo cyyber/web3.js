@@ -30,7 +30,7 @@ import {
 	QRL_DATA_FORMAT,
 } from '@theqrl/web3-types';
 import { Web3Subscription } from '@theqrl/web3-core';
-import { blockHeaderSchema, logSchema, syncSchema } from './schemas.js';
+import { blockHeaderSchema, logSchema, syncSubscriptionSchema } from './schemas.js';
 import { assertRpcResult } from './utils/invalid_response_error.js';
 
 /**
@@ -176,21 +176,21 @@ export class NewHeadsSubscription extends QRLSubscription<{
  *
  * (await web3.qrl.subscribe('syncing')).on('data', console.log);
  * > {
- *      startingBlock: '0x0',
- *      currentBlock: '0x1a0',
- *      highestBlock: '0x2d0',
- *      syncedAccounts: '0x0',
- *      syncedAccountBytes: '0x0',
- *      syncedBytecodes: '0x0',
- *      syncedBytecodeBytes: '0x0',
- *      syncedStorage: '0x0',
- *      syncedStorageBytes: '0x0',
- *      healedTrienodes: '0x0',
- *      healedTrienodeBytes: '0x0',
- *      healedBytecodes: '0x0',
- *      healedBytecodeBytes: '0x0',
- *      healingTrienodes: '0x0',
- *      healingBytecode: '0x0'
+ *      startingBlock: 0n,
+ *      currentBlock: 416n,
+ *      highestBlock: 720n,
+ *      syncedAccounts: 0n,
+ *      syncedAccountBytes: 0n,
+ *      syncedBytecodes: 0n,
+ *      syncedBytecodeBytes: 0n,
+ *      syncedStorage: 0n,
+ *      syncedStorageBytes: 0n,
+ *      healedTrienodes: 0n,
+ *      healedTrienodeBytes: 0n,
+ *      healedBytecodes: 0n,
+ *      healedBytecodeBytes: 0n,
+ *      healingTrienodes: 0n,
+ *      healingBytecode: 0n
  *   }
  * ```
  */
@@ -232,8 +232,8 @@ export class SyncingSubscription extends QRLSubscription<{
 					value,
 				]),
 			) as unknown as SyncOutput;
-			assertRpcResult('qrl_subscription', mappedData, syncSchema);
-			formatted = format(syncSchema, mappedData, super.returnFormat);
+			assertRpcResult('qrl_subscription', mappedData, syncSubscriptionSchema);
+			formatted = format(syncSubscriptionSchema, mappedData, super.returnFormat);
 		} catch (error) {
 			this._processSubscriptionError(error as Error);
 			return;
