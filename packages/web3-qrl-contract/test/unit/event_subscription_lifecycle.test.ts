@@ -15,6 +15,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { AbiError, ResponseError } from '@theqrl/web3-errors';
 import { Contract, EventLog } from '../../src';
 import { ADDR, FakeProvider, RECEIPT, topicOf, uintWord, flush } from '../fixtures/fake_provider';
 
@@ -245,4 +246,66 @@ test('throwing replay listeners do not suppress other listeners, valid logs or t
 	} finally {
 		warn.mockRestore();
 	}
+});
+
+test.each([false, true])(
+	'filters shared signatures using the selected layout (reversed=%s)',
+	async reversed => {
+		const indexed = {
+			...event,
+			inputs: [{ name: 'tokenId', type: 'uint256', indexed: true }],
+		} as const;
+		const indexedLog = { ...log, topics: [...log.topics, `0x${uintWord(8)}`], data: '0x' };
+		const provider = new FakeProvider(
+			method =>
+				method === 'qrl_getLogs'
+					? [log, indexedLog]
+					: method === 'qrl_subscribe'
+						? '0x1'
+						: undefined,
+			true,
+		);
+		const contract = new Contract(reversed ? [indexed, event] : [event, indexed], ADDR, {
+			provider: provider.asProvider(),
+		});
+		const past = await contract.getPastEvents('Value', { filter: { tokenId: 8 } });
+		expect(past).toHaveLength(1);
+		expect((past[0] as EventLog).returnValues.tokenId).toBe(BigInt(8));
+		expect(provider.lastCall('qrl_getLogs')?.params?.[0]).toHaveProperty(
+			'topics',
+			indexedLog.topics,
+		);
+		const plain = await contract.getPastEvents('Value', { filter: { value: 7 } });
+		expect(plain).toHaveLength(1);
+		expect((plain[0] as EventLog).returnValues.value).toBe(BigInt(7));
+		await expect(contract.getPastEvents('Value', { filter: { missing: 5 } })).rejects.toThrow(
+			AbiError,
+		);
+		expect(() => contract.events.Value({ filter: { missing: 5 } })).toThrow(AbiError);
+		const sub = contract.events.Value({ filter: { tokenId: 8 } });
+		await sub.subscribed;
+		expect(provider.lastCall('qrl_subscribe')?.params?.[1]).toHaveProperty(
+			'topics',
+			indexedLog.topics,
+		);
+		await sub.unsubscribe();
+	},
+);
+
+test('rejects non-string topics on the live path', async () => {
+	const provider = new FakeProvider(
+		method => (method === 'qrl_subscribe' ? '0x1' : undefined),
+		true,
+	);
+	const contract = new Contract([event], ADDR, { provider: provider.asProvider() });
+	const sub = contract.events.Value();
+	const data = jest.fn();
+	const errors = jest.fn();
+	sub.on('data', data);
+	sub.on('error', errors);
+	await sub.subscribed;
+	provider.notify('0x1', { ...log, topics: [7] });
+	expect(data).not.toHaveBeenCalled();
+	expect(errors.mock.calls[0][0]).toBeInstanceOf(ResponseError);
+	await sub.unsubscribe();
 });

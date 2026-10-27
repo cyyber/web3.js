@@ -103,9 +103,10 @@ export const watchTransactionByPolling = <
 			);
 			// Stopped while the request was in flight.
 			if (stopped) return;
-			consecutiveErrors = 0;
-
-			if (!nextBlock?.hash) return;
+			if (!nextBlock?.hash) {
+				consecutiveErrors = 0;
+				return;
+			}
 
 			// The chain grew past the receipt's block; make sure the transaction is still in it.
 			const recheck = await recheckReceipt(web3Context, receipt);
@@ -137,10 +138,10 @@ export const watchTransactionByPolling = <
 			const depth = nextNumber - BigInt(receipt.blockNumber) + BigInt(1);
 			if (depth < BigInt(2)) {
 				confirmations = 1;
+				consecutiveErrors = 0;
 				return;
 			}
-			confirmations = Number(depth);
-			const formattedConfirmations: Numbers = confirmations;
+			const formattedConfirmations: Numbers = Number(depth);
 
 			emitConfirmation(transactionPromiEvent, {
 				confirmations: format({ format: 'uint' }, formattedConfirmations, returnFormat),
@@ -152,6 +153,8 @@ export const watchTransactionByPolling = <
 				),
 			});
 
+			confirmations = Number(depth);
+			consecutiveErrors = 0;
 			if (confirmations >= web3Context.transactionConfirmationBlocks) stop();
 		} catch (error) {
 			if (stopped) return;

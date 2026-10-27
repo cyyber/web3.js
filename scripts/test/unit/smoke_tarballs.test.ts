@@ -142,9 +142,7 @@ describe('release smoke test (P4-M-10)', () => {
 			.find(line => line.includes('/smoke-module ci '))!
 			.split(' ci ')[0];
 		expect(moduleProject.startsWith(directory)).toBe(false);
-		expect(JSON.parse(readFileSync(join(moduleProject, 'package.json'), 'utf8')).type).toBe(
-			'module',
-		);
+		expect(existsSync(moduleProject)).toBe(false);
 		expect(result.stdout).toContain('required @scope/a');
 		expect(result.stdout).toContain('imported @scope/b');
 		expect(result.stdout).toContain('Smoke-tested 2 package tarballs from tarballs');

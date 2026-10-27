@@ -38,6 +38,9 @@ export const DEFAULT_REQUEST_TIMEOUT = 120_000;
  */
 export const DEFAULT_MAX_RESPONSE_BYTES = 10 * 1024 * 1024;
 
+/** Allows a complete 1024-call-frame trace, including its JSON wrapper. */
+export const DEFAULT_MAX_RESPONSE_DEPTH = 4096;
+
 /**
  * Default bound on combined pending + sent request IDs outstanding per provider.
  */
@@ -70,9 +73,19 @@ export interface ProviderBoundsOptions {
 	requestTimeout?: number;
 	/**
 	 * Maximum decoded response bytes accepted from the node, at most 536,870,888.
+	 * This is not a heap limit: decoded text, transport buffers and parsed values coexist.
+	 * Before parsing, responses are limited to max(1024, floor(maxResponseBytes / 16))
+	 * object/array containers, including empty ones. This heuristic leaves room for dense
+	 * struct-logger traces with empty memory arrays while rejecting structural payloads
+	 * that can otherwise allocate roughly 30 times their text size. Choose the byte limit
+	 * for the available heap and concurrency; neither limit exactly bounds process memory.
 	 * @defaultValue {@link DEFAULT_MAX_RESPONSE_BYTES} (10 MiB)
 	 */
 	maxResponseBytes?: number;
+	/** Maximum JSON object/array nesting before parsing. Must be a positive safe integer.
+	 * @defaultValue 4096
+	 */
+	maxResponseDepth?: number;
 	/**
 	 * Maximum combined pending + sent requests outstanding per provider.
 	 * Currently enforced by the socket providers only.
@@ -180,6 +193,10 @@ export const resolveProviderBounds = (options?: ProviderBoundsOptions): Resolved
 	),
 	maxResponseBytes: validateMaxResponseBytes(
 		options?.maxResponseBytes ?? DEFAULT_MAX_RESPONSE_BYTES,
+	),
+	maxResponseDepth: validatePositiveInteger(
+		options?.maxResponseDepth ?? DEFAULT_MAX_RESPONSE_DEPTH,
+		'maxResponseDepth',
 	),
 	maxInFlightRequests: validatePositiveInteger(
 		options?.maxInFlightRequests ?? DEFAULT_MAX_IN_FLIGHT_REQUESTS,

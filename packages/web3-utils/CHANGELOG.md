@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Pass 9 audit corrections
+
+- Defer notifications for ids acknowledged by outstanding subscribe requests until awaiting callers can attach listeners. Keep ordering across coalesced WS/IPC bursts and clear deferred items on connection reset (P9-CORE-1).
+
+- Bound JSON object/array counts before parsing to max(1024, floor(maxResponseBytes / 16)), including empty containers; share the structure scan with HTTP. The budget admits dense struct-logger traces with empty memory arrays near the byte cap (P9R-2). Increase default depth to 4096 and expose validated maxResponseDepth across all providers, preserving full 1024-frame traces. Structural violations use InvalidResponseError and socket parsing recovers for following messages (P9-TR-1/2/3).
+
 ### Pass 8 audit corrections
 
 - Reject JSON messages nested beyond 1024 levels before JSON.parse in frame and stream modes; attribute the typed error to ids in the retained prefix and continue parsing subsequent messages. Discarded size-limited streams may use a non-contiguous retained prefix plus closing-piece head to identify requests.

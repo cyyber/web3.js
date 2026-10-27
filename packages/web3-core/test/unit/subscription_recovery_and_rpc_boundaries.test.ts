@@ -18,6 +18,7 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 import { JsonRpcRequest } from '@theqrl/web3-types';
 import { EventEmitter } from '@theqrl/web3-utils';
 import { Web3Context } from '../../src/web3_context';
+import { Web3RequestManagerEvent } from '../../src/web3_request_manager';
 import { Web3RequestManager } from '../../src/web3_request_manager';
 import { Web3SubscriptionManager } from '../../src/web3_subscription_manager';
 import { ExampleSubscription } from './fixtures/example_subscription';
@@ -517,4 +518,72 @@ test('drops buffered notifications when pending registration is cancelled or fai
 	await new Promise(resolve => setTimeout(resolve, 10));
 	expect(manager.subscriptions.size).toBe(0);
 	expect(provider.live.size).toBe(0);
+});
+
+test.each([false, true])(
+	'delivers an installed id burst after a parked notification (recovery=%s)',
+	async recovery => {
+		const { provider, manager, subscribe } = setup();
+		provider.hold = true;
+		const first = subscribe();
+		provider.held.shift()!.resolve('0x1');
+		const sub = await first;
+		const data = jest.fn<void, [string]>();
+		sub.on('data', data);
+		const errors = jest.fn();
+		manager.on('error', errors);
+		let id = '0x1';
+		if (recovery) {
+			provider.emit('connect', {});
+			id = '0x2';
+		} else {
+			await sub.unsubscribe();
+			void sub.subscribe();
+		}
+		provider.emit('message', { data: { subscription: id, result: '0' } });
+		provider.held.shift()!.resolve(id);
+		// Settle registration microtasks without letting the scheduled flush run.
+		for (let i = 0; i < 30; i += 1) {
+			// eslint-disable-next-line no-await-in-loop -- settle registration without running timers
+			await Promise.resolve();
+		}
+		for (let value = 1; value < 300; value += 1)
+			provider.emit('message', { data: { subscription: id, result: String(value) } });
+		expect(data.mock.calls.map(([value]) => value)).toEqual(
+			Array.from({ length: 300 }, (_, i) => String(i)),
+		);
+		expect(errors).not.toHaveBeenCalled();
+		await sub.unsubscribe();
+		manager.clear();
+	},
+);
+
+test('throwing provider-change listeners cannot interrupt teardown or a provider swap', async () => {
+	const { provider, requests, manager, subscribe } = setup();
+	const old = await subscribe();
+	const warn = jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+	const after = jest.fn();
+	requests.on(Web3RequestManagerEvent.BEFORE_PROVIDER_CHANGE, () => {
+		throw new Error('before');
+	});
+	requests.on(Web3RequestManagerEvent.PROVIDER_CHANGED, async () => {
+		await Promise.resolve();
+		throw new Error('after');
+	});
+	requests.on(Web3RequestManagerEvent.PROVIDER_CHANGED, after);
+	const replacement = new RaceProvider();
+	try {
+		expect(requests.setProvider(replacement as never)).toBe(true);
+		await flush();
+		expect(requests.provider).toBe(replacement);
+		expect(provider.live.size).toBe(0);
+		expect(manager.subscriptions.has(old.id!)).toBe(false);
+		expect(after).toHaveBeenCalledTimes(1);
+		expect(warn).toHaveBeenCalledTimes(2);
+		const next = await subscribe();
+		await next.unsubscribe();
+	} finally {
+		warn.mockRestore();
+		manager.clear();
+	}
 });

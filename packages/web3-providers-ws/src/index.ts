@@ -177,16 +177,12 @@ export default class WebSocketProvider<
 		reconnectOptions?: Partial<ReconnectOptions>,
 		providerOptions?: SocketProviderOptions,
 	) {
-		const maxPayload = (socketOptions as ClientOptions | undefined)?.maxPayload;
+		const copiedOptions = socketOptions === undefined ? undefined : { ...socketOptions };
+		const maxPayload = (copiedOptions as ClientOptions | undefined)?.maxPayload;
 		if (maxPayload !== undefined && (!Number.isSafeInteger(maxPayload) || maxPayload < 0)) {
 			throw new ProviderError('maxPayload must be a non-negative safe integer');
 		}
-		super(
-			socketPath,
-			socketOptions === undefined ? undefined : { ...socketOptions },
-			reconnectOptions,
-			providerOptions,
-		);
+		super(socketPath, copiedOptions, reconnectOptions, providerOptions);
 		WebSocketProvider.warnIfCleartext(socketPath);
 	}
 

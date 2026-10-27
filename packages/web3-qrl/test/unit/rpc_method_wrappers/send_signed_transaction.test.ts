@@ -536,6 +536,23 @@ describe('sendTransaction', () => {
 	describe('receipt status (H-1)', () => {
 		const signedTransaction = testData[0][1];
 		const options = { checkRevertBeforeSending: false };
+		it('normalizes a null return format before broadcasting', async () => {
+			(
+				WaitForTransactionReceipt.waitForTransactionReceipt as jest.Mock
+			).mockResolvedValueOnce(expectedTransactionReceipt);
+			// eslint-disable-next-line no-null/no-null
+			const pending = sendSignedTransaction(web3Context, signedTransaction, null as never, {
+				checkRevertBeforeSending: false,
+			});
+			const hashes = jest.fn();
+			const errors = jest.fn();
+			pending.on('transactionHash', hashes);
+			pending.on('error', errors);
+			const receipt = await pending;
+			expect(receipt.status).toBe(BigInt(1));
+			expect(hashes).toHaveBeenCalledTimes(1);
+			expect(errors).not.toHaveBeenCalled();
+		});
 		const formats: [string, DataFormat][] = [
 			['BIGINT/HEX', { number: FMT_NUMBER.BIGINT, bytes: FMT_BYTES.HEX }],
 			['HEX/HEX', { number: FMT_NUMBER.HEX, bytes: FMT_BYTES.HEX }],

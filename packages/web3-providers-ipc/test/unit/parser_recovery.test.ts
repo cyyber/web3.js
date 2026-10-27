@@ -82,3 +82,51 @@ describe('IPC parser recovery', () => {
 		},
 	);
 });
+
+// IPC emits all messages from one read synchronously, before subscribe's promise resumes.
+test('defers acknowledged IPC bursts until awaiting callers attach listeners, including reconnect', async () => {
+	const provider = new TestIpcProvider('/unused.ipc', {}, { autoReconnect: false });
+	const received: unknown[] = [];
+	try {
+		for (const round of [1, 2]) {
+			if (round === 2) provider.connect();
+			const connected = new Promise<void>(resolve =>
+				provider.once('connect', () => resolve()),
+			);
+			const socket = provider.SocketConnection as Socket;
+			socket.emit('connect');
+			// eslint-disable-next-line no-await-in-loop -- exercise initial and replacement sockets in order
+			await connected;
+			const pending = provider.request({
+				jsonrpc: '2.0',
+				id: round,
+				method: 'qrl_subscribe',
+				params: ['newHeads'],
+			});
+			const notifications = Array.from({ length: 200 }, (_, i) => ({
+				jsonrpc: '2.0',
+				method: 'qrl_subscription',
+				params: { subscription: `0x${round}`, result: i },
+			}));
+			socket.emit(
+				'data',
+				JSON.stringify({ jsonrpc: '2.0', id: round, result: `0x${round}` }) +
+					notifications.map(item => JSON.stringify(item)).join(''),
+			);
+			// eslint-disable-next-line no-await-in-loop -- attach after registration, as public callers do
+			await pending;
+			const listener = (message: unknown) => {
+				received.push(message);
+			};
+			provider.on('message', listener);
+			// eslint-disable-next-line no-await-in-loop -- allow deferred notifications to flush
+			await new Promise(resolve => setTimeout(resolve, 10));
+			provider.removeListener('message', listener);
+			expect(received.splice(0)).toEqual(notifications);
+			provider.disconnect();
+			socket.destroy();
+		}
+	} finally {
+		provider.disconnect();
+	}
+});

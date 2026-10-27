@@ -17,11 +17,21 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 import { JsonRpcId, JsonRpcResponse } from '@theqrl/web3-types';
 import { InvalidResponseError, ResponseTooLargeError } from '@theqrl/web3-errors';
 import { EventEmitter, EventEmitterLike } from './event_emitter.js';
-import { DEFAULT_MAX_RESPONSE_BYTES, validateMaxResponseBytes } from './provider_bounds.js';
+import {
+	DEFAULT_MAX_RESPONSE_BYTES,
+	DEFAULT_MAX_RESPONSE_DEPTH,
+	validateMaxResponseBytes,
+	validatePositiveInteger,
+} from './provider_bounds.js';
+import {
+	findJsonStructureViolation,
+	jsonStructureViolation,
+	maxResponseContainers,
+} from './json_response_bounds.js';
 import { isNullish } from './validation.js';
 
 const CHUNK_TIMEOUT_MS = 15 * 1000;
-export const MAX_RESPONSE_DEPTH = 1024;
+export const MAX_RESPONSE_DEPTH = DEFAULT_MAX_RESPONSE_DEPTH;
 
 /**
  * Longest prefix of an oversized message that is searched for request ids. JSON-RPC servers
@@ -113,12 +123,14 @@ export interface ChunkResponseParserOptions {
 	framed?: boolean;
 	/**
 	 * Largest message accepted, measured in UTF-16 code units of the decoded text. That count
-	 * never exceeds the text's UTF-8 byte count, so a reply within the provider's
-	 * `maxResponseBytes` is never refused; the WebSocket transport enforces the same bound on
+	 * never exceeds the text's UTF-8 byte count. Structural limits apply separately;
+	 * the WebSocket transport enforces a byte bound on
 	 * the wire through `maxPayload`.
 	 * @defaultValue {@link DEFAULT_MAX_RESPONSE_BYTES} (10 MiB)
 	 */
 	maxResponseBytes?: number;
+	/** Maximum JSON nesting depth; defaults to 4096. */
+	maxResponseDepth?: number;
 }
 
 /**
@@ -138,7 +150,7 @@ export type ChunkResponseParserErrorHandler = (
  * Stream mode finds message boundaries with a single linear scan that tracks string
  * literals (with escapes) and bracket depth: a message is complete exactly when the depth
  * returns to zero. `JSON.parse` runs once per complete message, never on a growing prefix,
- * with nesting limited to 1024 levels before parsing to bound structural allocation. An earlier
+ * with configurable nesting and container-count limits checked before parsing. An earlier
  * version split on `}{`-like delimiters and re-parsed the accumulated text after every
  * fragment, which let a peer block the event loop for minutes with a few hundred KB of
  * unparseable output.
@@ -159,7 +171,8 @@ export class ChunkResponseParser {
 	private messageLength = 0;
 	/** The open message exceeded the bound: only its boundaries are tracked, its text dropped. */
 	private discarding = false;
-	private depthExceeded = false;
+	private structureViolation: string | undefined;
+	private containers = 0;
 	private depth = 0;
 	private inString = false;
 	private escaped = false;
@@ -168,18 +181,25 @@ export class ChunkResponseParser {
 	private readonly eventEmitter: EventEmitterLike;
 	private readonly framed: boolean;
 	private readonly maxBytes: number;
+	private readonly maxDepth: number;
+	private readonly maxContainers: number;
 
 	public constructor(
 		eventEmitter: EventEmitterLike,
 		_autoReconnect: boolean,
 		options: ChunkResponseParserOptions = {},
 	) {
+		this.maxDepth = validatePositiveInteger(
+			options.maxResponseDepth ?? DEFAULT_MAX_RESPONSE_DEPTH,
+			'maxResponseDepth',
+		);
 		this.eventEmitter = eventEmitter;
 		this.framed = options.framed ?? false;
 		// Validated here as well: an unusable bound must fail loudly, not disable the check.
 		this.maxBytes = validateMaxResponseBytes(
 			options.maxResponseBytes ?? DEFAULT_MAX_RESPONSE_BYTES,
 		);
+		this.maxContainers = maxResponseContainers(this.maxBytes);
 	}
 
 	/**
@@ -198,7 +218,8 @@ export class ChunkResponseParser {
 	 * next one.
 	 */
 	public reset(): void {
-		this.depthExceeded = false;
+		this.structureViolation = undefined;
+		this.containers = 0;
 		this.clearChunkTimeout();
 		this.pendingParts = [];
 		this.messageLength = 0;
@@ -249,13 +270,13 @@ export class ChunkResponseParser {
 		}
 	}
 
-	private reportDepth(text: string): void {
+	private reportStructure(text: string, message: string): void {
 		const error = new InvalidResponseError({
 			jsonrpc: '2.0',
 			id: 1,
 			error: {
 				code: 2,
-				message: `JSON-RPC message exceeds maximum nesting depth ${MAX_RESPONSE_DEPTH}`,
+				message,
 			},
 		});
 		const { ids, notification } = inspectEnvelopePrefix(text);
@@ -281,22 +302,13 @@ export class ChunkResponseParser {
 			return [];
 		}
 		let result: unknown;
-		let depth = 0;
-		let inString = false;
-		let escaped = false;
-		for (const c of data) {
-			if (inString) {
-				if (escaped) escaped = false;
-				else if (c === '\\') escaped = true;
-				else if (c === '"') inString = false;
-			} else if (c === '"') inString = true;
-			else if (c === '{' || c === '[') {
-				depth += 1;
-				if (depth > MAX_RESPONSE_DEPTH) {
-					this.reportDepth(data);
-					return [];
-				}
-			} else if (c === '}' || c === ']') depth -= 1;
+		const violation = findJsonStructureViolation(data, {
+			maxResponseBytes: this.maxBytes,
+			maxResponseDepth: this.maxDepth,
+		});
+		if (violation) {
+			this.reportStructure(data, violation);
+			return [];
 		}
 		try {
 			result = JSON.parse(data);
@@ -333,6 +345,7 @@ export class ChunkResponseParser {
 				if (c === OPEN_BRACE || c === OPEN_BRACKET) {
 					start = i;
 					this.depth = 1;
+					this.containers = 1;
 				} else if (c !== SPACE && c !== TAB && c !== LINE_FEED && c !== CARRIAGE_RETURN) {
 					garbage = true;
 				}
@@ -348,8 +361,15 @@ export class ChunkResponseParser {
 				this.inString = true;
 			} else if (c === OPEN_BRACE || c === OPEN_BRACKET) {
 				this.depth += 1;
-				if (this.depth > MAX_RESPONSE_DEPTH && !this.depthExceeded) {
-					this.depthExceeded = true;
+				this.containers += 1;
+				const violation = jsonStructureViolation(
+					this.depth,
+					this.containers,
+					this.maxDepth,
+					this.maxContainers,
+				);
+				if (violation && !this.structureViolation) {
+					this.structureViolation = violation;
 					this.discarding = true;
 					this.pendingParts = [this.messagePrefix(data.slice(start, i + 1))];
 				}
@@ -358,16 +378,16 @@ export class ChunkResponseParser {
 				if (this.depth === 0) {
 					const piece = data.slice(start, i + 1);
 					const length = this.messageLength + piece.length;
-					const prefix = this.depthExceeded
+					const prefix = this.structureViolation
 						? this.pendingParts[0]
 						: this.messagePrefix(piece);
 					const parts = this.pendingParts;
 					const oversized = this.discarding || length > this.maxBytes;
-					const depthExceeded = this.depthExceeded;
+					const violation = this.structureViolation;
 					// Release the old message before any allocation or error callback can throw.
 					this.reset();
-					if (depthExceeded) {
-						this.reportDepth(prefix);
+					if (violation) {
+						this.reportStructure(prefix, violation);
 					} else if (oversized) {
 						this.reportOversized(prefix, length);
 					} else {

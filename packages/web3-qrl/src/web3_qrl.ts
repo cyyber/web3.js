@@ -101,30 +101,29 @@ export class Web3QRL extends Web3Context<Web3QRLExecutionAPI, RegisteredSubscrip
 		});
 	}
 
-	// TODO Add returnFormat parameter
 	/**
 	 * Checks if the node is currently syncing.
 	 *
-	 * @returns Either a {@link SyncingStatusAPI}, or `false`.
+	 * @returns Either a formatted {@link SyncOutput}, or `false`. Numeric fields default to bigint.
 	 *
 	 * ```ts
 	 * web3.qrl.isSyncing().then(console.log);
 	 * > {
-	 *     startingBlock: '0x64',
-	 *     currentBlock: '0x138',
-	 *     highestBlock: '0x200',
-	 *     syncedAccounts: '0x0',
-	 *     syncedAccountBytes: '0x0',
-	 *     syncedBytecodes: '0x0',
-	 *     syncedBytecodeBytes: '0x0',
-	 *     syncedStorage: '0x0',
-	 *     syncedStorageBytes: '0x0',
-	 *     healedTrienodes: '0x0',
-	 *     healedTrienodeBytes: '0x0',
-	 *     healedBytecodes: '0x0',
-	 *     healedBytecodeBytes: '0x0',
-	 *     healingTrienodes: '0x0',
-	 *     healingBytecode: '0x0'
+	 *     startingBlock: 100n,
+	 *     currentBlock: 312n,
+	 *     highestBlock: 512n,
+	 *     syncedAccounts: 0n,
+	 *     syncedAccountBytes: 0n,
+	 *     syncedBytecodes: 0n,
+	 *     syncedBytecodeBytes: 0n,
+	 *     syncedStorage: 0n,
+	 *     syncedStorageBytes: 0n,
+	 *     healedTrienodes: 0n,
+	 *     healedTrienodeBytes: 0n,
+	 *     healedBytecodes: 0n,
+	 *     healedBytecodeBytes: 0n,
+	 *     healingTrienodes: 0n,
+	 *     healingBytecode: 0n
 	 * }
 	 * ```
 	 */

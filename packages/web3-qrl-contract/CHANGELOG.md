@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Pass 9 audit corrections
+
+- Encode sibling-layout indexed filters and post-filter historical logs with their selected ABI; reject unknown filter keys typed. Live subscriptions rely on node topic filtering and never locally post-filter values (P9-CT-1).
+- Restore an optional registry for public decodeEventABI, prefer a matching caller fragment, copy selected fragments, and reject non-string topic entries (P9-CT-2/3/4).
+- Document P9-CT-5: same-signature layouts with equal indexed counts cannot be distinguished. Named decoding prefers its bound fragment, allEvents the first match; supply the actual contract/version ABI.
+
 ### Pass 8 audit corrections
 
 - Preserve public `decodeEventABI` support for raw ABI fragments: derive a missing signature for both the named event and interface candidates without modifying caller input (P8R-2).

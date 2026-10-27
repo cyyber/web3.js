@@ -168,9 +168,10 @@ export class Web3RequestManager<
 			return true;
 		}
 
-		this.emit(Web3RequestManagerEvent.BEFORE_PROVIDER_CHANGE, this._provider);
+		const report = (error: unknown) => console.warn('A provider-change listener threw', error);
+		this.emitSafe(Web3RequestManagerEvent.BEFORE_PROVIDER_CHANGE, this._provider, report);
 		this._provider = newProvider;
-		this.emit(Web3RequestManagerEvent.PROVIDER_CHANGED, this._provider);
+		this.emitSafe(Web3RequestManagerEvent.PROVIDER_CHANGED, this._provider, report);
 		return true;
 	}
 

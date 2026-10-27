@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Pass 9 audit corrections
+
+- Defer socket notifications for an acknowledged subscription until registration promises resume, then flush parked notifications for installed ids before live delivery; the count/size cap applies only while ids are unknown. Provider-change callbacks are isolated per listener so throws/rejections cannot interrupt a swap. Non-Error subscription listener failures become `SubscriptionError` (P9-CORE-1/2).
+- Async listener rejections are reported after the rejected promise settles and can follow later data events. Base/contract subscriptions without error listeners drop these reports; attach an error listener to observe them.
+
 ### Pass 8 audit corrections
 
 - Install subscription ids before emitting connected; contain synchronous and asynchronous listener failures per listener. Buffer early notifications during registration/recovery (128 notifications and 1,048,576 serialized UTF-16 code units per manager), delivering them after awaiting subscribers can attach listeners. Cancellation and provider changes discard pending notifications. Buffer overflow is reported on the manager error event.

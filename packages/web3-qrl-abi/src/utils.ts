@@ -256,9 +256,10 @@ export const flattenTypes = (
 	includeTuple: boolean,
 	puts: ReadonlyArray<AbiParameter>,
 ): string[] => {
+	if (!Array.isArray(puts)) throw new AbiError('Invalid ABI parameters: expected an array');
 	const types: string[] = [];
 
-	puts.forEach(param => {
+	puts.forEach((param: AbiParameter) => {
 		// ABI JSON is untrusted input: a parameter without a string `type` is an error, not a
 		// raw TypeError from `.startsWith` / `.replace` below (I-10).
 		if (typeof param?.type !== 'string') {
@@ -266,7 +267,10 @@ export const flattenTypes = (
 				`Invalid ABI parameter: missing "type" in ${JSON.stringify(param) ?? 'undefined'}`,
 			);
 		}
-		if (typeof param.components === 'object') {
+		if (param.components !== undefined && !Array.isArray(param.components)) {
+			throw new AbiError('Invalid ABI parameter components: expected an array');
+		}
+		if (Array.isArray(param.components)) {
 			if (!param.type.startsWith('tuple')) {
 				throw new AbiError(
 					`Invalid value given "${param.type}". Error: components found but type is not tuple.`,

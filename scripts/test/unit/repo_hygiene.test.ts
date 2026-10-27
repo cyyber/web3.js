@@ -47,7 +47,14 @@ describe('repository hygiene (P4-L-45, P4-L-46, P4-L-50)', () => {
 		repo = mkdtempSync(join(tmpdir(), 'web3-hygiene-'));
 		git('init', '-q');
 		mkdirSync(join(repo, 'scripts'));
-		copyFileSync(join(root, 'scripts/check-repo-hygiene.js'), join(repo, 'scripts/check-repo-hygiene.js'));
+		copyFileSync(
+			join(root, 'scripts/check-repo-hygiene.js'),
+			join(repo, 'scripts/check-repo-hygiene.js'),
+		);
+		copyFileSync(
+			join(root, 'scripts/doctor-checks.js'),
+			join(repo, 'scripts/doctor-checks.js'),
+		);
 		write('.gitignore', '.secrets.json\n.env\n.env.*\ndist/\nlib/\nnode_modules\n');
 		write('packages/foo/src/index.ts', 'export {};\n');
 		write('config/tsconfig.cjs.json', '{}\n');
@@ -71,13 +78,39 @@ describe('repository hygiene (P4-L-45, P4-L-46, P4-L-50)', () => {
 	});
 
 	it.each(['.pnpmfile.cjs', 'packages/foo/.pnpmfile.cjs', 'packages/foo/pnpm-workspace.yaml'])(
-		'rejects alternate install policy at %s even when untracked', name => {
+		'rejects alternate install policy at %s even when untracked',
+		name => {
 			write(name, '{}');
 			const result = hygiene();
 			expect(result.status).toBe(1);
 			expect(result.stderr).toContain(`${name} can override the root install policy`);
 		},
 	);
+
+	it('rejects nested npmrc runtime overrides even when untracked', () => {
+		write(
+			'packages/foo/.npmrc',
+			'use-node-version=22.99.0\nnode-mirror:release=https://example.invalid/\n',
+		);
+		const result = hygiene();
+		expect(result.status).toBe(1);
+		expect(result.stderr).toContain('packages/foo/.npmrc');
+		expect(result.stderr).toContain('usenodeversion');
+		expect(result.stderr).toContain('nodemirror:release');
+	});
+
+	it('requires Markdown link targets to exist in the index as well as on disk', () => {
+		write('CHANGELOG.md', '[evidence](docs/audit-evidence.md#checks)');
+		write('docs/audit-evidence.md', '# Checks');
+		git('add', 'CHANGELOG.md');
+		expect(hygiene().stderr).toContain(
+			'missing or untracked Markdown file docs/audit-evidence.md',
+		);
+		git('add', 'docs/audit-evidence.md');
+		expect(hygiene().status).toBe(0);
+		rmSync(join(repo, 'docs/audit-evidence.md'));
+		expect(hygiene().status).toBe(1);
+	});
 
 	it('checks tracked symlinks named like excluded directories (dist, node_modules)', () => {
 		link('packages/foo/dist', '/etc');
@@ -86,8 +119,12 @@ describe('repository hygiene (P4-L-45, P4-L-46, P4-L-50)', () => {
 
 		const result = hygiene();
 		expect(result.status).toBe(1);
-		expect(result.stderr).toContain('FAIL packages/foo/dist must use a relative symlink target, not /etc');
-		expect(result.stderr).toContain('FAIL packages/foo/node_modules points outside the repository');
+		expect(result.stderr).toContain(
+			'FAIL packages/foo/dist must use a relative symlink target, not /etc',
+		);
+		expect(result.stderr).toContain(
+			'FAIL packages/foo/node_modules points outside the repository',
+		);
 	});
 
 	it('enforces the allowed symlink target prefixes of docs/symlink-template-policy.md', () => {
@@ -100,9 +137,15 @@ describe('repository hygiene (P4-L-45, P4-L-46, P4-L-50)', () => {
 
 		const result = hygiene();
 		expect(result.status).toBe(1);
-		expect(result.stderr).toContain('FAIL packages/foo/test/built points outside the allowed symlink targets');
-		expect(result.stderr).toContain('FAIL packages/foo/test/site points outside the allowed symlink targets');
-		expect(result.stderr).toContain('FAIL packages/foo/test/src-link points outside the allowed symlink targets');
+		expect(result.stderr).toContain(
+			'FAIL packages/foo/test/built points outside the allowed symlink targets',
+		);
+		expect(result.stderr).toContain(
+			'FAIL packages/foo/test/site points outside the allowed symlink targets',
+		);
+		expect(result.stderr).toContain(
+			'FAIL packages/foo/test/src-link points outside the allowed symlink targets',
+		);
 	});
 
 	it('rejects tracked generated output under tools/* as well as packages/*', () => {
@@ -112,7 +155,9 @@ describe('repository hygiene (P4-L-45, P4-L-46, P4-L-50)', () => {
 
 		const result = hygiene();
 		expect(result.status).toBe(1);
-		expect(result.stderr).toContain('FAIL tools/bar/lib/index.js is generated package output and must not be tracked');
+		expect(result.stderr).toContain(
+			'FAIL tools/bar/lib/index.js is generated package output and must not be tracked',
+		);
 		expect(result.stderr).toContain(
 			'FAIL packages/foo/.coverage/unit/coverage.json is generated coverage output and must not be tracked',
 		);
@@ -127,11 +172,19 @@ describe('repository hygiene (P4-L-45, P4-L-46, P4-L-50)', () => {
 		git('add', '-f', '.secrets.json', 'packages/foo/.env');
 		const result = hygiene();
 		expect(result.status).toBe(1);
-		expect(result.stderr).toContain('FAIL .secrets.json is a local secret file and must not be tracked');
-		expect(result.stderr).toContain('FAIL packages/foo/.env is a local secret file and must not be tracked');
+		expect(result.stderr).toContain(
+			'FAIL .secrets.json is a local secret file and must not be tracked',
+		);
+		expect(result.stderr).toContain(
+			'FAIL packages/foo/.env is a local secret file and must not be tracked',
+		);
 	});
 
 	it('fails when a local secret file is not covered by .gitignore', () => {
+		copyFileSync(
+			join(root, 'scripts/doctor-checks.js'),
+			join(repo, 'scripts/doctor-checks.js'),
+		);
 		write('.gitignore', 'dist/\n');
 		write('.env.production', 'KEY=1');
 		git('add', '.gitignore', 'packages', 'scripts', 'config', 'fixtures');

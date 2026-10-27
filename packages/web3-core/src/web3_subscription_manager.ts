@@ -445,16 +445,19 @@ export class Web3SubscriptionManager<
 	private _queueEarlyNotification(id: string, data: ProviderNotification): void {
 		// Unknown ids are untrusted. Bound both count and retained serialized size while
 		// registration is in flight; never let a silent subscribe retain arbitrary traffic.
+		if (this._earlyNotifications.length >= 128) {
+			this._reportManagerError(
+				new SubscriptionError('Subscription notification buffer limit exceeded'),
+			);
+			return;
+		}
 		let size: number;
 		try {
 			size = JSON.stringify(data).length;
 		} catch {
 			return;
 		}
-		if (
-			this._earlyNotifications.length >= 128 ||
-			this._earlyNotificationBytes + size > 1024 * 1024
-		) {
+		if (this._earlyNotificationBytes + size > 1024 * 1024) {
 			this._reportManagerError(
 				new SubscriptionError('Subscription notification buffer limit exceeded'),
 			);
@@ -485,12 +488,25 @@ export class Web3SubscriptionManager<
 		// Process if the received data is related to a subscription
 		if (typeof subscriptionId === 'string') {
 			const sub = this._subscriptions.get(subscriptionId);
-			if (
-				(!sub && this._subscribesInFlight > 0) ||
-				this._earlyNotifications.some(entry => entry.id === subscriptionId)
-			) {
+			if (sub) {
+				// A known id is live traffic, not an untrusted registration backlog. Drain its
+				// parked messages in order before this one, without applying the unknown-id cap.
+				const pending = this._earlyNotifications.filter(
+					entry => entry.id === subscriptionId,
+				);
+				this._earlyNotifications = this._earlyNotifications.filter(
+					entry => entry.id !== subscriptionId,
+				);
+				for (const entry of pending) this._earlyNotificationBytes -= entry.size;
+				for (const entry of pending) {
+					if (this._subscriptions.get(subscriptionId) !== sub) return;
+					sub.processSubscriptionData(entry.data);
+				}
+				if (this._subscriptions.get(subscriptionId) === sub)
+					sub.processSubscriptionData(data);
+			} else if (this._subscribesInFlight > 0) {
 				this._queueEarlyNotification(subscriptionId, data);
-			} else sub?.processSubscriptionData(data);
+			}
 		}
 	}
 	/**

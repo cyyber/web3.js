@@ -21,6 +21,7 @@ import {
 	isAbiConstructorFragment,
 	formatParam,
 	mapTypes,
+	flattenTypes,
 } from '../../src/utils';
 import {
 	jsonInterfaceInvalidData,
@@ -121,7 +122,11 @@ describe('utils', () => {
 	describe('ABI JSON edge cases (I-10)', () => {
 		it('rejects a parameter without a string type with an AbiError', () => {
 			expect(() =>
-				jsonInterfaceMethodToString({ type: 'function', name: 'f', inputs: [{ name: 'x' }] } as any),
+				jsonInterfaceMethodToString({
+					type: 'function',
+					name: 'f',
+					inputs: [{ name: 'x' }],
+				} as any),
 			).toThrow(AbiError);
 			expect(() =>
 				jsonInterfaceMethodToString({
@@ -149,4 +154,21 @@ describe('utils', () => {
 			});
 		});
 	});
+});
+
+// eslint-disable-next-line no-null/no-null
+test.each([null, {}, 'x', 5])('reports malformed ABI input arrays typed: %p', inputs => {
+	expect(() => flattenTypes(false, inputs as never)).toThrow(AbiError);
+});
+// eslint-disable-next-line no-null/no-null
+test.each([null, {}, 'x', 5])('reports malformed tuple components typed: %p', components => {
+	expect(() =>
+		flattenTypes(false, [{ type: 'tuple', name: 'arg', components }] as never),
+	).toThrow(AbiError);
+});
+
+test('rejects a non-array event input list when deriving its signature', () => {
+	expect(() => jsonInterfaceMethodToString({ name: 'Broken', inputs: 'x' } as never)).toThrow(
+		AbiError,
+	);
 });

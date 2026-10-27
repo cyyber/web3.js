@@ -202,7 +202,10 @@ Hygiene rejects `.pnpmfile.cjs` and nested `pnpm-workspace.yaml` files, includin
 untracked files, because they can replace the root install policy. Doctor also
 rejects setting-named local/global pnpm hooks, dependency extensions/patches/config
 packages, alternate build allow-lists and store-policy overrides in workspace or
-npmrc configuration. Lockfiles carrying hook/extension checksums or patches fail
+npmrc configuration. Runtime selection (`useNodeVersion`, `executionEnv`,
+`node-mirror:*`) and package-manager version management overrides are forbidden
+in both sources. Doctor inspects every tracked `.npmrc`; hygiene also inspects
+untracked `.npmrc` files, and CODEOWNERS routes nested files to devops. Lockfiles carrying hook/extension checksums or patches fail
 policy checks even if the corresponding setting has been removed.
 
 <!-- overrides:start -->

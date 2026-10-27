@@ -139,6 +139,10 @@ if (resolveOnly) {
 // Keep runtime module resolution away from the checkout's node_modules. Rebase only
 // the pinned local tarballs; registry resolutions and integrity hashes stay unchanged.
 const smokeRoot = mkdtempSync(join(tmpdir(), 'web3-release-smoke-'));
+// Keep failed projects only when explicitly requested for debugging.
+if (process.env.WEB3_KEEP_SMOKE_PROJECTS !== '1') {
+	process.on('exit', () => rmSync(smokeRoot, { recursive: true, force: true }));
+}
 const smokeTarballs = join(smokeRoot, 'tarballs');
 mkdirSync(smokeTarballs);
 const relocated = new Map(tarballs.map(tarball => {

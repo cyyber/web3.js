@@ -38,7 +38,11 @@ const until = async (check: () => boolean) => {
 	}
 };
 
-const setup = async (failHandshake = false, coalesced = false, dropUnsubscribe = false) => {
+const setup = async (
+	failHandshake = false,
+	coalesced: boolean | number = false,
+	dropUnsubscribe = false,
+) => {
 	const server = new WebSocketServer({ host: '127.0.0.1', port: 0 });
 	await new Promise<void>(resolve => server.once('listening', resolve));
 	let connections = 0;
@@ -79,12 +83,22 @@ const setup = async (failHandshake = false, coalesced = false, dropUnsubscribe =
 					const wire = (socket as unknown as { _socket: Socket })._socket;
 					wire.cork();
 					reply(id);
-					if (coalesced)
+					for (
+						let i = 0;
+						i < (typeof coalesced === 'number' ? coalesced : Number(coalesced));
+						i += 1
+					)
 						socket.send(
 							JSON.stringify({
 								jsonrpc: '2.0',
 								method: 'qrl_subscription',
-								params: { subscription: id, result: `first-${id}` },
+								params: {
+									subscription: id,
+									result:
+										typeof coalesced === 'number'
+											? `${id}:${i}`
+											: `first-${id}`,
+								},
 							}),
 						);
 					wire.uncork();
@@ -304,6 +318,29 @@ test('treats an unsubscribe written before connection loss as completed local re
 		await expect(sub.unsubscribe()).resolves.toBeUndefined();
 		expect(sub.id).toBeUndefined();
 		expect(test.manager.subscriptions.size).toBe(0);
+	} finally {
+		await test.close();
+	}
+});
+
+// This must exercise the wire: a mock that awaits registration between items misses the race.
+test('delivers 200 coalesced WS items in order after initial and recovery replies', async () => {
+	const test = await setup(false, 200);
+	try {
+		await new Promise<void>(resolve => test.provider.once('connect', () => resolve()));
+		const sub = await test.manager.subscribe('heads');
+		const data = jest.fn<void, [unknown]>();
+		const errors = jest.fn();
+		sub.on('data', data);
+		test.manager.on('error', errors);
+		await until(() => data.mock.calls.length === 200);
+		for (const socket of test.server.clients) socket.terminate();
+		await until(() => data.mock.calls.length === 400);
+		expect(data.mock.calls.map(([value]) => value)).toEqual(
+			['0x1', '0x2'].flatMap(id => Array.from({ length: 200 }, (_, i) => `${id}:${i}`)),
+		);
+		expect(errors).not.toHaveBeenCalled();
+		await sub.unsubscribe();
 	} finally {
 		await test.close();
 	}

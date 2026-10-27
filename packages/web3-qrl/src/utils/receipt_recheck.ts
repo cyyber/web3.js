@@ -28,6 +28,7 @@ import {
 import { format } from '@theqrl/web3-utils';
 import { isNullish, isObject, isUInt } from '@theqrl/web3-validator';
 
+import { assertRpcResult } from './invalid_response_error.js';
 import { transactionReceiptSchema } from '../schemas.js';
 import { isHash32, isValidUnsignedHexNumber } from './hex_guards.js';
 
@@ -87,6 +88,11 @@ export const recheckReceipt = async (
 		!isValidUnsignedHexNumber(fresh.blockNumber) ||
 		!isValidUnsignedHexNumber(fresh.status)
 	) {
+		return { kind: 'unknown' };
+	}
+	try {
+		assertRpcResult('qrl_getTransactionReceipt', fresh, transactionReceiptSchema);
+	} catch {
 		return { kind: 'unknown' };
 	}
 	if (fresh.blockHash.toLowerCase() === blockHashHex(receipt)) return { kind: 'unchanged' };

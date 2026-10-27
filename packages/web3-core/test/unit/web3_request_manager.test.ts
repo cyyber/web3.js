@@ -114,6 +114,12 @@ describe('Web3RequestManager', () => {
 				const providerString = 'http://mydomain.com';
 
 				const manager = new Web3RequestManager();
+				manager.on(Web3RequestManagerEvent.BEFORE_PROVIDER_CHANGE, value => {
+					emitSpy(Web3RequestManagerEvent.BEFORE_PROVIDER_CHANGE, value);
+				});
+				manager.on(Web3RequestManagerEvent.PROVIDER_CHANGED, value => {
+					emitSpy(Web3RequestManagerEvent.PROVIDER_CHANGED, value);
+				});
 				manager.setProvider(providerString);
 
 				expect(emitSpy).toHaveBeenCalledTimes(2);
@@ -151,6 +157,12 @@ describe('Web3RequestManager', () => {
 				const providerString = 'https://mydomain.com';
 
 				const manager = new Web3RequestManager();
+				manager.on(Web3RequestManagerEvent.BEFORE_PROVIDER_CHANGE, value => {
+					emitSpy(Web3RequestManagerEvent.BEFORE_PROVIDER_CHANGE, value);
+				});
+				manager.on(Web3RequestManagerEvent.PROVIDER_CHANGED, value => {
+					emitSpy(Web3RequestManagerEvent.PROVIDER_CHANGED, value);
+				});
 				manager.setProvider(providerString);
 
 				expect(emitSpy).toHaveBeenCalledTimes(2);
@@ -188,6 +200,12 @@ describe('Web3RequestManager', () => {
 				const providerString = 'ws://mydomain.com';
 
 				const manager = new Web3RequestManager();
+				manager.on(Web3RequestManagerEvent.BEFORE_PROVIDER_CHANGE, value => {
+					emitSpy(Web3RequestManagerEvent.BEFORE_PROVIDER_CHANGE, value);
+				});
+				manager.on(Web3RequestManagerEvent.PROVIDER_CHANGED, value => {
+					emitSpy(Web3RequestManagerEvent.PROVIDER_CHANGED, value);
+				});
 				manager.setProvider(providerString);
 
 				expect(emitSpy).toHaveBeenCalledTimes(2);

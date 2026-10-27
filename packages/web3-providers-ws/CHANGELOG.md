@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Pass 9 audit corrections
+
+- Enforce container-count limits and configurable maxResponseDepth (default 4096) before JSON.parse. Validate a single copy of socket options so a changing maxPayload getter cannot bypass validation (P9-TR-1/3).
+
 ### Pass 8 audit corrections
 
 - Contain throwing provider listeners and reject excessively nested JSON before parsing. Copy socket options at construction so later caller mutation cannot remove the validated wire limit. Failed manual reconnects preserve the automatic attempt budget.

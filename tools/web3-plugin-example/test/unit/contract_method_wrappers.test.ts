@@ -91,8 +91,6 @@ describe('ContractMethodWrappersPlugin', () => {
 
 			// Mocking getBlockByNumber for getEip1559GasPricing
 			requestManagerSendSpy.mockResolvedValueOnce({ baseFeePerGas: '1000000000' });
-			// Mocking block number for trySendTransaction call
-			requestManagerSendSpy.mockResolvedValueOnce('0x1');
 			requestManagerSendSpy.mockResolvedValueOnce(expectedTransactionHash);
 			// Mocking response for getTransactionReceipt for waitForTransactionReceipt; only a
 			// receipt with status 1 counts as success, anything else is treated as a revert (H-1)
@@ -107,8 +105,8 @@ describe('ContractMethodWrappersPlugin', () => {
 				recipient,
 				amount,
 			);
-			// The first call will be to `qrl_getBlockByNumber` and the second is to `qrl_blockNumber`. And the third one will be to `qrl_sendTransaction`:
-			expect(requestManagerSendSpy).toHaveBeenNthCalledWith(3, {
+			// Gas pricing precedes broadcast; block deadlines start only after the send reply.
+			expect(requestManagerSendSpy).toHaveBeenNthCalledWith(2, {
 				method: 'qrl_sendTransaction',
 				params: [
 					expect.objectContaining({

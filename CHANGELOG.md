@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Pass 9 audit corrections
+
+- Address all 18 pass-9 findings: preserve subscription bursts, bound JSON containers across all transports, allow deep traces, correct transaction/receipt handling and event filters, reject pnpm runtime overrides, and restore tracked audit evidence. Document indistinguishable event layouts (P9-CT-5).
+- Repository hygiene now rejects inline relative Markdown-file links to missing or untracked files. Tarball smoke projects are removed on exit; set `WEB3_KEEP_SMOKE_PROJECTS=1` to retain them for debugging.
+- Allow dense struct-logger traces with empty memory arrays near the response byte cap by budgeting one container per 16 configured bytes, while continuing to count empty arrays and objects (P9R-2).
+
 ### Pass 8 audit corrections
 
 - Address the 18 pass-8 findings: correct sync progress and receipt formatting, isolate subscription/provider callbacks, retain coalesced notifications, bound JSON nesting, distinguish event layouts, and close alternate install-policy sources. Document backfill delivery limits, isolate tarball smoke installs from the workspace, restore release evidence, and make the zizmor check enforce findings.

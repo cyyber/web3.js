@@ -4,6 +4,7 @@ const { execFileSync, spawnSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
 
+const { npmrcPolicyFailures } = require('./doctor-checks');
 const root = path.resolve(__dirname, '..');
 const failures = [];
 
@@ -226,6 +227,9 @@ function checkWorkspaceTree() {
 		if (baseName === '.pnpmfile.cjs' || (baseName === 'pnpm-workspace.yaml' && posixPath !== 'pnpm-workspace.yaml')) {
 			fail(`${posixPath} can override the root install policy and must not exist`);
 		}
+		if (baseName === '.npmrc' && entry.isFile()) {
+			for (const message of npmrcPolicyFailures(fs.readFileSync(absolutePath, 'utf8'))) fail(`${posixPath}: ${message}`);
+		}
 		if (entry.isSymbolicLink()) {
 			checkSymlink(relativePath, absolutePath, posixPath);
 			return;
@@ -247,6 +251,21 @@ function checkWorkspaceTree() {
 	});
 }
 
+function checkTrackedMarkdownLinks() {
+	const tracked = new Set(trackedFiles());
+	for (const file of tracked) {
+		if (!file.endsWith('.md')) continue;
+		const text = fs.readFileSync(path.join(root, file), 'utf8').replace(/^```[^\n]*\n[\s\S]*?^```[^\n]*$/gm, '');
+		for (const match of text.matchAll(/\[[^\]\n]*\]\(([^\s)#]+\.md)(?:#[^)]*)?\)/g)) {
+			const target = match[1];
+			if (/^(?:[a-z]+:|\/)/i.test(target)) continue;
+			const resolved = path.posix.normalize(path.posix.join(path.posix.dirname(file), target));
+			if (!tracked.has(resolved)) fail(`${file} links to missing or untracked Markdown file ${resolved}`);
+		}
+	}
+}
+
+checkTrackedMarkdownLinks();
 checkTrackedForbiddenFiles();
 checkTrackedFileContents();
 checkWorkspaceTree();

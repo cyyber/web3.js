@@ -228,11 +228,37 @@ export const isOrList = (input: AbiParameter, value: unknown): value is unknown[
 	return true;
 };
 
+// Public callers can pass ordinary ABI JSON without Contract's signature annotations.
+const eventSignature = (event: AbiEventFragment & { signature?: HexString }): HexString =>
+	event.signature ?? encodeEventSignature(jsonInterfaceMethodToString(event));
+
 export const encodeEventABI = (
 	{ address }: ContractOptions,
 	event: AbiEventFragment & { signature: string },
 	options?: Filter,
+	jsonInterface: ReadonlyArray<AbiFragment & { signature?: HexString }> = [],
 ) => {
+	const keys = Object.keys(options?.filter ?? {});
+	const layouts = [event, ...jsonInterface.filter(isAbiEventFragment)].filter(
+		candidate =>
+			candidate.name !== ALL_EVENTS &&
+			(event.name === ALL_EVENTS ||
+				(candidate.anonymous === event.anonymous &&
+					rightPad(eventSignature(candidate), TOPIC_HEX_LENGTH).toLowerCase() ===
+						rightPad(eventSignature(event), TOPIC_HEX_LENGTH).toLowerCase())),
+	);
+	for (const key of keys) {
+		if (!layouts.some(layout => layout.inputs?.some(input => input.name === key))) {
+			throw new AbiError(`Unknown event filter input: ${key}`);
+		}
+	}
+	if (event.name !== ALL_EVENTS && keys.length > 0) {
+		const layout = layouts.find(candidate =>
+			keys.every(key => candidate.inputs?.some(input => input.name === key)),
+		);
+		if (!layout) throw new AbiError('Event filter inputs do not belong to a single layout');
+		event = { ...layout, signature: eventSignature(layout) };
+	}
 	const topics = options?.topics;
 	const filter = options?.filter ?? {};
 	const opts: Writeable<Filter> = {};
@@ -310,16 +336,11 @@ const malformedLog = (log: unknown, reason: string): ResponseError =>
 /** A signature may be shared by events with different indexed arguments. */
 export class EventTopicCountError extends AbiError {}
 
-// Public callers can pass ordinary ABI JSON without Contract's signature annotations.
-const eventSignature = (event: AbiEventFragment & { signature?: HexString }): HexString =>
-	event.signature ?? encodeEventSignature(jsonInterfaceMethodToString(event));
-
-export const decodeEventABI = (
+export const selectEventABI = (
 	event: AbiEventFragment & { signature?: HexString },
 	data: LogsInput,
-	jsonInterface: ReadonlyArray<AbiFragment & { signature?: HexString }>,
-	returnFormat: DataFormat = DEFAULT_RETURN_FORMAT,
-): EventLog => {
+	jsonInterface: ReadonlyArray<AbiFragment & { signature?: HexString }> = [],
+): AbiEventFragment & { signature?: HexString } => {
 	// The log is node supplied: anything but an object cannot be decoded.
 	if (typeof data !== 'object' || isNullish(data) || Array.isArray(data)) {
 		throw malformedLog(data, 'expected a log object');
@@ -330,18 +351,27 @@ export const decodeEventABI = (
 		throw malformedLog(data, '"topics" is not an array');
 	}
 
+	if (!isNullish(jsonInterface) && !Array.isArray(jsonInterface)) {
+		throw new AbiError('Invalid event ABI registry: expected an array');
+	}
+	if (data.topics?.some(topic => typeof topic !== 'string')) {
+		throw malformedLog(data, 'every topic must be a string');
+	}
 	let modifiedEvent = { ...event };
 
-	const result = format(logSchema, data, returnFormat);
 	const topics: string[] = Array.isArray(data.topics) ? data.topics : [];
 	const topic0 = typeof topics[0] === 'string' ? topics[0].toLowerCase() : undefined;
 
 	// A signature does not encode which inputs are indexed. Select the compatible
 	// fragment when an ABI contains both ERC-20 and ERC-721 forms of an event.
-	const candidates = jsonInterface.filter(
+	const candidates = [
+		event,
+		...((jsonInterface ?? []) as ReadonlyArray<AbiFragment & { signature?: HexString }>),
+	].filter(
 		j =>
 			isAbiEventFragment(j) &&
 			!j.anonymous &&
+			j.name !== ALL_EVENTS &&
 			topic0 !== undefined &&
 			rightPad(eventSignature(j), TOPIC_HEX_LENGTH).toLowerCase() === topic0,
 	) as (AbiEventFragment & { signature?: HexString })[];
@@ -359,7 +389,7 @@ export const decodeEventABI = (
 			candidates.find(
 				j => (j.inputs ?? []).filter(input => input.indexed).length + 1 === topics.length,
 			) ?? candidates[0];
-		if (matched) modifiedEvent = matched;
+		if (matched) modifiedEvent = { ...matched };
 		else if (modifiedEvent.name === ALL_EVENTS) {
 			modifiedEvent = { anonymous: true } as unknown as AbiEventFragment & {
 				signature: string;
@@ -378,6 +408,19 @@ export const decodeEventABI = (
 			);
 		}
 	}
+
+	return modifiedEvent;
+};
+
+export const decodeEventABI = (
+	event: AbiEventFragment & { signature?: HexString },
+	data: LogsInput,
+	jsonInterface: ReadonlyArray<AbiFragment & { signature?: HexString }> = [],
+	returnFormat: DataFormat = DEFAULT_RETURN_FORMAT,
+): EventLog => {
+	const modifiedEvent = selectEventABI(event, data, jsonInterface);
+	const result = format(logSchema, data, returnFormat);
+	const topics = data.topics ?? [];
 
 	const argTopics = modifiedEvent.anonymous ? topics : topics.slice(1);
 	return {

@@ -125,9 +125,23 @@ export async function isSyncing<ReturnFormat extends DataFormat = typeof DEFAULT
 	web3Context: Web3Context<QRLExecutionAPI>,
 	returnFormat: ReturnFormat = DEFAULT_RETURN_FORMAT as ReturnFormat,
 ): Promise<false | FormatType<SyncOutput, ReturnFormat>> {
+	returnFormat = returnFormat ?? (DEFAULT_RETURN_FORMAT as ReturnFormat);
 	const response = await qrlRpcMethods.getSyncing(web3Context.requestManager);
 	if (response === false) return false;
 	assertRpcResult('qrl_syncing', response, syncSchema);
+	if (
+		['startingBlock', 'currentBlock', 'highestBlock'].some(
+			key =>
+				!Object.prototype.hasOwnProperty.call(response, key) ||
+				(response as Record<string, unknown>)[key] === undefined,
+		)
+	) {
+		throw invalidResponseError(
+			'qrl_syncing',
+			'startingBlock, currentBlock and highestBlock quantities',
+			response,
+		);
+	}
 	return format(syncSchema, response as SyncOutput, returnFormat);
 }
 
@@ -397,6 +411,7 @@ export function sendTransaction<
 	returnFormat: ReturnFormat,
 	options: SendTransactionOptions<ResolveType> = { checkRevertBeforeSending: true },
 ): Web3PromiEvent<ResolveType, SendTransactionEvents<ReturnFormat>> {
+	returnFormat = returnFormat ?? (DEFAULT_RETURN_FORMAT as ReturnFormat);
 	const promiEvent = new Web3PromiEvent<ResolveType, SendTransactionEvents<ReturnFormat>>(
 		(resolve, reject) => {
 			setImmediate(() => {
@@ -663,6 +678,7 @@ export function sendSignedTransaction<
 	returnFormat: ReturnFormat,
 	options: SendSignedTransactionOptions<ResolveType> = { checkRevertBeforeSending: true },
 ): Web3PromiEvent<ResolveType, SendSignedTransactionEvents<ReturnFormat>> {
+	returnFormat = returnFormat ?? (DEFAULT_RETURN_FORMAT as ReturnFormat);
 	const promiEvent = new Web3PromiEvent<ResolveType, SendSignedTransactionEvents<ReturnFormat>>(
 		(resolve, reject) => {
 			setImmediate(() => {

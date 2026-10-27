@@ -1182,12 +1182,11 @@ describe('Contract', () => {
 			expect(pastEventFilterArray).toHaveLength(1);
 			expect(pastEventFilterArray[0]).toStrictEqual(AllGetPastEventsData.response[1]);
 
-			const pastEventFilterWithIncorrectParam = await deployedContract.getPastEvents({
-				filter: {
-					incorrectParam: 'test',
-				},
-			});
-			expect(pastEventFilterWithIncorrectParam).toHaveLength(0);
+			await expect(
+				deployedContract.getPastEvents({
+					filter: { incorrectParam: 'test' },
+				}),
+			).rejects.toThrow('Unknown event filter input: incorrectParam');
 
 			spyTx.mockClear();
 			spyGetLogs.mockClear();
@@ -1275,11 +1274,9 @@ describe('Contract', () => {
 				return Promise.resolve(newContract) as any;
 			});
 
-			const spyGetLogs = jest
-				.spyOn(qrl, 'getLogs')
-				.mockImplementation(() => {
-					throw new Error('Inner error');
-				});
+			const spyGetLogs = jest.spyOn(qrl, 'getLogs').mockImplementation(() => {
+				throw new Error('Inner error');
+			});
 
 			const deployedContract = await contract
 				.deploy({

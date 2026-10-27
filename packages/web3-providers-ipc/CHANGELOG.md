@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Pass 9 audit corrections
+
+- Enforce container-count limits and configurable maxResponseDepth (default 4096) while scanning streams; discard rejected messages and resume at the next boundary (P9-TR-1/3).
+
 ### Pass 8 audit corrections
 
 - Bound JSON nesting and contain throwing provider/parser listeners. Failed manual reconnects during backoff preserve the automatic attempt budget.

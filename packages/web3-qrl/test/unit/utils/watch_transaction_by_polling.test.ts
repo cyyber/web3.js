@@ -16,10 +16,16 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 import { Web3Context, Web3PromiEvent } from '@theqrl/web3-core';
 import { format, numberToHex, sha3Raw } from '@theqrl/web3-utils';
-import { DEFAULT_RETURN_FORMAT, TransactionReceipt, Web3QRLExecutionAPI } from '@theqrl/web3-types';
+import {
+	DEFAULT_RETURN_FORMAT,
+	FMT_NUMBER,
+	TransactionReceipt,
+	Web3QRLExecutionAPI,
+} from '@theqrl/web3-types';
 import { qrlRpcMethods } from '@theqrl/web3-rpc-methods';
 import {
 	BaseWeb3Error,
+	FormatterError,
 	TransactionError,
 	TransactionMissingReceiptOrBlockHashError,
 } from '@theqrl/web3-errors';
@@ -151,6 +157,30 @@ describe('watchTransactionByPolling', () => {
 			jest.clearAllTimers();
 			jest.useRealTimers();
 			jest.resetAllMocks();
+		});
+
+		it('stops after repeated moved-receipt format failures', async () => {
+			(qrlRpcMethods.getBlockByNumber as jest.Mock).mockResolvedValue(mockBlockData);
+			(qrlRpcMethods.getTransactionReceipt as jest.Mock).mockResolvedValue({
+				...expectedTransactionReceipt,
+				blockHash: `0x${'55'.repeat(32)}`,
+				effectiveGasPrice: '0x1000000000000000',
+			});
+			const errors = jest.fn();
+			promiEvent.on('error', errors);
+			WatchTransactionByPolling.watchTransactionByPolling({
+				web3Context,
+				transactionReceipt: formattedTransactionReceipt,
+				transactionPromiEvent: promiEvent as never,
+				returnFormat: { ...DEFAULT_RETURN_FORMAT, number: FMT_NUMBER.NUMBER },
+			});
+			await jest.advanceTimersByTimeAsync(1000);
+			expect(errors).toHaveBeenCalledTimes(1);
+			expect(errors.mock.calls[0][0]).toBeInstanceOf(FormatterError);
+			expect(qrlRpcMethods.getBlockByNumber).toHaveBeenCalledTimes(
+				MAX_CONSECUTIVE_POLLING_ERRORS,
+			);
+			expect(jest.getTimerCount()).toBe(0);
 		});
 
 		it('reports throwing confirmation listeners and still stops at the threshold', async () => {

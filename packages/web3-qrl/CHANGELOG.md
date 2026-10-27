@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Pass 9 audit corrections
+
+- Reset polling errors only after a successful confirmation step and validate reorg-moved receipts before adoption. Repeated receipt-format errors stop polling and report failure (P9-QRL-1/2).
+- Start block-inclusion deadlines after the broadcast reply; transactionSendTimeout continues to bound the broadcast. Normalize nullish returnFormat before send/formatting, and require all three core syncing fields (P9-QRL-3/4/5). isSyncing defaults to bigint quantities; malformed syncing replies now also surface as InvalidResponseError through QRNS network checks.
+
 ### Pass 8 audit corrections
 
 - Accept and format go-qrl syncing notifications with Go-cased numeric fields, including PulledStates/KnownStates. isSyncing now validates RPC responses and accepts a returnFormat; its default numeric output is bigint (P8-QRL-1/3).

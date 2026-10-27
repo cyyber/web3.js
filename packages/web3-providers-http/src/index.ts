@@ -32,6 +32,7 @@ import {
 	ConnectionTimeoutError,
 	HttpStatusError,
 	InvalidClientError,
+	InvalidResponseError,
 	InvalidConnectionError,
 	MethodNotImplementedError,
 	ProviderCapabilityError,
@@ -42,6 +43,7 @@ import {
 	ResponseTooLargeError,
 } from '@theqrl/web3-errors';
 import {
+	assertJsonStructureBounds,
 	composeAbortSignal,
 	isNullish,
 	resolveProviderBounds,
@@ -260,6 +262,7 @@ export default class HttpProvider<
 			}
 		} catch (error) {
 			if (
+				error instanceof InvalidResponseError ||
 				error instanceof ResponseTooLargeError ||
 				error instanceof ProviderCapabilityError ||
 				signal.aborted
@@ -500,6 +503,7 @@ export default class HttpProvider<
 
 	private async parseBoundedJson<T>(response: Response, signal: AbortSignal): Promise<T> {
 		const text = await this.readBoundedText(response, signal);
+		assertJsonStructureBounds(text, this.bounds);
 		try {
 			return JSON.parse(text) as T;
 		} catch (err) {

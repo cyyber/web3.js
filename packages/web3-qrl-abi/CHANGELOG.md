@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Pass 9 audit corrections
+
+- Reject non-array ABI parameter lists and tuple components with AbiError instead of raw TypeError (P9-ABI-1).
+
 ### Pass 7 audit corrections
 
 - Accept Number.MAX_SAFE_INTEGER and its negative through ABI and typed-data encoding. Ignore undefined extra keys and empty undeclared domain keys while still requiring declared fields (P7-ABI-1/2).

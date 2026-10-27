@@ -19,10 +19,8 @@ import { QRLExecutionAPI, Bytes } from '@theqrl/web3-types';
 import { AsyncFunction, rejectIfTimeout } from '@theqrl/web3-utils';
 import { TransactionSendTimeoutError } from '@theqrl/web3-errors';
 
-import { rejectIfBlockTimeout, ResourceCleaner } from './reject_if_block_timeout.js';
-
 /**
- * An internal function to send a transaction or throws if sending did not finish during the timeout during the blocks-timeout.
+ * Sends a transaction with a wall-clock deadline. Block deadlines start after the broadcast reply.
  * @param web3Context - the context to read the configurations from
  * @param sendTransactionFunc - the function that will send the transaction (could be sendTransaction or sendRawTransaction)
  * @param transactionHash - to be used inside the exception message if there will be any exceptions.
@@ -41,30 +39,11 @@ export async function trySendTransaction(
 		}),
 	);
 
-	let blockTimeoutResourceCleaner: ResourceCleaner | undefined;
-	let waiting = true;
-
 	try {
-		// The send timeout covers setup as well as sending. Keep the send behind successful
-		// setup, and observe the setup promise even if the timeout wins first.
-		const sendWhenReady = rejectIfBlockTimeout(web3Context, transactionHash).then(
-			async ([rejectOnBlockTimeout, resourceCleaner]) => {
-				if (!waiting) {
-					// A late watcher must be cleaned up without submitting the transaction.
-					resourceCleaner.clean();
-					return rejectOnBlockTimeout;
-				}
-				blockTimeoutResourceCleaner = resourceCleaner;
-				return Promise.race([
-					Promise.resolve().then(sendTransactionFunc),
-					rejectOnBlockTimeout,
-				]);
-			},
-		);
-		return await Promise.race([sendWhenReady, rejectOnTimeout]);
+		// Block inclusion deadlines belong to waitForTransactionReceipt, after the node
+		// returns a hash. A header during broadcast cannot establish that sending failed.
+		return await Promise.race([Promise.resolve().then(sendTransactionFunc), rejectOnTimeout]);
 	} finally {
-		waiting = false;
 		clearTimeout(timeoutId);
-		blockTimeoutResourceCleaner?.clean();
 	}
 }

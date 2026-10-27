@@ -198,6 +198,11 @@ export abstract class SocketProvider<
 	private _connectionTimer?: ReturnType<typeof setTimeout>;
 	/** The pending reconnect attempt armed by {@link _reconnect}, so it can be cancelled. */
 	private _reconnectTimer?: ReturnType<typeof setTimeout>;
+	// A subscribe reply can share a socket read with hundreds of notifications. The
+	// manager cannot install its id until the reply promise resumes. Park only ids
+	// acknowledged by an outstanding subscribe request, then dispatch after that turn.
+	private readonly _acknowledgedSubscriptions = new Map<string, JsonRpcNotification[]>();
+	private _subscriptionNotificationTimer?: ReturnType<typeof setTimeout>;
 	private _peakInFlight = 0;
 	private readonly _onDiagnostics?: (diagnostics: SocketProviderDiagnostics) => void;
 	protected _socketConnection?: unknown;
@@ -258,6 +263,7 @@ export abstract class SocketProvider<
 			{
 				framed: this._isFramedTransport(),
 				maxResponseBytes: this._providerBounds.maxResponseBytes,
+				maxResponseDepth: this._providerBounds.maxResponseDepth,
 			},
 		);
 		this.chunkResponseParser.onError((error, requestIds) => {
@@ -299,6 +305,7 @@ export abstract class SocketProvider<
 			// Bytes left over from a previous connection must never prefix the first message of
 			// this one.
 			this.chunkResponseParser.reset();
+			this._clearSubscriptionNotifications();
 			this._rejectSentRequests();
 			this._openSocketConnection();
 			this._connectionStatus = 'connecting';
@@ -566,6 +573,7 @@ export abstract class SocketProvider<
 		this._cancelReconnect();
 		this._clearConnectionTimer();
 		this.chunkResponseParser.reset();
+		this._clearSubscriptionNotifications();
 		this._removeSocketListeners();
 		if (this.getStatus() !== 'disconnected') {
 			this._closeSocketConnection(disconnectCode, data);
@@ -721,6 +729,7 @@ export abstract class SocketProvider<
 		this._cancelReconnect();
 		this._clearConnectionTimer();
 		this.chunkResponseParser.reset();
+		this._clearSubscriptionNotifications();
 		// Previously these maps were simply cleared, which abandoned every caller's promise
 		// in `pending` forever. Reset cancels outstanding work; it does not forget it.
 		this._rejectAllRequests(
@@ -739,6 +748,7 @@ export abstract class SocketProvider<
 		// The attempt that just failed must not time out during the back-off (P4-L-16).
 		this._clearConnectionTimer();
 		this.chunkResponseParser.reset();
+		this._clearSubscriptionNotifications();
 		this._rejectSentRequests();
 
 		if (this._reconnectAttempts < this._reconnectOptions.maxAttempts) {
@@ -959,6 +969,31 @@ export abstract class SocketProvider<
 		}
 	}
 
+	private _clearSubscriptionNotifications(): void {
+		if (this._subscriptionNotificationTimer !== undefined)
+			clearTimeout(this._subscriptionNotificationTimer);
+		this._subscriptionNotificationTimer = undefined;
+		this._acknowledgedSubscriptions.clear();
+	}
+
+	private _acknowledgeSubscription(id: string): void {
+		if (!this._acknowledgedSubscriptions.has(id)) this._acknowledgedSubscriptions.set(id, []);
+		if (this._subscriptionNotificationTimer !== undefined) return;
+		this._subscriptionNotificationTimer = setTimeout(() => {
+			this._subscriptionNotificationTimer = undefined;
+			for (const [subscriptionId, notifications] of [...this._acknowledgedSubscriptions]) {
+				for (const notification of notifications) {
+					// A listener can disconnect/reset the provider. Never replay across that boundary.
+					if (this._acknowledgedSubscriptions.get(subscriptionId) !== notifications)
+						break;
+					this._emit('message', notification);
+				}
+				if (this._acknowledgedSubscriptions.get(subscriptionId) === notifications)
+					this._acknowledgedSubscriptions.delete(subscriptionId);
+			}
+		}, 0);
+	}
+
 	protected _onMessage(event: MessageEvent): void {
 		let responses: JsonRpcResponse[];
 		try {
@@ -1008,7 +1043,10 @@ export abstract class SocketProvider<
 			// timer. The `*_subscribe` call that established it was bounded like any
 			// other request; from here the stream is governed by reconnect, unsubscribe,
 			// and disconnect semantics. There is no built-in idle heartbeat.
-			this._emit('message', response);
+			const notification = response as JsonRpcNotification;
+			const pending = this._acknowledgedSubscriptions.get(notification.params.subscription);
+			if (pending) pending.push(notification);
+			else this._emit('message', response);
 			return;
 		}
 
@@ -1043,6 +1081,16 @@ export abstract class SocketProvider<
 			// Settled before the event goes out: a `message` listener that throws must not
 			// leave the request to fail by deadline although its reply arrived (P4-L-20). The
 			// throw is reported by the caller's per-response catch.
+			const request = this._sentRequestsQueue.get(requestId)?.payload;
+			if (
+				!Array.isArray(request) &&
+				request?.method === 'qrl_subscribe' &&
+				jsonRpc.isResponseWithResult(response) &&
+				typeof response.result === 'string' &&
+				/^0x[0-9a-f]+$/i.test(response.result)
+			) {
+				this._acknowledgeSubscription(response.result);
+			}
 			this._settleRequest(requestId, { resolve: response });
 			this._emit('message', response);
 		} else {
@@ -1060,6 +1108,7 @@ export abstract class SocketProvider<
 	protected _clearQueues(event?: ConnectionEvent) {
 		this._clearConnectionTimer();
 		this.chunkResponseParser.reset();
+		this._clearSubscriptionNotifications();
 		this._rejectAllRequests(new ConnectionNotOpenError(event));
 		this._removeSocketListeners();
 	}

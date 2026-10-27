@@ -93,7 +93,12 @@ export abstract class Web3Subscription<
 	) {
 		this.emitSafe(eventName, params, error => {
 			if (eventName === 'error') console.warn('A subscription error listener threw', error);
-			else this._processSubscriptionError(error as Error);
+			else
+				this._processSubscriptionError(
+					error instanceof Error
+						? error
+						: new SubscriptionError(BaseWeb3Error.convertToString(error)),
+				);
 		});
 	}
 

@@ -27,6 +27,7 @@ import {
 	ConnectionTimeoutError,
 	ProviderCapabilityError,
 	ProviderError,
+	InvalidResponseError,
 	RequestTimeoutError,
 	ResponseTooLargeError,
 } from '@theqrl/web3-errors';
@@ -792,12 +793,81 @@ describe('dispatcher option validation (pass-7)', () => {
 	);
 });
 
+test.each([undefined, { dispatch: jest.fn() }])(
+	'accepts an optional native dispatcher: %p',
+	async dispatcher => {
+		mockFetch.mockReset();
+		const { stream } = countingStream([
+			encoder.encode(JSON.stringify({ jsonrpc: '2.0', id: 42, result: '0x1' })),
+		]);
+		mockFetch.mockResolvedValue(fakeResponse({ body: stream }));
+		const provider = new HttpProvider('http://127.0.0.1:8545', {
+			providerOptions: { dispatcher },
+		});
+		await expect(provider.request(payload)).resolves.toHaveProperty('result', '0x1');
+		expect(mockFetch).toHaveBeenCalledWith(
+			expect.any(String),
+			expect.objectContaining({ dispatcher }),
+		);
+	},
+);
 
-test.each([undefined, { dispatch: jest.fn() }])('accepts an optional native dispatcher: %p', async dispatcher => {
-	mockFetch.mockReset();
-	const { stream } = countingStream([encoder.encode(JSON.stringify({ jsonrpc: '2.0', id: 42, result: '0x1' }))]);
-	mockFetch.mockResolvedValue(fakeResponse({ body: stream }));
-	const provider = new HttpProvider('http://127.0.0.1:8545', { providerOptions: { dispatcher } });
-	await expect(provider.request(payload)).resolves.toHaveProperty('result', '0x1');
-	expect(mockFetch).toHaveBeenCalledWith(expect.any(String), expect.objectContaining({ dispatcher }));
+test.each([
+	[200, '[]'],
+	[500, '[]'],
+	[200, '{}'],
+	[500, '{}'],
+] as const)(
+	'rejects empty-container bombs in HTTP status %s before JSON.parse (item=%s)',
+	async (status, item) => {
+		const provider = new HttpProvider('http://localhost:8545', { maxResponseBytes: 65536 });
+		const body = Buffer.from('{"id":42,"result":[' + `${item},`.repeat(5000) + item + ']}');
+		mockFetch.mockResolvedValueOnce(fakeResponse({ status, body }));
+		await expect(provider.request(payload)).rejects.toThrow(InvalidResponseError);
+	},
+);
+
+test.each([65536, DEFAULT_MAX_RESPONSE_BYTES])(
+	'HTTP accepts struct-logger traces with empty memory near the byte cap (%s)',
+	async maxResponseBytes => {
+		const entry = {
+			pc: 0,
+			op: 'PUSH1',
+			gas: 900000,
+			gasCost: 3,
+			depth: 1,
+			stack: ['0x1'],
+			memory: [],
+		};
+		const encoded = JSON.stringify(entry);
+		const prefix =
+			'{"jsonrpc":"2.0","id":42,"result":{"gas":1,"failed":false,"returnValue":"","structLogs":[';
+		const suffix = ']}}';
+		const count = Math.floor(
+			(maxResponseBytes - prefix.length - suffix.length + 1) / (encoded.length + 1),
+		);
+		const body = Buffer.from(prefix + `${encoded},`.repeat(count - 1) + encoded + suffix);
+		expect(body.length).toBeLessThanOrEqual(maxResponseBytes);
+		expect(body.length).toBeGreaterThan(maxResponseBytes * 0.99);
+		mockFetch.mockResolvedValueOnce(fakeResponse({ body }));
+		const provider = new HttpProvider('http://localhost:8545', { maxResponseBytes });
+		const reply = await provider.request(payload);
+		expect(reply).toHaveProperty('result.structLogs.length', count);
+		expect(reply).toHaveProperty('result.structLogs.0', entry);
+		expect(reply).toHaveProperty(`result.structLogs.${count - 1}`, entry);
+	},
+);
+
+test('HTTP accepts 1024-frame traces and enforces a custom depth', async () => {
+	const body = Buffer.from(
+		'{"id":42,"result":' + '{"calls":['.repeat(1024) + '{}' + ']}'.repeat(1024) + '}',
+	);
+	mockFetch.mockResolvedValueOnce(fakeResponse({ body }));
+	await expect(
+		new HttpProvider('http://localhost:8545').request(payload),
+	).resolves.toHaveProperty('id', 42);
+	mockFetch.mockResolvedValueOnce(fakeResponse({ body }));
+	await expect(
+		new HttpProvider('http://localhost:8545', { maxResponseDepth: 100 }).request(payload),
+	).rejects.toThrow('nesting depth 100');
 });

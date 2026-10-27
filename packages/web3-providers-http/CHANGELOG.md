@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Pass 9 audit corrections
+
+- Apply pre-parse container and depth limits to successful and HTTP-error responses. maxResponseDepth defaults to 4096; structural violations surface as InvalidResponseError (P9-TR-2/3).
+
 ### Pass 8 audit corrections
 
 - Correct redirect opt-in documentation: native fetch strips credential headers on an origin change (including port), while custom API-key headers can reach any redirect target (P8-TR-4).

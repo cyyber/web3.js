@@ -97,6 +97,7 @@ import {
 import { ALL_EVENTS, ALL_EVENTS_ABI, TOPIC_HEX_LENGTH } from './constants.js';
 import {
 	decodeEventABI,
+	selectEventABI,
 	EventTopicCountError,
 	decodeMethodReturn,
 	encodeEventABI,
@@ -956,6 +957,7 @@ export class Contract<Abi extends ContractAbi>
 			this.options,
 			abi,
 			eventOptions,
+			this._jsonInterface,
 		);
 		// The logs are fetched in the wire format: `decodeEventABI` needs hex `data` and `topics`
 		// and formats the decoded event with the caller's format itself (P4-L-29).
@@ -1004,19 +1006,11 @@ export class Contract<Abi extends ContractAbi>
 			return decodedLogs.filter(log => {
 				if (typeof log === 'string') return true;
 
-				// allEvents has no inputs; resolve its event ABI to identify indexed types that require hashing.
-				// A decoded log carries the 32-byte signature hash, a fragment the 64-byte topic
-				// `encodeEventSignature` returns: compare both as topics.
-				const logAbi =
-					abi.name === ALL_EVENTS
-						? this._jsonInterface.find(
-								item =>
-									isAbiEventFragment(item) &&
-									typeof log.signature === 'string' &&
-									rightPad(item.signature, TOPIC_HEX_LENGTH).toLowerCase() ===
-										rightPad(log.signature, TOPIC_HEX_LENGTH).toLowerCase(),
-							)
-						: abi;
+				const logAbi = selectEventABI(
+					abi,
+					{ ...log.raw } as LogsInput,
+					this._jsonInterface,
+				);
 
 				return filterKeys.every((key: string) => {
 					const inputAbi = logAbi?.inputs?.find(input => input.name === key);
@@ -1549,6 +1543,7 @@ export class Contract<Abi extends ContractAbi>
 				this.options,
 				abi,
 				params[0] as EventParameters,
+				this._jsonInterface,
 			);
 			const sub = new LogsSubscription(
 				{

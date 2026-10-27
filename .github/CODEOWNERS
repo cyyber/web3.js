@@ -23,7 +23,7 @@
 /scripts/check-repo-hygiene.js @theQRL/devops
 
 # Gate dependencies and package generation inputs.
-/.npmrc @theQRL/devops
+**/.npmrc @theQRL/devops
 /scripts/check-package-dependencies.js @theQRL/devops
 /scripts/git-dependency-digest.js @theQRL/devops
 /scripts/lint-budget.js @theQRL/devops

@@ -212,7 +212,7 @@ describe('getPastEvents', () => {
 				fromBlock: 0,
 				filter: { unknownKey: 1 },
 			}),
-		).resolves.toHaveLength(0);
+		).rejects.toThrow('Unknown event filter input: unknownKey');
 	});
 
 	it('matches an indexed string filter through its keccak256 topic (L-61)', async () => {

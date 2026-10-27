@@ -524,3 +524,101 @@ test.each([true, false])(
 		}
 	},
 );
+
+test.each([
+	[true, '[]'],
+	[false, '[]'],
+	[true, '{}'],
+	[false, '{}'],
+] as const)(
+	'bounds empty-container allocation, preserves following replies and ignores quoted brackets (framed=%s, item=%s)',
+	(framed, item) => {
+		const parser = new ChunkResponseParser(new EventEmitter(), false, {
+			framed,
+			maxResponseBytes: 65536,
+		});
+		const fail = jest.fn();
+		parser.onError(fail);
+		const hostile =
+			'{"jsonrpc":"2.0","id":42,"result":[' + `${item},`.repeat(5000) + item + ']}';
+		const good = JSON.stringify({ id: 43, result: '[{}]"\\' });
+		if (framed) {
+			expect(parser.parseResponse(hostile)).toEqual([]);
+			expect(parser.parseResponse(good)).toEqual([JSON.parse(good)]);
+		} else {
+			expect(parser.parseResponse(hostile.slice(0, 1000))).toEqual([]);
+			expect(parser.parseResponse(hostile.slice(1000) + good)).toEqual([JSON.parse(good)]);
+		}
+		expect(fail).toHaveBeenCalledWith(expect.any(InvalidResponseError), [42]);
+		expect(fail.mock.calls[0][0].message).toContain('container count');
+		parser.reset();
+	},
+);
+
+test.each([
+	[true, 65536],
+	[false, 65536],
+	[true, 10 * 1024 * 1024],
+	[false, 10 * 1024 * 1024],
+] as const)(
+	'accepts struct-logger traces with empty memory near the byte cap (framed=%s, maxResponseBytes=%s)',
+	(framed, maxResponseBytes) => {
+		const entry = {
+			pc: 0,
+			op: 'PUSH1',
+			gas: 900000,
+			gasCost: 3,
+			depth: 1,
+			stack: ['0x1'],
+			memory: [],
+		};
+		const encoded = JSON.stringify(entry);
+		const prefix =
+			'{"jsonrpc":"2.0","id":42,"result":{"gas":1,"failed":false,"returnValue":"","structLogs":[';
+		const suffix = ']}}';
+		const count = Math.floor(
+			(maxResponseBytes - prefix.length - suffix.length + 1) / (encoded.length + 1),
+		);
+		const text = prefix + `${encoded},`.repeat(count - 1) + encoded + suffix;
+		expect(Buffer.byteLength(text)).toBeLessThanOrEqual(maxResponseBytes);
+		expect(Buffer.byteLength(text)).toBeGreaterThan(maxResponseBytes * 0.99);
+		const parser = new ChunkResponseParser(new EventEmitter(), false, {
+			framed,
+			maxResponseBytes,
+		});
+		const fail = jest.fn();
+		parser.onError(fail);
+		const replies = framed
+			? parser.parseResponse(text)
+			: [
+					...parser.parseResponse(text.slice(0, text.length / 2)),
+					...parser.parseResponse(text.slice(text.length / 2)),
+				];
+		expect(replies).toHaveLength(1);
+		expect(replies[0]).toHaveProperty('result.structLogs.length', count);
+		expect(replies[0]).toHaveProperty('result.structLogs.0', entry);
+		expect(replies[0]).toHaveProperty(`result.structLogs.${count - 1}`, entry);
+		expect(fail).not.toHaveBeenCalled();
+		parser.reset();
+	},
+);
+
+test.each([true, false])(
+	'accepts a full 1024-frame trace and enforces custom depth (framed=%s)',
+	framed => {
+		const text =
+			'{"id":1,"result":' + '{"calls":['.repeat(1024) + '{}' + ']}'.repeat(1024) + '}';
+		const parser = new ChunkResponseParser(new EventEmitter(), false, { framed });
+		expect(parser.parseResponse(text)).toHaveLength(1);
+		const limited = new ChunkResponseParser(new EventEmitter(), false, {
+			framed,
+			maxResponseDepth: 100,
+		});
+		const fail = jest.fn();
+		limited.onError(fail);
+		expect(limited.parseResponse(text)).toEqual([]);
+		expect(fail.mock.calls[0][0].message).toContain('nesting depth 100');
+		parser.reset();
+		limited.reset();
+	},
+);

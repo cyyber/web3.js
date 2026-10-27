@@ -329,3 +329,27 @@ provider.on('error', error => {
 	}
 });
 ```
+
+## Response structure limits
+
+HTTP, WebSocket and IPC responses are bounded before `JSON.parse`, including HTTP
+error bodies. `maxResponseBytes` defaults to 10 MiB. `maxResponseDepth` defaults to
+4096 and accepts a positive safe integer; this accommodates a complete 1024-frame
+call trace with its JSON wrapper. HTTP accepts these in its second constructor
+argument; WebSocket and IPC accept them in the fourth (`providerOptions`).
+
+Each message may contain at most `max(1024, floor(maxResponseBytes / 16))` object
+and array containers (655,360 at the default byte limit), including empty ones.
+This heuristic allows dense struct-logger traces with empty memory arrays near
+the byte limit while bounding allocations for container-heavy payloads. Container and depth
+violations raise `InvalidResponseError`; byte violations raise
+`ResponseTooLargeError`. Socket parsers discard the offending message and can
+process the following message. Identifiable response ids are failed individually;
+without an identifiable id, pending requests may all fail.
+
+The byte limit is not a heap allowance. Text, transport buffers, parsed strings,
+arrays and objects coexist, and concurrent replies multiply memory use. Dense
+structures can otherwise allocate about 30 times their text size. The structural
+budget prevents that amplification pattern but does not promise a fixed process
+memory ceiling. Increase byte/depth limits only to fit your workload and available
+heap; reduce concurrency or byte limits for small heaps.

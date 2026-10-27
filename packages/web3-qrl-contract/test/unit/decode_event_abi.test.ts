@@ -14,7 +14,7 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
-import { AbiError } from '@theqrl/web3-errors';
+import { AbiError, ResponseError } from '@theqrl/web3-errors';
 import { AbiEventFragment, DEFAULT_RETURN_FORMAT, LogsInput } from '@theqrl/web3-types';
 import { encodeEventSignature, encodeParameter } from '@theqrl/web3-qrl-abi';
 import { decodeEventABI } from '../../src/encoding';
@@ -36,6 +36,39 @@ describe('decodeEventABI with unannotated public ABI fragments', () => {
 		expect(decoded.returnValues.value).toBe('hello');
 		expect(decoded.signature).toBe(signature.slice(0, 66));
 		expect(event).not.toHaveProperty('signature');
+	});
+
+	it('accepts an omitted or null registry and rejects other registry shapes typed', () => {
+		expect(decodeEventABI(event, log).returnValues.value).toBe('hello');
+		// eslint-disable-next-line no-null/no-null
+		expect(decodeEventABI(event, log, null as never).returnValues.value).toBe('hello');
+		expect(() => decodeEventABI(event, log, {} as never)).toThrow(AbiError);
+	});
+
+	it.each([7, {}, undefined])('rejects malformed topic entries %p', topic => {
+		expect(() => decodeEventABI(event, { ...log, topics: [topic] } as never)).toThrow(
+			ResponseError,
+		);
+	});
+
+	it('keeps the caller fragment when only another layout is in the registry', () => {
+		const indexed = { ...event, inputs: [{ name: 'value', type: 'uint256', indexed: true }] };
+		const plain = { ...indexed, inputs: [{ name: 'value', type: 'uint256', indexed: false }] };
+		const valueLog = {
+			topics: [encodeEventSignature(indexed), encodeParameter('uint256', 5)],
+			data: '0x',
+		} as LogsInput;
+		expect(decodeEventABI(indexed, valueLog, [plain]).returnValues.value).toBe(BigInt(5));
+	});
+
+	it('does not mutate a selected registry fragment with missing inputs', () => {
+		const ping = { type: 'event', name: 'Ping' } as AbiEventFragment;
+		decodeEventABI(
+			{ type: 'event', name: 'ALLEVENTS', inputs: [] },
+			{ topics: [encodeEventSignature(ping)], data: '0x' } as LogsInput,
+			[ping],
+		);
+		expect(ping).not.toHaveProperty('inputs');
 	});
 
 	it('resolves a raw event fragment on the allEvents path', () => {

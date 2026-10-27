@@ -271,10 +271,19 @@ if (!exists('.npmrc')) {
 	fail('Missing .npmrc');
 } else {
 	const npmrc = readText('.npmrc');
-	for (const message of npmrcPolicyFailures(npmrc)) fail(message);
+
 	for (const required of ['engine-strict=true']) {
 		if (!npmrc.includes(required)) fail(`.npmrc must include ${required}`);
 	}
+}
+
+try {
+	const npmrcFiles = execFileSync('git', ['ls-files', '-z', '--', '.npmrc', '**/.npmrc'], { cwd: root, encoding: 'utf8' }).split('\0').filter(Boolean);
+	for (const file of npmrcFiles) {
+		for (const message of npmrcPolicyFailures(readText(file))) fail(`${file}: ${message}`);
+	}
+} catch {
+	fail('Unable to inspect tracked npmrc configuration');
 }
 
 if (!exists('pnpm-lock.yaml')) {

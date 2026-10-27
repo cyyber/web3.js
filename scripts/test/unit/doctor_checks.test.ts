@@ -456,3 +456,21 @@ describe('pass-8 alternate install policy', () => {
 		expect(doctorChecks.workspacePolicyFailures(read('pnpm-workspace.yaml'))).toEqual([]);
 	});
 });
+
+test.each([
+	'use-node-version',
+	'useNodeVersion',
+	'executionEnv',
+	'execution_env',
+	'node-mirror:release',
+	'nodeMirror:nightly',
+	'manage-package-manager-versions',
+	'MANAGEPACKAGEMANAGERVERSIONS',
+])('refuses runtime selection policy from npmrc and workspace: %s', key => {
+	expect(doctorChecks.npmrcPolicyFailures(`${key}=x`)).toHaveLength(1);
+	expect(
+		doctorChecks.workspacePolicyFailures(
+			`minimumReleaseAge: 10080\nblockExoticSubdeps: true\nstrictDepBuilds: true\n${key}: x`,
+		),
+	).toHaveLength(1);
+});

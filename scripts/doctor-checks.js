@@ -79,6 +79,7 @@ function listWorkspaceBlockItems(workspaceYaml, blockName) {
 
 function npmrcPolicyFailures(npmrc) {
 	const controlled = new Set([
+		'usenodeversion', 'executionenv', 'nodemirror', 'managepackagemanagerversions',
 		'minimumreleaseage',
 		'minimumreleaseageexclude',
 		'allowbuilds',
@@ -109,7 +110,7 @@ function npmrcPolicyFailures(npmrc) {
 			.trim()
 			.replace(/['"[\]_-]/g, '')
 			.toLowerCase();
-		return controlled.has(key)
+		return (controlled.has(key) || key.startsWith('nodemirror:'))
 			? [
 					`.npmrc must not set ${key}; declare install and quarantine policy in pnpm-workspace.yaml`,
 				]
@@ -137,6 +138,7 @@ function workspacePolicyFailures(workspaceYaml) {
 	}
 	// These alternate policy sources bypass the reviewed allowBuilds/overrides mapping.
 	const forbidden = new Set([
+		'usenodeversion', 'executionenv', 'nodemirror', 'managepackagemanagerversions',
 		'pnpmfile', 'globalpnpmfile', 'ignorepnpmfile', 'packageextensions',
 		'patcheddependencies', 'configdependencies', 'supportedarchitectures',
 		'dangerouslyallowallbuilds', 'onlybuiltdependencies', 'onlybuiltdependenciesfile',
@@ -144,7 +146,8 @@ function workspacePolicyFailures(workspaceYaml) {
 		'verifystoreintegrity', 'lockfile', 'trustpolicy',
 	]);
 	for (const key of Object.keys(workspace)) {
-		if (forbidden.has(key.replace(/[-_]/g, '').toLowerCase())) {
+		const normalized = key.replace(/[-_]/g, '').toLowerCase();
+		if (forbidden.has(normalized) || normalized.startsWith('nodemirror:')) {
 			failures.push(`pnpm-workspace.yaml must not declare alternate install policy ${key}`);
 		}
 	}
