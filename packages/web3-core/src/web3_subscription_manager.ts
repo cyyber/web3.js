@@ -443,8 +443,19 @@ export class Web3SubscriptionManager<
 	}
 
 	private _queueEarlyNotification(id: string, data: ProviderNotification): void {
-		// Unknown ids are untrusted. Bound both count and retained serialized size while
-		// registration is in flight; never let a silent subscribe retain arbitrary traffic.
+		// A socket reply can precede a wrapper's delayed request() continuation. The
+		// provider marks acknowledged ids during dispatch, independent of promise timing.
+		const provider = this.requestManager.provider as unknown as
+			| {
+					isSubscriptionAcknowledged?: (subscriptionId: string) => boolean;
+			  }
+			| undefined;
+		if (provider?.isSubscriptionAcknowledged?.(id)) {
+			this._earlyNotifications.push({ id, data, size: 0 });
+			this._flushEarlyNotificationsSoon();
+			return;
+		}
+		// Unknown ids are untrusted. Bound both count and retained serialized size.
 		if (this._earlyNotifications.length >= 128) {
 			this._reportManagerError(
 				new SubscriptionError('Subscription notification buffer limit exceeded'),

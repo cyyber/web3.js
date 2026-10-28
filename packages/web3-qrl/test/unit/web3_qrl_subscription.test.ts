@@ -214,6 +214,10 @@ describe('Web3QRL subscribe and clear subscriptions', () => {
 			// eslint-disable-next-line no-null/no-null
 			[{ syncing: true, status: null }],
 			[{ syncing: true }],
+			[{ syncing: true, status: {} }],
+			[{ syncing: true, status: { CurrentBlock: '0x2', HighestBlock: '0x3' } }],
+			[{ syncing: true, status: { StartingBlock: '0x1', HighestBlock: '0x3' } }],
+			[{ syncing: true, status: { StartingBlock: '0x1', CurrentBlock: '0x2' } }],
 			// eslint-disable-next-line no-null/no-null
 			[null],
 			['abc'],
@@ -233,7 +237,10 @@ describe('Web3QRL subscribe and clear subscriptions', () => {
 				expect(() => subscription._processSubscriptionResult(notification)).not.toThrow();
 
 				expect(error).toHaveBeenCalledTimes(1);
-				expect(error.mock.calls[0][0]).toBeInstanceOf(SubscriptionError);
+				expect(
+					error.mock.calls[0][0] instanceof SubscriptionError ||
+						error.mock.calls[0][0] instanceof InvalidResponseError,
+				).toBe(true);
 				expect(changed).not.toHaveBeenCalled();
 				expect(data).not.toHaveBeenCalled();
 			},

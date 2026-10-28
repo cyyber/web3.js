@@ -976,6 +976,11 @@ export abstract class SocketProvider<
 		this._acknowledgedSubscriptions.clear();
 	}
 
+	/** Whether this id is backed by a subscribe reply whose initial notifications are being dispatched. */
+	public isSubscriptionAcknowledged(id: string): boolean {
+		return this._acknowledgedSubscriptions.has(id);
+	}
+
 	private _acknowledgeSubscription(id: string): void {
 		if (!this._acknowledgedSubscriptions.has(id)) this._acknowledgedSubscriptions.set(id, []);
 		if (this._subscriptionNotificationTimer !== undefined) return;

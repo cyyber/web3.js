@@ -21,8 +21,20 @@ emitting contract/version, or pass that explicit fragment to `decodeEventABI`;
 do not merge these indistinguishable layouts and expect automatic selection.
 
 Named event filters select a compatible layout before encoding indexed topics.
-Unknown filter keys, or keys that belong to no single named layout, raise
-`AbiError`. `getPastEvents` also compares filter values using the fragment selected
-for each log. Live subscriptions rely on the node's topic filter and do not apply
-a local value filter: non-indexed fields and `allEvents` value filters must be
-checked by the consumer. Providing explicit `topics` overrides generated topics.
+Only non-nullish filter values select a layout; nullish values are wildcards.
+Omitted `anonymous` and `anonymous: false` mean the same thing. Unknown active
+filter keys, or keys that belong to no single named layout, raise `AbiError`.
+
+When compatible layouts index a key at different positions or have different
+topic counts, named queries and subscriptions request the signature without value
+topics, then compare decoded values locally. This fetches more logs, but includes
+matches from every distinguishable layout and excludes wrong-field live matches.
+`getPastEvents` always compares values using the selected fragment; `allEvents`
+scans all logs for the address before applying its local filter. Otherwise live
+subscriptions rely on the node's topic filter: consumers must check non-indexed
+values and `allEvents` filters themselves. Explicit `topics` override generated
+topics and this automatic live post-filter. Live log fields are validated before
+decoding. The indistinguishable-layout limitation above still applies.
+
+ABI parameter parsing permits at most 64 combined tuple/array levels and rejects
+excessive nesting with a typed ABI or validation error.

@@ -532,3 +532,114 @@ intact over real HTTP, WebSocket and IPC connections under the same old-space li
 WebSocket and IPC report no error events. Logs and JSON results are under
 `/tmp/web3-p9r2-*`. This follow-up reruns the affected suites and transport probes;
 the full-workspace and live-chain integration totals above describe the earlier run.
+
+## Pass 10 remediation (2026-10-27)
+
+This section covers the 18 numbered findings in the pass-10 report against
+`7abf7e9`. The report's informational observations remain separate from those
+findings; the changes below do not claim to resolve every informational item.
+
+| Finding | Change and regression coverage |
+| --- | --- |
+| P10-CORE-1 | Socket acknowledgements identify legitimate early notifications even when a `request()` wrapper resumes in another timer turn. Manager tests cover 300 coalesced items in order on initial and recovery registration, with and without the delayed wrapper. Unknown-id flood limits and cancellation cleanup remain in force. |
+| P10-CORE-2 | Strict hex output bypasses the byte-array round trip, byte-array hex conversion uses bounded chunks, and decimal integer strings are limited to 155 digits before `BigInt`. This covers uint512; callers needing larger integers can use bigint or hex inputs. Network quantities are bounded before formatting. |
+| P10-CORE-3 | Zero planck amounts format as `"0"` in every unit, including negative-zero and hex-zero inputs. |
+| P10-CORE-4 | `net.getId` and `net.getPeerCount` normalize nullish return formats to the default. |
+| P10-TR-1 | Apply the report-permitted documentation remedy: key-dense JSON can still consume about 14 times its text size, compared with about 4 times for measured container/number-dense cases. Plan at least `15 × maxResponseBytes × concurrent replies` of heap plus transport, text and application headroom. These measurements are not a fixed upper bound. The earlier empty-container measurement does not bound all JSON shapes. |
+| P10-TR-2 | Socket parsers count UTF-8 bytes, including multibyte text and surrogate pairs split between stream chunks. Exact-limit replies pass; oversized replies reject with `ResponseTooLargeError` and request-id attribution. |
+| P10-QRL-1 | Before recursive RLP decoding, scan headers iteratively and enforce 16 MiB serialized bytes, four list levels and 65,536 total items. Four levels permit transaction/access-list/entry/storage-key-list nesting. Hex-string entry points check size before conversion. Tests reject a deeply wrapped 5 MiB payload without calling the RLP decoder and accept a normal access-list transaction. |
+| P10-QRL-2 | Subscription confirmations report the confirming header's hash, matching polling semantics. |
+| P10-QRL-3 | Polling requires a 32-byte block hash and a block number equal to the request. Malformed replies consume the bounded error budget without advancing confirmation counts; pending/null blocks remain idle. |
+| P10-QRL-4 | Transaction and receipt readers compare the returned transaction hash with the requested hash before formatting, ignoring hex case. Rechecks treat a foreign receipt as unknown and never adopt it. |
+| P10-QRL-5 | Syncing subscriptions require starting, current and highest block fields before emitting progress. Partial status objects emit a typed error without changed/data events; complete go-qrl notifications still pass. |
+| P10-CT-1 | Treat omitted `anonymous` and `anonymous: false` identically when selecting compatible event layouts. |
+| P10-CT-2 | Ignore nullish filter values when selecting a layout or checking its active keys. |
+| P10-CT-3 | When compatible layouts place a key at different indexed positions or have different topic counts, request signature-only topics and compare values locally, including live delivery. Tests apply node topic semantics in both ABI orders. Explicit topics and live `allEvents` keep their documented semantics. Indistinguishable same-signature/same-count layouts retain the P9-CT-5 limitation. |
+| P10-CT-4 | Validate live contract logs against the RPC log schema before decoding. Malformed non-topic fields emit typed errors instead of data. |
+| P10-ABI-1 | Bound combined tuple/array nesting to 64 levels in contract ABI cloning, signature flattening, ParamType construction and validator schema conversion. Excessive inputs reject with typed errors before recursive work. |
+| P10-SC-1 | Decode npmrc key quotes, JSON escapes and unescaped comments as `ini` does before applying the policy-key checks. Tests include hash/semicolon comments, quotes, bracket suffixes and escaped comment characters. |
+| P10-SC-2 | Use the already locked Markdown parser as a declared development dependency. Check rendered relative Markdown/MDX links, including titles, references and static HTML links, while excluding code and comments. Targets must exist on disk and in the index. |
+
+The small release-smoke follow-ups remove the runner's owned npm cache as well
+as its projects on exit, handle SIGINT/SIGTERM, preserve caller-supplied caches,
+document `WEB3_KEEP_SMOKE_PROJECTS`, and assert the CJS/ESM project manifest type
+inside the fake npm fixture. `encodeEventABI` also rejects a non-array event
+registry with `AbiError`.
+
+Original pass-10 reproductions were replayed against rebuilt packages. The
+300-item acknowledgement burst arrives intact with plain, `setImmediate` and
+`setTimeout` request wrappers. The 12 MB multibyte response rejects on all three
+transports, and the 30 MB IPC response now rejects while retaining the connection.
+The nested-RLP reproduction rejects under a 256 MiB old-space limit, including a
+roughly 10 MB JSON response through the real HTTP provider. The event-layout,
+live-log, receipt-identity, syncing and ABI-depth reproductions show the corrected
+behavior. Local logs are `/tmp/web3-pass10-poc-*.log`.
+
+The original formatting timing script now exits on the intentionally rejected
+oversized decimal input. Its completed hex rows show roughly 17 ms for 10 MiB
+hex formatting on this run; a separate control verifies typed decimal rejection
+and zero round trips for every unit. These timings are observations on this host,
+not performance guarantees.
+
+Final verification (2026-10-28) used Node 22.22.1 and pnpm 10.27.0, with each
+unit-test group run serially on one CPU and coverage thresholds enabled. All
+20 groups pass: **6,800 tests in 278 suites**, with six skipped and one todo
+(68 more passing tests than the pass-10 baseline). All 19 package builds pass,
+including CommonJS, ESM and declarations. The frozen offline install, doctor,
+hygiene, declared-dependency check, browser bundles, UMD smoke, documentation
+build, package inspection, 19-package packing and isolated CJS/ESM tarball smoke
+pass. Lint remains at **1,256 warnings against a budget of 1,256**, with no errors;
+the final RLP size-boundary change also passes targeted lint with its existing
+test warning. The smoke project directory was removed on exit.
+
+Live-node verification covers the two packages affected by the transaction and
+event changes. These are scoped results, not a rerun of every workspace
+integration package:
+
+| Package | Transport | Passed | Skipped | Failed |
+| --- | --- | ---: | ---: | ---: |
+| web3-qrl | HTTP | 171 | 18 | 0 |
+| web3-qrl | WebSocket | 187 | 2 | 0 |
+| web3-qrl | IPC | 187 | 2 | 0 |
+| web3-qrl-contract | HTTP | 111 | 15 | 0 |
+| web3-qrl-contract | WebSocket | 124 | 2 | 0 |
+
+The first QRL WebSocket run reached the harness's 1,800-second timeout; a fresh
+testnet retry with suite progress reporting completed in 491 seconds without a
+code change. Both testnets were stopped after verification. The first docs run
+timed out during search indexing; limiting the indexer's worker count to two
+allowed the retry to finish. Logs are under `/tmp/web3-pass10-*`. The older
+pass-5 through pass-9 PoC collections and the workflow/supply-chain scanners
+were not rerun for this remediation; their earlier results remain historical.
+
+## Pass 10 verification follow-ups (2026-10-28)
+
+P10R-2 corrects the umbrella integration fixture: its mocked receipt now uses
+`keccak256(sentRawTransaction)`, matching the hash returned by the broadcast
+mock. The receipt-identity checks remain enforced. The complete `web3` integration
+configuration now passes against the local execution testnet in all three modes:
+HTTP **35 passed / 6 skipped**, WebSocket **35 / 6**, and IPC **31 / 10**, with
+zero failures. The first HTTP attempt passed the corrected fixture but hit an
+unrelated fixed-fee test before the fresh chain's base fee fell below its fee
+cap; waiting for that condition and rerunning the HTTP suite passed. Both
+disposable testnets were stopped after verification.
+
+P10R-1 replaces synchronous smoke commands with awaited child processes. A signal
+sent only to the runner now cancels the active command and its POSIX process
+group, waits for the child to close, cleans up, and re-raises the signal. A child
+that ignores cancellation is killed after five seconds. Caller-provided caches
+remain untouched, and `WEB3_KEEP_SMOKE_PROJECTS=1` retains debugging files while
+still allowing cancellation. Nine new regression cases cover SIGINT/SIGTERM
+during lock resolution and installation, process-group signals, the retention
+options, and an unresponsive child.
+
+All **236 script tests in 17 suites** pass, including all 16 smoke-runner tests.
+The original sleeping-npm reproduction now ends with SIGTERM/SIGINT (rather than
+exit 0 after finishing the smoke), takes about 0.52 seconds including the harness's
+0.4-second pre-signal wait, and leaves neither temporary directory behind.
+The real smoke imports and requires all 19 packed packages successfully using
+the latest audit build's matching lockfile. An initial attempt with the older
+scratch lockfile correctly failed integrity checks against the rebuilt tarballs.
+Targeted lint passes with only the existing script-header warning; hygiene and
+`git diff --check` pass. Logs are under `/tmp/web3-pass10r-*`. These are focused
+follow-up checks; the full-workspace totals above describe the earlier run.

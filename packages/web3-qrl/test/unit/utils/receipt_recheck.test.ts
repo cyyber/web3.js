@@ -41,3 +41,14 @@ test('adopts a validated moved receipt', async () => {
 		receipt: fresh,
 	});
 });
+
+test.each([false, true])('does not adopt a foreign receipt (moved=%s)', async moved => {
+	(qrlRpcMethods.getTransactionReceipt as jest.Mock).mockResolvedValue({
+		...expectedTransactionReceipt,
+		transactionHash: `0x${'ff'.repeat(32)}`,
+		...(moved ? { blockHash: `0x${'ab'.repeat(32)}` } : {}),
+	});
+	await expect(recheckReceipt(new Web3Context(), expectedTransactionReceipt)).resolves.toEqual({
+		kind: 'unknown',
+	});
+});

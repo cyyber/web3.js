@@ -3,6 +3,7 @@
 const { execFileSync, spawnSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
+const markdown = require('markdown-it')({ html: true });
 
 const { npmrcPolicyFailures } = require('./doctor-checks');
 const root = path.resolve(__dirname, '..');
@@ -251,14 +252,37 @@ function checkWorkspaceTree() {
 	});
 }
 
+// Tokenize Markdown so examples (including code spans and every kind of code block)
+// never become links, while titles, escaped/angle destinations and references do.
+function markdownLinks(source) {
+	const targets = [];
+	const visit = tokens => {
+		for (const token of tokens) {
+			if (token.type === 'link_open') targets.push(token.attrGet('href'));
+			if (token.type === 'html_inline' || token.type === 'html_block') {
+				const html = token.content.replace(/<!--[\s\S]*?(?:-->|$)/g, '');
+				for (const tag of html.matchAll(/<(?:a|Link)\b[^>]*>/gi)) {
+					for (const attr of tag[0].matchAll(/\s(?:href|to)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+))/gi)) {
+						targets.push(markdown.utils.unescapeAll(attr[1] ?? attr[2] ?? attr[3]));
+					}
+				}
+			}
+			if (token.children) visit(token.children);
+		}
+	};
+	visit(markdown.parse(source, {}));
+	return targets;
+}
+
 function checkTrackedMarkdownLinks() {
 	const tracked = new Set(trackedFiles());
 	for (const file of tracked) {
-		if (!file.endsWith('.md')) continue;
-		const text = fs.readFileSync(path.join(root, file), 'utf8').replace(/^```[^\n]*\n[\s\S]*?^```[^\n]*$/gm, '');
-		for (const match of text.matchAll(/\[[^\]\n]*\]\(([^\s)#]+\.md)(?:#[^)]*)?\)/g)) {
-			const target = match[1];
-			if (/^(?:[a-z]+:|\/)/i.test(target)) continue;
+		if (!/\.mdx?$/.test(file)) continue;
+		for (const href of markdownLinks(fs.readFileSync(path.join(root, file), 'utf8'))) {
+			if (!href || /^(?:[a-z][a-z\d+.-]*:|\/|#)/i.test(href)) continue;
+			let target;
+			try { target = decodeURIComponent(href.split(/[?#]/, 1)[0]); } catch { continue; }
+			if (!/\.mdx?$/i.test(target)) continue;
 			const resolved = path.posix.normalize(path.posix.join(path.posix.dirname(file), target));
 			if (!tracked.has(resolved)) fail(`${file} links to missing or untracked Markdown file ${resolved}`);
 		}

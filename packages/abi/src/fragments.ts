@@ -327,6 +327,31 @@ const paramTypeArray = new RegExp(/^(.*)\[([0-9]*)\]$/);
 // and sizes what the decoder allocates, so it must be a safe integer below this bound.
 const MAX_ARRAY_LENGTH = 2 ** 32;
 
+// Check untrusted JSON before either components or arrayChildren recurse. Count both
+// kinds together, including already constructed children embedded in a new parameter.
+function assertParamDepth(value: JsonFragmentType): void {
+	const pending = [{ value, depth: 0 }];
+	while (pending.length) {
+		const current = pending.pop()!;
+		if (!current.value || typeof current.value !== 'object') continue;
+		const dimensions =
+			typeof current.value.type === 'string'
+				? (current.value.type.match(/\[/g)?.length ?? 0)
+				: 0;
+		const depth = current.depth + dimensions + (current.value.components ? 1 : 0);
+		if (depth > 64)
+			logger.throwArgumentError(
+				'ABI nesting exceeds maximum depth 64',
+				'type',
+				'depth limit',
+			);
+		if (Array.isArray(current.value.components)) {
+			for (const child of current.value.components as ReadonlyArray<JsonFragmentType>)
+				pending.push({ value: child, depth });
+		}
+	}
+}
+
 export class ParamType {
 	// The local name of the parameter (of null if unbound)
 	readonly name: string;
@@ -368,7 +393,9 @@ export class ParamType {
 			// such elements grow without consuming any data (M-10).
 			if (
 				match[2] &&
-				(!Number.isSafeInteger(arrayLength) || arrayLength < 1 || arrayLength >= MAX_ARRAY_LENGTH)
+				(!Number.isSafeInteger(arrayLength) ||
+					arrayLength < 1 ||
+					arrayLength >= MAX_ARRAY_LENGTH)
 			) {
 				logger.throwArgumentError('array length out-of-bounds', 'type', this.type);
 			}
@@ -461,6 +488,7 @@ export class ParamType {
 			return value;
 		}
 		verifyObject(value, 'param type object');
+		assertParamDepth(value);
 
 		return new ParamType(_constructorGuard, {
 			name: value.name || null,

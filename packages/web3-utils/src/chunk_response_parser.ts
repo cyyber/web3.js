@@ -111,6 +111,27 @@ const inspectEnvelopePrefix = (text: string): { ids: JsonRpcId[]; notification: 
 	return { ids: [...ids], notification: !rootArray && hasMethod && !hasId };
 };
 
+// Count decoded UTF-8 bytes without allocating an encoded copy. A high surrogate at
+// a chunk boundary is provisionally three bytes; its following low surrogate adds one.
+const utf8ByteLength = (text: string, previousHighSurrogate = false): number => {
+	let bytes = 0;
+	for (let i = 0; i < text.length; i += 1) {
+		const c = text.charCodeAt(i);
+		if (c <= 0x7f) bytes += 1;
+		else if (c <= 0x7ff) bytes += 2;
+		else if (
+			c >= 0xd800 &&
+			c <= 0xdbff &&
+			text.charCodeAt(i + 1) >= 0xdc00 &&
+			text.charCodeAt(i + 1) <= 0xdfff
+		) {
+			bytes += 4;
+			i += 1;
+		} else bytes += i === 0 && previousHighSurrogate && c >= 0xdc00 && c <= 0xdfff ? 1 : 3;
+	}
+	return bytes;
+};
+
 export interface ChunkResponseParserOptions {
 	/**
 	 * `true` for transports that deliver whole messages (WebSocket frames). Input is then never
@@ -122,10 +143,8 @@ export interface ChunkResponseParserOptions {
 	 */
 	framed?: boolean;
 	/**
-	 * Largest message accepted, measured in UTF-16 code units of the decoded text. That count
-	 * never exceeds the text's UTF-8 byte count. Structural limits apply separately;
-	 * the WebSocket transport enforces a byte bound on
-	 * the wire through `maxPayload`.
+	 * Largest message accepted, measured in UTF-8 bytes of decoded text. Structural limits
+	 * apply separately; WebSocket also enforces a wire bound through `maxPayload`.
 	 * @defaultValue {@link DEFAULT_MAX_RESPONSE_BYTES} (10 MiB)
 	 */
 	maxResponseBytes?: number;
@@ -167,8 +186,9 @@ export class ChunkResponseParser {
 	// call (all of it, or a bounded prefix while discarding), and the scanner state at the end
 	// of the last piece.
 	private pendingParts: string[] = [];
-	/** Code units of the open message seen so far, kept or not. */
-	private messageLength = 0;
+	/** UTF-8 bytes of the open message seen so far, kept or not. */
+	private messageBytes = 0;
+	private trailingHighSurrogate = false;
 	/** The open message exceeded the bound: only its boundaries are tracked, its text dropped. */
 	private discarding = false;
 	private structureViolation: string | undefined;
@@ -222,7 +242,8 @@ export class ChunkResponseParser {
 		this.containers = 0;
 		this.clearChunkTimeout();
 		this.pendingParts = [];
-		this.messageLength = 0;
+		this.messageBytes = 0;
+		this.trailingHighSurrogate = false;
 		this.discarding = false;
 		this.depth = 0;
 		this.inString = false;
@@ -287,7 +308,7 @@ export class ChunkResponseParser {
 	/**
 	 * An oversized message is dropped unparsed and the requests it answers are failed by the
 	 * ids found in `text`; the handler falls back to failing every request when there is none.
-	 * `length` is the size of the whole message, in code units, kept or not.
+	 * `length` is the UTF-8 byte size of the whole message, kept or not.
 	 */
 	private reportOversized(text: string, length: number): void {
 		const error = new ResponseTooLargeError(this.maxBytes, length);
@@ -297,8 +318,9 @@ export class ChunkResponseParser {
 	}
 
 	private parseFrame(data: string): JsonRpcResponse[] {
-		if (data.length > this.maxBytes) {
-			this.reportOversized(data, data.length);
+		const bytes = utf8ByteLength(data);
+		if (bytes > this.maxBytes) {
+			this.reportOversized(data, bytes);
 			return [];
 		}
 		let result: unknown;
@@ -377,7 +399,8 @@ export class ChunkResponseParser {
 				this.depth -= 1;
 				if (this.depth === 0) {
 					const piece = data.slice(start, i + 1);
-					const length = this.messageLength + piece.length;
+					const length =
+						this.messageBytes + utf8ByteLength(piece, this.trailingHighSurrogate);
 					const prefix = this.structureViolation
 						? this.pendingParts[0]
 						: this.messagePrefix(piece);
@@ -409,10 +432,12 @@ export class ChunkResponseParser {
 
 		if (this.depth > 0) {
 			const piece = data.slice(start);
-			this.messageLength += piece.length;
+			this.messageBytes += utf8ByteLength(piece, this.trailingHighSurrogate);
+			const last = piece.charCodeAt(piece.length - 1);
+			if (piece.length > 0) this.trailingHighSurrogate = last >= 0xd800 && last <= 0xdbff;
 			if (this.discarding) {
 				// Only the boundary of the message is still of interest.
-			} else if (this.messageLength > this.maxBytes) {
+			} else if (this.messageBytes > this.maxBytes) {
 				// The open message is over the bound. It is not abandoned: its structure is still
 				// followed so that the bytes completing it are not taken for the start of the next
 				// message (the stream would otherwise be out of step until the peer happened to

@@ -207,7 +207,9 @@ describe('formatting, polling and converter hardening (pass-4 audit)', () => {
 		it('accepts the longest delay a timer can hold and rejects anything above it', () => {
 			expect(validateTimeout(MAX_TIMER_DELAY_MS, 'timeout')).toBe(MAX_TIMER_DELAY_MS);
 			expect(() => validateTimeout(MAX_TIMER_DELAY_MS + 1, 'timeout')).toThrow(ProviderError);
-			expect(() => validateTimeout(Number.MAX_SAFE_INTEGER, 'timeout')).toThrow(ProviderError);
+			expect(() => validateTimeout(Number.MAX_SAFE_INTEGER, 'timeout')).toThrow(
+				ProviderError,
+			);
 		});
 
 		it('Web3DeferredPromise refuses a timeout a timer cannot hold', () => {
@@ -241,3 +243,11 @@ describe('typed errors and null members (pass-4 informational, round 2)', () => 
 	});
 });
 /* eslint-enable no-null/no-null */
+
+test('normalizes large hex byte strings without changing padding or validation', () => {
+	const bytes = '0x' + 'Ab'.repeat(1024 * 1024);
+	expect(format({ format: 'bytes' }, bytes, DEFAULT_RETURN_FORMAT)).toBe(bytes.toLowerCase());
+	expect(format({ format: 'bytes4' }, '0xab', DEFAULT_RETURN_FORMAT)).toBe('0x000000ab');
+	expect(format({ format: 'bytes' }, '0xabc', DEFAULT_RETURN_FORMAT)).toBe('0xabc');
+	expect(format({ format: 'bytes' }, '0xzz', DEFAULT_RETURN_FORMAT)).toBe('0xzz');
+});

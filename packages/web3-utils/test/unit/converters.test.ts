@@ -473,13 +473,18 @@ describe('converters', () => {
 			expect(toPlanck(amount, unit)).toBe(expected);
 		});
 
-		it.each(units)('rejects one decimal more than %s has (%i) instead of inflating', (unit, zeros) => {
-			expect(() => toPlanck(`0.${'0'.repeat(zeros)}1`, unit)).toThrow(InvalidNumberError);
-			expect(() => toPlanck(`1.${'0'.repeat(zeros)}1`, unit)).toThrow(InvalidNumberError);
-		});
+		it.each(units)(
+			'rejects one decimal more than %s has (%i) instead of inflating',
+			(unit, zeros) => {
+				expect(() => toPlanck(`0.${'0'.repeat(zeros)}1`, unit)).toThrow(InvalidNumberError);
+				expect(() => toPlanck(`1.${'0'.repeat(zeros)}1`, unit)).toThrow(InvalidNumberError);
+			},
+		);
 
 		it.each(units)('ignores trailing zeros beyond the precision of %s (%i)', (unit, zeros) => {
-			expect(toPlanck(`1.${'0'.repeat(zeros + 3)}`, unit)).toBe((BigInt(10) ** BigInt(zeros)).toString());
+			expect(toPlanck(`1.${'0'.repeat(zeros + 3)}`, unit)).toBe(
+				(BigInt(10) ** BigInt(zeros)).toString(),
+			);
 		});
 
 		it.each([
@@ -554,13 +559,29 @@ describe('converters', () => {
 
 	describe('typed number parsing (L-26, L-28)', () => {
 		// Using "null" value intentionally for validation
-		// eslint-disable-next-line no-null/no-null
-		it.each(['', ' ', ' 1 ', '+1', '0b101', '0x', '-0x', '1e3', '1.5', 'abc', true, [], [7], {}, undefined, null, NaN, Infinity])(
-			'toNumber rejects %j with InvalidNumberError',
-			value => {
-				expect(() => toNumber(value as never)).toThrow(InvalidNumberError);
-			},
-		);
+		it.each([
+			'',
+			' ',
+			' 1 ',
+			'+1',
+			'0b101',
+			'0x',
+			'-0x',
+			'1e3',
+			'1.5',
+			'abc',
+			true,
+			[],
+			[7],
+			{},
+			undefined,
+			// eslint-disable-next-line no-null/no-null -- invalid numeric input
+			null,
+			NaN,
+			Infinity,
+		])('toNumber rejects %j with InvalidNumberError', value => {
+			expect(() => toNumber(value as never)).toThrow(InvalidNumberError);
+		});
 
 		it('toNumber does not return negative zero', () => {
 			expect(Object.is(toNumber('-0x0'), 0)).toBe(true);
@@ -578,13 +599,29 @@ describe('converters', () => {
 		});
 
 		// Using "null" value intentionally for validation
-		// eslint-disable-next-line no-null/no-null
-		it.each(['abc', 'ff', '0x', '-0x', '', ' 1 ', '+1', '0b11', '1e3', '1.5', 1.5, NaN, Infinity, true, [], {}, undefined, null])(
-			'toBigInt rejects %j with InvalidNumberError instead of a raw error',
-			value => {
-				expect(() => toBigInt(value)).toThrow(InvalidNumberError);
-			},
-		);
+		it.each([
+			'abc',
+			'ff',
+			'0x',
+			'-0x',
+			'',
+			' 1 ',
+			'+1',
+			'0b11',
+			'1e3',
+			'1.5',
+			1.5,
+			NaN,
+			Infinity,
+			true,
+			[],
+			{},
+			undefined,
+			// eslint-disable-next-line no-null/no-null -- invalid numeric input
+			null,
+		])('toBigInt rejects %j with InvalidNumberError instead of a raw error', value => {
+			expect(() => toBigInt(value)).toThrow(InvalidNumberError);
+		});
 
 		it.each([
 			['0x', InvalidNumberError],
@@ -611,9 +648,12 @@ describe('converters', () => {
 			expect(numberToHex('0x0', true)).toBe('0x00');
 		});
 
-		it.each(['', ' 1 ', '+1', '0b11', '0x'])('rejects the lenient spelling %j (L-28)', value => {
-			expect(() => numberToHex(value)).toThrow(Web3ValidatorError);
-		});
+		it.each(['', ' 1 ', '+1', '0b11', '0x'])(
+			'rejects the lenient spelling %j (L-28)',
+			value => {
+				expect(() => numberToHex(value)).toThrow(Web3ValidatorError);
+			},
+		);
 	});
 
 	describe('toHex (L-30)', () => {
@@ -633,4 +673,17 @@ describe('converters', () => {
 			expect(() => hexToAddress('-0x1')).toThrow(InvalidAddressError);
 		});
 	});
+});
+
+test.each(['planck', 'kplanck', 'mplanck', 'shor', 'quanta'] as QRLUnits[])(
+	'formats zero without a decimal point in %s',
+	unit => {
+		for (const amount of [0, BigInt(0), '0x0', '-0', '-0x0'])
+			expect(fromPlanck(amount, unit)).toBe('0');
+	},
+);
+test('bounds decimal conversion before BigInt while retaining uint512', () => {
+	const max = (BigInt(1) << BigInt(512)) - BigInt(1);
+	expect(toBigInt(max.toString())).toBe(max);
+	expect(() => toBigInt('9'.repeat(1024 * 1024))).toThrow(InvalidNumberError);
 });

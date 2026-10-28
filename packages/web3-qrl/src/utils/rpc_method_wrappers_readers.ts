@@ -131,6 +131,16 @@ export async function getTransactionReceipt<ReturnFormat extends DataFormat>(
 	}
 
 	assertRpcResult('qrl_getTransactionReceipt', response, transactionReceiptSchema);
+	if (
+		typeof response.transactionHash !== 'string' ||
+		response.transactionHash.toLowerCase() !== transactionHashFormatted.toLowerCase()
+	) {
+		throw invalidResponseError(
+			'qrl_getTransactionReceipt',
+			'a receipt for the requested transaction hash',
+			response,
+		);
+	}
 	return format(
 		transactionReceiptSchema,
 		response as unknown as TransactionReceipt,

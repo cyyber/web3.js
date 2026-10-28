@@ -152,6 +152,9 @@ importers:
       jest:
         specifier: 30.4.2
         version: 30.4.2(@types/node@25.9.1)(ts-node@10.9.2(@types/node@25.9.1)(typescript@6.0.3))
+      markdown-it:
+        specifier: 14.3.3
+        version: 14.3.3
       multi-semantic-release:
         specifier: 3.1.0
         version: 3.1.0(typescript@6.0.3)

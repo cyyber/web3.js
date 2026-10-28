@@ -50,7 +50,7 @@ import {
 } from '@theqrl/web3-types';
 import { Web3Context, Web3PromiEvent } from '@theqrl/web3-core';
 import { format, hexToBytes, bytesToUint8Array, sha3Raw } from '@theqrl/web3-utils';
-import { TransactionFactory } from '@theqrl/web3-qrl-accounts';
+import { assertSerializedTransactionSize, TransactionFactory } from '@theqrl/web3-qrl-accounts';
 import { isBlockTag, isHexStrict, isNullish, isObject, isString } from '@theqrl/web3-validator';
 import { ContractExecutionError, SignatureError } from '@theqrl/web3-errors';
 import { qrlRpcMethods } from '@theqrl/web3-rpc-methods';
@@ -309,6 +309,16 @@ export async function getTransaction<ReturnFormat extends DataFormat>(
 	}
 
 	assertRpcResult('qrl_getTransaction', response, transactionInfoSchema);
+	if (
+		typeof response.hash !== 'string' ||
+		response.hash.toLowerCase() !== transactionHashFormatted.toLowerCase()
+	) {
+		throw invalidResponseError(
+			'qrl_getTransactionByHash',
+			'the requested transaction hash',
+			response,
+		);
+	}
 	return formatTransaction(response, returnFormat, { fillInputAndData: true });
 }
 
@@ -723,6 +733,7 @@ export function sendSignedTransaction<
 
 				const execute = async () => {
 					const deserializeTransaction = () => {
+						assertSerializedTransactionSize(signedTransaction);
 						// Formatting signedTransaction to be send to RPC endpoint
 						const signedTransactionFormattedHex = format(
 							{ format: 'bytes' },

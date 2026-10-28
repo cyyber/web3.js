@@ -62,7 +62,9 @@ const toIntegerBigInt = (value: ValidInputTypes): bigint | undefined => {
 		}
 	}
 
-	return DECIMAL_INTEGER.test(value) ? BigInt(value) : undefined;
+	return value.length <= (value.startsWith('-') ? 156 : 155) && DECIMAL_INTEGER.test(value)
+		? BigInt(value)
+		: undefined;
 };
 
 export const isUInt = (

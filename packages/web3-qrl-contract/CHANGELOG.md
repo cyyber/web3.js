@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Pass 10 audit corrections
+
+- Treat omitted anonymous as false and ignore nullish filter keys during layout selection. Broaden topic queries and post-filter live values when compatible layouts place keys at different positions; validate live log fields before decoding (P10-CT-1 through P10-CT-4).
+- Reject ABI parameter nesting beyond 64 combined tuple/array levels while cloning contract interfaces (P10-ABI-1).
+
 ### Pass 9 audit corrections
 
 - Encode sibling-layout indexed filters and post-filter historical logs with their selected ABI; reject unknown filter keys typed. Live subscriptions rely on node topic filtering and never locally post-filter values (P9-CT-1).

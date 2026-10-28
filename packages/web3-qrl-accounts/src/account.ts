@@ -19,6 +19,7 @@ import {
 	decrypt as createDecipheriv,
 	encrypt as createCipheriv,
 } from '@theqrl/qrl-cryptography/aes.js';
+import { assertSerializedTransactionSize } from './tx/rlp_bounds.js';
 import { argon2idSync } from '@theqrl/qrl-cryptography/argon2id.js';
 import {
 	InvalidBytesError,
@@ -307,6 +308,7 @@ export const signTransaction = async (
 export const recoverTransaction = (rawTransaction: HexString): Address => {
 	if (isNullish(rawTransaction)) throw new UndefinedRawTransactionError();
 
+	assertSerializedTransactionSize(rawTransaction);
 	const tx = TransactionFactory.fromSerializedData(hexToBytes(rawTransaction));
 
 	// Verify the ML-DSA-87 signature before deriving the sender. Without this,

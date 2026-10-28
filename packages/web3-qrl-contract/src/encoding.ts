@@ -232,18 +232,83 @@ export const isOrList = (input: AbiParameter, value: unknown): value is unknown[
 const eventSignature = (event: AbiEventFragment & { signature?: HexString }): HexString =>
 	event.signature ?? encodeEventSignature(jsonInterfaceMethodToString(event));
 
+/** A single topic array cannot constrain an input at two different indexed positions. */
+export const eventFilterNeedsBroadTopics = (
+	event: AbiEventFragment & { signature?: HexString },
+	filter: Filter['filter'],
+	jsonInterface: ReadonlyArray<AbiFragment & { signature?: HexString }>,
+): boolean => {
+	if (event.name === ALL_EVENTS) return false;
+	const keys = Object.keys(filter ?? {}).filter(key => !isNullish(filter?.[key]));
+	if (keys.length === 0) return false;
+	const layouts = [event, ...jsonInterface.filter(isAbiEventFragment)].filter(
+		candidate =>
+			Boolean(candidate.anonymous) === Boolean(event.anonymous) &&
+			rightPad(eventSignature(candidate), TOPIC_HEX_LENGTH).toLowerCase() ===
+				rightPad(eventSignature(event), TOPIC_HEX_LENGTH).toLowerCase() &&
+			keys.every(key => candidate.inputs?.some(input => input.name === key)),
+	);
+	if (layouts.length < 2) return false;
+	const positions = (layout: AbiEventFragment) => {
+		const indexed = (layout.inputs ?? []).filter(input => input.indexed);
+		return [
+			indexed.length,
+			...keys.map(key => indexed.findIndex(input => input.name === key)),
+		].join(',');
+	};
+	return layouts.some(layout => positions(layout) !== positions(layouts[0]));
+};
+
+/** Compare decoded event values using ABI encoding, including OR lists and indexed hashes. */
+export const matchesEventFilter = (
+	log: EventLog,
+	abi: AbiEventFragment,
+	filter: NonNullable<Filter['filter']>,
+): boolean =>
+	Object.keys(filter)
+		.filter(key => !isNullish(filter[key]))
+		.every(key => {
+			const input = abi.inputs?.find(item => item.name === key);
+			if (!input) return false;
+			const matches = (expected: unknown) => {
+				const actual = log.returnValues[key];
+				if (input.indexed && isIndexedHashType(input.type)) {
+					return (
+						typeof actual === 'string' &&
+						rightPad(actual, TOPIC_HEX_LENGTH).toLowerCase() ===
+							encodeIndexedTopic(input, expected).toLowerCase()
+					);
+				}
+				const expectedWord = encodeParameter(input, expected);
+				try {
+					return encodeParameter(input, actual) === expectedWord;
+				} catch {
+					return false;
+				}
+			};
+			return isOrList(input, filter[key])
+				? (filter[key] as unknown[]).some(matches)
+				: matches(filter[key]);
+		});
+
 export const encodeEventABI = (
 	{ address }: ContractOptions,
 	event: AbiEventFragment & { signature: string },
 	options?: Filter,
 	jsonInterface: ReadonlyArray<AbiFragment & { signature?: HexString }> = [],
 ) => {
-	const keys = Object.keys(options?.filter ?? {});
+	if (!Array.isArray(jsonInterface))
+		throw new AbiError('Invalid event registry: expected an array');
+	const keys = Object.keys(options?.filter ?? {}).filter(
+		key => !isNullish(options?.filter?.[key]),
+	);
+	const broadTopics =
+		!options?.topics && eventFilterNeedsBroadTopics(event, options?.filter, jsonInterface);
 	const layouts = [event, ...jsonInterface.filter(isAbiEventFragment)].filter(
 		candidate =>
 			candidate.name !== ALL_EVENTS &&
 			(event.name === ALL_EVENTS ||
-				(candidate.anonymous === event.anonymous &&
+				(Boolean(candidate.anonymous) === Boolean(event.anonymous) &&
 					rightPad(eventSignature(candidate), TOPIC_HEX_LENGTH).toLowerCase() ===
 						rightPad(eventSignature(event), TOPIC_HEX_LENGTH).toLowerCase())),
 	);
@@ -291,7 +356,7 @@ export const encodeEventABI = (
 		}
 
 		// add event topics (indexed arguments)
-		if (event.name !== ALL_EVENTS && event.inputs) {
+		if (event.name !== ALL_EVENTS && event.inputs && !broadTopics) {
 			for (const input of event.inputs) {
 				if (!input.indexed) {
 					continue;

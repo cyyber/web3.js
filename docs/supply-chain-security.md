@@ -323,3 +323,9 @@ Pass 6 removed expired quarantine exemptions; only the first-party scope and the
 body-parser 2.4.0 security patch (released 2026-10-22) remain exempt as of 2026-10-24.
 Frozen-lockfile installs do not resolve versions, so this quarantine applies to
 resolving maintainer installs rather than replaying CI's committed lockfile.
+
+Doctor and hygiene parse npmrc key quotes and unescaped `#`/`;` comments before
+checking policy names, so a comment cannot hide a runtime or install-policy override.
+Tracked Markdown link checks parse Markdown syntax, ignore code/comments, and check
+relative `.md`/`.mdx` targets in inline, reference and static HTML/MDX links against
+both the working tree and Git index.

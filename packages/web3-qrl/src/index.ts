@@ -64,3 +64,5 @@ export { detectTransactionType } from './utils/detect_transaction_type.js';
 export { transactionBuilder } from './utils/transaction_builder.js';
 
 export default Web3QRL;
+
+export { assertRpcResult } from './utils/invalid_response_error.js';

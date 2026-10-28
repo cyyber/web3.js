@@ -255,6 +255,7 @@ export const modifyParams = (
 export const flattenTypes = (
 	includeTuple: boolean,
 	puts: ReadonlyArray<AbiParameter>,
+	depth = 0,
 ): string[] => {
 	if (!Array.isArray(puts)) throw new AbiError('Invalid ABI parameters: expected an array');
 	const types: string[] = [];
@@ -263,10 +264,11 @@ export const flattenTypes = (
 		// ABI JSON is untrusted input: a parameter without a string `type` is an error, not a
 		// raw TypeError from `.startsWith` / `.replace` below (I-10).
 		if (typeof param?.type !== 'string') {
-			throw new AbiError(
-				`Invalid ABI parameter: missing "type" in ${JSON.stringify(param) ?? 'undefined'}`,
-			);
+			throw new AbiError('Invalid ABI parameter: missing "type"');
 		}
+		const nextDepth =
+			depth + (param.type.match(/\[/g)?.length ?? 0) + (param.components ? 1 : 0);
+		if (nextDepth > 64) throw new AbiError('ABI nesting exceeds maximum depth 64');
 		if (param.components !== undefined && !Array.isArray(param.components)) {
 			throw new AbiError('Invalid ABI parameter components: expected an array');
 		}
@@ -278,7 +280,7 @@ export const flattenTypes = (
 			}
 			const arrayBracket = param.type.indexOf('[');
 			const suffix = arrayBracket >= 0 ? param.type.substring(arrayBracket) : '';
-			const result = flattenTypes(includeTuple, param.components);
+			const result = flattenTypes(includeTuple, param.components, nextDepth);
 
 			if (Array.isArray(result) && includeTuple) {
 				types.push(`tuple(${result.join(',')})${suffix}`);

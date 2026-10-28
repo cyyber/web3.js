@@ -18,6 +18,7 @@ import { keccak256 } from '@theqrl/qrl-cryptography/keccak.js';
 import { validateNoLeadingZeroes } from '@theqrl/web3-validator';
 import { RLP } from '@ethereumjs/rlp';
 import { bytesToHex, hexToBytes, uint8ArrayConcat, uint8ArrayEquals } from '@theqrl/web3-utils';
+import { assertSerializedTransactionSize, assertTransactionRlpBounds } from './rlp_bounds.js';
 import { MAX_INTEGER } from './constants.js';
 import { BaseTransaction } from './baseTransaction.js';
 import {
@@ -90,6 +91,7 @@ export class FeeMarketEIP1559Transaction extends BaseTransaction<FeeMarketEIP155
 	 * accessList, descriptor, extraParams, signature, publicKey ])`
 	 */
 	public static fromSerializedTx(serialized: Uint8Array, opts: TxOptions = {}) {
+		assertSerializedTransactionSize(serialized);
 		if (!uint8ArrayEquals(serialized.subarray(0, 1), TRANSACTION_TYPE_UINT8ARRAY)) {
 			throw new Error(
 				`Invalid serialized tx input: not an EIP-1559 transaction (wrong tx type, expected: ${TRANSACTION_TYPE}, received: ${bytesToHex(
@@ -97,6 +99,7 @@ export class FeeMarketEIP1559Transaction extends BaseTransaction<FeeMarketEIP155
 				)}`,
 			);
 		}
+		assertTransactionRlpBounds(serialized.subarray(1));
 		const values = RLP.decode(serialized.subarray(1));
 
 		if (!Array.isArray(values)) {
@@ -357,7 +360,11 @@ export class FeeMarketEIP1559Transaction extends BaseTransaction<FeeMarketEIP155
 	 *
 	 * @param hashMessage - Return hashed message if set to true (default: true)
 	 */
-	public getMessageToSign(descriptor: Uint8Array, extraParams: Uint8Array, hashMessage = true): Uint8Array {
+	public getMessageToSign(
+		descriptor: Uint8Array,
+		extraParams: Uint8Array,
+		hashMessage = true,
+	): Uint8Array {
 		const base = this.raw().slice(0, 9);
 		base.push(descriptor);
 		base.push(extraParams);
@@ -415,7 +422,12 @@ export class FeeMarketEIP1559Transaction extends BaseTransaction<FeeMarketEIP155
 		return this.publicKey!;
 	}
 
-	public _processAuthValues(descriptor: Uint8Array, extraParams: Uint8Array, signature: Uint8Array, publicKey: Uint8Array) {
+	public _processAuthValues(
+		descriptor: Uint8Array,
+		extraParams: Uint8Array,
+		signature: Uint8Array,
+		publicKey: Uint8Array,
+	) {
 		const opts = { ...this.txOptions, common: this.common };
 
 		return FeeMarketEIP1559Transaction.fromTxData(

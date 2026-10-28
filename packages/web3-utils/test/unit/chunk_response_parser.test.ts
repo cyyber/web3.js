@@ -323,7 +323,7 @@ describe('ChunkResponseParser', () => {
 			// @ts-expect-error read private member
 			expect(parser.pendingParts.join('')).toBe(opening);
 			// @ts-expect-error read private member
-			expect(parser.messageLength).toBe(opening.length + 100 * 1024);
+			expect(parser.messageBytes).toBe(opening.length + 100 * 1024);
 		});
 
 		it('stream mode: a discarded message that never completes is bounded by the chunk timeout', () => {
@@ -622,3 +622,47 @@ test.each([true, false])(
 		limited.reset();
 	},
 );
+
+describe('UTF-8 response byte accounting (P10-TR-2)', () => {
+	it.each([true, false])('enforces encoded bytes (framed=%s)', framed => {
+		const message = { jsonrpc: '2.0', id: 1, result: '日😀'.repeat(30) };
+		const wire = JSON.stringify(message);
+		const size = Buffer.byteLength(wire);
+		const errors = jest.fn();
+		const exact = new ChunkResponseParser(new EventEmitter(), false, {
+			framed,
+			maxResponseBytes: size,
+		});
+		expect(exact.parseResponse(wire)).toEqual([message]);
+		const small = new ChunkResponseParser(new EventEmitter(), false, {
+			framed,
+			maxResponseBytes: size - 1,
+		});
+		small.onError(errors);
+		expect(small.parseResponse(wire)).toEqual([]);
+		expect(errors).toHaveBeenCalledWith(expect.any(ResponseTooLargeError), [1]);
+		expect(small.parseResponse('{"id":2}')).toEqual([{ id: 2 }]);
+	});
+	it('counts a surrogate pair split across chunks once, including empty chunks', () => {
+		const wire = JSON.stringify({ id: 1, result: '😀' });
+		const split = wire.indexOf('😀') + 1;
+		const parser = new ChunkResponseParser(new EventEmitter(), false, {
+			maxResponseBytes: Buffer.byteLength(wire),
+		});
+		expect(parser.parseResponse(wire.slice(0, split))).toEqual([]);
+		expect(parser.parseResponse('')).toEqual([]);
+		expect(parser.parseResponse(wire.slice(split))).toEqual([JSON.parse(wire)]);
+	});
+	it('bounds a partial multibyte stream before completion', () => {
+		const parser = new ChunkResponseParser(new EventEmitter(), false, { maxResponseBytes: 80 });
+		const errors = jest.fn();
+		parser.onError(errors);
+		parser.parseResponse('{"id":1,"result":"');
+		parser.parseResponse('日'.repeat(30));
+		// @ts-expect-error inspect the bounded discard state before the message ends
+		expect(parser.discarding).toBe(true);
+		parser.parseResponse('"}');
+		expect(errors).toHaveBeenCalledWith(expect.any(ResponseTooLargeError), [1]);
+		parser.reset();
+	});
+});

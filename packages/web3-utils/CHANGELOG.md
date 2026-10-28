@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Pass 10 audit corrections
+
+- Count socket response limits in UTF-8 bytes, including split surrogate pairs; document residual key-dense JSON heap amplification and concurrency sizing (P10-TR-1, P10-TR-2).
+- Avoid the bytes-to-hex round trip for strict hex output; bound decimal conversion strings to 155 digits, sufficient for uint512; format zero planck values without a trailing decimal point (P10-CORE-2, P10-CORE-3).
+
 ### Pass 9 audit corrections
 
 - Defer notifications for ids acknowledged by outstanding subscribe requests until awaiting callers can attach listeners. Keep ordering across coalesced WS/IPC bursts and clear deferred items on connection reset (P9-CORE-1).

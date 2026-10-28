@@ -31,7 +31,7 @@ import {
 } from '@theqrl/web3-types';
 import { Web3Subscription } from '@theqrl/web3-core';
 import { blockHeaderSchema, logSchema, syncSubscriptionSchema } from './schemas.js';
-import { assertRpcResult } from './utils/invalid_response_error.js';
+import { assertRpcResult, invalidResponseError } from './utils/invalid_response_error.js';
 
 /**
  * Base of the QRL subscriptions: a subscription error (a notification the subscription cannot
@@ -233,6 +233,19 @@ export class SyncingSubscription extends QRLSubscription<{
 				]),
 			) as unknown as SyncOutput;
 			assertRpcResult('qrl_subscription', mappedData, syncSubscriptionSchema);
+			if (
+				['startingBlock', 'currentBlock', 'highestBlock'].some(
+					key =>
+						!Object.prototype.hasOwnProperty.call(mappedData, key) ||
+						(mappedData as unknown as Record<string, unknown>)[key] === undefined,
+				)
+			) {
+				throw invalidResponseError(
+					'qrl_subscription',
+					'startingBlock, currentBlock and highestBlock quantities',
+					mappedData,
+				);
+			}
 			formatted = format(syncSubscriptionSchema, mappedData, super.returnFormat);
 		} catch (error) {
 			this._processSubscriptionError(error as Error);

@@ -158,7 +158,7 @@ export const watchTransactionBySubscription = <
 								receipt: format(transactionReceiptSchema, receipt, returnFormat),
 								latestBlockHash: format(
 									{ format: 'bytes32' },
-									newBlockHeader.parentHash as Bytes,
+									newBlockHeader.hash as Bytes,
 									returnFormat,
 								),
 							});

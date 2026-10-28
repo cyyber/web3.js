@@ -104,12 +104,24 @@ function npmrcPolicyFailures(npmrc) {
 	]);
 	return npmrc.split(/\r?\n/).flatMap(line => {
 		if (/^\s*(?:[#;]|$)/.test(line)) return [];
-		const key = (
-			line.includes('=') ? line.slice(0, line.indexOf('=')) : line.replace(/\s*[#;].*$/, '')
-		)
-			.trim()
-			.replace(/['"[\]_-]/g, '')
-			.toLowerCase();
+		let rawKey = (line.includes('=') ? line.slice(0, line.indexOf('=')) : line).trim();
+		// Match ini's key decoding, including quoted JSON escapes and unescaped comments.
+		if ((rawKey.startsWith('"') && rawKey.endsWith('"')) || (rawKey.startsWith("'") && rawKey.endsWith("'"))) {
+			if (rawKey.startsWith("'")) rawKey = rawKey.slice(1, -1);
+			try { rawKey = String(JSON.parse(rawKey)); } catch { /* ini keeps unparseable quoted text. */ }
+		} else {
+			let decoded = '';
+			for (let index = 0; index < rawKey.length; index += 1) {
+				const character = rawKey[index];
+				if (character === '#' || character === ';') break;
+				if (character === '\\' && index + 1 < rawKey.length) {
+					index += 1;
+					decoded += '\\;#'.includes(rawKey[index]) ? rawKey[index] : `\\${rawKey[index]}`;
+				} else decoded += character;
+			}
+			rawKey = decoded;
+		}
+		const key = rawKey.trim().replace(/['"[\]_-]/g, '').toLowerCase();
 		return (controlled.has(key) || key.startsWith('nodemirror:'))
 			? [
 					`.npmrc must not set ${key}; declare install and quarantine policy in pnpm-workspace.yaml`,

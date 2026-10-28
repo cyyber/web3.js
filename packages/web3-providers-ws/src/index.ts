@@ -79,7 +79,8 @@ const serializePayload = (payload: unknown): string => {
  * reconnect scheduled (M-8). Both `socketOptions.handshakeTimeout` and the provider option
  * can be set; the shorter one wins.
  *
- * `providerOptions.maxResponseBytes` (10 MiB by default) bounds every message the node sends.
+ * `providerOptions.maxResponseBytes` (10 MiB by default) bounds each message in UTF-8 bytes.
+ * `providerOptions.maxResponseDepth` (4096 by default) bounds JSON nesting before parsing.
  * Messages exceeding this parser bound are dropped and identified requests fail with
  * `ResponseTooLargeError`; notifications do not fail unrelated requests. The default
  * `ws` wire limit (`maxPayload`) is min(2 × this bound, 536,870,888 bytes). Exceeding the wire limit closes the

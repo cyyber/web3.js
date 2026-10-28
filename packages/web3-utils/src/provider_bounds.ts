@@ -34,7 +34,7 @@ export const DEFAULT_CONNECTION_TIMEOUT = 30_000;
 export const DEFAULT_REQUEST_TIMEOUT = 120_000;
 
 /**
- * Default bound on decoded response bytes accepted from a node (10 MiB).
+ * Default bound on UTF-8 response bytes accepted from a node (10 MiB).
  */
 export const DEFAULT_MAX_RESPONSE_BYTES = 10 * 1024 * 1024;
 
@@ -72,13 +72,16 @@ export interface ProviderBoundsOptions {
 	 */
 	requestTimeout?: number;
 	/**
-	 * Maximum decoded response bytes accepted from the node, at most 536,870,888.
+	 * Maximum UTF-8 response bytes accepted from the node, at most 536,870,888.
 	 * This is not a heap limit: decoded text, transport buffers and parsed values coexist.
 	 * Before parsing, responses are limited to max(1024, floor(maxResponseBytes / 16))
 	 * object/array containers, including empty ones. This heuristic leaves room for dense
 	 * struct-logger traces with empty memory arrays while rejecting structural payloads
-	 * that can otherwise allocate roughly 30 times their text size. Choose the byte limit
-	 * for the available heap and concurrency; neither limit exactly bounds process memory.
+	 * that can otherwise allocate roughly 30 times their text size. Key-dense objects still
+	 * used about 14 times their text size in the audit; container/number-dense cases about
+	 * 4 times. Plan at least 15 * maxResponseBytes * concurrent replies of heap, plus text,
+	 * transport and application headroom. These are measurements, not an upper bound;
+	 * lower byte limits and concurrency on small heaps, especially in browsers.
 	 * @defaultValue {@link DEFAULT_MAX_RESPONSE_BYTES} (10 MiB)
 	 */
 	maxResponseBytes?: number;
@@ -87,8 +90,8 @@ export interface ProviderBoundsOptions {
 	 */
 	maxResponseDepth?: number;
 	/**
-	 * Maximum combined pending + sent requests outstanding per provider.
-	 * Currently enforced by the socket providers only.
+	 * Maximum combined pending + sent request IDs outstanding per provider.
+	 * Each entry in a batch counts separately. Enforced by socket providers only.
 	 * @defaultValue {@link DEFAULT_MAX_IN_FLIGHT_REQUESTS} (256)
 	 */
 	maxInFlightRequests?: number;

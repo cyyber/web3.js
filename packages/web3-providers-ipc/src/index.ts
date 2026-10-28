@@ -70,7 +70,8 @@ const socketsWithErrorListener = new WeakSet<Socket>();
  * `maxAttempts` and end in a `MaxAttemptsReachedOnReconnectingError`, after which the next
  * `request()` tries to connect again (L-43).
  *
- * `providerOptions.maxResponseBytes` (10 MiB by default) bounds every message the node sends.
+ * `providerOptions.maxResponseBytes` (10 MiB by default) bounds each message in UTF-8 bytes.
+ * `providerOptions.maxResponseDepth` (4096 by default) bounds JSON nesting before parsing.
  * A larger message is dropped unparsed, its structure still followed so the stream stays in
  * step, and only the request it answers fails with a `ResponseTooLargeError`; an unrelated
  * request in flight on the same socket is unaffected (P4-M-5).

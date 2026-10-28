@@ -24,6 +24,7 @@ import {
 	Web3SubscriptionManager,
 } from '@theqrl/web3-core';
 import {
+	AbiError,
 	ContractExecutionError,
 	ContractMissingABIError,
 	ContractTransactionDataAndInputError,
@@ -45,7 +46,6 @@ import {
 import {
 	encodeEventSignature,
 	encodeFunctionSignature,
-	encodeParameter,
 	decodeContractErrorData,
 	isAbiErrorFragment,
 	isAbiEventFragment,
@@ -98,13 +98,12 @@ import { ALL_EVENTS, ALL_EVENTS_ABI, TOPIC_HEX_LENGTH } from './constants.js';
 import {
 	decodeEventABI,
 	selectEventABI,
+	matchesEventFilter,
+	eventFilterNeedsBroadTopics,
 	EventTopicCountError,
 	decodeMethodReturn,
 	encodeEventABI,
-	encodeIndexedTopic,
 	encodeMethodABI,
-	isIndexedHashType,
-	isOrList,
 } from './encoding.js';
 import { LogsSubscription } from './log_subscription.js';
 import {
@@ -254,6 +253,7 @@ const providerOf = (arg: unknown): SupportedProviders<QRLExecutionAPI> | string 
  */
 const cloneAbiParameters = (
 	parameters: ReadonlyArray<AbiParameter> | undefined,
+	depth = 0,
 ): ReadonlyArray<AbiParameter> | undefined => {
 	// Anything that is not an array is left to the ABI layer to reject.
 	if (isNullish(parameters) || !Array.isArray(parameters as unknown)) {
@@ -263,9 +263,14 @@ const cloneAbiParameters = (
 		if (typeof parameter !== 'object' || isNullish(parameter)) {
 			return parameter;
 		}
+		const nextDepth =
+			depth +
+			(typeof parameter.type === 'string' ? (parameter.type.match(/\[/g)?.length ?? 0) : 0) +
+			(parameter.components ? 1 : 0);
+		if (nextDepth > 64) throw new AbiError('ABI nesting exceeds maximum depth 64');
 		return isNullish(parameter.components)
 			? { ...parameter }
-			: { ...parameter, components: cloneAbiParameters(parameter.components) };
+			: { ...parameter, components: cloneAbiParameters(parameter.components, nextDepth) };
 	});
 };
 
@@ -1012,40 +1017,7 @@ export class Contract<Abi extends ContractAbi>
 					this._jsonInterface,
 				);
 
-				return filterKeys.every((key: string) => {
-					const inputAbi = logAbi?.inputs?.find(input => input.name === key);
-					if (!inputAbi) {
-						return false;
-					}
-
-					// Compare through the ABI type: `20`, `'20'`, `20n` and `'0x14'` are the
-					// same `uint256`, and a hashed indexed value is compared as its topic
-					// (L-61).
-					const matches = (expected: unknown): boolean => {
-						const actual = log.returnValues[key];
-						if (inputAbi.indexed && isIndexedHashType(inputAbi.type)) {
-							const expectedTopicValue = encodeIndexedTopic(inputAbi, expected);
-							return (
-								typeof actual === 'string' &&
-								rightPad(actual, 128).toLowerCase() ===
-									expectedTopicValue.toLowerCase()
-							);
-						}
-						const expectedWord = encodeParameter(inputAbi, expected);
-						try {
-							return encodeParameter(inputAbi, actual) === expectedWord;
-						} catch {
-							// A value that cannot be re-encoded (the log was decoded as
-							// anonymous, for example) does not match.
-							return false;
-						}
-					};
-
-					if (isOrList(inputAbi, filter[key])) {
-						return (filter[key] as unknown[]).some(matches);
-					}
-					return matches(filter[key]);
-				});
+				return matchesEventFilter(log, logAbi, filter);
 			});
 		}
 
@@ -1539,6 +1511,7 @@ export class Contract<Abi extends ContractAbi>
 		returnFormat: DataFormat = DEFAULT_RETURN_FORMAT,
 	): ContractBoundEvent {
 		return (...params: unknown[]) => {
+			const eventOptions = (params[0] ?? {}) as NonNullable<EventParameters>;
 			const { topics, fromBlock } = encodeEventABI(
 				this.options,
 				abi,
@@ -1551,6 +1524,11 @@ export class Contract<Abi extends ContractAbi>
 					topics,
 					abi,
 					jsonInterface: this._jsonInterface,
+					filter:
+						!eventOptions.topics &&
+						eventFilterNeedsBroadTopics(abi, eventOptions.filter, this._jsonInterface)
+							? eventOptions.filter
+							: undefined,
 				},
 				{
 					subscriptionManager: this

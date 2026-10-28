@@ -522,6 +522,9 @@ export const toNumber = (value: Numbers): number | bigint => {
  * > 1n
  * ```
  */
+// Decimal strings are limited to 155 digits (enough for uint512), plus an optional
+// minus sign. This prevents untrusted decimal quantities from imposing unbounded
+// BigInt base conversion work. Hex strings retain their existing conversion rules.
 export const toBigInt = (value: unknown): bigint => {
 	if (typeof value === 'number') {
 		if (!Number.isInteger(value)) {
@@ -547,7 +550,7 @@ export const toBigInt = (value: unknown): bigint => {
 			return negative ? -magnitude : magnitude;
 		}
 
-		if (DECIMAL_INTEGER.test(value)) {
+		if (value.length <= (value.startsWith('-') ? 156 : 155) && DECIMAL_INTEGER.test(value)) {
 			return BigInt(value);
 		}
 	}
@@ -613,7 +616,7 @@ export const fromPlanck = (number: Numbers, unit: QRLUnits): string => {
 	const fraction = rawFraction.slice(0, fractionEnd);
 
 	if (integer === '') {
-		return `${sign}0.${fraction}`;
+		return fraction === '' ? `${sign}0` : `${sign}0.${fraction}`;
 	}
 
 	if (fraction === '') {

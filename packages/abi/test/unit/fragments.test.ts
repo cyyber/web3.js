@@ -20,6 +20,7 @@ import {
 	ErrorFragment,
 	EventFragment,
 	FormatTypes,
+	ParamType,
 	Fragment,
 	FunctionFragment,
 } from '../../src/fragments.js';
@@ -308,9 +309,7 @@ describe('untrusted ABI JSON (I-10)', () => {
 		expect(() => Fragment.fromObject(JSON.parse('null'))).toThrow(/invalid fragment object/);
 		expect(codeOf(() => Fragment.fromObject(JSON.parse('null')))).toBe('INVALID_ARGUMENT');
 		expect(() => Fragment.fromObject(undefined as any)).toThrow(/invalid fragment object/);
-		expect(() => Fragment.fromObject('function f()' as any)).toThrow(
-			/invalid fragment object/,
-		);
+		expect(() => Fragment.fromObject('function f()' as any)).toThrow(/invalid fragment object/);
 		expect(() => EventFragment.fromObject(JSON.parse('null'))).toThrow(/invalid event object/);
 		expect(() => FunctionFragment.fromObject(JSON.parse('null'))).toThrow(
 			/invalid function object/,
@@ -325,9 +324,11 @@ describe('untrusted ABI JSON (I-10)', () => {
 		expect(() =>
 			EventFragment.fromObject({ type: 'event', name: 'E', inputs: 'x' as any }),
 		).toThrow(/invalid inputs/);
-		expect(codeOf(() => EventFragment.fromObject({ type: 'event', name: 'E', inputs: 'x' as any }))).toBe(
-			'INVALID_ARGUMENT',
-		);
+		expect(
+			codeOf(() =>
+				EventFragment.fromObject({ type: 'event', name: 'E', inputs: 'x' as any }),
+			),
+		).toBe('INVALID_ARGUMENT');
 		expect(() =>
 			FunctionFragment.fromObject({
 				type: 'function',
@@ -345,9 +346,9 @@ describe('untrusted ABI JSON (I-10)', () => {
 				inputs: 5 as any,
 			}),
 		).toThrow(/invalid inputs/);
-		expect(() => ErrorFragment.fromObject({ type: 'error', name: 'E', inputs: 5 as any })).toThrow(
-			/invalid inputs/,
-		);
+		expect(() =>
+			ErrorFragment.fromObject({ type: 'error', name: 'E', inputs: 5 as any }),
+		).toThrow(/invalid inputs/);
 		expect(() =>
 			ConstructorFragment.fromObject({ type: 'constructor', inputs: 'x' as any }),
 		).toThrow(/invalid inputs/);
@@ -355,15 +356,35 @@ describe('untrusted ABI JSON (I-10)', () => {
 
 	it('rejects an input whose type is not a string', () => {
 		expect(() =>
-			EventFragment.fromObject({ type: 'event', name: 'E', inputs: [JSON.parse('{"type":null}')] }),
+			EventFragment.fromObject({
+				type: 'event',
+				name: 'E',
+				inputs: [JSON.parse('{"type":null}')],
+			}),
 		).toThrow(/invalid type/);
 	});
 
 	it('still treats absent inputs and outputs as none', () => {
 		expect(EventFragment.fromObject({ type: 'event', name: 'E' }).inputs).toEqual([]);
-		const fn = FunctionFragment.fromObject({ type: 'function', name: 'f', stateMutability: 'view' });
+		const fn = FunctionFragment.fromObject({
+			type: 'function',
+			name: 'f',
+			stateMutability: 'view',
+		});
 		expect(fn.inputs).toEqual([]);
 		expect(fn.outputs).toEqual([]);
 		expect(ErrorFragment.fromObject({ type: 'error', name: 'E' }).inputs).toEqual([]);
 	});
+});
+
+test('bounds JSON components and string array dimensions with INVALID_ARGUMENT', () => {
+	type NestedParameter = { type: string; components?: NestedParameter[] };
+	let input: NestedParameter = { type: 'uint8' };
+	for (let i = 0; i < 2000; i += 1) input = { type: 'tuple', components: [input] };
+	for (const value of [input, 'uint8' + '[]'.repeat(2000)]) {
+		expect(() => ParamType.from(value)).toThrow(
+			expect.objectContaining({ code: 'INVALID_ARGUMENT' }),
+		);
+	}
+	expect(ParamType.from('uint8' + '[]'.repeat(64)).arrayLength).toBe(-1);
 });

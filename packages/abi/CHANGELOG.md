@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Pass 10 audit corrections
+
+- Reject ABI parameters beyond 64 combined tuple/array levels with INVALID_ARGUMENT before recursive construction (P10-ABI-1).
+
 ### Pass 7 audit corrections
 
 - Accept both safe integer endpoints as JavaScript numbers and reject unsafe numeric inputs explicitly (P7-ABI-1).

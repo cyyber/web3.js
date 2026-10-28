@@ -151,6 +151,14 @@ pnpm run release:dry-run
 
 `pnpm run release` and `pnpm run release:publish-tarballs` are for CI. Do not run them locally against the upstream repository.
 
+The smoke runner removes its temporary projects and any npm cache it creates on
+exit. SIGINT/SIGTERM cancel the active command (including its subprocesses on
+POSIX), wait for it to stop, clean up, and terminate the runner with the same
+signal. A command that ignores cancellation is killed after five seconds.
+A caller-provided `npm_config_cache` is preserved. Set
+`WEB3_KEEP_SMOKE_PROJECTS=1` to retain the projects and owned cache for debugging;
+this does not disable cancellation.
+
 ## Package Artefacts
 
 Release tarballs must be built from CI output. Generated `lib/` and `dist/` directories are not expected to be committed unless that policy is explicitly changed before audit freeze.

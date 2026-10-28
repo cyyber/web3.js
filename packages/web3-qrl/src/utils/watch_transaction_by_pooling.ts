@@ -22,10 +22,12 @@ import {
 	TransactionReceipt,
 } from '@theqrl/web3-types';
 import { Web3Context, Web3PromiEvent } from '@theqrl/web3-core';
-import { format, numberToHex } from '@theqrl/web3-utils';
+import { format, numberToHex, isNullish } from '@theqrl/web3-utils';
 import { qrlRpcMethods } from '@theqrl/web3-rpc-methods';
 
 import { SendSignedTransactionEvents, SendTransactionEvents } from '../types.js';
+import { isHash32, isValidUnsignedHexNumber } from './hex_guards.js';
+import { invalidResponseError } from './invalid_response_error.js';
 import { transactionReceiptSchema } from '../schemas.js';
 import { MAX_CONSECUTIVE_POLLING_ERRORS } from '../constants.js';
 import { reportWatcherError, emitConfirmation } from './promi_event_errors.js';
@@ -103,11 +105,23 @@ export const watchTransactionByPolling = <
 			);
 			// Stopped while the request was in flight.
 			if (stopped) return;
-			if (!nextBlock?.hash) {
+			// eslint-disable-next-line no-null/no-null -- a pending block has no hash
+			if (isNullish(nextBlock) || nextBlock.hash === null) {
 				consecutiveErrors = 0;
 				return;
 			}
 
+			if (
+				!isHash32(nextBlock.hash) ||
+				!isValidUnsignedHexNumber(nextBlock.number) ||
+				BigInt(nextBlock.number) !== nextNumber
+			) {
+				throw invalidResponseError(
+					'qrl_getBlockByNumber',
+					'a block with the requested number and a 32-byte hash',
+					nextBlock,
+				);
+			}
 			// The chain grew past the receipt's block; make sure the transaction is still in it.
 			const recheck = await recheckReceipt(web3Context, receipt);
 			if (stopped) return;

@@ -115,11 +115,11 @@ test.each([FMT_BYTES.HEX, FMT_BYTES.UINT8ARRAY])(
 		const request = jest
 			.fn()
 			.mockImplementation(
-				async ({ method }: { method: string }) =>
+				async ({ method, params }: { method: string; params: string[] }) =>
 					await Promise.resolve(
 						method === 'qrl_getTransactionReceipt'
 							? receipt
-							: { hash: `0x${'ef'.repeat(32)}` },
+							: { hash: `0x${'ef'.repeat(32)}`, number: params[0] },
 					),
 			);
 		const context = new Web3Context({ request, supportsSubscriptions: () => false } as never);
@@ -182,11 +182,11 @@ test.each(reorgFormats)(
 		const request = jest
 			.fn()
 			.mockImplementation(
-				async ({ method }: { method: string }) =>
+				async ({ method, params }: { method: string; params: string[] }) =>
 					await Promise.resolve(
 						method === 'qrl_getTransactionReceipt'
 							? moved
-							: { hash: `0x${'12'.repeat(32)}` },
+							: { hash: `0x${'12'.repeat(32)}`, number: params[0] },
 					),
 			);
 		const context = new Web3Context({

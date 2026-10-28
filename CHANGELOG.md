@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Pass 10 audit corrections
+
+- Bound raw transaction RLP before decoding, preserve delayed subscription bursts, count UTF-8 response bytes, and correct confirmation hashes, response identity checks and syncing notifications.
+- Correct merged-layout event filtering and live log validation; bound ABI parsing; speed up hex formatting, bound decimal parsing, and normalize zero and nullish formats.
+- Reject comment-obscured npmrc policy keys. Parse tracked Markdown links, including references, titles, HTML links and MDX targets, while excluding code and comments.
+- Follow up on P10R-1/P10R-2: cancel asynchronous tarball-smoke commands on SIGINT/SIGTERM before cleanup, and derive the umbrella integration receipt fixture's hash from the submitted transaction.
+- Document the residual key-dense JSON heap cost and concurrency sizing (the report-permitted P10-TR-1 remedy). See [audit evidence](docs/audit-evidence.md).
+
 ### Pass 9 audit corrections
 
 - Address all 18 pass-9 findings: preserve subscription bursts, bound JSON containers across all transports, allow deep traces, correct transaction/receipt handling and event filters, reject pnpm runtime overrides, and restore tracked audit evidence. Document indistinguishable event layouts (P9-CT-5).

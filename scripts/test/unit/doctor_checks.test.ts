@@ -474,3 +474,27 @@ test.each([
 		),
 	).toHaveLength(1);
 });
+
+test.each(['use-node-version', 'dangerously-allow-all-builds', 'pnpmfile', 'trust-policy'])(
+	'rejects ini comment and quote spellings of policy key %s',
+	key => {
+		for (const spelling of [
+			key + ' #comment',
+			key + ' ;comment',
+			key + '#',
+			'"' + key + '"',
+			"'" + key + "'",
+			key + '[]',
+		]) {
+			expect(doctorChecks.npmrcPolicyFailures(spelling + '=x')).toHaveLength(1);
+		}
+	},
+);
+
+test('decodes quoted JSON escapes and preserves escaped comment characters like ini', () => {
+	expect(
+		doctorChecks.npmrcPolicyFailures(String.raw`"\u0075se-node-version"=22.99.0`),
+	).toHaveLength(1);
+	expect(doctorChecks.npmrcPolicyFailures(String.raw`use-node-version\#literal=x`)).toEqual([]);
+	expect(doctorChecks.npmrcPolicyFailures(String.raw`use-node-version\;literal=x`)).toEqual([]);
+});

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Pass 10 audit corrections
+
+- Retain acknowledged subscription bursts when a custom request wrapper resumes in a later timer turn, including reconnect registration. Per-subscription order and cancellation cleanup are preserved (P10-CORE-1).
+
 ### Pass 9 audit corrections
 
 - Defer socket notifications for an acknowledged subscription until registration promises resume, then flush parked notifications for installed ids before live delivery; the count/size cap applies only while ids are unknown. Provider-change callbacks are isolated per listener so throws/rejections cannot interrupt a swap. Non-Error subscription listener failures become `SubscriptionError` (P9-CORE-1/2).

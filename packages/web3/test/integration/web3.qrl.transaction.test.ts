@@ -77,8 +77,7 @@ describe('signTransaction', () => {
 								// "logsBloom": "0xa957d47df264a31badc3ae823e10ac1d444b098d9b73d204c40426e57f47e8c3", // 256 byte bloom filter
 								status: '0x1',
 								to: payload.to,
-								transactionHash:
-									'0x85d995eba9763907fdf35cd2034144dd9d53ce32cbec21349d4b12823c6860c5',
+								transactionHash: keccak256(sentRawTransaction as string),
 								transactionIndex: '0x66',
 								// "type": payload.type
 							};

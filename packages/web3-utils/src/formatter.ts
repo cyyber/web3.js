@@ -153,6 +153,13 @@ export const convertScalarValue = (value: unknown, qrlType: string, format: Data
 			}
 			switch (format.bytes) {
 				case FMT_BYTES.HEX:
+					if (
+						typeof paddedValue === 'string' &&
+						paddedValue.length % 2 === 0 &&
+						/^0x[0-9a-f]*$/i.test(paddedValue)
+					) {
+						return `0x${paddedValue.slice(2).toLowerCase()}`;
+					}
 					return bytesToHex(bytesToUint8Array(paddedValue as Bytes));
 				case FMT_BYTES.UINT8ARRAY:
 					return bytesToUint8Array(paddedValue as Bytes);
@@ -187,9 +194,7 @@ const resolveArraySchema = (schemaProp: JsonSchema, value: unknown[]): JsonSchem
 	// alternative that describes array items, so `transactions: []` stays an empty array
 	// instead of vanishing from every empty block (P4-M-6).
 	if (value.length === 0) {
-		return (
-			schemaProp.oneOf.find(alternative => !isNullish(alternative?.items)) ?? schemaProp
-		);
+		return schemaProp.oneOf.find(alternative => !isNullish(alternative?.items)) ?? schemaProp;
 	}
 
 	let resolved = schemaProp;

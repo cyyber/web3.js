@@ -14,7 +14,7 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
-import { spawnSync } from 'child_process';
+import { spawn, spawnSync } from 'child_process';
 import {
 	chmodSync,
 	existsSync,
@@ -37,6 +37,18 @@ const script = join(root, 'scripts/release/smoke-tarballs.js');
 const fakeNpm = `#!/usr/bin/env bash
 set -e
 echo "$PWD $*" >> "$NPM_FAKE_LOG"
+if [ "$NPM_FAKE_WAIT" = "$1" ]; then
+  exec node -e '
+    const fs = require("fs");
+    if (process.env.NPM_FAKE_IGNORE_SIGNALS === "1") {
+      process.on("SIGINT", () => {});
+      process.on("SIGTERM", () => {});
+    }
+    fs.writeFileSync(process.env.NPM_FAKE_READY + ".tmp", JSON.stringify({ pid: process.pid, cache: process.env.npm_config_cache, project: process.cwd() }));
+    fs.renameSync(process.env.NPM_FAKE_READY + ".tmp", process.env.NPM_FAKE_READY);
+    setInterval(() => {}, 1000);
+  '
+fi
 case "$1" in
   install)
     node -e '
@@ -47,6 +59,8 @@ case "$1" in
   ci)
     node -e '
       const fs = require("fs");
+      const manifest = JSON.parse(fs.readFileSync("package.json", "utf8"));
+      if (!process.cwd().endsWith("smoke-" + manifest.type)) throw new Error("incorrect project module type");
       const lock = JSON.parse(fs.readFileSync("package-lock.json", "utf8"));
       for (const [name, spec] of Object.entries(lock.packages[""].dependencies)) {
         if (process.env.NPM_FAKE_OMIT === "package" && name === "@scope/a") continue;
@@ -68,6 +82,14 @@ const row = (name: string) =>
 		`@scope/${name}@0.5.0`,
 		`scope-${name}-0.5.0.tgz`,
 	].join('\t');
+
+const killGroup = (pid: number) => {
+	try {
+		process.kill(-pid, 'SIGKILL');
+	} catch (error) {
+		if ((error as NodeJS.ErrnoException).code !== 'ESRCH') throw error;
+	}
+};
 
 describe('release smoke test (P4-M-10)', () => {
 	let directory: string;
@@ -204,4 +226,106 @@ describe('release smoke test (P4-M-10)', () => {
 		expect(result.stderr).toContain('Missing tarball');
 		expect(npmCalls()).toEqual([]);
 	});
+
+	it.each([
+		{ signal: 'SIGINT', phase: 'install' },
+		{ signal: 'SIGTERM', phase: 'install' },
+		{ signal: 'SIGINT', phase: 'ci' },
+		{ signal: 'SIGTERM', phase: 'ci' },
+		{ signal: 'SIGINT', phase: 'ci', group: true },
+		{ signal: 'SIGTERM', phase: 'ci', group: true },
+		{ signal: 'SIGTERM', phase: 'ci', keep: true },
+		{ signal: 'SIGTERM', phase: 'ci', sharedCache: true },
+		{ signal: 'SIGTERM', phase: 'ci', ignoreSignals: true },
+	])(
+		'cancels the active child and cleans up according to policy: %j',
+		async options => {
+			const { signal, phase, group, keep, sharedCache, ignoreSignals } = options;
+			const ready = join(directory, 'npm-ready.json');
+			const temporary = join(directory, 'tmp');
+			const callerCache = join(directory, 'caller-cache');
+			mkdirSync(temporary);
+			mkdirSync(callerCache);
+			writeFileSync(join(callerCache, 'sentinel'), 'keep');
+			const env = {
+				...process.env,
+				TMPDIR: temporary,
+				NPM_EXECUTABLE: join(directory, 'npm'),
+				NPM_FAKE_LOG: logPath,
+				NPM_FAKE_WAIT: phase,
+				NPM_FAKE_READY: ready,
+				NPM_FAKE_IGNORE_SIGNALS: ignoreSignals ? '1' : '',
+				WEB3_KEEP_SMOKE_PROJECTS: keep ? '1' : '',
+				npm_config_cache: sharedCache ? callerCache : undefined,
+			};
+			const child = spawn(process.execPath, [script], {
+				cwd: directory,
+				env,
+				detached: true,
+				stdio: ['ignore', 'pipe', 'pipe'],
+			});
+			let output = '';
+			child.stdout.on('data', chunk => {
+				output += String(chunk);
+			});
+			child.stderr.on('data', chunk => {
+				output += String(chunk);
+			});
+			const completed = new Promise<{ code: number | null; signal: NodeJS.Signals | null }>(
+				(resolveExit, reject) => {
+					child.once('error', reject);
+					child.once('close', (code, exitSignal) =>
+						resolveExit({ code, signal: exitSignal }),
+					);
+				},
+			);
+			let npmPid: number | undefined;
+			try {
+				const deadline = Date.now() + 10_000;
+				while (!existsSync(ready)) {
+					if (
+						Date.now() > deadline ||
+						typeof child.exitCode === 'number' ||
+						typeof child.signalCode === 'string'
+					)
+						throw new Error(`npm did not become ready: ${output}`);
+					// Wait for the child's atomic readiness file before delivering a signal.
+					// eslint-disable-next-line no-await-in-loop
+					await new Promise(resolveWait => setTimeout(resolveWait, 20));
+				}
+				const state = JSON.parse(readFileSync(ready, 'utf8')) as {
+					pid: number;
+					cache: string;
+					project: string;
+				};
+				npmPid = state.pid;
+				process.kill(group ? -child.pid! : child.pid!, signal as NodeJS.Signals);
+				let timer: ReturnType<typeof setTimeout> | undefined;
+				const result = await Promise.race([
+					completed,
+					new Promise<never>((_, reject) => {
+						timer = setTimeout(
+							() => reject(new Error('smoke runner ignored cancellation')),
+							10_000,
+						);
+					}),
+				]).finally(() => clearTimeout(timer));
+				expect(result.code).toBeNull();
+				expect(result.signal).toBe(signal);
+				expect(() => process.kill(state.pid, 0)).toThrow();
+				expect(existsSync(state.cache)).toBe(keep === true || sharedCache === true);
+				expect(existsSync(state.project)).toBe(phase === 'install' || keep === true);
+				expect(readFileSync(join(callerCache, 'sentinel'), 'utf8')).toBe('keep');
+				expect(output).not.toContain('Smoke-tested');
+				expect(npmCalls().some(call => call.includes('smoke-module'))).toBe(false);
+			} finally {
+				// Own both groups so a failed assertion cannot leave a waiting fixture behind.
+				for (const pid of [npmPid, child.pid]) {
+					if (pid) killGroup(pid);
+				}
+				await completed;
+			}
+		},
+		25_000,
+	);
 });

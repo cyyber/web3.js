@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Pass 10 audit corrections
+
+- Bound ABI tuple/array schema nesting to 64 levels and reject excessive dimensions with Web3ValidatorError (P10-ABI-1).
+- Convert byte arrays to hex in bounded chunks and refuse decimal integer strings longer than 155 digits before BigInt conversion (P10-CORE-2).
+
 ### Pass 8 audit corrections
 
 - Return false for odd-length hexadecimal bloom membership values instead of throwing InvalidBytesError.

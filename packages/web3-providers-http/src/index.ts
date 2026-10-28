@@ -535,6 +535,7 @@ export default class HttpProvider<
 	 *
 	 * Response bytes are counted as they stream in and the read is aborted above
 	 * `maxResponseBytes` (default 10 MiB), which throws `ResponseTooLargeError`.
+	 * `maxResponseDepth` (default 4096) bounds JSON nesting before parsing.
 	 *
 	 * IMPORTANT -- a `RequestTimeoutError` means the outcome is **unknown**, not that the
 	 * request was rejected. The node may have received, accepted and executed the call; only

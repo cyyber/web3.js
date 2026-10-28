@@ -67,7 +67,9 @@ describe('watchTransactionByPolling', () => {
 				},
 			);
 
-			jest.spyOn(qrlRpcMethods, 'getBlockByNumber').mockResolvedValue(mockBlockData as any);
+			jest.spyOn(qrlRpcMethods, 'getBlockByNumber').mockImplementation(
+				(_manager, number) => Promise.resolve({ ...mockBlockData, number }) as never,
+			);
 		});
 
 		it.each(testData)(
@@ -159,8 +161,32 @@ describe('watchTransactionByPolling', () => {
 			jest.resetAllMocks();
 		});
 
+		it.each([
+			{ hash: '0x1' },
+			{ hash: 7 },
+			{ number: '0x0' },
+			{ number: 'abc' },
+			{ number: undefined },
+		])('rejects invalid confirming blocks %p without advancing', async fields => {
+			(qrlRpcMethods.getBlockByNumber as jest.Mock).mockImplementation(
+				(_manager, number) => ({ ...mockBlockData, number, ...fields }),
+			);
+			const errors = jest.fn();
+			promiEvent.on('error', errors);
+			start();
+			await jest.advanceTimersByTimeAsync(1000);
+			expect(confirmations).toEqual([]);
+			expect(errors).toHaveBeenCalledTimes(1);
+			expect(qrlRpcMethods.getBlockByNumber).toHaveBeenCalledTimes(
+				MAX_CONSECUTIVE_POLLING_ERRORS,
+			);
+			expect(jest.getTimerCount()).toBe(0);
+		});
+
 		it('stops after repeated moved-receipt format failures', async () => {
-			(qrlRpcMethods.getBlockByNumber as jest.Mock).mockResolvedValue(mockBlockData);
+			(qrlRpcMethods.getBlockByNumber as jest.Mock).mockImplementation(
+				(_manager, number) => ({ ...mockBlockData, number }),
+			);
 			(qrlRpcMethods.getTransactionReceipt as jest.Mock).mockResolvedValue({
 				...expectedTransactionReceipt,
 				blockHash: `0x${'55'.repeat(32)}`,
@@ -184,7 +210,9 @@ describe('watchTransactionByPolling', () => {
 		});
 
 		it('reports throwing confirmation listeners and still stops at the threshold', async () => {
-			(qrlRpcMethods.getBlockByNumber as jest.Mock).mockResolvedValue(mockBlockData);
+			(qrlRpcMethods.getBlockByNumber as jest.Mock).mockImplementation(
+				(_manager, number) => ({ ...mockBlockData, number }),
+			);
 			const errors = jest.fn();
 			promiEvent.on('error', errors);
 			promiEvent.on('confirmation', () => {
@@ -198,7 +226,9 @@ describe('watchTransactionByPolling', () => {
 			expect(jest.getTimerCount()).toBe(0);
 		});
 		it('emits exactly the confirmations up to the threshold and stops polling (L-54)', async () => {
-			(qrlRpcMethods.getBlockByNumber as jest.Mock).mockResolvedValue(mockBlockData);
+			(qrlRpcMethods.getBlockByNumber as jest.Mock).mockImplementation(
+				(_manager, number) => ({ ...mockBlockData, number }),
+			);
 
 			start();
 			await jest.advanceTimersByTimeAsync(1_000);
@@ -213,7 +243,7 @@ describe('watchTransactionByPolling', () => {
 			(qrlRpcMethods.getBlockByNumber as jest.Mock)
 				.mockRejectedValueOnce(new Error('header not found'))
 				.mockRejectedValueOnce(new Error('header not found'))
-				.mockResolvedValue(mockBlockData);
+				.mockImplementation((_manager, number) => ({ ...mockBlockData, number }));
 			const errorListener = jest.fn<void, [BaseWeb3Error]>();
 			promiEvent.on('error', errorListener);
 
@@ -243,7 +273,9 @@ describe('watchTransactionByPolling', () => {
 		});
 
 		it('stops and reports a transaction that a reorg dropped from the chain (round 2)', async () => {
-			(qrlRpcMethods.getBlockByNumber as jest.Mock).mockResolvedValue(mockBlockData);
+			(qrlRpcMethods.getBlockByNumber as jest.Mock).mockImplementation(
+				(_manager, number) => ({ ...mockBlockData, number }),
+			);
 			// eslint-disable-next-line no-null/no-null
 			(qrlRpcMethods.getTransactionReceipt as jest.Mock).mockResolvedValue(null);
 			const errorListener = jest.fn<void, [BaseWeb3Error]>();
@@ -273,7 +305,9 @@ describe('watchTransactionByPolling', () => {
 					BigInt(formattedTransactionReceipt.blockNumber) + BigInt(1),
 				),
 			};
-			(qrlRpcMethods.getBlockByNumber as jest.Mock).mockResolvedValue(mockBlockData);
+			(qrlRpcMethods.getBlockByNumber as jest.Mock).mockImplementation(
+				(_manager, number) => ({ ...mockBlockData, number }),
+			);
 			(qrlRpcMethods.getTransactionReceipt as jest.Mock).mockResolvedValue(movedReceipt);
 			const receipts: TransactionReceipt[] = [];
 			promiEvent.on('confirmation', ({ receipt }) => {

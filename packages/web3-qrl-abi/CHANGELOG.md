@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Pass 10 audit corrections
+
+- Bound recursive signature flattening to 64 combined tuple/array levels with AbiError (P10-ABI-1).
+
 ### Pass 9 audit corrections
 
 - Reject non-array ABI parameter lists and tuple components with AbiError instead of raw TypeError (P9-ABI-1).

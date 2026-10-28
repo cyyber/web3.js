@@ -47,6 +47,20 @@ const extraTypes = [
 // (I-11). The size is only meaningful for `int`, `uint` and `bytes`.
 const ABI_TYPE_PATTERN = /^([a-z]+)(\d*)((?:\[\d*\])*)$/;
 
+const assertAbiDepth = (depth: number): void => {
+	if (depth > 64) {
+		throw new Web3ValidatorError([
+			{
+				keyword: 'maxDepth',
+				message: 'ABI nesting exceeds maximum depth 64',
+				params: { maxDepth: 64 },
+				instancePath: '',
+				schemaPath: '',
+			},
+		]);
+	}
+};
+
 /**
  * Splits an ABI type into its base type, its size and its array dimensions.
  *
@@ -70,6 +84,7 @@ export const parseBaseType = <T = (typeof VALID_QRL_BASE_TYPES)[number]>(
 	}
 
 	const [, name, size, dimensions] = match;
+	assertAbiDepth(dimensions.match(/\[/g)?.length ?? 0);
 	const arraySizes = [...dimensions.matchAll(/\[(\d*)\]/g)].map(([, digits]) =>
 		digits === '' ? -1 : parseInt(digits, 10),
 	);
@@ -173,6 +188,7 @@ const convertEthType = (
 export const abiSchemaToJsonSchema = (
 	abis: ShortValidationSchema | FullValidationSchema,
 	level = '/0',
+	depth = 0,
 ) => {
 	const schema: JsonSchema = {
 		type: 'array',
@@ -233,6 +249,8 @@ export const abiSchemaToJsonSchema = (
 		}
 
 		const { baseType, baseTypeSize, isArray, arraySizes } = parseBaseType(abiType);
+		const nextDepth = depth + arraySizes.length + (baseType === 'tuple' ? 1 : 0);
+		assertAbiDepth(nextDepth);
 
 		// A tuple without `components` used to reach `abiSchemaToJsonSchema(undefined)` and die
 		// with a raw `TypeError`; it is a schema error and is reported as one.
@@ -253,7 +271,7 @@ export const abiSchemaToJsonSchema = (
 		let elementSchema: JsonSchema;
 
 		if (baseType === 'tuple') {
-			elementSchema = abiSchemaToJsonSchema(abiComponents, abiName);
+			elementSchema = abiSchemaToJsonSchema(abiComponents, abiName, nextDepth);
 
 			// For a bare tuple the `$id` belongs on the tuple itself. For an array of
 			// tuples it belongs on the outermost array, and is set after wrapping below.
@@ -264,7 +282,9 @@ export const abiSchemaToJsonSchema = (
 			// The element keeps its declared size: `bytes32[]` elements are `bytes32`, not any
 			// `bytes`, and `uint8[]` elements are `uint8`, not `uint256`.
 			elementSchema = convertEthType(
-				baseTypeSize === undefined ? String(baseType) : `${String(baseType)}${baseTypeSize}`,
+				baseTypeSize === undefined
+					? String(baseType)
+					: `${String(baseType)}${baseTypeSize}`,
 			);
 		} else {
 			elementSchema = { $id: abiName, ...convertEthType(abiType) };
@@ -521,13 +541,17 @@ export const padLeft = (value: ValidInputTypes, characterAmount: number, sign = 
 	return `${prefix}${hexValue.padStart(characterAmount, sign)}`;
 };
 
+const HEX_BYTES = Array.from({ length: 256 }, (_, i) => i.toString(16).padStart(2, '0'));
+
 export function uint8ArrayToHexString(uint8Array: Uint8Array): string {
-	let hexString = '0x';
-	for (const e of uint8Array) {
-		const hex = e.toString(16);
-		hexString += hex.length === 1 ? `0${hex}` : hex;
+	const chunks: string[] = [];
+	for (let start = 0; start < uint8Array.length; start += 8192) {
+		const length = Math.min(8192, uint8Array.length - start);
+		const part = new Array<string>(length);
+		for (let i = 0; i < length; i += 1) part[i] = HEX_BYTES[uint8Array[start + i]];
+		chunks.push(part.join(''));
 	}
-	return hexString;
+	return `0x${chunks.join('')}`;
 }
 
 export function hexToUint8Array(hex: string): Uint8Array {

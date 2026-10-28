@@ -333,7 +333,8 @@ provider.on('error', error => {
 ## Response structure limits
 
 HTTP, WebSocket and IPC responses are bounded before `JSON.parse`, including HTTP
-error bodies. `maxResponseBytes` defaults to 10 MiB. `maxResponseDepth` defaults to
+error bodies. `maxResponseBytes` defaults to 10 MiB and counts UTF-8 bytes on all
+three transports, including multibyte text and split IPC chunks. `maxResponseDepth` defaults to
 4096 and accepts a positive safe integer; this accommodates a complete 1024-frame
 call trace with its JSON wrapper. HTTP accepts these in its second constructor
 argument; WebSocket and IPC accept them in the fourth (`providerOptions`).
@@ -348,8 +349,22 @@ process the following message. Identifiable response ids are failed individually
 without an identifiable id, pending requests may all fail.
 
 The byte limit is not a heap allowance. Text, transport buffers, parsed strings,
-arrays and objects coexist, and concurrent replies multiply memory use. Dense
-structures can otherwise allocate about 30 times their text size. The structural
-budget prevents that amplification pattern but does not promise a fixed process
-memory ceiling. Increase byte/depth limits only to fit your workload and available
-heap; reduce concurrency or byte limits for small heaps.
+arrays and objects coexist, and concurrent replies multiply memory use. The
+container budget rejects the measured roughly 30× structural allocation attack,
+but key-dense objects still used about 14× their response text size (132 MiB for a
+10 MiB reply). Container/number-dense cases used about 4×; the previously measured
+50 MiB empty-container case was not a worst-case bound for all JSON shapes.
+
+Plan at least `15 × maxResponseBytes × concurrent replies` of heap, plus headroom
+for text, transport buffers and your application. These measurements are sizing
+guidance, not a guaranteed upper bound. Use lower byte limits and concurrency for
+small heaps and browsers. Raising `maxResponseDepth` or the byte limit raises the
+work and allocation a peer can impose.
+
+Socket `maxInFlightRequests` counts request ids, so every batch entry consumes a
+slot. Notifications coalesced with a subscription acknowledgement are parked for
+one event-loop iteration; they have no item-count cap. The manager also retains
+that acknowledged burst when a custom `request()` wrapper delays promise
+completion. Delivery stays ordered within each subscription, and cancellation
+removes its parked items. Unknown ids still share a bounded registration buffer;
+custom providers that do not expose acknowledgement information use that buffer.

@@ -309,3 +309,155 @@ test('rejects non-string topics on the live path', async () => {
 	expect(errors.mock.calls[0][0]).toBeInstanceOf(ResponseError);
 	await sub.unsubscribe();
 });
+
+test('rejects excessive tuple depth while cloning a contract ABI', () => {
+	type NestedParameter = { name: string; type: string; components?: NestedParameter[] };
+	let input: NestedParameter = { name: '', type: 'uint8' };
+	for (let i = 0; i < 2000; i += 1) input = { name: '', type: 'tuple', components: [input] };
+	expect(
+		() => new Contract([{ type: 'function', name: 'f', inputs: [input], outputs: [] }]),
+	).toThrow(AbiError);
+	expect(
+		() =>
+			new Contract([
+				{
+					type: 'function',
+					name: 'f',
+					inputs: [{ name: '', type: 'uint8' + '[]'.repeat(2000) }],
+					outputs: [],
+				},
+			]),
+	).toThrow(AbiError);
+});
+test.each([
+	{ blockNumber: 'abc' },
+	{ logIndex: {} },
+	{ removed: 'yes' },
+	{ address: 7 },
+	{ blockHash: '0xzz' },
+	// eslint-disable-next-line no-null/no-null -- malformed node reply
+	{ transactionHash: null },
+])('rejects malformed live log fields %p', async fields => {
+	const provider = new FakeProvider(
+		method => (method === 'qrl_subscribe' ? '0x1' : undefined),
+		true,
+	);
+	const contract = new Contract([event], ADDR, { provider: provider.asProvider() });
+	const sub = contract.events.Value();
+	const data = jest.fn();
+	const errors = jest.fn();
+	sub.on('data', data);
+	sub.on('error', errors);
+	await sub.subscribed;
+	provider.notify('0x1', { ...log, ...fields });
+	expect(data).not.toHaveBeenCalled();
+	expect(errors.mock.calls[0][0]).toBeInstanceOf(ResponseError);
+	await sub.unsubscribe();
+});
+
+test('ignores nullish layout keys and merges omitted anonymous with false', async () => {
+	const indexed = {
+		type: 'event',
+		name: 'Value',
+		inputs: [{ name: 'tokenId', type: 'uint256', indexed: true }],
+	} as const;
+	const indexedLog = { ...log, topics: [...log.topics, `0x${uintWord(8)}`], data: '0x' };
+	const provider = new FakeProvider(
+		method =>
+			method === 'qrl_getLogs'
+				? [log, indexedLog]
+				: method === 'qrl_subscribe'
+					? '0x1'
+					: undefined,
+		true,
+	);
+	const contract = new Contract([event, indexed], ADDR, { provider: provider.asProvider() });
+	expect(await contract.getPastEvents('Value', { filter: { tokenId: undefined } })).toHaveLength(
+		2,
+	);
+	expect(provider.lastCall('qrl_getLogs')?.params[0]).toHaveProperty('topics', log.topics);
+	expect(
+		await contract.getPastEvents('Value', { filter: { tokenId: 8, value: undefined } }),
+	).toHaveLength(1);
+	const sub = contract.events.Value({ filter: { tokenId: 8 } });
+	await sub.subscribed;
+	expect(provider.lastCall('qrl_subscribe')?.params[1]).toHaveProperty(
+		'topics',
+		indexedLog.topics,
+	);
+	await sub.unsubscribe();
+});
+
+test.each([false, true])(
+	'fetches and filters every compatible indexed layout (reversed=%s)',
+	async reversed => {
+		const first = {
+			type: 'event',
+			name: 'Shared',
+			inputs: [
+				{ name: 'key', type: 'uint256', indexed: true },
+				{ name: 'other', type: 'uint256', indexed: true },
+				{ name: 'value', type: 'uint256', indexed: false },
+			],
+		} as const;
+		const second = {
+			...first,
+			inputs: [
+				{ name: 'other', type: 'uint256', indexed: true },
+				{ name: 'key', type: 'uint256', indexed: true },
+				{ name: 'value', type: 'uint256', indexed: true },
+			],
+		} as const;
+		const signature = topicOf('Shared(uint256,uint256,uint256)');
+		const one = {
+			...log,
+			topics: [signature, `0x${uintWord(7)}`, `0x${uintWord(9)}`],
+			data: `0x${uintWord(20)}`,
+		};
+		const wrong = {
+			...log,
+			topics: [signature, `0x${uintWord(7)}`, `0x${uintWord(9)}`, `0x${uintWord(20)}`],
+			data: '0x',
+		};
+		const two = {
+			...wrong,
+			topics: [signature, `0x${uintWord(9)}`, `0x${uintWord(7)}`, `0x${uintWord(20)}`],
+		};
+		const all = [one, wrong, two];
+		const matchesTopics = (entry: typeof one, topics: (string | undefined)[]) =>
+			topics.length <= entry.topics.length &&
+			// eslint-disable-next-line no-null/no-null -- the node treats null topic slots as wildcards
+			topics.every((topic, index) => topic == null || topic === entry.topics[index]);
+		const provider = new FakeProvider((method, params) => {
+			if (method === 'qrl_getLogs')
+				return all.filter(entry =>
+					matchesTopics(entry, (params[0] as { topics: string[] }).topics),
+				);
+			if (method === 'qrl_subscribe') return '0x1';
+			return undefined;
+		}, true);
+		const contract = new Contract(reversed ? [second, first] : [first, second], ADDR, {
+			provider: provider.asProvider(),
+		});
+		const past = await contract.getPastEvents('Shared', { filter: { key: 7 } });
+		expect(past).toHaveLength(2);
+		expect(past.map(entry => (entry as EventLog).returnValues.key)).toEqual([
+			BigInt(7),
+			BigInt(7),
+		]);
+		expect(provider.lastCall('qrl_getLogs')?.params[0]).toHaveProperty('topics', [signature]);
+		const sub = contract.events.Shared({ filter: { key: 7 } });
+		const received = jest.fn();
+		sub.on('data', received);
+		await sub.subscribed;
+		const topics = (provider.lastCall('qrl_subscribe')?.params[1] as { topics: string[] })
+			.topics;
+		for (const entry of all) if (matchesTopics(entry, topics)) provider.notify('0x1', entry);
+		expect(received).toHaveBeenCalledTimes(2);
+		expect(received.mock.calls.map(([entry]) => (entry as EventLog).returnValues.key)).toEqual([
+			BigInt(7),
+			BigInt(7),
+		]);
+		await sub.unsubscribe();
+	},
+);

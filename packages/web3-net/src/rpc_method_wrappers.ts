@@ -17,7 +17,7 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 
 import { format } from '@theqrl/web3-utils';
 import { Web3Context, createInvalidResponseError } from '@theqrl/web3-core';
-import { DataFormat, Web3NetAPI } from '@theqrl/web3-types';
+import { DEFAULT_RETURN_FORMAT, DataFormat, Web3NetAPI } from '@theqrl/web3-types';
 import { netRpcMethods } from '@theqrl/web3-rpc-methods';
 
 /**
@@ -28,7 +28,7 @@ import { netRpcMethods } from '@theqrl/web3-rpc-methods';
  * network id or the peer count would act on garbage (L-40).
  */
 const isUnsignedQuantity = (value: unknown): value is string | number | bigint =>
-	(typeof value === 'string' && /^(0x[0-9a-f]+|[0-9]+)$/i.test(value)) ||
+	(typeof value === 'string' && value.length <= 155 && /^(0x[0-9a-f]+|[0-9]+)$/i.test(value)) ||
 	(typeof value === 'number' && Number.isSafeInteger(value) && value >= 0) ||
 	(typeof value === 'bigint' && value >= BigInt(0));
 
@@ -48,7 +48,11 @@ export async function getId<ReturnFormat extends DataFormat>(
 		throw invalidReply('net_version', 'a non-negative integer', response);
 	}
 
-	return format({ format: 'uint' }, response as unknown as number, returnFormat);
+	return format(
+		{ format: 'uint' },
+		response as unknown as number,
+		returnFormat ?? DEFAULT_RETURN_FORMAT,
+	);
 }
 
 /**
@@ -65,7 +69,11 @@ export async function getPeerCount<ReturnFormat extends DataFormat>(
 	}
 
 	// Data returned is number in hex format
-	return format({ format: 'uint' }, response as unknown as number, returnFormat);
+	return format(
+		{ format: 'uint' },
+		response as unknown as number,
+		returnFormat ?? DEFAULT_RETURN_FORMAT,
+	);
 }
 
 /**

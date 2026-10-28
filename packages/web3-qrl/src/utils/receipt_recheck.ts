@@ -85,6 +85,8 @@ export const recheckReceipt = async (
 	if (
 		!isObject(fresh) ||
 		!isHash32(fresh.blockHash) ||
+		!isHash32(fresh.transactionHash) ||
+		fresh.transactionHash.toLowerCase() !== transactionHash.toLowerCase() ||
 		!isValidUnsignedHexNumber(fresh.blockNumber) ||
 		!isValidUnsignedHexNumber(fresh.status)
 	) {

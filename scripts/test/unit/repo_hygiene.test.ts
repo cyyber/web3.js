@@ -39,6 +39,7 @@ describe('repository hygiene (P4-L-45, P4-L-46, P4-L-50)', () => {
 	const hygiene = () =>
 		spawnSync(process.execPath, [join(repo, 'scripts/check-repo-hygiene.js')], {
 			cwd: repo,
+			env: { ...process.env, NODE_PATH: join(root, 'node_modules') },
 			encoding: 'utf8',
 			timeout: 30_000,
 		});
@@ -110,6 +111,34 @@ describe('repository hygiene (P4-L-45, P4-L-46, P4-L-50)', () => {
 		expect(hygiene().status).toBe(0);
 		rmSync(join(repo, 'docs/audit-evidence.md'));
 		expect(hygiene().status).toBe(1);
+	});
+
+	it.each([
+		'[evidence](docs/missing.md "title")',
+		'[evidence](<docs/missing.md>)',
+		'[evidence][ref]\n\n[ref]: docs/missing.md "title"',
+		'[ref]\n\n[ref]: docs/missing.md',
+		'<a href="docs/missing.md">evidence</a>',
+		'<Link to="docs/missing.mdx">evidence</Link>',
+		'[evidence](docs/missing.md?view=1#checks)',
+		'[evidence](docs/missing%20file.md)',
+	])('checks rendered Markdown links: %s', source => {
+		write('README.md', source);
+		git('add', 'README.md');
+		expect(hygiene().stderr).toContain('missing or untracked Markdown file');
+	});
+	it.each([
+		'`[example](docs/missing.md)`',
+		'``[example](docs/missing.md)``',
+		'~~~markdown\n[example](docs/missing.md)\n~~~',
+		'````markdown\n```\n[example](docs/missing.md)\n````',
+		'    [example](docs/missing.md)',
+		'<!-- [example](docs/missing.md) -->',
+		'<!-- <a href="docs/missing.md">example</a> -->',
+	])('ignores code and comment examples: %s', source => {
+		write('README.md', source);
+		git('add', 'README.md');
+		expect(hygiene().status).toBe(0);
 	});
 
 	it('checks tracked symlinks named like excluded directories (dist, node_modules)', () => {

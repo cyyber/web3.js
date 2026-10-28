@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Pass 10 audit corrections
+
+- Bound raw transaction input before conversion, use the confirming header hash, validate polling headers against the requested block number, match receipt/transaction replies to the requested hash, and require all three syncing progress fields in subscriptions (P10-QRL-1 through P10-QRL-5).
+
 ### Pass 9 audit corrections
 
 - Reset polling errors only after a successful confirmation step and validate reorg-moved receipts before adoption. Repeated receipt-format errors stop polling and report failure (P9-QRL-1/2).

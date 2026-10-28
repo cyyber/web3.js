@@ -15,12 +15,20 @@ You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AbiEventFragment, LogsInput, HexString, Topic, DataFormat } from '@theqrl/web3-types';
+import {
+	AbiEventFragment,
+	LogsInput,
+	HexString,
+	Topic,
+	DataFormat,
+	Filter,
+} from '@theqrl/web3-types';
 import { Web3RequestManager, Web3Subscription, Web3SubscriptionManager } from '@theqrl/web3-core';
 import { SubscriptionError } from '@theqrl/web3-errors';
 import { rightPad } from '@theqrl/web3-utils';
 import { ALL_EVENTS, TOPIC_HEX_LENGTH } from './constants.js';
-import { decodeEventABI } from './encoding.js';
+import { assertRpcResult, logSchema } from '@theqrl/web3-qrl';
+import { decodeEventABI, selectEventABI, matchesEventFilter } from './encoding.js';
 import { EventLog, ContractAbiWithSignature } from './types.js';
 import { isLogOf } from './utils.js';
 
@@ -113,6 +121,7 @@ export class LogsSubscription extends Web3Subscription<
 	public readonly abi: AbiEventFragment & { signature: HexString };
 
 	public readonly jsonInterface: ContractAbiWithSignature;
+	private readonly filter?: Filter['filter'];
 
 	/**
 	 * Set when the subscription was created through `contract.events.<Event>()`: resolves with
@@ -129,6 +138,7 @@ export class LogsSubscription extends Web3Subscription<
 			topics?: (Topic | Topic[] | null)[];
 			abi: AbiEventFragment & { signature: HexString };
 			jsonInterface: ContractAbiWithSignature;
+			filter?: Filter['filter'];
 		},
 		options: { subscriptionManager: Web3SubscriptionManager; returnFormat?: DataFormat },
 	);
@@ -138,6 +148,7 @@ export class LogsSubscription extends Web3Subscription<
 			topics?: (Topic | Topic[] | null)[];
 			abi: AbiEventFragment & { signature: HexString };
 			jsonInterface: ContractAbiWithSignature;
+			filter?: Filter['filter'];
 		},
 		options: (
 			| { subscriptionManager: Web3SubscriptionManager }
@@ -153,6 +164,7 @@ export class LogsSubscription extends Web3Subscription<
 		this.topics = args.topics;
 		this.abi = args.abi;
 		this.jsonInterface = args.jsonInterface;
+		this.filter = args.filter;
 	}
 
 	protected _buildSubscriptionParams() {
@@ -169,6 +181,12 @@ export class LogsSubscription extends Web3Subscription<
 	 * instead of `data`, as documented (P4-L-25).
 	 */
 	public _processSubscriptionResult(data: unknown) {
+		try {
+			assertRpcResult('qrl_subscription', data, logSchema);
+		} catch (error) {
+			this._processSubscriptionError(error as Error);
+			return;
+		}
 		if (!isLogOf(data, this.expectedAddress, this.expectedTopic)) {
 			if (this.listenerCount('error') > 0) {
 				this.emit(
@@ -183,6 +201,15 @@ export class LogsSubscription extends Web3Subscription<
 		let formatted: EventLog;
 		try {
 			formatted = this.formatSubscriptionResult(data as EventLog);
+			if (
+				this.filter &&
+				!matchesEventFilter(
+					formatted,
+					selectEventABI(this.abi, data as LogsInput, this.jsonInterface),
+					this.filter,
+				)
+			)
+				return;
 		} catch (error) {
 			this._processSubscriptionError(error as Error);
 			return;

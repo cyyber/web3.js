@@ -68,9 +68,10 @@ describe('watchTransactionBySubscription (L-54)', () => {
 		removeSubscription = jest
 			.spyOn(web3Context.subscriptionManager, 'removeSubscription')
 			.mockResolvedValue('0x1' as never);
-		(qrlRpcMethods.getBlockByNumber as jest.Mock).mockResolvedValue({
+		(qrlRpcMethods.getBlockByNumber as jest.Mock).mockImplementation((_manager, number) => ({
 			hash: `0x${'cd'.repeat(32)}`,
-		});
+			number,
+		}));
 
 		promiEvent = new Web3PromiEvent(() => undefined);
 		confirmations = [];
@@ -107,6 +108,15 @@ describe('watchTransactionBySubscription (L-54)', () => {
 		expect(confirmations).toEqual([BigInt(2), BigInt(3)]);
 		expect(errors).toHaveBeenCalledTimes(2);
 		expect(removeSubscription).toHaveBeenCalledTimes(1);
+	});
+	it('reports the confirming header hash rather than its parent', async () => {
+		const data = jest.fn();
+		promiEvent.on('confirmation', data);
+		start();
+		await jest.advanceTimersByTimeAsync(1);
+		subscription.emit('data', header(0x11));
+		await jest.advanceTimersByTimeAsync(1);
+		expect(data.mock.calls[0][0]).toHaveProperty('latestBlockHash', header(0x11).hash);
 	});
 	it('counts confirmations from the subscription, stops at the threshold and never starts polling', async () => {
 		start();

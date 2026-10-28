@@ -94,7 +94,10 @@ describe('ContractMethodWrappersPlugin', () => {
 			requestManagerSendSpy.mockResolvedValueOnce(expectedTransactionHash);
 			// Mocking response for getTransactionReceipt for waitForTransactionReceipt; only a
 			// receipt with status 1 counts as success, anything else is treated as a revert (H-1)
-			requestManagerSendSpy.mockResolvedValueOnce({ status: '0x1' });
+			requestManagerSendSpy.mockResolvedValueOnce({
+				status: '0x1',
+				transactionHash: expectedTransactionHash,
+			});
 			// Mocking getBlockNumber for waitForTransactionReceipt
 			requestManagerSendSpy.mockResolvedValueOnce('0x2');
 			requestManagerSendSpy.mockResolvedValueOnce(expectedSenderBalance);

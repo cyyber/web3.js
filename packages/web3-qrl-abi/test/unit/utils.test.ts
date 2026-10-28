@@ -172,3 +172,14 @@ test('rejects a non-array event input list when deriving its signature', () => {
 		AbiError,
 	);
 });
+
+test('bounds nested tuples and array dimensions before recursive signature construction', () => {
+	type NestedParameter = { name: string; type: string; components?: NestedParameter[] };
+	let input: NestedParameter = { name: '', type: 'uint8' };
+	for (let i = 0; i < 2000; i += 1) input = { name: '', type: 'tuple', components: [input] };
+	expect(() => flattenTypes(false, [input])).toThrow(AbiError);
+	expect(() => flattenTypes(false, [{ name: '', type: 'uint8' + '[]'.repeat(2000) }])).toThrow(
+		AbiError,
+	);
+	expect(flattenTypes(false, [{ name: '', type: 'uint8' + '[]'.repeat(64) }])).toHaveLength(1);
+});

@@ -125,18 +125,21 @@ describe('utils', () => {
 		});
 	});
 	describe('numberToHex', () => {
-		it.each(validHexStrictDataWithNumber.map((tuple): [number | bigint, string] => [tuple[1], tuple[0]]))(
-			'valid numbers and bigints',
-			(input, res) => {
-				expect(numberToHex(input)).toEqual(res.toLowerCase());
+		it.each(
+			validHexStrictDataWithNumber.map((tuple): [number | bigint, string] => [
+				tuple[1],
+				tuple[0],
+			]),
+		)('valid numbers and bigints', (input, res) => {
+			expect(numberToHex(input)).toEqual(res.toLowerCase());
+		});
+
+		it.each((validHexStrictData as string[]).filter(input => !['0x', '0X'].includes(input)))(
+			'valid hex strings',
+			input => {
+				expect(numberToHex(input)).toEqual(input.toLowerCase());
 			},
 		);
-
-		it.each(
-			(validHexStrictData as string[]).filter(input => !['0x', '0X'].includes(input)),
-		)('valid hex strings', input => {
-			expect(numberToHex(input)).toEqual(input.toLowerCase());
-		});
 
 		it.each(['0x', '0X', '-0x', '', ' 1 ', '+1', '0b11', '1e3', '1.5'])(
 			'rejects %j, which is not an integer (L-27, L-28)',
@@ -196,12 +199,19 @@ describe('utils', () => {
 			expect(parseBaseType(type)).toEqual({ baseType, baseTypeSize, isArray, arraySizes });
 		});
 
-		it.each(['uint8x', 'bytes 3 2', 'uint[ 2]', 'int-8', 'string8', 'uintt', 'bytesabc', ' uint8', 'Uint8'])(
-			'rejects the malformed type %j instead of guessing a size (I-11)',
-			type => {
-				expect(parseBaseType(type).baseType).toBeUndefined();
-			},
-		);
+		it.each([
+			'uint8x',
+			'bytes 3 2',
+			'uint[ 2]',
+			'int-8',
+			'string8',
+			'uintt',
+			'bytesabc',
+			' uint8',
+			'Uint8',
+		])('rejects the malformed type %j instead of guessing a size (I-11)', type => {
+			expect(parseBaseType(type).baseType).toBeUndefined();
+		});
 
 		it('rejects a non-string type without throwing (L-26)', () => {
 			expect(parseBaseType(5 as unknown as string).baseType).toBeUndefined();
@@ -216,4 +226,23 @@ describe('utils', () => {
 			expect(padLeft(input, padLeftData.padDigits)).toBe(res);
 		});
 	});
+});
+
+test('hex conversion preserves every byte across chunk boundaries', () => {
+	const bytes = Uint8Array.from({ length: 20000 }, (_, index) => index % 256);
+	expect(uint8ArrayToHexString(bytes)).toBe('0x' + Buffer.from(bytes).toString('hex'));
+	expect(uint8ArrayToHexString(new Uint8Array())).toBe('0x');
+});
+test('rejects excessive ABI dimensions and combined tuple depth with a typed error', () => {
+	expect(() => parseBaseType('uint8' + '[]'.repeat(2000))).toThrow(/maximum depth 64/);
+	expect(() =>
+		qrlAbiToJsonSchema([
+			{
+				name: '',
+				type: 'tuple' + '[]'.repeat(32),
+				components: [{ name: '', type: 'uint8' + '[]'.repeat(32) }],
+			},
+		]),
+	).toThrow(/maximum depth 64/);
+	expect(() => qrlAbiToJsonSchema(['uint8' + '[]'.repeat(64)])).not.toThrow();
 });
