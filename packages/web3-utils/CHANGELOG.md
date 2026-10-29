@@ -7,10 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Pass 11 audit corrections
+
+- Document the provider acknowledgement contract, notification park and decoded UTF-8 byte accounting. Clarify that the 155-digit decimal bound applies to `toBigInt` and its callers; `toNumber`, `toHex` and `toPlanck` remain uncapped.
+
 ### Pass 10 audit corrections
 
 - Count socket response limits in UTF-8 bytes, including split surrogate pairs; document residual key-dense JSON heap amplification and concurrency sizing (P10-TR-1, P10-TR-2).
-- Avoid the bytes-to-hex round trip for strict hex output; bound decimal conversion strings to 155 digits, sufficient for uint512; format zero planck values without a trailing decimal point (P10-CORE-2, P10-CORE-3).
+- Avoid the bytes-to-hex round trip for strict hex output; bound `toBigInt` decimal strings to 155 digits, sufficient for uint512; format zero planck values without a trailing decimal point (P10-CORE-2, P10-CORE-3).
 
 ### Pass 9 audit corrections
 

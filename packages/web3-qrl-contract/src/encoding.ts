@@ -232,13 +232,18 @@ export const isOrList = (input: AbiParameter, value: unknown): value is unknown[
 const eventSignature = (event: AbiEventFragment & { signature?: HexString }): HexString =>
 	event.signature ?? encodeEventSignature(jsonInterfaceMethodToString(event));
 
-/** A single topic array cannot constrain an input at two different indexed positions. */
+/**
+ * Whether compatible named, non-anonymous layouts require signature-only topics because
+ * an active filter key has different indexed positions (including non-indexed) across them.
+ * Expects ABI fragments and a filter object; nullish values are wildcards. Different indexed
+ * counts alone do not require broad topics. Explicit topics are handled by the caller.
+ */
 export const eventFilterNeedsBroadTopics = (
 	event: AbiEventFragment & { signature?: HexString },
 	filter: Filter['filter'],
 	jsonInterface: ReadonlyArray<AbiFragment & { signature?: HexString }>,
 ): boolean => {
-	if (event.name === ALL_EVENTS) return false;
+	if (event.name === ALL_EVENTS || event.anonymous) return false;
 	const keys = Object.keys(filter ?? {}).filter(key => !isNullish(filter?.[key]));
 	if (keys.length === 0) return false;
 	const layouts = [event, ...jsonInterface.filter(isAbiEventFragment)].filter(
@@ -251,15 +256,16 @@ export const eventFilterNeedsBroadTopics = (
 	if (layouts.length < 2) return false;
 	const positions = (layout: AbiEventFragment) => {
 		const indexed = (layout.inputs ?? []).filter(input => input.indexed);
-		return [
-			indexed.length,
-			...keys.map(key => indexed.findIndex(input => input.name === key)),
-		].join(',');
+		return keys.map(key => indexed.findIndex(input => input.name === key)).join(',');
 	};
 	return layouts.some(layout => positions(layout) !== positions(layouts[0]));
 };
 
-/** Compare decoded event values using ABI encoding, including OR lists and indexed hashes. */
+/**
+ * Compare a decoded log against a filter using its selected ABI, including OR lists and
+ * indexed hashes. Nullish values are wildcards; unknown keys fail to match. Expects a
+ * decoded EventLog and filter object; unencodable expected values throw AbiError.
+ */
 export const matchesEventFilter = (
 	log: EventLog,
 	abi: AbiEventFragment,
@@ -327,6 +333,27 @@ export const encodeEventABI = (
 	const topics = options?.topics;
 	const filter = options?.filter ?? {};
 	const opts: Writeable<Filter> = {};
+	// Local filters also compare non-indexed values. Validate every active alternative
+	// before requesting logs, even when no broad topic query is needed. Explicit topics
+	// override the subscription filter. allEvents must validate each matching layout.
+	if (!topics && keys.length > 0) {
+		const filterLayouts =
+			event.name === ALL_EVENTS
+				? layouts.filter(layout =>
+						keys.every(key => layout.inputs?.some(input => input.name === key)),
+					)
+				: [event];
+		for (const layout of filterLayouts) {
+			for (const input of layout.inputs ?? []) {
+				if (!keys.includes(input.name)) continue;
+				const value = filter[input.name];
+				for (const alternative of isOrList(input, value) ? value : [value]) {
+					if (input.indexed) encodeIndexedTopic(input, alternative);
+					else encodeParameter(input, alternative);
+				}
+			}
+		}
+	}
 
 	if (!isNullish(options?.fromBlock)) {
 		opts.fromBlock = format(blockSchema.properties.number, options?.fromBlock, {
@@ -375,6 +402,21 @@ export const encodeEventABI = (
 					);
 				} else {
 					opts.topics.push(encodeIndexedTopic(input, value));
+				}
+			}
+			// A shorter topic filter also matches longer logs. Do not require trailing
+			// wildcard slots that exist only in the selected indexed layout.
+			if (
+				!event.anonymous &&
+				layouts.some(
+					layout =>
+						keys.every(key => layout.inputs?.some(input => input.name === key)) &&
+						layout.inputs?.filter(input => input.indexed).length !==
+							event.inputs?.filter(input => input.indexed).length,
+				)
+			) {
+				while (opts.topics.length > 1 && isNullish(opts.topics[opts.topics.length - 1])) {
+					opts.topics.pop();
 				}
 			}
 		}

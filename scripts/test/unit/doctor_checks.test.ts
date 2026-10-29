@@ -498,3 +498,35 @@ test('decodes quoted JSON escapes and preserves escaped comment characters like 
 	expect(doctorChecks.npmrcPolicyFailures(String.raw`use-node-version\#literal=x`)).toEqual([]);
 	expect(doctorChecks.npmrcPolicyFailures(String.raw`use-node-version\;literal=x`)).toEqual([]);
 });
+
+describe('pass-11 configuration key decoding', () => {
+	it.each([
+		'${X-use-node-version}',
+		'${X:-node-mirror:release}',
+		'${X}',
+		'prefix${X}',
+		'"\\u0024{X-use-node-version}"',
+	])('rejects environment-dependent npmrc key %s', key => {
+		expect(doctorChecks.npmrcPolicyFailures(`${key}=value`)).toHaveLength(1);
+	});
+	it.each(['${X-useNodeVersion}', '${X:-node-mirror:release}', '${X}'])(
+		'rejects workspace key %s',
+		key => {
+			expect(
+				doctorChecks.workspacePolicyFailures(
+					read('pnpm-workspace.yaml') + `\n"${key}": value\n`,
+				),
+			).toEqual(['pnpm-workspace.yaml must not use environment substitution in keys']);
+		},
+	);
+	it('checks each bare-CR line and preserves environment substitution in values', () => {
+		expect(
+			doctorChecks.npmrcPolicyFailures(
+				'save-exact=true\ruse-node-version=22.99.0\rnode-mirror:release=http://example.test',
+			),
+		).toHaveLength(2);
+		expect(
+			doctorChecks.npmrcPolicyFailures('//example.test/:_authToken=${TOKEN}\r# ${COMMENT}'),
+		).toEqual([]);
+	});
+});

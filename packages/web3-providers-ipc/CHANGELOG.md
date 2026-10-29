@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Pass 11 audit corrections
+
+- Use one streaming UTF-8 decoder per socket; document decoded byte accounting and `maxResponseDepth`.
+
 ### Pass 9 audit corrections
 
 - Enforce container-count limits and configurable maxResponseDepth (default 4096) while scanning streams; discard rejected messages and resume at the next boundary (P9-TR-1/3).

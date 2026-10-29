@@ -60,6 +60,7 @@ export type SendTransactionEvents<ReturnFormat extends DataFormat> = {
 	confirmation: {
 		confirmations: FormatType<Numbers, ReturnFormat>;
 		receipt: FormatType<TransactionReceipt, ReturnFormat>;
+		/** Hash of the block establishing this confirmation; confirmation one uses the receipt's block. */
 		latestBlockHash: FormatType<Bytes, ReturnFormat>;
 	};
 	error: SendTransactionErrorEvent<ReturnFormat>;
@@ -73,6 +74,7 @@ export type SendSignedTransactionEvents<ReturnFormat extends DataFormat> = {
 	confirmation: {
 		confirmations: FormatType<Numbers, ReturnFormat>;
 		receipt: FormatType<TransactionReceipt, ReturnFormat>;
+		/** Hash of the block establishing this confirmation; confirmation one uses the receipt's block. */
 		latestBlockHash: FormatType<Bytes, ReturnFormat>;
 	};
 	error: SendTransactionErrorEvent<ReturnFormat>;

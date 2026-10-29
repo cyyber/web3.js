@@ -308,7 +308,7 @@ export async function getTransaction<ReturnFormat extends DataFormat>(
 		throw invalidResponseError('qrl_getTransactionByHash', 'a transaction object', response);
 	}
 
-	assertRpcResult('qrl_getTransaction', response, transactionInfoSchema);
+	assertRpcResult('qrl_getTransactionByHash', response, transactionInfoSchema);
 	if (
 		typeof response.hash !== 'string' ||
 		response.hash.toLowerCase() !== transactionHashFormatted.toLowerCase()
@@ -371,36 +371,57 @@ export async function getTransactionFromBlock<ReturnFormat extends DataFormat>(
 ) {
 	const transactionIndexFormatted = format({ format: 'uint' }, transactionIndex, QRL_DATA_FORMAT);
 
-	let response;
 	// Only a 32-byte value is a block hash; `'0x10'` is a block number (P4-L-11).
-	if (isBlockHash(block)) {
-		const blockHashFormatted = format({ format: 'bytes32' }, block, QRL_DATA_FORMAT);
-		response = await qrlRpcMethods.getTransactionByBlockHashAndIndex(
-			web3Context.requestManager,
-			blockHashFormatted as HexString,
-			transactionIndexFormatted,
-		);
-	} else {
-		const blockNumberFormatted = isBlockTag(block as string)
+	const byHash = isBlockHash(block);
+	const blockFormatted = byHash
+		? format({ format: 'bytes32' }, block as Bytes, QRL_DATA_FORMAT)
+		: isBlockTag(block as string)
 			? (block as BlockTag)
 			: format({ format: 'uint' }, block as Numbers, QRL_DATA_FORMAT);
-		response = await qrlRpcMethods.getTransactionByBlockNumberAndIndex(
-			web3Context.requestManager,
-			blockNumberFormatted,
-			transactionIndexFormatted,
-		);
-	}
+	const method = byHash
+		? 'qrl_getTransactionByBlockHashAndIndex'
+		: 'qrl_getTransactionByBlockNumberAndIndex';
+	const response = byHash
+		? await qrlRpcMethods.getTransactionByBlockHashAndIndex(
+				web3Context.requestManager,
+				blockFormatted as HexString,
+				transactionIndexFormatted,
+			)
+		: await qrlRpcMethods.getTransactionByBlockNumberAndIndex(
+				web3Context.requestManager,
+				blockFormatted,
+				transactionIndexFormatted,
+			);
 
 	if (isNullish(response)) return response;
 	if (!isObject(response)) {
-		throw invalidResponseError(
-			'qrl_getTransactionByBlock*AndIndex',
-			'a transaction object',
-			response,
-		);
+		throw invalidResponseError(method, 'a transaction object', response);
 	}
 
-	assertRpcResult('qrl_getTransaction', response, transactionInfoSchema);
+	assertRpcResult(method, response, transactionInfoSchema);
+	const matchesBlock = byHash
+		? typeof response.blockHash === 'string' &&
+			response.blockHash.toLowerCase() === blockFormatted.toLowerCase()
+		: isBlockTag(blockFormatted) ||
+			BigInt(expectQuantityReply(method, response.blockNumber)) === BigInt(blockFormatted);
+	// Pending transactions have no mined location to echo back. All other replies
+	// must identify the requested index, including requests using moving block tags.
+	const pending =
+		blockFormatted === 'pending' &&
+		// eslint-disable-next-line no-null/no-null -- JSON-RPC pending location
+		response.blockHash === null &&
+		// eslint-disable-next-line no-null/no-null -- JSON-RPC pending location
+		response.blockNumber === null &&
+		// eslint-disable-next-line no-null/no-null -- JSON-RPC pending location
+		response.transactionIndex === null;
+	if (
+		!matchesBlock ||
+		(!pending &&
+			BigInt(expectQuantityReply(method, response.transactionIndex)) !==
+				BigInt(transactionIndexFormatted))
+	) {
+		throw invalidResponseError(method, 'the requested block and transaction index', response);
+	}
 	return formatTransaction(response, returnFormat, { fillInputAndData: true });
 }
 
@@ -1040,6 +1061,43 @@ export async function getLogs<ReturnFormat extends DataFormat>(
 		}
 
 		assertRpcResult('qrl_getLogs', entry, logSchema);
+		const addresses = Array.isArray(filter.address) ? filter.address : [filter.address];
+		const matchesAddress =
+			isNullish(filter.address) ||
+			addresses.length === 0 ||
+			addresses.some(
+				address =>
+					typeof entry.address === 'string' &&
+					address?.toLowerCase() === entry.address.toLowerCase(),
+			);
+		const topics = entry.topics as Bytes[] | undefined;
+		const matchesTopics =
+			!filter.topics?.length ||
+			(Array.isArray(topics) &&
+				topics.length >= filter.topics.length &&
+				filter.topics.every((topic, index) => {
+					const alternatives = Array.isArray(topic) ? topic : [topic];
+					return (
+						alternatives.length === 0 ||
+						alternatives.some(
+							alternative =>
+								isNullish(alternative) ||
+								alternative.toLowerCase() ===
+									format(
+										{ format: 'bytes64' },
+										topics[index],
+										QRL_DATA_FORMAT,
+									).toLowerCase(),
+						)
+					);
+				}));
+		if (!matchesAddress || !matchesTopics) {
+			throw invalidResponseError(
+				'qrl_getLogs',
+				'logs matching the requested address and topics',
+				entry,
+			);
+		}
 		return format(logSchema, entry as unknown as Log, returnFormat);
 	});
 }

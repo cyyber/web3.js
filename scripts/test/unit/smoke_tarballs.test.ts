@@ -230,8 +230,10 @@ describe('release smoke test (P4-M-10)', () => {
 	it.each([
 		{ signal: 'SIGINT', phase: 'install' },
 		{ signal: 'SIGTERM', phase: 'install' },
+		{ signal: 'SIGHUP', phase: 'install' },
 		{ signal: 'SIGINT', phase: 'ci' },
 		{ signal: 'SIGTERM', phase: 'ci' },
+		{ signal: 'SIGHUP', phase: 'ci' },
 		{ signal: 'SIGINT', phase: 'ci', group: true },
 		{ signal: 'SIGTERM', phase: 'ci', group: true },
 		{ signal: 'SIGTERM', phase: 'ci', keep: true },

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Pass 11 audit corrections
+
+- Document decoded UTF-8 byte accounting, `maxResponseDepth` and the distinction between sent close code 1009 and observed 1006 on wire-limit failures.
+
 ### Pass 9 audit corrections
 
 - Enforce container-count limits and configurable maxResponseDepth (default 4096) before JSON.parse. Validate a single copy of socket options so a changing maxPayload getter cannot bypass validation (P9-TR-1/3).

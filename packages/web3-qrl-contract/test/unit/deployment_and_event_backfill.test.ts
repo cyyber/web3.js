@@ -166,7 +166,6 @@ describe('deployment, error fragments and event backfill (pass-5 audit)', () => 
 					log,
 					{ ...log, data: '0x' },
 					{ ...log, topics: [...log.topics, topicOf('Other(uint256)')] },
-					{ ...log, topics: [topicOf('Other(uint256)')], data: '0x' },
 					log,
 				];
 			return undefined;
@@ -208,7 +207,7 @@ describe('deployment, error fragments and event backfill (pass-5 audit)', () => 
 			contract.getPastEvents('Values', { filter: { arr: [1, 2] } }),
 		).resolves.toHaveLength(1);
 		await expect(
-			contract.getPastEvents('Values', { filter: { arr: [3, 4] } }),
+			contract.getPastEvents('allEvents', { filter: { arr: [3, 4] } }),
 		).resolves.toHaveLength(0);
 		await expect(
 			contract.getPastEvents('Values', { filter: { arr: [[1, 2]] } }),

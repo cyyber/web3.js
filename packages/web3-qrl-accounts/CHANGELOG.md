@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Pass 11 audit corrections
+
+- Leave non-string/non-Uint8Array inputs to typed transaction validators when checking serialized size (P11-QRL-3).
+
 ### Pass 10 audit corrections
 
 - Pre-scan serialized EIP-1559 RLP without recursion or payload copies before decoding. Limit serialized transactions to 16 MiB, four nested list levels (including storage-key lists), and 65,536 RLP items; reject violations with TransactionError. Recovery checks string size before hex conversion (P10-QRL-1).

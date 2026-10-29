@@ -73,6 +73,8 @@ export interface ProviderBoundsOptions {
 	requestTimeout?: number;
 	/**
 	 * Maximum UTF-8 response bytes accepted from the node, at most 536,870,888.
+	 * HTTP counts response-body bytes; sockets count decoded text re-encoded as UTF-8.
+	 * Invalid socket bytes replaced by U+FFFD can count up to three times their wire size.
 	 * This is not a heap limit: decoded text, transport buffers and parsed values coexist.
 	 * Before parsing, responses are limited to max(1024, floor(maxResponseBytes / 16))
 	 * object/array containers, including empty ones. This heuristic leaves room for dense

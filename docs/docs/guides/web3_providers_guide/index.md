@@ -334,7 +334,10 @@ provider.on('error', error => {
 
 HTTP, WebSocket and IPC responses are bounded before `JSON.parse`, including HTTP
 error bodies. `maxResponseBytes` defaults to 10 MiB and counts UTF-8 bytes on all
-three transports, including multibyte text and split IPC chunks. `maxResponseDepth` defaults to
+three transports, including multibyte text and split IPC chunks. HTTP counts
+response-body bytes; sockets count the UTF-8 size of decoded text. Invalid UTF-8
+bytes replaced with U+FFFD can therefore count up to three times on sockets.
+`maxResponseDepth` defaults to
 4096 and accepts a positive safe integer; this accommodates a complete 1024-frame
 call trace with its JSON wrapper. HTTP accepts these in its second constructor
 argument; WebSocket and IPC accept them in the fourth (`providerOptions`).
@@ -366,5 +369,24 @@ slot. Notifications coalesced with a subscription acknowledgement are parked for
 one event-loop iteration; they have no item-count cap. The manager also retains
 that acknowledged burst when a custom `request()` wrapper delays promise
 completion. Delivery stays ordered within each subscription, and cancellation
-removes its parked items. Unknown ids still share a bounded registration buffer;
-custom providers that do not expose acknowledgement information use that buffer.
+removes its parked items. Unknown ids share a separate 128-item / 1 MiB registration
+budget; retained acknowledged bursts consume neither allowance.
+
+Custom providers may expose `isSubscriptionAcknowledged(id): boolean`. Return
+`true` only for an id acknowledged by an outstanding `qrl_subscribe` request while
+dispatching its initial notifications, and clear that state on disconnect/reset.
+The manager trusts this signal to bypass both registration limits; a provider
+that returns `true` for arbitrary ids removes those bounds. Socket providers
+park notifications until a zero-delay timer runs (at least 1 ms in Node), keep
+the acknowledgement during that flush, then clear it. Providers without this
+method use the bounded unknown-id buffer.
+
+`assertRpcResult(method, value, schema, path?)`, exported by `@theqrl/web3-qrl`,
+checks known result fields before formatting. Unknown and absent fields are
+ignored; callers must require identity fields separately. Null requires a
+nullable schema, a null alternative, or the declared `nullableWhen` condition.
+The optional `path` labels nested validation errors and defaults to `result`.
+
+Transaction confirmation events report the confirming block’s own hash in
+`latestBlockHash`; confirmation one uses the receipt’s block hash. This applies
+to both polling and subscriptions.

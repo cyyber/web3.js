@@ -80,7 +80,10 @@ const npmCache = process.env.npm_config_cache || mkdtempSync(resolve(tmpdir(), '
 const cleanupPaths = process.env.npm_config_cache ? [] : [npmCache];
 const cleanup = () => {
 	if (process.env.WEB3_KEEP_SMOKE_PROJECTS !== '1')
-		for (const directory of cleanupPaths) rmSync(directory, { recursive: true, force: true });
+		for (const directory of cleanupPaths) {
+			try { rmSync(directory, { recursive: true, force: true }); }
+			catch (error) { console.warn(`Unable to remove smoke directory ${directory}: ${error.message}`); }
+		}
 };
 process.on('exit', cleanup);
 
@@ -101,6 +104,7 @@ const finishInterrupted = () => {
 	cleanup();
 	process.removeAllListeners('SIGINT');
 	process.removeAllListeners('SIGTERM');
+	process.removeAllListeners('SIGHUP');
 	process.kill(process.pid, interrupted);
 };
 const cancel = signal => {
@@ -119,6 +123,7 @@ const onInterrupt = () => cancel('SIGINT');
 const onTerminate = () => cancel('SIGTERM');
 process.on('SIGINT', onInterrupt);
 process.on('SIGTERM', onTerminate);
+process.on('SIGHUP', () => cancel('SIGHUP'));
 
 const run = (command, commandArgs, cwd) => new Promise((resolveRun, reject) => {
 	if (interrupted) {

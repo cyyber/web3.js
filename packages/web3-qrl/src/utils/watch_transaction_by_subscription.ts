@@ -101,6 +101,7 @@ export const watchTransactionBySubscription = <
 					if (
 						!newBlockHeader?.number ||
 						!isValidUnsignedHexNumber(newBlockHeader.number) ||
+						!isHash32(newBlockHeader.hash) ||
 						!isHash32(newBlockHeader.parentHash) ||
 						// For some cases, the on-data event is fired couple times for the same block!
 						// This needs investigation but seems to be because of multiple `subscription.on('data'...)` even this should not cause that.

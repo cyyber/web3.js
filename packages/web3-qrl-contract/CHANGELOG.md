@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Pass 11 audit corrections
+
+- Apply active subscription filters to live delivery, removed logs and replay independently of topic breadth, including non-indexed keys and `allEvents`; validate values before requests (P11R-1).
+- Apply broad filters to subscription replay, validate values before requests, preserve anonymous indexed topics and use prefix filters for compatible indexed counts (P11-CT-1–4). Document `eventFilterNeedsBroadTopics` and `matchesEventFilter`.
+
 ### Pass 10 audit corrections
 
 - Treat omitted anonymous as false and ignore nullish filter keys during layout selection. Broaden topic queries and post-filter live values when compatible layouts place keys at different positions; validate live log fields before decoding (P10-CT-1 through P10-CT-4).

@@ -25,10 +25,12 @@ import { ProviderBoundsOptions, RequestBoundsOptions } from '@theqrl/web3-utils'
  * A dispatcher must be an object with a `dispatch` function; undefined uses the default.
  * A node-fetch `agent` is rejected when native fetch is available.
  *
- * The transport bounds (`connectionTimeout`, `requestTimeout`, `maxResponseBytes`) come
+ * The transport bounds (`connectionTimeout`, `requestTimeout`, `maxResponseBytes`,
+ * `maxResponseDepth`, `maxInFlightRequests`) come
  * from {@link ProviderBoundsOptions} so that the HTTP and socket providers share option
  * names, defaults and validation. Every bound is optional and defaults to a finite value;
- * there is deliberately no way to express "no timeout".
+ * there is deliberately no way to express "no timeout". `maxResponseBytes` counts response-body
+ * bytes, and `maxResponseDepth` bounds JSON nesting before parsing.
  */
 export interface HttpProviderOptions extends ProviderBoundsOptions {
 	/**

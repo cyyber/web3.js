@@ -197,7 +197,10 @@ Doctor also compares the lockfile's override keys and values with the workspace
 mapping, rejects root `package.json` `resolutions` and `pnpm` fields, and requires
 an integer `minimumReleaseAge` of at least 10080 minutes, `blockExoticSubdeps: true`
 and `strictDepBuilds: true`. Workspace YAML directives, warnings, aliases and
-merge tags are rejected. Bare `.npmrc` policy keys are checked like `key=true`.
+merge tags are rejected. Bare `.npmrc` policy keys are checked like `key=true`. Both CR and LF delimit
+configuration lines. Environment substitution (`${...}`) is forbidden in npmrc
+and workspace setting names, including escaped spellings; substitutions in
+values such as registry credentials remain allowed.
 Hygiene rejects `.pnpmfile.cjs` and nested `pnpm-workspace.yaml` files, including
 untracked files, because they can replace the root install policy. Doctor also
 rejects setting-named local/global pnpm hooks, dependency extensions/patches/config

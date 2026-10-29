@@ -21,8 +21,9 @@ const MAX_SERIALIZED_BYTES = 16 * 1024 * 1024;
 const MAX_RLP_DEPTH = 4; // transaction -> access list -> entry -> storage keys
 const MAX_RLP_ITEMS = 65536;
 
-/** Bound raw transaction input before converting a hex string or decoding RLP. */
+/** Bound string/Uint8Array input before conversion; other types are left to the caller's validator. */
 export const assertSerializedTransactionSize = (data: string | Uint8Array): void => {
+	if (typeof data !== 'string' && !(data instanceof Uint8Array)) return;
 	const length =
 		typeof data === 'string'
 			? (data.length - (/^0x/i.test(data) ? 2 : 0)) / 2

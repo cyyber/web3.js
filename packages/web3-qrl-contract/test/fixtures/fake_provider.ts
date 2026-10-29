@@ -15,7 +15,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { SupportedProviders } from '@theqrl/web3-types';
+import { Filter, SupportedProviders } from '@theqrl/web3-types';
 import { rightPad, sha3Raw, toChecksumAddress } from '@theqrl/web3-utils';
 import { Contract, NonPayableMethodObject } from '../../src';
 
@@ -105,7 +105,10 @@ const defaultHandler = (method: string): unknown => {
 type Request = { id?: unknown; method: string; params?: unknown };
 /** Returned by a handler to answer a request with a JSON-RPC error reply. */
 export class RpcErrorReply {
-	public constructor(public readonly code: number, public readonly message: string) {}
+	public constructor(
+		public readonly code: number,
+		public readonly message: string,
+	) {}
 }
 
 export type FakeRpcHandler = (method: string, params: unknown[]) => unknown;
@@ -153,7 +156,12 @@ export class FakeProvider {
 			}
 			return { jsonrpc: '2.0', id: payload.id, result };
 		} catch (error) {
-			if (typeof error === 'object' && error && 'code' in error && !(error instanceof Error)) {
+			if (
+				typeof error === 'object' &&
+				error &&
+				'code' in error &&
+				!(error instanceof Error)
+			) {
 				return { jsonrpc: '2.0', id: payload.id, error };
 			}
 			throw error;
@@ -217,3 +225,25 @@ export const flush = async (): Promise<void> =>
 	new Promise(resolve => {
 		setTimeout(resolve, 20);
 	});
+
+/** Apply the node's address and positional topic rules to an honest mock log reply. */
+export const filterLogs = <T extends { address?: string; topics?: readonly string[] }>(
+	logs: T[],
+	input: unknown,
+): T[] => {
+	const filter = input as Filter;
+	const addresses = [filter.address ?? []].flat().map(address => address.toLowerCase());
+	return logs.filter(log => {
+		if (addresses.length > 0 && !addresses.includes(log.address?.toLowerCase() ?? ''))
+			return false;
+		const topics = filter.topics ?? [];
+		if (topics.length > (log.topics?.length ?? 0)) return false;
+		return topics.every((topic, index) => {
+			const options = [topic ?? []].flat();
+			return (
+				options.length === 0 ||
+				options.some(value => value.toLowerCase() === log.topics?.[index]?.toLowerCase())
+			);
+		});
+	});
+};

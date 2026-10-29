@@ -388,6 +388,7 @@ export const toAscii = hexToAscii;
 
 /**
  * Auto converts any given value into it's hex representation.
+ * Numeric decimal strings are not length-capped; bound untrusted input before conversion.
  * @param value - Value to be converted to hex
  * @param returnType - If true, it will return the type of the value
  *
@@ -460,6 +461,7 @@ export const toHex = (
  * Accepted inputs are finite JavaScript numbers, bigints, `0x`-prefixed hex strings and plain
  * decimal integer strings. `NaN`, `Infinity`, `''`, `' 1 '`, `'+1'`, `'0b11'`, `'1e3'`, `'0x'`,
  * booleans, arrays and objects are rejected with an {@link InvalidNumberError} (L-26, L-28).
+ * Decimal strings are not length-capped; the 155-digit limit of `toBigInt` does not apply here.
  *
  * @param value - The value to convert
  * @returns - Returns the value in number or bigint representation
@@ -641,6 +643,7 @@ export const fromPlanck = (number: Numbers, unit: QRLUnits): string => {
  *
  * `''`, `'.'`, `'+1'`, `' 1 '`, `'0b11'`, `'1e3'`, `NaN`, `Infinity` and non-numeric values
  * are rejected with a typed error (L-26, L-28).
+ * Decimal strings are not length-capped; bound untrusted input before conversion.
  *
  * @param number - The number to convert.
  * @param unit - {@link QRLUnits} The unit of the number passed.

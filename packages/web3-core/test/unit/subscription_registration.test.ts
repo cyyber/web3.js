@@ -42,7 +42,8 @@ const setup = async (
 	failHandshake = false,
 	coalesced: boolean | number = false,
 	dropUnsubscribe = false,
-	delayRequest = false,
+	delayRequest: boolean | number = false,
+	tail = 0,
 ) => {
 	const server = new WebSocketServer({ host: '127.0.0.1', port: 0 });
 	await new Promise<void>(resolve => server.once('listening', resolve));
@@ -103,6 +104,17 @@ const setup = async (
 							}),
 						);
 					wire.uncork();
+					if (tail > 0)
+						setTimeout(() => {
+							for (let i = 0; i < tail; i += 1)
+								socket.send(
+									JSON.stringify({
+										jsonrpc: '2.0',
+										method: 'qrl_subscription',
+										params: { subscription: id, result: `${id}:tail:${i}` },
+									}),
+								);
+						}, 8);
 				});
 			} else if (request.method === 'qrl_unsubscribe') {
 				if (dropUnsubscribe) socket.terminate();
@@ -120,7 +132,9 @@ const setup = async (
 		const request = provider.request.bind(provider);
 		jest.spyOn(provider, 'request').mockImplementation(async payload => {
 			const result = await request(payload);
-			await new Promise<void>(resolve => setTimeout(resolve, 0));
+			await new Promise<void>(resolve =>
+				setTimeout(resolve, typeof delayRequest === 'number' ? delayRequest : 0),
+			);
 			return result;
 		});
 	}
@@ -270,7 +284,7 @@ test('delivers coalesced first WS notifications after initial and recovery regis
 	try {
 		await new Promise<void>(resolve => test.provider.once('connect', () => resolve()));
 		const sub = await test.manager.subscribe('heads');
-		const data = jest.fn();
+		const data = jest.fn<void, [unknown]>();
 		sub.on('data', data);
 		await until(() => data.mock.calls.length === 1);
 		for (const socket of test.server.clients) socket.terminate();
@@ -352,6 +366,36 @@ test.each([false, true])(
 				['0x1', '0x2'].flatMap(id => Array.from({ length: 300 }, (_, i) => `${id}:${i}`)),
 			);
 			expect(errors).not.toHaveBeenCalled();
+			await sub.unsubscribe();
+		} finally {
+			await test.close();
+		}
+	},
+);
+
+test.each([
+	[0, 60],
+	[100, 60],
+	[200, 60],
+	[200, 150],
+])(
+	'keeps the unknown-id budget after an acknowledged burst of %s and tail of %s',
+	async (burst, tail) => {
+		const test = await setup(false, burst, false, 30, tail);
+		const retained = Math.min(tail, 128);
+		try {
+			await new Promise<void>(resolve => test.provider.once('connect', () => resolve()));
+			const errors = jest.fn();
+			test.manager.on('error', errors);
+			const sub = await test.manager.subscribe('heads');
+			const data = jest.fn<void, [unknown]>();
+			sub.on('data', data);
+			await until(() => data.mock.calls.length === burst + retained);
+			expect(data.mock.calls.map(([value]) => value)).toEqual([
+				...Array.from({ length: burst }, (_, i) => `0x1:${i}`),
+				...Array.from({ length: retained }, (_, i) => `0x1:tail:${i}`),
+			]);
+			expect(errors).toHaveBeenCalledTimes(tail - retained);
 			await sub.unsubscribe();
 		} finally {
 			await test.close();

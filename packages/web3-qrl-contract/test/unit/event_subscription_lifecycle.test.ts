@@ -17,7 +17,15 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 
 import { AbiError, ResponseError } from '@theqrl/web3-errors';
 import { Contract, EventLog } from '../../src';
-import { ADDR, FakeProvider, RECEIPT, topicOf, uintWord, flush } from '../fixtures/fake_provider';
+import {
+	ADDR,
+	FakeProvider,
+	RECEIPT,
+	topicOf,
+	uintWord,
+	flush,
+	filterLogs,
+} from '../fixtures/fake_provider';
 
 const event = {
 	type: 'event',
@@ -146,9 +154,9 @@ test.each([
 		} as const;
 		const indexedLog = { ...log, topics: [...log.topics, `0x${uintWord(8)}`], data: '0x' };
 		const provider = new FakeProvider(
-			method =>
+			(method, params) =>
 				method === 'qrl_getLogs'
-					? [log, indexedLog]
+					? filterLogs([log, indexedLog], params[0])
 					: method === 'qrl_subscribe'
 						? '0x1'
 						: undefined,
@@ -192,8 +200,12 @@ test('anonymous events exclude declared signatures and require exact indexed cou
 		{ ...anonLog, topics: [] },
 	];
 	const provider = new FakeProvider(
-		method =>
-			method === 'qrl_getLogs' ? candidates : method === 'qrl_subscribe' ? '0x1' : undefined,
+		(method, params) =>
+			method === 'qrl_getLogs'
+				? filterLogs(candidates, params[0])
+				: method === 'qrl_subscribe'
+					? '0x1'
+					: undefined,
 		true,
 	);
 	const contract = new Contract([anonymous, ping, event], ADDR, {
@@ -257,9 +269,9 @@ test.each([false, true])(
 		} as const;
 		const indexedLog = { ...log, topics: [...log.topics, `0x${uintWord(8)}`], data: '0x' };
 		const provider = new FakeProvider(
-			method =>
+			(method, params) =>
 				method === 'qrl_getLogs'
-					? [log, indexedLog]
+					? filterLogs([log, indexedLog], params[0])
 					: method === 'qrl_subscribe'
 						? '0x1'
 						: undefined,
@@ -363,9 +375,9 @@ test('ignores nullish layout keys and merges omitted anonymous with false', asyn
 	} as const;
 	const indexedLog = { ...log, topics: [...log.topics, `0x${uintWord(8)}`], data: '0x' };
 	const provider = new FakeProvider(
-		method =>
+		(method, params) =>
 			method === 'qrl_getLogs'
-				? [log, indexedLog]
+				? filterLogs([log, indexedLog], params[0])
 				: method === 'qrl_subscribe'
 					? '0x1'
 					: undefined,
@@ -439,6 +451,14 @@ test.each([false, true])(
 		const contract = new Contract(reversed ? [second, first] : [first, second], ADDR, {
 			provider: provider.asProvider(),
 		});
+		for (const key of ['invalid', [7, 'invalid']]) {
+			expect(() => contract.events.Shared({ filter: { key } })).toThrow(AbiError);
+			// eslint-disable-next-line no-await-in-loop -- each failed read must fail before RPC
+			await expect(contract.getPastEvents('Shared', { filter: { key } })).rejects.toThrow(
+				AbiError,
+			);
+		}
+		expect(provider.calls).toHaveLength(0);
 		const past = await contract.getPastEvents('Shared', { filter: { key: 7 } });
 		expect(past).toHaveLength(2);
 		expect(past.map(entry => (entry as EventLog).returnValues.key)).toEqual([
@@ -446,10 +466,15 @@ test.each([false, true])(
 			BigInt(7),
 		]);
 		expect(provider.lastCall('qrl_getLogs')?.params[0]).toHaveProperty('topics', [signature]);
-		const sub = contract.events.Shared({ filter: { key: 7 } });
+		const sub = contract.events.Shared({ fromBlock: 0, filter: { key: 7 } });
 		const received = jest.fn();
 		sub.on('data', received);
 		await sub.subscribed;
+		expect(received.mock.calls.map(([entry]) => (entry as EventLog).returnValues.key)).toEqual([
+			BigInt(7),
+			BigInt(7),
+		]);
+		received.mockClear();
 		const topics = (provider.lastCall('qrl_subscribe')?.params[1] as { topics: string[] })
 			.topics;
 		for (const entry of all) if (matchesTopics(entry, topics)) provider.notify('0x1', entry);
@@ -461,3 +486,67 @@ test.each([false, true])(
 		await sub.unsubscribe();
 	},
 );
+
+test.each([false, true])(
+	'uses prefix topics for different indexed counts (reversed=%s)',
+	async reversed => {
+		const first = {
+			type: 'event',
+			name: 'Shared',
+			inputs: [
+				{ name: 'key', type: 'uint256', indexed: true },
+				{ name: 'other', type: 'uint256', indexed: false },
+			],
+		} as const;
+		const second = {
+			...first,
+			inputs: [first.inputs[0], { ...first.inputs[1], indexed: true }],
+		} as const;
+		const signature = topicOf('Shared(uint256,uint256)');
+		const one = { ...log, topics: [signature, `0x${uintWord(7)}`], data: `0x${uintWord(9)}` };
+		const two = { ...one, topics: [...one.topics, `0x${uintWord(9)}`], data: '0x' };
+		const all = [one, two, { ...one, topics: [signature, `0x${uintWord(8)}`] }];
+		const provider = new FakeProvider((method, params) => {
+			if (method !== 'qrl_getLogs') return undefined;
+			const topics = (params[0] as { topics: string[] }).topics;
+			return all.filter(
+				entry =>
+					topics.length <= entry.topics.length &&
+					topics.every((value, i) => value === entry.topics[i]),
+			);
+		}, true);
+		const contract = new Contract(reversed ? [second, first] : [first, second], ADDR, {
+			provider: provider.asProvider(),
+		});
+		expect(await contract.getPastEvents('Shared', { filter: { key: 7 } })).toHaveLength(2);
+		expect(provider.lastCall('qrl_getLogs')?.params[0]).toHaveProperty('topics', one.topics);
+		const sub = contract.events.Shared({ fromBlock: 0, filter: { key: 7 } });
+		const data = jest.fn();
+		sub.on('data', data);
+		await sub.subscribed;
+		expect(data).toHaveBeenCalledTimes(2);
+		expect(provider.lastCall('qrl_subscribe')?.params[1]).toHaveProperty('topics', one.topics);
+		await sub.unsubscribe();
+	},
+);
+
+test('keeps indexed topics for anonymous merged layouts', async () => {
+	const indexed = {
+		...event,
+		anonymous: true,
+		inputs: [{ name: 'value', type: 'uint256', indexed: true }],
+	} as const;
+	const unindexed = { ...event, anonymous: true } as const;
+	const matching = { ...log, topics: [`0x${uintWord(7)}`], data: '0x' };
+	const provider = new FakeProvider(
+		method => (method === 'qrl_getLogs' ? [matching] : undefined),
+		true,
+	);
+	const contract = new Contract([indexed, unindexed], ADDR, { provider: provider.asProvider() });
+	expect(await contract.getPastEvents('Value', { filter: { value: 7 } })).toHaveLength(1);
+	expect(provider.lastCall('qrl_getLogs')?.params[0]).toHaveProperty('topics', matching.topics);
+	const sub = contract.events.Value({ filter: { value: 7 } });
+	await sub.subscribed;
+	expect(provider.lastCall('qrl_subscribe')?.params[1]).toHaveProperty('topics', matching.topics);
+	await sub.unsubscribe();
+});

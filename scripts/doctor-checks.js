@@ -102,7 +102,7 @@ function npmrcPolicyFailures(npmrc) {
 		'configdependencies',
 		'supportedarchitectures',
 	]);
-	return npmrc.split(/\r?\n/).flatMap(line => {
+	return npmrc.split(/[\r\n]+/).flatMap(line => {
 		if (/^\s*(?:[#;]|$)/.test(line)) return [];
 		let rawKey = (line.includes('=') ? line.slice(0, line.indexOf('=')) : line).trim();
 		// Match ini's key decoding, including quoted JSON escapes and unescaped comments.
@@ -121,6 +121,9 @@ function npmrcPolicyFailures(npmrc) {
 			}
 			rawKey = decoded;
 		}
+		// pnpm substitutes environment variables in keys after ini decoding. Reject
+		// dynamic names so policy checks do not depend on the invocation environment.
+		if (rawKey.includes('${')) return ['.npmrc must not use environment substitution in keys'];
 		const key = rawKey.trim().replace(/['"[\]_-]/g, '').toLowerCase();
 		return (controlled.has(key) || key.startsWith('nodemirror:'))
 			? [
@@ -158,6 +161,10 @@ function workspacePolicyFailures(workspaceYaml) {
 		'verifystoreintegrity', 'lockfile', 'trustpolicy',
 	]);
 	for (const key of Object.keys(workspace)) {
+		if (key.includes('${')) {
+			failures.push('pnpm-workspace.yaml must not use environment substitution in keys');
+			continue;
+		}
 		const normalized = key.replace(/[-_]/g, '').toLowerCase();
 		if (forbidden.has(normalized) || normalized.startsWith('nodemirror:')) {
 			failures.push(`pnpm-workspace.yaml must not declare alternate install policy ${key}`);

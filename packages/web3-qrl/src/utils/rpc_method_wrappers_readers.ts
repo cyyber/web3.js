@@ -82,26 +82,34 @@ export async function getBlock<ReturnFormat extends DataFormat>(
 	hydrated = false,
 	returnFormat: ReturnFormat,
 ) {
-	let response;
 	// Only a 32-byte value is a block hash; `'0x10'` is a block number (P4-L-11).
-	if (isBlockHash(block)) {
-		const blockHashFormatted = format({ format: 'bytes32' }, block, QRL_DATA_FORMAT);
-		response = await qrlRpcMethods.getBlockByHash(
-			web3Context.requestManager,
-			blockHashFormatted as HexString,
-			hydrated,
-		);
-	} else {
-		const blockNumberFormatted = isBlockTag(block as string)
+	const byHash = isBlockHash(block);
+	const blockFormatted = byHash
+		? format({ format: 'bytes32' }, block as Bytes, QRL_DATA_FORMAT)
+		: isBlockTag(block as string)
 			? (block as BlockTag)
 			: format({ format: 'uint' }, block as Numbers, QRL_DATA_FORMAT);
-		response = await qrlRpcMethods.getBlockByNumber(
-			web3Context.requestManager,
-			blockNumberFormatted,
-			hydrated,
-		);
+	const method = byHash ? 'qrl_getBlockByHash' : 'qrl_getBlockByNumber';
+	const response = byHash
+		? await qrlRpcMethods.getBlockByHash(
+				web3Context.requestManager,
+				blockFormatted as HexString,
+				hydrated,
+			)
+		: await qrlRpcMethods.getBlockByNumber(
+				web3Context.requestManager,
+				blockFormatted,
+				hydrated,
+			);
+	if (!isNullish(response)) {
+		assertRpcResult(method, response, blockSchema);
+		const matches = byHash
+			? typeof response.hash === 'string' &&
+				response.hash.toLowerCase() === blockFormatted.toLowerCase()
+			: isBlockTag(blockFormatted) ||
+				BigInt(expectQuantityReply(method, response.number)) === BigInt(blockFormatted);
+		if (!matches) throw invalidResponseError(method, 'the requested block', response);
 	}
-	if (!isNullish(response)) assertRpcResult('qrl_getBlock', response, blockSchema);
 	return format(blockSchema, response as unknown as Block, returnFormat);
 }
 

@@ -93,6 +93,18 @@ describe('watchTransactionBySubscription (L-54)', () => {
 			transactionPromiEvent: promiEvent,
 			returnFormat: DEFAULT_RETURN_FORMAT,
 		});
+	// eslint-disable-next-line no-null/no-null -- malformed header field
+	it.each([undefined, null, '0x12'])('does not count a header with hash %s', async hash => {
+		start();
+		await jest.advanceTimersByTimeAsync(1);
+		subscription.emit('data', { ...header(0x11), hash });
+		await jest.advanceTimersByTimeAsync(1);
+		expect(confirmations).toEqual([]);
+		// A bad header must neither suppress a valid header nor cancel the polling fallback.
+		subscription.emit('data', header(0x11));
+		await jest.advanceTimersByTimeAsync(1);
+		expect(confirmations).toEqual([BigInt(2)]);
+	});
 
 	it('reports throwing confirmation listeners without stopping before the threshold', async () => {
 		const errors = jest.fn();

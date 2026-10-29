@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Pass 11 audit corrections
+
+- Keep acknowledged notification bursts outside the unknown-id count limit so delayed registration can retain subsequent notifications (P11-CORE-1).
+
 ### Pass 10 audit corrections
 
 - Retain acknowledged subscription bursts when a custom request wrapper resumes in a later timer turn, including reconnect registration. Per-subscription order and cancellation cleanup are preserved (P10-CORE-1).

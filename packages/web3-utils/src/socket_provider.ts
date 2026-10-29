@@ -98,8 +98,9 @@ export interface SocketProviderDiagnostics {
  * Constructor options shared by the socket (WebSocket / IPC) providers.
  *
  * The bound names (`connectionTimeout`, `requestTimeout`, `maxResponseBytes`,
- * `maxInFlightRequests`) are the same ones the HTTP provider accepts, so every transport
- * presents one surface. `maxResponseBytes` bounds every message the peer sends: a larger one
+ * `maxResponseDepth`, `maxInFlightRequests`) are the same ones the HTTP provider accepts.
+ * `maxResponseDepth` bounds JSON nesting before parsing. `maxResponseBytes` bounds the
+ * UTF-8 size of each decoded message (invalid bytes can expand to three-byte U+FFFD): a larger one
  * is dropped unparsed and identified requests fail with a `ResponseTooLargeError`.
  * Oversized notifications are dropped without failing unrelated requests. WebSocket also
  * has a separate wire limit (twice this bound, capped at 536,870,888 bytes); exceeding it closes the
@@ -166,6 +167,12 @@ const unrefTimer = (timer: unknown): void => {
 	}
 };
 
+/**
+ * Base transport with bounded requests and JSON parsing. Notifications for newly
+ * acknowledged subscription ids are parked until a zero-delay timer runs (at least
+ * 1 ms in Node), then dispatched in order. This park has no item-count cap and is
+ * cleared on connection reset; it only admits ids from outstanding subscribe replies.
+ */
 export abstract class SocketProvider<
 	MessageEvent,
 	CloseEvent,
@@ -182,7 +189,7 @@ export abstract class SocketProvider<
 	protected _reconnectAttempts!: number;
 	protected readonly _socketOptions?: unknown;
 	protected readonly _reconnectOptions: ReconnectOptions;
-	/** Validated `connectionTimeout` / `requestTimeout` / `maxResponseBytes` / `maxInFlightRequests`. */
+	/** Validated timeouts, UTF-8 `maxResponseBytes`, `maxResponseDepth` and `maxInFlightRequests`. */
 	protected readonly _providerBounds: ResolvedProviderBounds;
 	/**
 	 * Teardown state for every in-flight request, reachable from either queue map via the
@@ -976,7 +983,13 @@ export abstract class SocketProvider<
 		this._acknowledgedSubscriptions.clear();
 	}
 
-	/** Whether this id is backed by a subscribe reply whose initial notifications are being dispatched. */
+	/**
+	 * Whether this id is backed by an outstanding subscribe reply during its initial
+	 * notification flush. The subscription manager trusts `true` to bypass its unknown-id
+	 * count and byte caps while registration finishes. Custom providers implementing this
+	 * optional contract must only acknowledge such ids and clear them on reset/disconnect;
+	 * returning `true` for arbitrary ids disables those bounds. False after the park flush.
+	 */
 	public isSubscriptionAcknowledged(id: string): boolean {
 		return this._acknowledgedSubscriptions.has(id);
 	}

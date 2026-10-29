@@ -280,8 +280,8 @@ function checkTrackedMarkdownLinks() {
 		if (!/\.mdx?$/.test(file)) continue;
 		for (const href of markdownLinks(fs.readFileSync(path.join(root, file), 'utf8'))) {
 			if (!href || /^(?:[a-z][a-z\d+.-]*:|\/|#)/i.test(href)) continue;
-			let target;
-			try { target = decodeURIComponent(href.split(/[?#]/, 1)[0]); } catch { continue; }
+			let target = href.split(/[?#]/, 1)[0];
+			try { target = decodeURIComponent(target); } catch { /* Check the literal path when percent escapes are malformed. */ }
 			if (!/\.mdx?$/i.test(target)) continue;
 			const resolved = path.posix.normalize(path.posix.join(path.posix.dirname(file), target));
 			if (!tracked.has(resolved)) fail(`${file} links to missing or untracked Markdown file ${resolved}`);

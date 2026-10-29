@@ -15,7 +15,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { BaseWeb3Error, ResponseError } from '@theqrl/web3-errors';
+import { BaseWeb3Error, ResponseError, InvalidResponseError } from '@theqrl/web3-errors';
 import { encodeFunctionSignature } from '@theqrl/web3-qrl-abi';
 import {
 	AbiEventFragment,
@@ -151,19 +151,15 @@ describe('getPastEvents', () => {
 		expect(events[0].returnValues).toEqual({ __length__: 0 });
 	});
 
-	it('drops logs of another address or another event signature (I-13)', async () => {
+	it('rejects replies containing another address or event signature (P11-QRL-2)', async () => {
 		logs = [
 			transferLog,
 			{ ...transferLog, address: `Q${ADDR2.slice(1).toLowerCase()}` },
 			approvalLog,
 		];
-		const events = (await contract.getPastEvents('Approval' as never, {
-			fromBlock: 0,
-		})) as EventLog[];
-
-		expect(events).toHaveLength(1);
-		expect(events[0].event).toBe('Approval');
-		expect(events[0].returnValues.value).toBe(BigInt(99));
+		await expect(contract.getPastEvents('Approval' as never, { fromBlock: 0 })).rejects.toThrow(
+			InvalidResponseError,
+		);
 	});
 
 	it('drops a log whose custom topics do not match the requested ABI topic count', async () => {
@@ -205,7 +201,7 @@ describe('getPastEvents', () => {
 			}),
 		).resolves.toHaveLength(1);
 		await expect(
-			contract.getPastEvents('Transfer' as never, { fromBlock: 0, filter: { to: ADDR } }),
+			contract.getPastEvents('allEvents', { fromBlock: 0, filter: { to: ADDR } }),
 		).resolves.toHaveLength(0);
 		await expect(
 			contract.getPastEvents('Transfer' as never, {
@@ -227,7 +223,7 @@ describe('getPastEvents', () => {
 			}),
 		).resolves.toHaveLength(1);
 		await expect(
-			contract.getPastEvents('Named' as never, { fromBlock: 0, filter: { tag: 'world' } }),
+			contract.getPastEvents('allEvents', { fromBlock: 0, filter: { tag: 'world' } }),
 		).resolves.toHaveLength(0);
 	});
 

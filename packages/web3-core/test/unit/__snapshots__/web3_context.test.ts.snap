@@ -100,6 +100,7 @@ exports[`Web3Context getContextObject should return correct context object 1`] =
     "_subscribesInFlight": 0,
     "_subscriptionConnections": WeakMap {},
     "_subscriptions": Map {},
+    "_unknownNotificationCount": 0,
     "registeredSubscriptions": {},
     "requestManager": Web3RequestManager {
       "_emitter": EventEmitter {

@@ -24,7 +24,7 @@ import {
 	Bytes,
 	Web3QRLExecutionAPI,
 } from '@theqrl/web3-types';
-import { isBytes, isNullish } from '@theqrl/web3-validator';
+import { isBlockTag, isBytes, isNullish } from '@theqrl/web3-validator';
 import { qrlRpcMethods } from '@theqrl/web3-rpc-methods';
 
 import { getBlock } from '../../../src/rpc_method_wrappers';
@@ -68,7 +68,16 @@ describe('getBlock', () => {
 		async (_, inputParameters) => {
 			const [inputBlock, hydrated] = inputParameters;
 			const expectedReturnFormat = { number: FMT_NUMBER.STR, bytes: FMT_BYTES.UINT8ARRAY };
-			const expectedMockRpcResponse = hydrated ? mockRpcResponseHydrated : mockRpcResponse;
+			const baseResponse = hydrated ? mockRpcResponseHydrated : mockRpcResponse;
+			const requested = inputBlock ?? web3Context.defaultBlock;
+			const expectedMockRpcResponse = {
+				...baseResponse,
+				...(isBytes(requested as Bytes, { size: 32 })
+					? { hash: format({ format: 'bytes32' }, requested, QRL_DATA_FORMAT) }
+					: isBlockTag(requested as string)
+						? {}
+						: { number: format({ format: 'uint' }, requested, QRL_DATA_FORMAT) }),
+			};
 			const expectedFormattedResult = format(
 				blockSchema,
 				expectedMockRpcResponse,

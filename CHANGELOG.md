@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Pass 11 audit corrections
+
+- Fix the P11R-1 residual: non-indexed subscription filters now agree with past-event reads for live delivery and replay, with validation before requests.
+- Fix all nine pass-11 findings: replay contract filters, validate broad filters before requests, preserve anonymous topics and exact prefix filters, separate acknowledged bursts from unknown-id limits, validate confirmation hashes and RPC identities, preserve typed raw-input errors, and reject hidden pnpm policy keys.
+- Handle SIGHUP and cleanup failures in tarball smoke; check malformed-percent Markdown links. Clarify provider bounds, public helpers and conversion limits.
+
 ### Pass 10 audit corrections
 
 - Bound raw transaction RLP before decoding, preserve delayed subscription bursts, count UTF-8 response bytes, and correct confirmation hashes, response identity checks and syncing notifications.

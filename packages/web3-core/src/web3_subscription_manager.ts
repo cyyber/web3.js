@@ -146,6 +146,7 @@ export class Web3SubscriptionManager<
 	private _disposed = false;
 	private _earlyNotifications: { id: string; data: ProviderNotification; size: number }[] = [];
 	private _earlyNotificationBytes = 0;
+	private _unknownNotificationCount = 0;
 	private _notificationTimer?: ReturnType<typeof setTimeout>;
 
 	private readonly _beforeProviderChangeListener: () => void;
@@ -421,6 +422,7 @@ export class Web3SubscriptionManager<
 		this._notificationTimer = undefined;
 		this._earlyNotifications = [];
 		this._earlyNotificationBytes = 0;
+		this._unknownNotificationCount = 0;
 	}
 
 	private _flushEarlyNotificationsSoon(): void {
@@ -431,12 +433,14 @@ export class Web3SubscriptionManager<
 			const pending = this._earlyNotifications;
 			this._earlyNotifications = [];
 			this._earlyNotificationBytes = 0;
+			this._unknownNotificationCount = 0;
 			for (const entry of pending) {
 				const sub = this._subscriptions.get(entry.id);
 				if (sub) sub.processSubscriptionData(entry.data);
 				else if (this._subscribesInFlight > 0) {
 					this._earlyNotifications.push(entry);
 					this._earlyNotificationBytes += entry.size;
+					if (entry.size > 0) this._unknownNotificationCount += 1;
 				}
 			}
 		}, 0);
@@ -456,7 +460,7 @@ export class Web3SubscriptionManager<
 			return;
 		}
 		// Unknown ids are untrusted. Bound both count and retained serialized size.
-		if (this._earlyNotifications.length >= 128) {
+		if (this._unknownNotificationCount >= 128) {
 			this._reportManagerError(
 				new SubscriptionError('Subscription notification buffer limit exceeded'),
 			);
@@ -476,6 +480,7 @@ export class Web3SubscriptionManager<
 		}
 		this._earlyNotifications.push({ id, data, size });
 		this._earlyNotificationBytes += size;
+		this._unknownNotificationCount += 1;
 		this._flushEarlyNotificationsSoon();
 	}
 
@@ -508,7 +513,10 @@ export class Web3SubscriptionManager<
 				this._earlyNotifications = this._earlyNotifications.filter(
 					entry => entry.id !== subscriptionId,
 				);
-				for (const entry of pending) this._earlyNotificationBytes -= entry.size;
+				for (const entry of pending) {
+					this._earlyNotificationBytes -= entry.size;
+					if (entry.size > 0) this._unknownNotificationCount -= 1;
+				}
 				for (const entry of pending) {
 					if (this._subscriptions.get(subscriptionId) !== sub) return;
 					sub.processSubscriptionData(entry.data);

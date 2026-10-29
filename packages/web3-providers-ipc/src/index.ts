@@ -184,10 +184,9 @@ export default class IpcProvider<API extends Web3APISpec = QRLExecutionAPI> exte
 			previous.destroy();
 		}
 		this._socketConnection = new Socket(this._socketOptions);
-		// The socket decodes its own byte stream, so a character split across two `data`
-		// events survives; a fresh decoder for the (rare) binary chunk as well (L-24).
-		this._decoder = new TextDecoder('utf-8');
-		this._socketConnection.setEncoding('utf8');
+		// Decode the byte stream once, retaining split characters across data events.
+		// Preserve BOMs as the former socket StringDecoder did; reset on every connection.
+		this._decoder = new TextDecoder('utf-8', { ignoreBOM: true });
 		this._socketConnection.connect({ path: this._socketPath });
 	}
 
@@ -210,7 +209,7 @@ export default class IpcProvider<API extends Web3APISpec = QRLExecutionAPI> exte
 	}
 
 	protected _parseResponses(e: Uint8Array | string) {
-		this._decoder ??= new TextDecoder('utf-8');
+		this._decoder ??= new TextDecoder('utf-8', { ignoreBOM: true });
 		const text = typeof e === 'string' ? e : this._decoder.decode(e, { stream: true });
 		return this.chunkResponseParser.parseResponse(text);
 	}

@@ -84,7 +84,7 @@ const serializePayload = (payload: unknown): string => {
  * Messages exceeding this parser bound are dropped and identified requests fail with
  * `ResponseTooLargeError`; notifications do not fail unrelated requests. The default
  * `ws` wire limit (`maxPayload`) is min(2 × this bound, 536,870,888 bytes). Exceeding the wire limit closes the
- * connection with code 1009 and fails all outstanding requests with `ResponseTooLargeError`,
+ * connection (ws sends 1009 to the peer; its local close event can report 1006) and fails all outstanding requests with `ResponseTooLargeError`,
  * since the frame is unavailable for request correlation.
  *
  * `disconnect(code, reason)` accepts the close codes every WebSocket client lets an endpoint

@@ -133,6 +133,13 @@ export interface RpcResultSchema {
 	nullable?: boolean;
 	nullableWhen?: string;
 }
+/**
+ * Validate known RPC result fields before formatting; throw `InvalidResponseError` on
+ * mismatch. Absent/undefined object fields and unknown members are ignored, so callers
+ * must separately require identity fields. Null is accepted only by a nullable schema,
+ * a null alternative, or a matching `nullableWhen` sibling. `path` labels nested errors
+ * and defaults to `result`; it is not a property selector.
+ */
 export const assertRpcResult = (
 	method: string,
 	value: unknown,

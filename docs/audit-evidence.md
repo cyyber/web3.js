@@ -549,7 +549,7 @@ findings; the changes below do not claim to resolve every informational item.
 | P10-TR-2 | Socket parsers count UTF-8 bytes, including multibyte text and surrogate pairs split between stream chunks. Exact-limit replies pass; oversized replies reject with `ResponseTooLargeError` and request-id attribution. |
 | P10-QRL-1 | Before recursive RLP decoding, scan headers iteratively and enforce 16 MiB serialized bytes, four list levels and 65,536 total items. Four levels permit transaction/access-list/entry/storage-key-list nesting. Hex-string entry points check size before conversion. Tests reject a deeply wrapped 5 MiB payload without calling the RLP decoder and accept a normal access-list transaction. |
 | P10-QRL-2 | Subscription confirmations report the confirming header's hash, matching polling semantics. |
-| P10-QRL-3 | Polling requires a 32-byte block hash and a block number equal to the request. Malformed replies consume the bounded error budget without advancing confirmation counts; pending/null blocks remain idle. |
+| P10-QRL-3 | Polling requires a 32-byte block hash and a block number equal to the request. Consecutive malformed replies consume the bounded error budget without advancing confirmation counts; pending/null blocks remain idle. |
 | P10-QRL-4 | Transaction and receipt readers compare the returned transaction hash with the requested hash before formatting, ignoring hex case. Rechecks treat a foreign receipt as unknown and never adopt it. |
 | P10-QRL-5 | Syncing subscriptions require starting, current and highest block fields before emitting progress. Partial status objects emit a typed error without changed/data events; complete go-qrl notifications still pass. |
 | P10-CT-1 | Treat omitted `anonymous` and `anonymous: false` identically when selecting compatible event layouts. |
@@ -635,11 +635,92 @@ options, and an unresponsive child.
 
 All **236 script tests in 17 suites** pass, including all 16 smoke-runner tests.
 The original sleeping-npm reproduction now ends with SIGTERM/SIGINT (rather than
-exit 0 after finishing the smoke), takes about 0.52 seconds including the harness's
-0.4-second pre-signal wait, and leaves neither temporary directory behind.
+exit 0 after finishing the smoke) and leaves neither temporary directory behind.
+The saved signal logs do not record elapsed time.
 The real smoke imports and requires all 19 packed packages successfully using
-the latest audit build's matching lockfile. An initial attempt with the older
-scratch lockfile correctly failed integrity checks against the rebuilt tarballs.
+the latest audit build's matching lockfile.
 Targeted lint passes with only the existing script-header warning; hygiene and
 `git diff --check` pass. Logs are under `/tmp/web3-pass10r-*`. These are focused
 follow-up checks; the full-workspace totals above describe the earlier run.
+
+## Pass 11 remediation (2026-10-29)
+
+The nine findings in the pass-11 report are addressed in the working tree.
+
+| Finding | Change and regression coverage |
+| --- | --- |
+| P11-CT-1 | Subscription backfill receives the same broad filter as live delivery. The merged-layout test checks replay and live matches in both ABI orders. Explicit topics retain their override semantics. |
+| P11-CT-2 | Broad queries encode every active filter value and every OR alternative before issuing RPCs. Invalid filters fail before fetching or subscribing. |
+| P11-CT-3 | Anonymous events retain the bound fragment's indexed topics; they never request a signature-only broad query. |
+| P11-CT-4 | Indexed positions determine whether broad topics are necessary. Compatible layouts with different indexed counts use a prefix without trailing wildcard slots, including unfiltered named queries. |
+| P11-SC-1 | Reject environment substitution in npmrc and workspace setting names after key decoding. Parse bare CR as well as LF separators. Credential substitution in values remains allowed. |
+| P11-CORE-1 | Maintain the unknown-notification count separately from acknowledged entries. Real WebSocket tests delay registration by 30 ms, send a burst followed by a second batch, check order, and verify the 128-entry unknown-id cap still holds. |
+| P11-QRL-1 | Require a 32-byte confirming header hash before advancing the subscription watcher. Missing and malformed hashes cannot suppress a subsequent valid header. |
+| P11-QRL-2 | Check requested block hash/number, transaction block/index, and log address/positional topics before return formatting. Tests cover mismatches, missing fields, alternate input/return formats, OR/wildcard topics, null results, tags and pending transaction locations. |
+| P11-QRL-3 | The serialized-size precheck only measures strings and Uint8Arrays, leaving other inputs to typed validators. Nullish and other invalid send/decode inputs raise Web3ValidatorError without broadcasting. |
+
+Related cleanup handles SIGHUP and failed directory removal in the smoke runner,
+checks literal link targets when percent decoding fails, and uses one streaming
+UTF-8 decoder per IPC connection while preserving BOM handling. Public helper,
+provider acknowledgement, byte/depth-limit and confirmation-hash contracts are
+documented. Decimal length limits are explicitly scoped to `toBigInt` and its
+callers. The two unsupported pass-10 timing/integrity narrative claims above were
+removed or qualified.
+
+Contract fixtures now apply node topic semantics where they model an honest node.
+A reply containing logs outside its requested address/topics is tested as an
+InvalidResponseError, rather than silently treated as a valid response. Snapshot
+changes only add the manager's new unknown-notification counter.
+
+Validation used Node 22.22.1 / pnpm 10.27.0, one CPU (`taskset -c 0`),
+`UV_THREADPOOL_SIZE=1`, and Jest `--runInBand --watchman=false`. The workspace
+build completed all 19 targets; final incremental CommonJS, ESM and declaration
+builds passed for all eight changed TypeScript packages.
+
+| Unit-test group | Passed | Skipped | Suites |
+| --- | ---: | ---: | ---: |
+| web3-core | 514 | 0 | 19 |
+| web3-qrl | 1,586 | 4 | 57 |
+| web3-qrl-contract | 242 | 0 | 16 |
+| web3-qrl-accounts | 350 | 2 | 18 |
+| web3-providers-ipc | 36 | 0 | 4 |
+| Repository scripts | 248 | 0 | 17 |
+| **Total** | **2,976** | **6** | **131** |
+
+All package coverage thresholds passed. Doctor, repository hygiene and
+`git diff --check` passed. Tests requiring child-process fixtures or local sockets
+were rerun outside the sandbox after its EPERM refusals. Logs are under
+`/tmp/web3-pass11-*.log`. These checks cover the remediation; live-node integration,
+browser bundles, published-tarball smoke and supply-chain scans were not repeated.
+
+The full lint-budget gate passed with zero errors and **1,256 warnings against
+an unchanged budget of 1,256**. The final indexed-function mock retest also passed
+all 19 tests after its lint cleanup; it is included in the contract total above.
+
+### P11R-1 follow-up (2026-10-29)
+
+Subscription post-filtering now depends on active filter keys, independently of
+whether the node topic query needs broadening. Non-indexed filters apply to live
+delivery, removed logs and `fromBlock` replay for single and merged layouts,
+anonymous events and `allEvents`. Explicit topics retain their subscription override.
+All active values and OR alternatives are validated before requests; `allEvents`
+validates every layout containing all active keys. The contract guide documents
+these semantics.
+
+The new `non_indexed_event_filters.test.ts` adds 37 cases covering both ABI orders,
+three return formats, replay/live/removed-log agreement, synchronous validation,
+wildcards, empty OR lists and explicit-topic overrides. The full contract unit suite
+passed **279 tests in 17 suites**, including all coverage thresholds, on one CPU.
+After test lint cleanup, the 37-case suite passed again. CommonJS, ESM and declaration
+builds passed. Targeted ESLint reported zero errors and the same five existing
+warnings in `contract.ts`; formatting, repository hygiene and `git diff --check`
+passed. Hygiene was rerun outside the sandbox because its Git subprocess was blocked.
+
+The auditor's `poc11r_nonindexed_live.cjs` was replayed against the rebuilt package:
+S1 and S4 now return 1/1/1 (past/replay/live), S2 returns 2/2/2, and S3/S5 retain
+2/2/2. S3 was already correct before this follow-up; the report's 4/4 description
+of that row is inaccurate. All 30 type/return-format rows in
+`poc11_ct_broad_matrix.cjs` now produce the same two matching live and past results,
+without errors. Explicit-topic and indexed-filter controls are unchanged.
+Logs are `/tmp/web3-p11r-*.log`. The workspace-wide gates and real-node integration
+suites were not repeated for this follow-up.

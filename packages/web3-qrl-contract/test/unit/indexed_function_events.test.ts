@@ -21,6 +21,7 @@ import { Filter } from '@theqrl/web3-types';
 import { hexToBytes } from '@theqrl/web3-utils';
 import { isFilterObject } from '@theqrl/web3-validator';
 import { Contract, encodeEventABI } from '../../src';
+import { filterLogs } from '../fixtures/fake_provider';
 import { getLogsData } from '../fixtures/unitTestFixtures';
 
 const eventAbi = {
@@ -137,7 +138,11 @@ describe.each(['Callback', 'allEvents'] as const)(
 					data: '0x',
 					topics: [eventTopic, callback.topic],
 				}));
-				const request = jest.fn().mockResolvedValue(logs);
+				const request = jest
+					.fn()
+					.mockImplementation(async ({ params }: { params: unknown[] }) =>
+						Promise.resolve(filterLogs(logs, params[0])),
+					);
 				const contract = new Contract([eventAbi], address, { provider: { request } });
 
 				const options = { filter: { callback: value } } as unknown as Filter;

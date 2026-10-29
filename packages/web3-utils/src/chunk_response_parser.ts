@@ -188,6 +188,7 @@ export class ChunkResponseParser {
 	private pendingParts: string[] = [];
 	/** UTF-8 bytes of the open message seen so far, kept or not. */
 	private messageBytes = 0;
+	/** Direct parser callers may split a UTF-16 pair; streaming socket decoders keep it intact. */
 	private trailingHighSurrogate = false;
 	/** The open message exceeded the bound: only its boundaries are tracked, its text dropped. */
 	private discarding = false;

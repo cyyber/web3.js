@@ -119,6 +119,7 @@ describe('repository hygiene (P4-L-45, P4-L-46, P4-L-50)', () => {
 		'[evidence][ref]\n\n[ref]: docs/missing.md "title"',
 		'[ref]\n\n[ref]: docs/missing.md',
 		'<a href="docs/missing.md">evidence</a>',
+		'<a href="docs/missing%zz.md">evidence</a>',
 		'<Link to="docs/missing.mdx">evidence</Link>',
 		'[evidence](docs/missing.md?view=1#checks)',
 		'[evidence](docs/missing%20file.md)',

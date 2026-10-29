@@ -87,10 +87,7 @@ export const testData: TestData[] = [
 	// blockNumber = Bytes, transactionIndex = number
 	[
 		'blockNumber = "0xdc0818cf78f21a8e70579cb46a43643f78291264dda342ae31049421c82d21ae", transactionIndex = 0',
-		[
-			'0xdc0818cf78f21a8e70579cb46a43643f78291264dda342ae31049421c82d21ae, transactionIndex = 0',
-			0,
-		],
+		['0xdc0818cf78f21a8e70579cb46a43643f78291264dda342ae31049421c82d21ae', 0],
 	],
 	[
 		'blockNumber = hexToBytes("0xdc0818cf78f21a8e70579cb46a43643f78291264dda342ae31049421c82d21ae"), transactionIndex = 0',
@@ -113,7 +110,7 @@ export const testData: TestData[] = [
 	['blockNumber = BlockTags.SAFE, transactionIndex = "0x0"', [BlockTags.SAFE, 0]],
 	['blockNumber = BlockTags.FINALIZED, transactionIndex = "0x0"', [BlockTags.FINALIZED, 0]],
 	// blockNumber = Numbers, transactionIndex = number
-	['blockNumber = "0x4b7"', ['0x4b7, transactionIndex = 0', 0]],
+	['blockNumber = "0x4b7"', ['0x4b7', 0]],
 	['blockNumber = 1207, transactionIndex = 0', [1207, 0]],
 	['blockNumber = "1207", transactionIndex = 0', ['1207', 0]],
 	['blockNumber = BigInt("0x4b7"), transactionIndex = 0', [BigInt('0x4b7'), 0]],

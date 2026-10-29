@@ -99,7 +99,6 @@ import {
 	decodeEventABI,
 	selectEventABI,
 	matchesEventFilter,
-	eventFilterNeedsBroadTopics,
 	EventTopicCountError,
 	decodeMethodReturn,
 	encodeEventABI,
@@ -1512,6 +1511,11 @@ export class Contract<Abi extends ContractAbi>
 	): ContractBoundEvent {
 		return (...params: unknown[]) => {
 			const eventOptions = (params[0] ?? {}) as NonNullable<EventParameters>;
+			const subscriptionFilter =
+				!eventOptions.topics &&
+				Object.values(eventOptions.filter ?? {}).some(value => !isNullish(value))
+					? eventOptions.filter
+					: undefined;
 			const { topics, fromBlock } = encodeEventABI(
 				this.options,
 				abi,
@@ -1524,11 +1528,7 @@ export class Contract<Abi extends ContractAbi>
 					topics,
 					abi,
 					jsonInterface: this._jsonInterface,
-					filter:
-						!eventOptions.topics &&
-						eventFilterNeedsBroadTopics(abi, eventOptions.filter, this._jsonInterface)
-							? eventOptions.filter
-							: undefined,
+					filter: subscriptionFilter,
 				},
 				{
 					subscriptionManager: this
@@ -1561,7 +1561,7 @@ export class Contract<Abi extends ContractAbi>
 						? Promise.resolve([])
 						: this._getPastEventsForAbi(
 								abi,
-								{ fromBlock, topics },
+								{ fromBlock, topics, filter: subscriptionFilter },
 								returnFormat,
 								error => {
 									if (!failed) sub._processSubscriptionError(error);
