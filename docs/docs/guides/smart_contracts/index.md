@@ -21,22 +21,28 @@ emitting contract/version, or pass that explicit fragment to `decodeEventABI`;
 do not merge these indistinguishable layouts and expect automatic selection.
 
 Named event filters select a compatible layout before encoding indexed topics.
-Only non-nullish filter values select a layout; nullish values are wildcards.
+Only own enumerable string keys in `filter` participate in `getPastEvents`, live
+subscriptions and their `fromBlock` replay; inherited and non-enumerable properties
+are ignored. Only non-nullish filter values select a layout; nullish values are
+wildcards.
 Omitted `anonymous` and `anonymous: false` mean the same thing. Unknown active
 filter keys, or keys that belong to no single named layout, raise `AbiError`.
 
 When compatible non-anonymous layouts index a key at different positions, named
 queries and subscriptions request the signature without value topics, then compare
 decoded values locally. Different indexed counts alone use a
-prefix topic filter when the filtered keys occupy the same positions. Anonymous
+prefix topic filter when the filtered keys occupy the same positions; unfiltered
+named queries also trim trailing wildcard slots. Anonymous
 events keep the bound layout’s indexed topics; without a signature topic they
 cannot automatically select sibling layouts.
 
 `getPastEvents`, live subscriptions and their `fromBlock` replay compare active
 filter values locally using the selected fragment, including non-indexed values.
 `allEvents` scans all logs for the address before applying its local filter.
-Filter values and every OR alternative are validated before fetching or subscribing;
-for `allEvents`, they must be encodable in every layout containing all active keys.
+Filter values and every OR alternative are validated before fetching or subscribing,
+including with explicit `topics`. Values must be encodable in every compatible
+layout containing all active keys, for both named events and `allEvents`. An empty
+OR list raises `AbiError`; an empty array for an array-typed input remains a value.
 Explicit `topics` override generated topics and disable the subscription's local
 filter for both live delivery and replay. `getPastEvents` still applies its filter
 when explicit topics are supplied. Live log fields are validated before decoding.

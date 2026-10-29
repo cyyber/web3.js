@@ -724,3 +724,91 @@ of that row is inaccurate. All 30 type/return-format rows in
 without errors. Explicit-topic and indexed-filter controls are unchanged.
 Logs are `/tmp/web3-p11r-*.log`. The workspace-wide gates and real-node integration
 suites were not repeated for this follow-up.
+
+## Pass 12 remediation (2026-10-29)
+
+The seven Low findings in `AUDIT_REPORT_2026-10-29_pass12.md` are addressed.
+
+| Finding | Change and regression coverage |
+| --- | --- |
+| P12-CORE-1 | The notification flush checks manager and connection generations before each delivery or requeue. Tests switch providers, clear and dispose from a listener while another registration is pending, then check that a reused id receives no stale data. |
+| P12-TR-1 | Batch error summaries inspect at most four entries and cap their combined text, retaining the complete `innerError` and `data`. A 30,000-entry unit case and the auditor's HTTP probe cover direct and HTTP-wrapped errors. |
+| P12-QRL-1 | `ArrayBuffer.isView` applies the serialized-size bound across realms. Tests create an oversized array in a VM context and check refusal before RLP decoding, formatting or broadcast; the exact size boundary remains accepted by the precheck. |
+| P12-QRL-2 | Raw log subscriptions and `getLogs` share the address/positional-topic matcher. Tests cover foreign and absent identities, address and topic alternatives, wildcards, prefix normalization and alternate return formats. Subscription topic types now include the documented OR lists. |
+| P12-QRL-3 | Quantity errors name their result field, including missing block numbers and transaction indexes. Nested schema quantity checks preserve their field path too. |
+| P12-CT-1 | Named events validate every compatible layout containing all active keys, also with explicit topics. A sibling missing a required key is dropped before encoding other expected values. Tests cover both ABI orders, reads, replay and live delivery. |
+| P12-CT-2 | Empty OR lists raise `AbiError` before any request. Empty array-typed values remain valid. Tests cover scalar and tuple OR lists and the array-value control. |
+
+Related corrections snapshot top-level subscription filter values, reject non-array
+`topics`, restore coverage for selected layouts missing filter keys, and clarify
+unfiltered topic prefixes, manager retention, the UTF-16 notification budget,
+IPC decoder initialization and best-effort smoke cleanup. The original report
+and its historical gate evidence are preserved.
+
+Validation used Node 22.22.1, CPU 0, `UV_THREADPOOL_SIZE=1` and Jest
+`--runInBand --watchman=false`. The wrapper `/tmp/web3-pass12-check.sh` records the
+working directory, exact command, timestamps and exit status in every
+`/tmp/web3-pass12-*.log`; the commands and statuses therefore remain available even
+for successful TypeScript builds that emit no compiler output.
+
+| Unit-test group | Passed | Skipped | Suites |
+| --- | ---: | ---: | ---: |
+| web3-core | 517 | 0 | 19 |
+| web3-errors | 120 | 0 | 3 |
+| web3-qrl-accounts | 351 | 2 | 18 |
+| web3-qrl | 1,600 | 4 | 57 |
+| web3-qrl-contract | 292 | 0 | 17 |
+| **Total** | **2,880** | **6** | **114** |
+
+The core total combines 503 passing tests from the full run with its 14 socket
+cases rerun outside the sandbox after `listen EPERM`. Coverage thresholds were
+enabled in each full package run and none failed. Test-only lint cleanup was
+followed by focused reruns of the three affected suites.
+
+CommonJS, ESM and declaration builds passed for all five changed runtime packages;
+the final contract change also passed all three incremental builds. The full
+lint-budget check retained **1,256 warnings against the unchanged 1,256 budget**.
+Its eight test-lint errors were corrected, and final ESLint over all changed
+TypeScript files reported zero errors. Formatting, repository hygiene and
+`git diff --check` passed. Lint-budget, hygiene and localhost-server checks that
+were blocked by sandbox subprocess/socket restrictions were rerun outside it.
+
+Auditor probes against the rebuilt packages confirm an empty stale-notification
+buffer after all three lifecycle actions; invalid named sibling filters rejected
+with zero `getLogs` calls; and foreign raw subscription logs reported as
+`InvalidResponseError` while matching/uppercase-address controls remain delivered.
+The 28,646-entry HTTP batch probe now yields a 319-character `ResponseError` and a
+408-character `HttpStatusError`, retaining every diagnostic entry. Original single
+error messages remain bounded as before.
+
+These checks cover the changed packages. Workspace-wide unit tests, live go-qrl
+integration, browser bundles, release smoke, docs build and supply-chain scans
+were not repeated for this remediation.
+
+## Pass 12 residual P12R-1 remediation (2026-10-30)
+
+Indexed topic encoding now uses the same own enumerable, non-nullish filter key
+list as validation, layout selection and local matching. Inherited and
+non-enumerable properties are ignored consistently by `getPastEvents`, subscription
+replay and live delivery. The smart-contract guide documents this contract.
+
+The 42 added cases in `non_indexed_event_filters.test.ts` cover inherited and
+non-enumerable indexed keys, mixtures with own non-indexed keys, own-property
+shadowing, null-prototype filters and a non-matching own-key control. Each case
+compares past events, replay, live and removed logs across single, merged,
+reversed, `allEvents` and anonymous layouts. Before the source fix, 12 cases
+failed; after it, all **334 contract tests in 17 suites passed**, with the package
+coverage thresholds enabled and met.
+
+Forced CommonJS, ESM and declaration builds passed. ESLint reported zero errors
+and warnings for the changed source and test. Checks used Node 22.22.1, CPU 0,
+`UV_THREADPOOL_SIZE=1` and Jest `--runInBand --watchman=false`; exact commands,
+timestamps and statuses are in `/tmp/web3-pass12-p12r1-{red,unit,build,eslint}.log`.
+Formatting, repository hygiene and `git diff --check` also passed. The hygiene
+check was rerun outside the sandbox after its Git subprocesses were blocked.
+
+The auditor's inherited-filter probe was rerun against the rebuilt package:
+the inherited-only filter now returns four logs on every path, while the ordinary
+own-property control still returns two. The output is saved in
+`/tmp/web3-pass12-p12r1-probe.log`. This focused follow-up did not repeat the
+workspace-wide release gates or live testnet integration.

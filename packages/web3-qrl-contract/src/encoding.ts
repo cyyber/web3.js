@@ -270,33 +270,37 @@ export const matchesEventFilter = (
 	log: EventLog,
 	abi: AbiEventFragment,
 	filter: NonNullable<Filter['filter']>,
-): boolean =>
-	Object.keys(filter)
-		.filter(key => !isNullish(filter[key]))
-		.every(key => {
-			const input = abi.inputs?.find(item => item.name === key);
-			if (!input) return false;
-			const matches = (expected: unknown) => {
-				const actual = log.returnValues[key];
-				if (input.indexed && isIndexedHashType(input.type)) {
-					return (
-						typeof actual === 'string' &&
-						rightPad(actual, TOPIC_HEX_LENGTH).toLowerCase() ===
-							encodeIndexedTopic(input, expected).toLowerCase()
-					);
-				}
-				const expectedWord = encodeParameter(input, expected);
-				try {
-					return encodeParameter(input, actual) === expectedWord;
-				} catch {
-					return false;
-				}
-			};
-			return isOrList(input, filter[key])
-				? (filter[key] as unknown[]).some(matches)
-				: matches(filter[key]);
-		});
+): boolean => {
+	const keys = Object.keys(filter).filter(key => !isNullish(filter[key]));
+	// A sibling lacking any required key cannot match. Check this before encoding
+	// expected values, whose types may differ in that sibling's remaining inputs.
+	if (keys.some(key => !abi.inputs?.some(input => input.name === key))) return false;
+	return keys.every(key => {
+		const input = abi.inputs?.find(item => item.name === key);
+		if (!input) return false;
+		const matches = (expected: unknown) => {
+			const actual = log.returnValues[key];
+			if (input.indexed && isIndexedHashType(input.type)) {
+				return (
+					typeof actual === 'string' &&
+					rightPad(actual, TOPIC_HEX_LENGTH).toLowerCase() ===
+						encodeIndexedTopic(input, expected).toLowerCase()
+				);
+			}
+			const expectedWord = encodeParameter(input, expected);
+			try {
+				return encodeParameter(input, actual) === expectedWord;
+			} catch {
+				return false;
+			}
+		};
+		return isOrList(input, filter[key])
+			? (filter[key] as unknown[]).some(matches)
+			: matches(filter[key]);
+	});
+};
 
+/** Encode RPC topics and validate `options.filter` against every compatible layout, even with explicit topics. */
 export const encodeEventABI = (
 	{ address }: ContractOptions,
 	event: AbiEventFragment & { signature: string },
@@ -305,6 +309,8 @@ export const encodeEventABI = (
 ) => {
 	if (!Array.isArray(jsonInterface))
 		throw new AbiError('Invalid event registry: expected an array');
+	if (!isNullish(options?.topics) && !Array.isArray(options.topics))
+		throw new AbiError('Invalid event topics: expected an array');
 	const keys = Object.keys(options?.filter ?? {}).filter(
 		key => !isNullish(options?.filter?.[key]),
 	);
@@ -334,19 +340,21 @@ export const encodeEventABI = (
 	const filter = options?.filter ?? {};
 	const opts: Writeable<Filter> = {};
 	// Local filters also compare non-indexed values. Validate every active alternative
-	// before requesting logs, even when no broad topic query is needed. Explicit topics
-	// override the subscription filter. allEvents must validate each matching layout.
-	if (!topics && keys.length > 0) {
-		const filterLayouts =
-			event.name === ALL_EVENTS
-				? layouts.filter(layout =>
-						keys.every(key => layout.inputs?.some(input => input.name === key)),
-					)
-				: [event];
+	// before requesting logs, for every compatible layout. Explicit topics still allow
+	// getPastEvents to post-filter, so they do not bypass validation.
+	if (keys.length > 0) {
+		const filterLayouts = layouts.filter(layout =>
+			keys.every(key => layout.inputs?.some(input => input.name === key)),
+		);
 		for (const layout of filterLayouts) {
 			for (const input of layout.inputs ?? []) {
 				if (!keys.includes(input.name)) continue;
 				const value = filter[input.name];
+				if (isOrList(input, value) && value.length === 0) {
+					throw new AbiError(
+						`Event filter alternatives for ${input.name} must not be empty`,
+					);
+				}
 				for (const alternative of isOrList(input, value) ? value : [value]) {
 					if (input.indexed) encodeIndexedTopic(input, alternative);
 					else encodeParameter(input, alternative);
@@ -389,7 +397,8 @@ export const encodeEventABI = (
 					continue;
 				}
 
-				const value = filter[input.name];
+				// Use the same own enumerable keys as validation and local matching.
+				const value = keys.includes(input.name) ? filter[input.name] : undefined;
 				if (isNullish(value)) {
 					// eslint-disable-next-line no-null/no-null
 					opts.topics.push(null);

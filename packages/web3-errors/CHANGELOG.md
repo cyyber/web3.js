@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Pass 12 audit corrections
+
+- Bound the combined text of batch RPC errors while retaining full diagnostics in innerError/data (P12-TR-1).
+
 ### Pass 7 audit corrections
 
 - TransactionBlockTimeoutError accepts bigint block heights and distances to retain precision above 2^53.

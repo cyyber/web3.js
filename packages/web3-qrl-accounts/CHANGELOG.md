@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Pass 12 audit corrections
+
+- Enforce the serialized-transaction size limit for array-buffer views from any JavaScript realm (P12-QRL-1).
+
 ### Pass 11 audit corrections
 
 - Leave non-string/non-Uint8Array inputs to typed transaction validators when checking serialized size (P11-QRL-3).

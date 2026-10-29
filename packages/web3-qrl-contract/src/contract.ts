@@ -1510,7 +1510,11 @@ export class Contract<Abi extends ContractAbi>
 		returnFormat: DataFormat = DEFAULT_RETURN_FORMAT,
 	): ContractBoundEvent {
 		return (...params: unknown[]) => {
-			const eventOptions = (params[0] ?? {}) as NonNullable<EventParameters>;
+			const givenOptions = (params[0] ?? {}) as NonNullable<EventParameters>;
+			const eventOptions = {
+				...givenOptions,
+				filter: givenOptions.filter ? { ...givenOptions.filter } : undefined,
+			};
 			const subscriptionFilter =
 				!eventOptions.topics &&
 				Object.values(eventOptions.filter ?? {}).some(value => !isNullish(value))
@@ -1519,7 +1523,7 @@ export class Contract<Abi extends ContractAbi>
 			const { topics, fromBlock } = encodeEventABI(
 				this.options,
 				abi,
-				params[0] as EventParameters,
+				eventOptions,
 				this._jsonInterface,
 			);
 			const sub = new LogsSubscription(

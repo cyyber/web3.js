@@ -14,6 +14,7 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
+import { assertLogMatchesFilter } from './utils/log_filter.js';
 import { format } from '@theqrl/web3-utils';
 import { isBlockTag, isNullish, isObject } from '@theqrl/web3-validator';
 import { BaseWeb3Error, SubscriptionError } from '@theqrl/web3-errors';
@@ -24,7 +25,7 @@ import {
 	BlockNumberOrTag,
 	HexString,
 	Numbers,
-	Topic,
+	Filter,
 	BlockHeaderOutput,
 	LogsOutput,
 	QRL_DATA_FORMAT,
@@ -74,7 +75,7 @@ export class LogsSubscription extends QRLSubscription<
 	{
 		readonly fromBlock?: BlockNumberOrTag;
 		readonly address?: Address | Address[];
-		readonly topics?: Topic[];
+		readonly topics?: Filter['topics'];
 	}
 > {
 	protected _buildSubscriptionParams() {
@@ -97,6 +98,7 @@ export class LogsSubscription extends QRLSubscription<
 
 	protected formatSubscriptionResult(data: LogsOutput) {
 		assertRpcResult('qrl_subscription', data, logSchema);
+		assertLogMatchesFilter('qrl_subscription', data, this.args);
 		return format(logSchema, data, super.returnFormat);
 	}
 }

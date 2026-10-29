@@ -151,8 +151,9 @@ pnpm run release:dry-run
 
 `pnpm run release` and `pnpm run release:publish-tarballs` are for CI. Do not run them locally against the upstream repository.
 
-The smoke runner removes its temporary projects and any npm cache it creates on
-exit. SIGINT/SIGTERM/SIGHUP cancel the active command (including its subprocesses on
+The smoke runner attempts to remove its temporary projects and any npm cache it
+creates on exit; cleanup failures emit a warning without changing the smoke result.
+SIGINT/SIGTERM/SIGHUP cancel the active command (including its subprocesses on
 POSIX), wait for it to stop, clean up, and terminate the runner with the same
 signal. A command that ignores cancellation is killed after five seconds.
 A caller-provided `npm_config_cache` is preserved. Set

@@ -121,6 +121,7 @@ export class LogsSubscription extends Web3Subscription<
 	public readonly abi: AbiEventFragment & { signature: HexString };
 
 	public readonly jsonInterface: ContractAbiWithSignature;
+	/** Active decoded-value filter, applied to both data and removed-log notifications. */
 	private readonly filter?: Filter['filter'];
 
 	/**

@@ -14,6 +14,7 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
+import { runInNewContext } from 'vm';
 import { RLP } from '@ethereumjs/rlp';
 import { TransactionError, TransactionSigningError } from '@theqrl/web3-errors';
 import { hexToBytes, uint8ArrayConcat } from '@theqrl/web3-utils';
@@ -495,4 +496,14 @@ describe('serialized RLP bounds (P10-QRL-1)', () => {
 		});
 		expect(decoded.accessList).toEqual(original.accessList);
 	});
+});
+
+test('bounds cross-realm byte views before RLP conversion (P12-QRL-1)', () => {
+	const size = 16 * 1024 * 1024;
+	const bytes = runInNewContext('new Uint8Array(size + 1)', { size }) as Uint8Array;
+	expect(bytes instanceof Uint8Array).toBe(false);
+	expect(ArrayBuffer.isView(bytes)).toBe(true);
+	expect(() => assertSerializedTransactionSize(bytes.subarray(0, size))).not.toThrow();
+	expect(() => assertSerializedTransactionSize(bytes)).toThrow(TransactionError);
+	expect(() => FeeMarketEIP1559Transaction.fromSerializedTx(bytes)).toThrow(/maximum size/);
 });

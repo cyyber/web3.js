@@ -863,13 +863,13 @@ describe('errors', () => {
 			expect(error.data).toBe('0x');
 		});
 
-		it('ResponseError bounds every entry of a batch', () => {
+		it('ResponseError bounds the combined batch text and retains each full error', () => {
 			const error = new responseErrors.ResponseError([
 				hugeReply,
 				{ ...hugeReply, id: 43 },
 			] as never);
-			expect(error.message.length).toBeLessThan(2 * (MAX_ECHOED_VALUE_LENGTH + 100));
-			expect(error.message.split(truncatedSuffix)).toHaveLength(3);
+			expect(error.message.length).toBeLessThan(MAX_ECHOED_VALUE_LENGTH + 100);
+			expect(error.innerError).toEqual([hugeReply.error, hugeReply.error]);
 		});
 
 		it('InvalidResponseError bounds the message, the returned error and the ids', () => {
@@ -889,7 +889,12 @@ describe('errors', () => {
 
 		it('HttpStatusError bounds the inner message it appends', () => {
 			const body = new responseErrors.ResponseError(hugeReply as never);
-			const error = new connectionErrors.HttpStatusError(500, 'Internal Server Error', 1, body);
+			const error = new connectionErrors.HttpStatusError(
+				500,
+				'Internal Server Error',
+				1,
+				body,
+			);
 			expect(error.message.length).toBeLessThan(MAX_ECHOED_VALUE_LENGTH + 200);
 			// Bounded once, by the inner ResponseError; not cut a second time here.
 			expect(error.message).toBe(

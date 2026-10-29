@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Pass 12 audit corrections
+
+- Validate raw log subscription identity using the getLogs matcher; normalize topic prefixes and name malformed or missing quantity fields (P12-QRL-2/3).
+
 ### Pass 11 audit corrections
 
 - Require confirmation header hashes; check block, transaction-location and log-filter identity; preserve typed validation for nullish signed transactions (P11-QRL-1–3). Document `assertRpcResult` and confirmation `latestBlockHash`.

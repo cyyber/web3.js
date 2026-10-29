@@ -21,9 +21,9 @@ const MAX_SERIALIZED_BYTES = 16 * 1024 * 1024;
 const MAX_RLP_DEPTH = 4; // transaction -> access list -> entry -> storage keys
 const MAX_RLP_ITEMS = 65536;
 
-/** Bound string/Uint8Array input before conversion; other types are left to the caller's validator. */
+/** Bound strings and array-buffer views from any realm before conversion; other types reach the validator. */
 export const assertSerializedTransactionSize = (data: string | Uint8Array): void => {
-	if (typeof data !== 'string' && !(data instanceof Uint8Array)) return;
+	if (typeof data !== 'string' && !ArrayBuffer.isView(data)) return;
 	const length =
 		typeof data === 'string'
 			? (data.length - (/^0x/i.test(data) ? 2 : 0)) / 2

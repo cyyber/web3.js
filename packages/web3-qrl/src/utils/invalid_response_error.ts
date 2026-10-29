@@ -71,9 +71,9 @@ export const invalidResponseError = (
  * Returns `reply` when it is an unsigned 256-bit quantity (a `0x` hex string, a decimal string,
  * a safe integer or a bigint) and throws the {@link invalidResponseError} otherwise.
  */
-export const expectQuantityReply = (method: string, reply: unknown): Numbers => {
+export const expectQuantityReply = (method: string, reply: unknown, path?: string): Numbers => {
 	if (!isUInt(reply as ValidInputTypes, { bitSize: 256 })) {
-		throw invalidResponseError(method, 'a hex quantity', reply);
+		throw invalidResponseError(method, `a hex quantity${path ? ` at ${path}` : ''}`, reply);
 	}
 	return reply as Numbers;
 };
@@ -189,7 +189,7 @@ export const assertRpcResult = (
 	} else if (schema.type === 'number') {
 		if (typeof value !== 'number' || !Number.isFinite(value)) fail();
 	} else if (schema.type === 'string' && typeof value !== 'string') fail();
-	if (schema.format === 'uint') expectQuantityReply(method, value);
+	if (schema.format === 'uint') expectQuantityReply(method, value, path);
 	else if (schema.format === 'uint512' && !isUInt(value as ValidInputTypes, { bitSize: 512 }))
 		fail();
 	else if (schema.format?.startsWith('bytes')) {

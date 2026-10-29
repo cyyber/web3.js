@@ -117,9 +117,9 @@ export default class IpcProvider<API extends Web3APISpec = QRLExecutionAPI> exte
 	protected _socketConnection?: Socket;
 
 	/**
-	 * Decoder for a binary chunk, kept across chunks so that a multi-byte character split
-	 * over two `data` events is reassembled; replaced for every connection (L-24). Created
-	 * lazily: the base constructor connects before this class's fields are initialised.
+	 * Streaming decoder for binary chunks, reassembling multi-byte characters split across
+	 * `data` events. Created when each connection opens; parsing also initializes it for
+	 * direct callers that have not opened a socket (L-24).
 	 */
 	private _decoder?: TextDecoder;
 

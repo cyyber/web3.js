@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Pass 12 audit corrections
+
+- Fix the P12R-1 residual: historical reads, subscription replay and live delivery consistently use own enumerable filter keys.
+- Fix all seven pass-12 findings: discard stale notification flushes, cap batch error text, bound cross-realm transaction views, validate raw log identity, name missing RPC identity fields, validate every compatible event layout and reject empty OR filters.
+
 ### Pass 11 audit corrections
 
 - Fix the P11R-1 residual: non-indexed subscription filters now agree with past-event reads for live delivery and replay, with validation before requests.

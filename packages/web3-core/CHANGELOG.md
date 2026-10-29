@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Pass 12 audit corrections
+
+- Stop early-notification flushes when a listener changes providers, clears or disposes the manager (P12-CORE-1).
+
 ### Pass 11 audit corrections
 
 - Keep acknowledged notification bursts outside the unknown-id count limit so delayed registration can retain subsequent notifications (P11-CORE-1).

@@ -91,3 +91,19 @@ describe('error diagnostics bounds (pass-5 audit)', () => {
 		expect(BaseWeb3Error.convertToString(null)).toBe('null');
 	});
 });
+
+test('bounds the combined batch error message while retaining every error (P12-TR-1)', () => {
+	const batch = Array.from({ length: 30_000 }, (_, id) => ({
+		jsonrpc: '2.0',
+		id,
+		error: { code: -32000, message: 'x'.repeat(300), data: id },
+	}));
+	const response = new ResponseError(batch as never);
+	const http = new HttpStatusError(500, 'Internal Server Error', undefined, response);
+	expect(response.message.length).toBeLessThan(400);
+	expect(response.message).toContain('29996 more');
+	expect(http.message.length).toBeLessThan(600);
+	expect(response.data).toHaveLength(batch.length);
+	expect(response.innerError).toEqual(batch.map(entry => entry.error));
+	expect(http.innerError).toBe(response);
+});

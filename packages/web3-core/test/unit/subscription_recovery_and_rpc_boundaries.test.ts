@@ -587,3 +587,59 @@ test('throwing provider-change listeners cannot interrupt teardown or a provider
 		manager.clear();
 	}
 });
+
+test.each(['setProvider', 'clear', 'dispose'] as const)(
+	'discards the remaining flush snapshot after %s inside a listener (P12-CORE-1)',
+	async action => {
+		const { provider, requests, manager, subscribe } = setup();
+		provider.hold = true;
+		const firstPending = subscribe();
+		const heldPending = subscribe().catch((error: unknown) => error);
+		const next = new RaceProvider();
+		next.nextId = '0x2';
+		const notify = (id: string, result: unknown) =>
+			provider.emit('message', {
+				jsonrpc: '2.0',
+				method: 'qrl_subscription',
+				params: { subscription: id, result },
+			});
+		notify('0x1', 'switch');
+		notify('0x1', 'old remainder');
+		notify('0x2', 'old provider');
+		provider.held.shift()!.resolve('0x1');
+		const first = await firstPending;
+		const received = jest.fn();
+		first.on('data', received);
+		first.on('data', () => {
+			if (action === 'setProvider') requests.setProvider(next as never);
+			else manager[action]();
+		});
+		await new Promise(resolve => setTimeout(resolve, 5));
+		expect(received.mock.calls).toEqual([['switch']]);
+		expect(
+			(manager as unknown as { _earlyNotifications: unknown[] })._earlyNotifications,
+		).toEqual([]);
+		const currentData = jest.fn();
+		let currentId: string | undefined;
+		let callsBeforeNotification = 0;
+		if (action !== 'dispose') {
+			if (action === 'clear') requests.setProvider(next as never);
+			const current = await subscribe();
+			current.on('data', currentData);
+			await new Promise(resolve => setTimeout(resolve, 5));
+			currentId = current.id;
+			callsBeforeNotification = currentData.mock.calls.length;
+			next.emit('message', {
+				jsonrpc: '2.0',
+				method: 'qrl_subscription',
+				params: { subscription: '0x2', result: 'new provider' },
+			});
+		}
+		expect(currentId).toBe(action === 'dispose' ? undefined : '0x2');
+		expect(callsBeforeNotification).toBe(0);
+		expect(currentData.mock.calls).toEqual(action === 'dispose' ? [] : [['new provider']]);
+		provider.held.shift()!.resolve('0x2');
+		expect(await heldPending).toBeInstanceOf(Error);
+		manager.dispose();
+	},
+);

@@ -16,6 +16,7 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 // Disabling because returnTypes must be last param to match 1.x params
+import { assertLogMatchesFilter } from './utils/log_filter.js';
 import {
 	QRL_DATA_FORMAT,
 	FormatType,
@@ -403,7 +404,8 @@ export async function getTransactionFromBlock<ReturnFormat extends DataFormat>(
 		? typeof response.blockHash === 'string' &&
 			response.blockHash.toLowerCase() === blockFormatted.toLowerCase()
 		: isBlockTag(blockFormatted) ||
-			BigInt(expectQuantityReply(method, response.blockNumber)) === BigInt(blockFormatted);
+			BigInt(expectQuantityReply(method, response.blockNumber, 'result.blockNumber')) ===
+				BigInt(blockFormatted);
 	// Pending transactions have no mined location to echo back. All other replies
 	// must identify the requested index, including requests using moving block tags.
 	const pending =
@@ -417,8 +419,9 @@ export async function getTransactionFromBlock<ReturnFormat extends DataFormat>(
 	if (
 		!matchesBlock ||
 		(!pending &&
-			BigInt(expectQuantityReply(method, response.transactionIndex)) !==
-				BigInt(transactionIndexFormatted))
+			BigInt(
+				expectQuantityReply(method, response.transactionIndex, 'result.transactionIndex'),
+			) !== BigInt(transactionIndexFormatted))
 	) {
 		throw invalidResponseError(method, 'the requested block and transaction index', response);
 	}
@@ -1061,43 +1064,7 @@ export async function getLogs<ReturnFormat extends DataFormat>(
 		}
 
 		assertRpcResult('qrl_getLogs', entry, logSchema);
-		const addresses = Array.isArray(filter.address) ? filter.address : [filter.address];
-		const matchesAddress =
-			isNullish(filter.address) ||
-			addresses.length === 0 ||
-			addresses.some(
-				address =>
-					typeof entry.address === 'string' &&
-					address?.toLowerCase() === entry.address.toLowerCase(),
-			);
-		const topics = entry.topics as Bytes[] | undefined;
-		const matchesTopics =
-			!filter.topics?.length ||
-			(Array.isArray(topics) &&
-				topics.length >= filter.topics.length &&
-				filter.topics.every((topic, index) => {
-					const alternatives = Array.isArray(topic) ? topic : [topic];
-					return (
-						alternatives.length === 0 ||
-						alternatives.some(
-							alternative =>
-								isNullish(alternative) ||
-								alternative.toLowerCase() ===
-									format(
-										{ format: 'bytes64' },
-										topics[index],
-										QRL_DATA_FORMAT,
-									).toLowerCase(),
-						)
-					);
-				}));
-		if (!matchesAddress || !matchesTopics) {
-			throw invalidResponseError(
-				'qrl_getLogs',
-				'logs matching the requested address and topics',
-				entry,
-			);
-		}
+		assertLogMatchesFilter('qrl_getLogs', entry, filter);
 		return format(logSchema, entry as unknown as Log, returnFormat);
 	});
 }

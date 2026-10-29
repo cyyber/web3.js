@@ -16,8 +16,10 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 /* eslint-disable no-null/no-null -- exercise JSON-RPC nulls and omitted caller inputs */
+import { runInNewContext } from 'vm';
+import { LogsSubscription } from '../../src/web3_subscriptions';
 import { Web3Context } from '@theqrl/web3-core';
-import { InvalidResponseError } from '@theqrl/web3-errors';
+import { InvalidResponseError, TransactionError } from '@theqrl/web3-errors';
 import { Web3ValidatorError } from '@theqrl/web3-validator';
 import {
 	DEFAULT_RETURN_FORMAT as fmt,
@@ -160,6 +162,7 @@ describe('RPC response identity', () => {
 		{ topics: [null] },
 		{ topics: [[]] },
 		{ topics: [topic] },
+		{ topics: [topic.slice(2)] },
 		{ topics: [[otherTopic, topic], null] },
 	] as Filter[])('accepts matching log filters %j', async filter => {
 		await expect(
@@ -193,3 +196,67 @@ test.each([null, undefined, 5, {}, true])(
 		expect(request).not.toHaveBeenCalled();
 	},
 );
+
+test.each(['number', 'blockNumber', 'transactionIndex'] as const)(
+	'names missing identity field %s (P12-QRL-3)',
+	async field => {
+		const result =
+			field === 'number'
+				? rpc.getBlock(context({ hash }), 18, false, fmt)
+				: rpc.getTransactionFromBlock(context({ ...tx, [field]: undefined }), 18, 0, fmt);
+		await expect(result).rejects.toThrow(`result.${field}`);
+	},
+);
+
+test('refuses oversized cross-realm signed input before formatting or RPC (P12-QRL-1)', async () => {
+	const input = runInNewContext('new Uint8Array(16 * 1024 * 1024 + 1)') as Uint8Array;
+	const request = jest.fn();
+	const c = new Web3Context<QRLExecutionAPI>({ provider: { request } });
+	expect(() => decodeSignedTransaction(input as never, fmt)).toThrow(TransactionError);
+	const pending = rpc.sendSignedTransaction(c, input, fmt);
+	const errors = jest.fn();
+	pending.on('error', errors);
+	await expect(pending).rejects.toThrow(/maximum size/);
+	expect(errors).toHaveBeenCalledTimes(1);
+	expect(request).not.toHaveBeenCalled();
+});
+
+test.each([
+	{
+		filter: { address, topics: [topic] },
+		entry: { ...log, address: otherAddress },
+		matches: false,
+	},
+	{
+		filter: { address, topics: [topic] },
+		entry: { ...log, topics: [otherTopic] },
+		matches: false,
+	},
+	{ filter: { topics: [topic] }, entry: { ...log, topics: [] }, matches: false },
+	{ filter: { topics: [topic] }, entry: { address }, matches: false },
+	{ filter: { address }, entry: { topics: [topic] }, matches: false },
+	{
+		filter: { address: [otherAddress, address], topics: [[otherTopic, topic], null] },
+		entry: log,
+		matches: true,
+	},
+	{ filter: { address: [], topics: [[]] }, entry: log, matches: true },
+	{ filter: { topics: [topic.slice(2)] }, entry: log, matches: true },
+	{ filter: {}, entry: log, matches: true },
+])('checks raw log subscription identity (%j)', ({ filter, entry, matches }) => {
+	const c = context([]);
+	const sub = new LogsSubscription(filter, {
+		subscriptionManager: c.subscriptionManager,
+		returnFormat: { number: FMT_NUMBER.STR, bytes: FMT_BYTES.UINT8ARRAY },
+	});
+	const data = jest.fn();
+	const errors = jest.fn();
+	sub.on('data', data);
+	sub.on('error', errors);
+	sub._processSubscriptionResult(entry);
+	expect(data).toHaveBeenCalledTimes(matches ? 1 : 0);
+	expect(errors).toHaveBeenCalledTimes(matches ? 0 : 1);
+	expect(errors.mock.calls.map(([error]) => error instanceof InvalidResponseError)).toEqual(
+		matches ? [] : [true],
+	);
+});

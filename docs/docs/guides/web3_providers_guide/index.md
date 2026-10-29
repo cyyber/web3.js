@@ -365,12 +365,16 @@ small heaps and browsers. Raising `maxResponseDepth` or the byte limit raises th
 work and allocation a peer can impose.
 
 Socket `maxInFlightRequests` counts request ids, so every batch entry consumes a
-slot. Notifications coalesced with a subscription acknowledgement are parked for
-one event-loop iteration; they have no item-count cap. The manager also retains
+slot. Notifications coalesced with a subscription acknowledgement are parked until
+a zero-delay timer runs; they have no item-count cap. The manager also retains
 that acknowledged burst when a custom `request()` wrapper delays promise
 completion. Delivery stays ordered within each subscription, and cancellation
-removes its parked items. Unknown ids share a separate 128-item / 1 MiB registration
-budget; retained acknowledged bursts consume neither allowance.
+removes its provider-parked items. A cancelled registration's manager-retained burst
+can remain until the in-flight registration count reaches zero. Unknown ids share
+a separate 128-item / 1,048,576 UTF-16-code-unit budget, measured with
+`JSON.stringify(notification).length`; retained acknowledged bursts consume neither
+allowance. Changing providers, clearing or disposing the manager stops an active
+flush before it can deliver or retain any more notifications from that generation.
 
 Custom providers may expose `isSubscriptionAcknowledged(id): boolean`. Return
 `true` only for an id acknowledged by an outstanding `qrl_subscribe` request while
@@ -386,6 +390,10 @@ checks known result fields before formatting. Unknown and absent fields are
 ignored; callers must require identity fields separately. Null requires a
 nullable schema, a null alternative, or the declared `nullableWhen` condition.
 The optional `path` labels nested validation errors and defaults to `result`.
+
+Both `getLogs` and raw `logs` subscriptions check returned addresses and positional
+topics against the requested filter before formatting. A mismatching subscription
+notification reports `InvalidResponseError` through the subscription's error path.
 
 Transaction confirmation events report the confirming block’s own hash in
 `latestBlockHash`; confirmation one uses the receipt’s block hash. This applies

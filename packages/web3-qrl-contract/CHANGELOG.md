@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Pass 12 audit corrections
+
+- Use own enumerable filter keys consistently for historical reads, subscription replay and live delivery, ignoring inherited and non-enumerable properties (P12R-1).
+- Validate filters across all compatible layouts, including explicit topics, and reject empty OR lists before requests (P12-CT-1/2). Snapshot top-level subscription filter values and reject non-array topics.
+
 ### Pass 11 audit corrections
 
 - Apply active subscription filters to live delivery, removed logs and replay independently of topic breadth, including non-indexed keys and `allEvents`; validate values before requests (P11R-1).

@@ -96,7 +96,12 @@ export class ResponseError<ErrorType = unknown, RequestType = unknown> extends B
 			message ??
 				`Returned error: ${
 					Array.isArray(response)
-						? response.map(r => buildErrorMessage(r)).join(',')
+						? truncateEchoedText(
+								response
+									.slice(0, 4)
+									.map(r => buildErrorMessage(r))
+									.join(','),
+							) + (response.length > 4 ? ` … [${response.length - 4} more]` : '')
 						: buildErrorMessage(response)
 				}`,
 		);

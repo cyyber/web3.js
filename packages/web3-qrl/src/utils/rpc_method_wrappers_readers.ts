@@ -107,7 +107,8 @@ export async function getBlock<ReturnFormat extends DataFormat>(
 			? typeof response.hash === 'string' &&
 				response.hash.toLowerCase() === blockFormatted.toLowerCase()
 			: isBlockTag(blockFormatted) ||
-				BigInt(expectQuantityReply(method, response.number)) === BigInt(blockFormatted);
+				BigInt(expectQuantityReply(method, response.number, 'result.number')) ===
+					BigInt(blockFormatted);
 		if (!matches) throw invalidResponseError(method, 'the requested block', response);
 	}
 	return format(blockSchema, response as unknown as Block, returnFormat);

@@ -430,11 +430,21 @@ export class Web3SubscriptionManager<
 		// Let await subscribe() callers attach their data listeners before the first delivery.
 		this._notificationTimer = setTimeout(() => {
 			this._notificationTimer = undefined;
+			const generation = this._generation;
+			const connection = this._connectionGeneration;
 			const pending = this._earlyNotifications;
 			this._earlyNotifications = [];
 			this._earlyNotificationBytes = 0;
 			this._unknownNotificationCount = 0;
 			for (const entry of pending) {
+				// A listener can clear the manager or replace/reconnect its provider.
+				// The remaining snapshot belongs to the previous registration generation.
+				if (
+					this._disposed ||
+					generation !== this._generation ||
+					connection !== this._connectionGeneration
+				)
+					return;
 				const sub = this._subscriptions.get(entry.id);
 				if (sub) sub.processSubscriptionData(entry.data);
 				else if (this._subscribesInFlight > 0) {
