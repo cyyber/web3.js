@@ -21,6 +21,7 @@ import {
 	InvalidProviderError,
 	InvalidResponseError,
 	ProviderError,
+	truncateEchoedText,
 	ResponseError,
 	redactClientUrl,
 } from '@theqrl/web3-errors';
@@ -525,7 +526,7 @@ export class Web3RequestManager<
 		}
 
 		const error = new ProviderError(
-			`Provider returned a value that is not a valid JSON-RPC response: ${description}`,
+			`Provider returned a value that is not a valid JSON-RPC response: ${truncateEchoedText(description)}`,
 		);
 		// Preserve the original value so the real failure is not lost.
 		error.innerError = value as Error;
@@ -688,7 +689,7 @@ export class Web3RequestManager<
 			throw new ResponseError(
 				response,
 				typeof message === 'string'
-					? `Batch request failed: ${message}`
+					? `Batch request failed: ${truncateEchoedText(message)}`
 					: 'Got normal response for a batch request.',
 			);
 		}

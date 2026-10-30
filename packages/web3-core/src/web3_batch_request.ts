@@ -28,6 +28,7 @@ import {
 	OperationAbortError,
 	OperationTimeoutError,
 	ResponseError,
+	truncateEchoedText,
 } from '@theqrl/web3-errors';
 import { toBatchEntryError } from './rpc_error_mapping.js';
 import { Web3RequestManager } from './web3_request_manager.js';
@@ -184,7 +185,7 @@ export class Web3BatchRequest {
 
 			throw new ResponseError(
 				response,
-				`Batch request mismatch the results. Requests: [${requestIdLabels.join()}], Responses: [${responseIdLabels.join()}]`,
+				`Batch request mismatch the results. Requests: [${truncateEchoedText(requestIdLabels.join())}], Responses: [${truncateEchoedText(responseIdLabels.join())}]`,
 			);
 		}
 

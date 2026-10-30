@@ -33,6 +33,18 @@ jest.mock('../../src/rpc_method_wrappers');
 describe('Web3QRL subscribe and clear subscriptions', () => {
 	let web3QRL: Web3QRL;
 
+	// eslint-disable-next-line no-null/no-null -- invalid caller options must fail before registration
+	it.each([null, 3, 'logs', []])(
+		'rejects invalid log options %j before registration (P13-QRL-2)',
+		async args => {
+			const qrl = new Web3QRL({});
+			const subscribe = jest.spyOn(qrl.subscriptionManager, 'subscribe');
+			await expect(qrl.subscribe('logs', args as never)).rejects.toThrow(SubscriptionError);
+			expect(subscribe).not.toHaveBeenCalled();
+			expect(qrl.subscriptionManager.subscriptions.size).toBe(0);
+		},
+	);
+
 	it('should return the subscription data provided by the Subscription Manager', async () => {
 		const requestManager = { send: jest.fn(), on: jest.fn(), provider: { on: jest.fn() } };
 
@@ -55,7 +67,10 @@ describe('Web3QRL subscribe and clear subscriptions', () => {
 		const requestManager = { send: jest.fn(), on: jest.fn(), provider: { on: jest.fn() } };
 		const subManager = new Web3SubscriptionManager(requestManager as any, undefined as any);
 
-		const dummyLogs = new LogsSubscription({}, { subscriptionManager: subManager });
+		const dummyLogs = new LogsSubscription(
+			{ fromBlock: 0 },
+			{ subscriptionManager: subManager },
+		);
 		jest.spyOn(subManager, 'subscribe').mockResolvedValueOnce(dummyLogs);
 		jest.spyOn(rpcMethodWrappers, 'getLogs').mockResolvedValueOnce(mockGetLogsRpcResponse);
 
@@ -142,7 +157,10 @@ describe('Web3QRL subscribe and clear subscriptions', () => {
 
 		it('reports a failed backfill on the error event when a listener is attached', async () => {
 			const subManager = makeSubscriptionManager();
-			const subscription = new LogsSubscription({}, { subscriptionManager: subManager });
+			const subscription = new LogsSubscription(
+				{ fromBlock: 0 },
+				{ subscriptionManager: subManager },
+			);
 			jest.spyOn(subManager, 'subscribe').mockResolvedValueOnce(subscription as never);
 			const error = backfillError();
 			jest.spyOn(rpcMethodWrappers, 'getLogs').mockRejectedValueOnce(error);
@@ -163,7 +181,10 @@ describe('Web3QRL subscribe and clear subscriptions', () => {
 		it('warns about a failed backfill when no error listener is attached', async () => {
 			const warn = jest.spyOn(console, 'warn').mockImplementation(() => undefined);
 			const subManager = makeSubscriptionManager();
-			const subscription = new LogsSubscription({}, { subscriptionManager: subManager });
+			const subscription = new LogsSubscription(
+				{ fromBlock: 0 },
+				{ subscriptionManager: subManager },
+			);
 			jest.spyOn(subManager, 'subscribe').mockResolvedValueOnce(subscription as never);
 			const error = backfillError();
 			jest.spyOn(rpcMethodWrappers, 'getLogs').mockRejectedValueOnce(error);

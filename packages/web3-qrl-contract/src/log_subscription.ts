@@ -28,7 +28,12 @@ import { SubscriptionError } from '@theqrl/web3-errors';
 import { rightPad } from '@theqrl/web3-utils';
 import { ALL_EVENTS, TOPIC_HEX_LENGTH } from './constants.js';
 import { assertRpcResult, logSchema } from '@theqrl/web3-qrl';
-import { decodeEventABI, selectEventABI, matchesEventFilter } from './encoding.js';
+import {
+	decodeEventABI,
+	selectEventABI,
+	matchesEventFilter,
+	hasExplicitTopics,
+} from './encoding.js';
 import { EventLog, ContractAbiWithSignature } from './types.js';
 import { isLogOf } from './utils.js';
 
@@ -239,9 +244,8 @@ export class LogsSubscription extends Web3Subscription<
 		}
 		const signatureTopic = rightPad(abi.signature, TOPIC_HEX_LENGTH).toLowerCase();
 		if (
-			Array.isArray(topics) &&
-			topics.length > 0 &&
-			!(typeof topics[0] === 'string' && topics[0].toLowerCase() === signatureTopic)
+			hasExplicitTopics(topics) &&
+			!(typeof topics?.[0] === 'string' && topics[0].toLowerCase() === signatureTopic)
 		) {
 			return undefined;
 		}

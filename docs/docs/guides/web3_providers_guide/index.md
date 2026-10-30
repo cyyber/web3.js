@@ -373,7 +373,7 @@ removes its provider-parked items. A cancelled registration's manager-retained b
 can remain until the in-flight registration count reaches zero. Unknown ids share
 a separate 128-item / 1,048,576 UTF-16-code-unit budget, measured with
 `JSON.stringify(notification).length`; retained acknowledged bursts consume neither
-allowance. Changing providers, clearing or disposing the manager stops an active
+allowance. Changing providers or connections, clearing or disposing the manager stops an active
 flush before it can deliver or retain any more notifications from that generation.
 
 Custom providers may expose `isSubscriptionAcknowledged(id): boolean`. Return
@@ -398,3 +398,11 @@ notification reports `InvalidResponseError` through the subscription's error pat
 Transaction confirmation events report the confirming block’s own hash in
 `latestBlockHash`; confirmation one uses the receipt’s block hash. This applies
 to both polling and subscriptions.
+
+Raw `logs` subscriptions copy their options, including address lists and nested
+topic alternatives, before registration. Mutating the original options does not
+change replay, live matching or resubscription. Null or non-object options raise
+`SubscriptionError` before a node subscription is created. Numeric `fromBlock`
+and `toBlock` values are sent as hex quantities. Only numeric `fromBlock` values
+trigger historical backfill; `latest` and `earliest` are live-only, and go-qrl
+refuses `pending`, `safe` and `finalized` for log subscriptions.

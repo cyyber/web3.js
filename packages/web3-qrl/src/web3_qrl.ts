@@ -41,7 +41,7 @@ import {
 	FMT_NUMBER,
 } from '@theqrl/web3-types';
 import { isSupportedProvider, Web3Context, Web3ContextInitOptions } from '@theqrl/web3-core';
-import { TransactionNotFound } from '@theqrl/web3-errors';
+import { SubscriptionError, TransactionNotFound } from '@theqrl/web3-errors';
 import { toChecksumAddress, isNullish, qrlUnitMap } from '@theqrl/web3-utils';
 import { isObject } from '@theqrl/web3-validator';
 import { qrlRpcMethods } from '@theqrl/web3-rpc-methods';
@@ -1531,20 +1531,27 @@ export class Web3QRL extends Web3Context<Web3QRLExecutionAPI, RegisteredSubscrip
 		args?: ConstructorParameters<RegisteredSubscription[T]>[0],
 		returnFormat: ReturnType = DEFAULT_RETURN_FORMAT as ReturnType,
 	): Promise<InstanceType<RegisteredSubscription[T]>> {
+		if (
+			name === 'logs' &&
+			args !== undefined &&
+			(isNullish(args) || typeof args !== 'object' || Array.isArray(args))
+		) {
+			throw new SubscriptionError('Log subscription options must be an object');
+		}
 		const subscription = await this.subscriptionManager?.subscribe(name, args, returnFormat);
+		const logArgs = subscription instanceof LogsSubscription ? subscription.args : undefined;
 		if (
 			subscription instanceof LogsSubscription &&
 			name === 'logs' &&
-			typeof args === 'object' &&
-			!isNullish((args as any).fromBlock) &&
-			Number.isFinite(Number((args as any).fromBlock))
+			!isNullish(logArgs?.fromBlock) &&
+			Number.isFinite(Number(logArgs?.fromBlock))
 		) {
 			// The backfill runs after the caller got the subscription back, so the logs reach
 			// the `data` listeners attached after the `await`. A failed backfill is reported
 			// through the subscription's guarded error path: the `error` event when a listener
 			// is attached, a warning otherwise; it never becomes an unhandled rejection (M-7d).
 			setImmediate(() => {
-				this.getPastLogs(args)
+				this.getPastLogs(logArgs)
 					.then(logs => {
 						for (const log of logs) {
 							subscription._processSubscriptionResult(log as LogsOutput);

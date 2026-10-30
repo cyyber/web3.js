@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Pass 13 audit corrections
+
+- Snapshot raw log subscription options and nested topic alternatives; use the snapshot for replay, and reject null or non-object options before registration (P13-QRL-1/2). Format numeric toBlock and name byte/access-list response fields in errors.
+
 ### Pass 12 audit corrections
 
 - Validate raw log subscription identity using the getLogs matcher; normalize topic prefixes and name malformed or missing quantity fields (P12-QRL-2/3).

@@ -355,7 +355,14 @@ export class Web3SubscriptionManager<
 
 	private _deleteSubscriptionIds(sub: InstanceType<RegisteredSubs[keyof RegisteredSubs]>): void {
 		for (const [id, registered] of this._subscriptions) {
-			if (registered === sub) this._subscriptions.delete(id);
+			if (registered !== sub) continue;
+			this._subscriptions.delete(id);
+			this._earlyNotifications = this._earlyNotifications.filter(entry => {
+				if (entry.id !== id) return true;
+				this._earlyNotificationBytes -= entry.size;
+				if (entry.size > 0) this._unknownNotificationCount -= 1;
+				return false;
+			});
 		}
 	}
 
@@ -433,6 +440,9 @@ export class Web3SubscriptionManager<
 			const generation = this._generation;
 			const connection = this._connectionGeneration;
 			const pending = this._earlyNotifications;
+			const registrations = new Map(
+				pending.map(entry => [entry.id, this._subscriptions.get(entry.id)]),
+			);
 			this._earlyNotifications = [];
 			this._earlyNotificationBytes = 0;
 			this._unknownNotificationCount = 0;
@@ -446,6 +456,9 @@ export class Web3SubscriptionManager<
 				)
 					return;
 				const sub = this._subscriptions.get(entry.id);
+				// An unsubscribe from a listener retires the remainder even if a node reuses its id.
+				const registered = registrations.get(entry.id);
+				if (registered && registered !== sub) continue;
 				if (sub) sub.processSubscriptionData(entry.data);
 				else if (this._subscribesInFlight > 0) {
 					this._earlyNotifications.push(entry);

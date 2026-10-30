@@ -84,9 +84,9 @@ export const expectQuantityReply = (method: string, reply: unknown, path?: strin
  * `format({ format: 'bytes' }, x)` hands an unparseable `x` back unchanged, so `getCode()` used
  * to resolve with `'abc'` (P4-L-13).
  */
-export const expectBytesReply = (method: string, reply: unknown): Bytes => {
+export const expectBytesReply = (method: string, reply: unknown, path = 'result'): Bytes => {
 	if ((typeof reply !== 'string' && !(reply instanceof Uint8Array)) || !isBytes(reply)) {
-		throw invalidResponseError(method, 'hex encoded bytes', reply);
+		throw invalidResponseError(method, `hex encoded bytes at ${path}`, reply);
 	}
 	return reply;
 };
@@ -193,7 +193,7 @@ export const assertRpcResult = (
 	else if (schema.format === 'uint512' && !isUInt(value as ValidInputTypes, { bitSize: 512 }))
 		fail();
 	else if (schema.format?.startsWith('bytes')) {
-		expectBytesReply(method, value);
+		expectBytesReply(method, value, path);
 		const width = Number(schema.format.slice(5));
 		if (
 			width &&

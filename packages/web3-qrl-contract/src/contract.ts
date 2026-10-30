@@ -102,6 +102,8 @@ import {
 	EventTopicCountError,
 	decodeMethodReturn,
 	encodeEventABI,
+	hasExplicitTopics,
+	snapshotEventOptions,
 	encodeMethodABI,
 } from './encoding.js';
 import { LogsSubscription } from './log_subscription.js';
@@ -957,6 +959,7 @@ export class Contract<Abi extends ContractAbi>
 		returnFormat: DataFormat,
 		onDecodeError?: (error: Error) => void,
 	): Promise<(string | EventLog)[]> {
+		eventOptions = snapshotEventOptions(eventOptions);
 		const { fromBlock, toBlock, topics, address } = encodeEventABI(
 			this.options,
 			abi,
@@ -977,7 +980,7 @@ export class Contract<Abi extends ContractAbi>
 		const expectedTopic =
 			abi.name === ALL_EVENTS ||
 			abi.anonymous ||
-			(Array.isArray(eventOptions.topics) &&
+			(hasExplicitTopics(eventOptions.topics) &&
 				topics?.[0]?.toString().toLowerCase() !== signatureTopic)
 				? undefined
 				: signatureTopic;
@@ -1511,12 +1514,9 @@ export class Contract<Abi extends ContractAbi>
 	): ContractBoundEvent {
 		return (...params: unknown[]) => {
 			const givenOptions = (params[0] ?? {}) as NonNullable<EventParameters>;
-			const eventOptions = {
-				...givenOptions,
-				filter: givenOptions.filter ? { ...givenOptions.filter } : undefined,
-			};
+			const eventOptions = snapshotEventOptions(givenOptions);
 			const subscriptionFilter =
-				!eventOptions.topics &&
+				!hasExplicitTopics(eventOptions.topics) &&
 				Object.values(eventOptions.filter ?? {}).some(value => !isNullish(value))
 					? eventOptions.filter
 					: undefined;

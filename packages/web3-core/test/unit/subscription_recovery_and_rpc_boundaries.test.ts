@@ -520,6 +520,45 @@ test('drops buffered notifications when pending registration is cancelled or fai
 	expect(provider.live.size).toBe(0);
 });
 
+test.each(['before', 'during'])(
+	'retires buffered logs on unsubscribe %s a flush even if ids are reused',
+	async when => {
+		const { provider, manager, subscribe } = setup();
+		provider.hold = true;
+		const firstPending = subscribe();
+		const nextPending = subscribe();
+		for (const result of ['first', 'stale second', 'stale third']) {
+			provider.emit('message', { data: { subscription: '0x1', result } });
+		}
+		provider.held.shift()!.resolve('0x1');
+		const first = await firstPending;
+		const received = jest.fn();
+		first.on('data', received);
+		let removal = Promise.resolve();
+		if (when === 'before') removal = first.unsubscribe();
+		else
+			first.once('data', () => {
+				removal = first.unsubscribe();
+			});
+		await new Promise(resolve => setTimeout(resolve, 5));
+		await removal;
+		expect(received.mock.calls).toEqual(when === 'before' ? [] : [['first']]);
+		expect(
+			(manager as unknown as { _earlyNotifications: unknown[] })._earlyNotifications,
+		).toEqual([]);
+		provider.held.shift()!.resolve('0x1');
+		const next = await nextPending;
+		const current = jest.fn();
+		next.on('data', current);
+		await new Promise(resolve => setTimeout(resolve, 5));
+		expect(current).not.toHaveBeenCalled();
+		provider.emit('message', { data: { subscription: '0x1', result: 'new' } });
+		expect(current.mock.calls).toEqual([['new']]);
+		await next.unsubscribe();
+		manager.dispose();
+	},
+);
+
 test.each([false, true])(
 	'delivers an installed id burst after a parked notification (recovery=%s)',
 	async recovery => {

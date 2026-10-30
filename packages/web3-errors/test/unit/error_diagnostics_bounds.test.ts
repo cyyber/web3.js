@@ -25,7 +25,7 @@ import {
 import { Eip838ExecutionError } from '../../src/errors/contract_errors';
 import { HttpStatusError } from '../../src/errors/connection_errors';
 import { RpcError } from '../../src/errors/rpc_errors';
-import { ResponseError } from '../../src/errors/response_errors';
+import { ResponseError, InvalidResponseError } from '../../src/errors/response_errors';
 
 describe('error diagnostics bounds (pass-5 audit)', () => {
 	it('serializes receipts, decoded arguments and nested RPC/request diagnostics with bigint values', () => {
@@ -107,3 +107,26 @@ test('bounds the combined batch error message while retaining every error (P12-T
 	expect(response.innerError).toEqual(batch.map(entry => entry.error));
 	expect(http.innerError).toBe(response);
 });
+
+test.each([{ jsonrpc: '2.0', id: null }, { jsonrpc: '2.0' }, { id: 1 }])(
+	'retains bounded node diagnostics for an incomplete envelope %j (P13-TR-1)',
+	envelope => {
+		const nodeError = { code: -32700, message: `Parse error: ${'x'.repeat(10000)}`, data: 42 };
+		const reply = { ...envelope, error: nodeError } as never;
+		const errors = [
+			new ResponseError(reply),
+			new InvalidResponseError(reply, {
+				jsonrpc: '2.0',
+				id: 9,
+				method: 'qrl_blockNumber',
+				params: [],
+			}),
+			new HttpStatusError(429, 'Too Many Requests', undefined, new ResponseError(reply)),
+		];
+		for (const error of errors) {
+			expect(error.message).toContain('Parse error:');
+			expect(error.message.length).toBeLessThan(700);
+		}
+		expect(errors[0].innerError).toBe(nodeError);
+	},
+);

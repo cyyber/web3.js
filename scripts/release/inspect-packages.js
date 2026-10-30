@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-const { existsSync, mkdtempSync, readFileSync } = require('fs');
+const { existsSync, mkdtempSync, readFileSync, rmSync } = require('fs');
 const { tmpdir } = require('os');
 const { join, resolve } = require('path');
 const { execFileSync } = require('child_process');
@@ -8,8 +8,18 @@ const { execFileSync } = require('child_process');
 const { checkPackageDependencies } = require('../check-package-dependencies');
 const { publishablePackages } = require('./packages');
 
+let ownedNpmCache;
 const npmCache = () =>
-	process.env.npm_config_cache || mkdtempSync(resolve(tmpdir(), 'web3-pack-npm-cache-'));
+	process.env.npm_config_cache ||
+	(ownedNpmCache ??= mkdtempSync(resolve(tmpdir(), 'web3-pack-npm-cache-')));
+process.on('exit', () => {
+	if (!ownedNpmCache) return;
+	try {
+		rmSync(ownedNpmCache, { recursive: true, force: true });
+	} catch (error) {
+		console.warn(`Unable to remove inspection cache ${ownedNpmCache}: ${error.message}`);
+	}
+});
 
 const normalizePackagePath = packagePath => packagePath.replace(/^\.\//, '').replace(/\\/g, '/');
 
@@ -196,6 +206,7 @@ const main = () => {
 if (require.main === module) main();
 
 module.exports = {
+	packDryRun,
 	forbiddenLabels,
 	forbiddenPatterns,
 	siblingRangeFailures,

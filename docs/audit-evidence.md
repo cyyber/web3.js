@@ -765,7 +765,8 @@ cases rerun outside the sandbox after `listen EPERM`. Coverage thresholds were
 enabled in each full package run and none failed. Test-only lint cleanup was
 followed by focused reruns of the three affected suites.
 
-CommonJS, ESM and declaration builds passed for all five changed runtime packages;
+CommonJS, ESM and declaration builds passed for all five packages with runtime code changes
+(the sixth source package, `web3-providers-ipc`, had a documentation-only edit);
 the final contract change also passed all three incremental builds. The full
 lint-budget check retained **1,256 warnings against the unchanged 1,256 budget**.
 Its eight test-lint errors were corrected, and final ESLint over all changed
@@ -812,3 +813,82 @@ the inherited-only filter now returns four logs on every path, while the ordinar
 own-property control still returns two. The output is saved in
 `/tmp/web3-pass12-p12r1-probe.log`. This focused follow-up did not repeat the
 workspace-wide release gates or live testnet integration.
+
+
+## Pass 13 remediation (2026-10-30)
+
+All eight Low findings in `AUDIT_REPORT_2026-10-30_pass13.md` are addressed.
+
+| Finding | Change and regression coverage |
+| --- | --- |
+| P13-CT-1 | `allEvents` validation respects the first explicit topic, including signature alternatives and wildcards. A pinned signature excludes anonymous layouts; known keys remain accepted when no declared signature is admitted. Tests use the ERC-1155 `TransferSingle`/`URI` shared `value` name. |
+| P13-CT-2 | Historical reads and subscriptions copy filter values and topic alternatives before asynchronous work, including OR lists, tuple objects, arrays and byte buffers. Mutation tests cover reads, replay and live delivery. |
+| P13-CT-3 | A shared predicate treats empty topics as omitted in encoding, historical reads and subscriptions. Tests ensure foreign event signatures are excluded and local value filters remain active. |
+| P13-QRL-1 | Raw log subscriptions copy their arguments at construction and use that copy for historical replay. Tests mutate address lists, nested topics and block bounds. |
+| P13-QRL-2 | Null, scalar and array log options fail with `SubscriptionError` before manager registration. Direct construction also rejects these inputs; the shared matcher tolerates a null filter. |
+| P13-QRL-3 | Validation budget checks treat every array-buffer view as atomic. Large views are summarized before diagnostic rendering, retaining the original value in the validation issue. The regression checks that a cross-realm view is never enumerated. |
+| P13-TR-1 | Error diagnostics retain bounded node messages independently of response id or JSON-RPC metadata. Tests cover `ResponseError`, `InvalidResponseError` and HTTP status wrapping. |
+| P13-TR-2 | Both core batch-message sites and non-JSON-RPC provider descriptions truncate echoed text. Tests check bounded messages and settlement of every failed batch entry. |
+
+Related fixes purge retired subscription notifications, including the active flush
+snapshot, before an id can be reused; avoid duplicate validation of the bound ABI
+fragment; format numeric subscription `toBlock`; name byte/access-list error
+fields; remove the empty RPC errors source; and share and clean the package
+inspector's owned npm cache. Script tests exercise successful/failed inspection,
+caller-owned caches and smoke cleanup failure. Guides describe snapshot semantics,
+empty topics, connection changes, supported subscription block tags and retained
+testnet directories. Historical audit reports and existing temporary directories
+are preserved.
+
+Validation uses Node 22.22.1, CPU 0, `UV_THREADPOOL_SIZE=1` and Jest
+`--runInBand --watchman=false`. `/tmp/web3-pass13-check.sh` records each exact
+command, working directory, timestamps and exit status. Logs are
+`/tmp/web3-pass13-*.log`; failed sandbox attempts and successful outside-sandbox
+reruns have separate labels.
+
+| Unit-test group | Passed | Skipped | Suites |
+| --- | ---: | ---: | ---: |
+| web3-core | 522 | 0 | 20 |
+| web3-errors | 123 | 0 | 3 |
+| web3-validator | 873 | 0 | 24 |
+| web3-qrl | 1,605 | 4 | 57 |
+| web3-qrl-contract | 348 | 0 | 18 |
+| **Changed runtime packages** | **3,471** | **4** | **122** |
+| Inspection and smoke scripts | 61 | 0 | 2 |
+
+Package coverage thresholds were enabled and produced no failures. The core total
+combines 508 passing cases from the full run with its 14 socket cases rerun outside
+the sandbox after `listen EPERM`. The script suites also passed outside the sandbox
+after subprocess capture failed inside it. Forced CommonJS, ESM and declaration
+builds passed for the five runtime packages; `web3-rpc-methods` passed a clean build
+in all three formats after removing its empty source file. Package inspection
+passed for all 19 publishable packages. Changed-file ESLint reported zero errors,
+and formatting and repository hygiene passed. The full lint-budget check passed
+at **1,252 warnings against the unchanged 1,256 budget**. After the final
+anonymous-layout refinement, all 348 contract tests and all three contract builds
+passed again; package ESLint remained at its existing 41-warning limit with zero
+errors. The docs build passed before the final anonymous-layout wording correction;
+that text-only correction was checked with repository hygiene and `git diff --check`.
+
+The rebuilt-library probes confirm the ERC-1155 query is admitted; nested mutation
+does not change delivered values; empty topics preserve named-event signatures;
+raw subscription options stay independent through resubscription; null options
+create no orphan; and unsubscribed flush remainders are discarded before id reuse.
+The 4 MiB cross-realm decode probe now refuses in **0.3 ms**, with RSS unchanged at
+89 MiB in that run. The real HTTP probes produced **314-character** batch-failure
+and **644-character** mismatched-id messages; the 980-entry matching control still
+succeeded, and all 980 foreign-id entries settled with errors. Null-id error
+messages retain the node's reason.
+
+The original subscription-shape probe stops at its uncaught direct-constructor
+null-options rejection. A scratch copy catches only that expected refusal and
+continues through the remaining rows, including mutations and resubscription;
+its output is `/tmp/web3-pass13-probe-q1-caught.log`. No per-log filtering speedup
+is claimed: pass 13 attributes the earlier pass-12 timing difference to load/JIT
+variation. Earlier evidence sections include interactive-session observations
+whose failed attempts or diff checks were not separately retained in log files;
+this remediation retains those records explicitly.
+
+Workspace-wide unit tests, browser bundles, tarball installation smoke, live
+execution-node integration and supply-chain scans were not repeated for this
+remediation.

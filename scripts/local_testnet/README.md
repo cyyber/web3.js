@@ -23,7 +23,10 @@ the container has a two-CPU quota, and `GOMAXPROCS=2` limits the Go clients. The
 HTTP, WS, and authenticated Engine API ports bind only to `127.0.0.1`. The
 launcher prints the temporary state directory, including its node/signer logs
 and IPC socket. Ctrl-C stops the node and signer; the logs remain for inspection.
-An optional first argument selects an **empty** state directory.
+Each run retains its state directory (typically around 80–110 MiB). After stopping
+the node and saving any logs you need, remove the exact directory printed by the
+launcher to reclaim that space. An optional first argument selects an **empty**
+state directory.
 
 Run the HTTP suites serially on the same two CPUs:
 

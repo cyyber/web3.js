@@ -24,8 +24,9 @@ import { invalidResponseError } from './invalid_response_error.js';
 export const assertLogMatchesFilter = (
 	method: string,
 	entry: { address?: unknown; topics?: unknown },
-	filter: Pick<Filter, 'address' | 'topics'> = {},
+	filter: Pick<Filter, 'address' | 'topics'> | null = {},
 ): void => {
+	filter ??= {};
 	const addresses = Array.isArray(filter.address) ? filter.address : [filter.address];
 	const matchesAddress =
 		isNullish(filter.address) ||
@@ -33,7 +34,8 @@ export const assertLogMatchesFilter = (
 		addresses.some(
 			address =>
 				typeof entry.address === 'string' &&
-				address?.toLowerCase() === entry.address.toLowerCase(),
+				typeof address === 'string' &&
+				address.toLowerCase() === entry.address.toLowerCase(),
 		);
 	const topics = entry.topics as Bytes[] | undefined;
 	const matchesTopics =
@@ -47,10 +49,11 @@ export const assertLogMatchesFilter = (
 					alternatives.some(
 						alternative =>
 							isNullish(alternative) ||
-							alternative.replace(/^0x/i, '').toLowerCase() ===
-								format({ format: 'bytes64' }, topics[index], QRL_DATA_FORMAT)
-									.replace(/^0x/i, '')
-									.toLowerCase(),
+							(typeof alternative === 'string' &&
+								alternative.replace(/^0x/i, '').toLowerCase() ===
+									format({ format: 'bytes64' }, topics[index], QRL_DATA_FORMAT)
+										.replace(/^0x/i, '')
+										.toLowerCase()),
 					)
 				);
 			}));

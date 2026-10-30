@@ -54,7 +54,7 @@ const checkValidationBudget = (data: unknown, maxEntries?: number) => {
 				},
 			]);
 		}
-		if (value && typeof value === 'object' && !(value instanceof Uint8Array)) {
+		if (value && typeof value === 'object' && !ArrayBuffer.isView(value)) {
 			// Check array size before iterating or copying its contents.
 			if (Array.isArray(value) && value.length > remaining) {
 				remaining = -1;
@@ -273,7 +273,11 @@ export class Validator {
 								? 'null'
 								: typeof value === 'string'
 									? truncateEchoedText(value)
-									: truncateEchoedText(BaseWeb3Error.convertToString(value, true))
+									: ArrayBuffer.isView(value) && value.byteLength > 256
+										? `[ArrayBuffer view: ${value.byteLength} bytes]`
+										: truncateEchoedText(
+												BaseWeb3Error.convertToString(value, true),
+											)
 						}" at "/${schemaPath}" must pass "${format}" validation`;
 					}
 

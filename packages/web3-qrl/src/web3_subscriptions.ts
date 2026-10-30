@@ -15,7 +15,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 import { assertLogMatchesFilter } from './utils/log_filter.js';
-import { format } from '@theqrl/web3-utils';
+import { deepCopy, format } from '@theqrl/web3-utils';
 import { isBlockTag, isNullish, isObject } from '@theqrl/web3-validator';
 import { BaseWeb3Error, SubscriptionError } from '@theqrl/web3-errors';
 
@@ -29,8 +29,9 @@ import {
 	BlockHeaderOutput,
 	LogsOutput,
 	QRL_DATA_FORMAT,
+	DataFormat,
 } from '@theqrl/web3-types';
-import { Web3Subscription } from '@theqrl/web3-core';
+import { Web3Subscription, Web3SubscriptionManager } from '@theqrl/web3-core';
 import { blockHeaderSchema, logSchema, syncSubscriptionSchema } from './schemas.js';
 import { assertRpcResult, invalidResponseError } from './utils/invalid_response_error.js';
 
@@ -63,9 +64,9 @@ abstract class QRLSubscription<
  * Subscribes to incoming logs, filtered by the given options. If a valid numerical fromBlock options property is set, web3.js will retrieve logs beginning from this point, backfilling the response as necessary.
  *
  * You can subscribe to logs matching a given filter object, which can take the following parameters:
- * - `fromBlock`: (optional, default: 'latest') Integer block number, or `'latest'` for the last mined block or `'pending'`, `'earliest'` for not yet mined transactions.
+ * - `fromBlock`: (optional, default: 'latest') A numeric block number enables historical backfill. `'latest'` and `'earliest'` subscribe to live logs only; go-qrl refuses `'pending'`, `'safe'` and `'finalized'`.
  * - `address`: (optional) Contract address or a list of addresses from which logs should originate.
- * - `topics`: (optional) Array of 32 Bytes DATA topics. Topics are order-dependent. Each topic can also be an array of DATA with `or` options.
+ * - `topics`: (optional) Array of 64-byte DATA topics. Topics are order-dependent. Each topic can also be an array of DATA with `or` options.
  *
  */
 export class LogsSubscription extends QRLSubscription<
@@ -74,25 +75,29 @@ export class LogsSubscription extends QRLSubscription<
 	},
 	{
 		readonly fromBlock?: BlockNumberOrTag;
+		readonly toBlock?: BlockNumberOrTag;
 		readonly address?: Address | Address[];
 		readonly topics?: Filter['topics'];
 	}
 > {
+	public constructor(
+		args: Pick<Filter, 'fromBlock' | 'toBlock' | 'address' | 'topics'> = {},
+		options: { subscriptionManager: Web3SubscriptionManager; returnFormat?: DataFormat },
+	) {
+		if (isNullish(args) || typeof args !== 'object' || Array.isArray(args)) {
+			throw new SubscriptionError('Log subscription options must be an object');
+		}
+		super(deepCopy(args), options);
+	}
+
 	protected _buildSubscriptionParams() {
-		const fromBlock = this.args?.fromBlock;
-		// A numeric `fromBlock` (number, bigint or decimal string) is sent as a hex quantity, as
-		// the JSON-RPC quantity encoding requires; block tags and hex strings pass through (I-12).
-		const args =
-			isNullish(fromBlock) || isBlockTag(fromBlock as string)
-				? this.args
-				: {
-						...this.args,
-						fromBlock: format(
-							{ format: 'uint' },
-							fromBlock as Numbers,
-							QRL_DATA_FORMAT,
-						),
-					};
+		const args = { ...this.args };
+		for (const key of ['fromBlock', 'toBlock'] as const) {
+			const block = args[key];
+			if (!isNullish(block) && !isBlockTag(block as string)) {
+				args[key] = format({ format: 'uint' }, block as Numbers, QRL_DATA_FORMAT);
+			}
+		}
 		return ['logs', args];
 	}
 

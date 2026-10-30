@@ -14,8 +14,10 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
-import { readFileSync } from 'fs';
-import { resolve } from 'path';
+import { readFileSync, writeFileSync, mkdtempSync, mkdirSync, rmSync, existsSync } from 'fs';
+import { join, resolve } from 'path';
+import { tmpdir } from 'os';
+import { spawnSync } from 'child_process';
 
 interface InspectPackages {
 	forbiddenLabels: (file: string) => string[];
@@ -26,6 +28,52 @@ interface InspectPackages {
 const { forbiddenLabels } = require('../../release/inspect-packages') as InspectPackages;
 
 const root = resolve(__dirname, '../../..');
+
+test.each([
+	{ shared: false, fail: false },
+	{ shared: false, fail: true },
+	{ shared: true, fail: false },
+])('cleans only its own package-inspection cache (%j)', ({ shared, fail }) => {
+	const directory = mkdtempSync(join(tmpdir(), 'web3-inspect-cache-test-'));
+	try {
+		const cache = join(directory, 'caller-cache');
+		mkdirSync(cache);
+		writeFileSync(join(cache, 'sentinel'), 'keep');
+		const log = join(directory, 'cache.log');
+		writeFileSync(
+			join(directory, 'npm'),
+			`#!/usr/bin/env node\nrequire('fs').appendFileSync(process.env.CACHE_LOG, process.env.npm_config_cache + '\\n');\nconsole.log('[{"files":[]}]');\nprocess.exit(${fail ? 1 : 0});\n`,
+			{ mode: 0o755 },
+		);
+		const script = join(root, 'scripts/release/inspect-packages.js');
+		const result = spawnSync(
+			process.execPath,
+			[
+				'-e',
+				`const {packDryRun} = require(${JSON.stringify(script)}); packDryRun(process.cwd()); packDryRun(process.cwd());`,
+			],
+			{
+				cwd: directory,
+				encoding: 'utf8',
+				env: {
+					...process.env,
+					PATH: `${directory}:${process.env.PATH}`,
+					TMPDIR: directory,
+					CACHE_LOG: log,
+					npm_config_cache: shared ? cache : '',
+				},
+			},
+		);
+		expect(result.status).toBe(fail ? 1 : 0);
+		const paths = readFileSync(log, 'utf8').trim().split('\n');
+		expect(new Set(paths).size).toBe(1);
+		expect(paths).toHaveLength(fail ? 1 : 2);
+		expect(existsSync(paths[0])).toBe(shared);
+		expect(readFileSync(join(cache, 'sentinel'), 'utf8')).toBe('keep');
+	} finally {
+		rmSync(directory, { recursive: true, force: true });
+	}
+});
 
 describe('package inspection forbidden patterns (P4-L-46)', () => {
 	// The npm packlist of a package whose `files` are `lib/**`, `src/**` and
@@ -75,8 +123,8 @@ describe('package inspection forbidden patterns (P4-L-46)', () => {
 });
 
 describe('release sibling ranges', () => {
-	// eslint-disable-next-line @typescript-eslint/no-require-imports
 	const { siblingRangeFailures, selectReleasePackages } =
+		// eslint-disable-next-line @typescript-eslint/no-require-imports
 		require('../../release/inspect-packages') as {
 			siblingRangeFailures: (manifest: unknown, siblings: Set<string>) => string[];
 			selectReleasePackages: (

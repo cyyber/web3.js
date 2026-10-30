@@ -35,6 +35,7 @@ import {
 	ContractAbi,
 	HexString32Bytes,
 	Uint,
+	Filter,
 } from '@theqrl/web3-types';
 import { LogsSubscription } from './log_subscription.js';
 
@@ -72,7 +73,7 @@ export interface ContractEventOptions {
 	/**
 	 * This allows to manually set the topics for the event filter. If given the filter property and event signature, (topic[0]) will not be set automatically. Each topic can also be a nested array of topics that behaves as `or` operation between the given nested topics.
 	 */
-	topics?: string[];
+	topics?: Filter['topics'];
 }
 
 export interface ContractOptions {

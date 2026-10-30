@@ -43,6 +43,35 @@ const context = (reply: unknown) =>
 const tx = { hash: otherHash, blockHash: hash, blockNumber: '0x12', transactionIndex: '0x0' };
 const log = { address, topics: [topic, otherTopic], data: '0x' };
 
+test('snapshots raw log arguments, including nested topic alternatives (P13-QRL-1)', () => {
+	const args = { address: [address], topics: [[topic]], fromBlock: 2, toBlock: 10 };
+	const sub = new LogsSubscription(args, {
+		subscriptionManager: context([]).subscriptionManager,
+	});
+	const data = jest.fn();
+	const errors = jest.fn();
+	sub.on('data', data);
+	sub.on('error', errors);
+	args.address[0] = otherAddress;
+	args.topics[0][0] = otherTopic;
+	args.fromBlock = 3;
+	args.toBlock = 12;
+	expect(sub['_buildSubscriptionParams']()).toEqual([
+		'logs',
+		{
+			address: [address],
+			topics: [[topic]],
+			fromBlock: '0x2',
+			toBlock: '0xa',
+		},
+	]);
+	sub._processSubscriptionResult(log);
+	expect(data).toHaveBeenCalledTimes(1);
+	expect(errors).not.toHaveBeenCalled();
+	sub._processSubscriptionResult({ ...log, address: otherAddress });
+	expect(errors).toHaveBeenCalledWith(expect.any(InvalidResponseError));
+});
+
 describe('RPC response identity', () => {
 	it.each([hash, `0x${hash.slice(2).toUpperCase()}`, hexToBytes(hash)])(
 		'checks block hashes before return formatting (%s)',

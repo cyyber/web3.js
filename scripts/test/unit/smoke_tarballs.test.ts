@@ -142,6 +142,28 @@ describe('release smoke test (P4-M-10)', () => {
 		rmSync(directory, { recursive: true, force: true });
 	});
 
+	it('warns on cleanup failure without changing a successful smoke result', () => {
+		const hook = join(directory, 'fail-cleanup.cjs');
+		writeFileSync(
+			hook,
+			`const fs = require('fs'); const remove = fs.rmSync; fs.rmSync = (path, options) => { if (String(path).includes('web3-release-smoke-')) throw new Error('simulated cleanup failure'); return remove(path, options); };`,
+		);
+		const previous = process.env.NODE_OPTIONS;
+		try {
+			process.env.NODE_OPTIONS = `--require=${hook}`;
+			const result = run();
+			expect(result.status).toBe(0);
+			expect(result.stderr).toContain('Unable to remove smoke directory');
+			expect(result.stderr).toContain('simulated cleanup failure');
+			const smokeRoot = /Isolated smoke projects: (.+)/.exec(result.stdout)?.[1];
+			expect(smokeRoot).toBeDefined();
+			rmSync(smokeRoot!, { recursive: true, force: true });
+		} finally {
+			if (previous === undefined) delete process.env.NODE_OPTIONS;
+			else process.env.NODE_OPTIONS = previous;
+		}
+	});
+
 	it('resolves a lockfile once and installs both smoke projects from it with npm ci', () => {
 		const result = run('dist/released-packages.tsv', 'dist/tarballs');
 

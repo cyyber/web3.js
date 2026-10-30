@@ -15,32 +15,9 @@ You should have received a copy of the GNU Lesser General Public License
 along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-import {
-	JsonRpcError,
-	JsonRpcPayload,
-	JsonRpcResponse,
-	JsonRpcResponseWithError,
-} from '@theqrl/web3-types';
+import { JsonRpcError, JsonRpcPayload, JsonRpcResponse } from '@theqrl/web3-types';
 import { BaseWeb3Error, truncateEchoedText, toJsonSafe } from '../web3_error_base.js';
 import { ERR_INVALID_RESPONSE, ERR_RESPONSE, ERR_RESPONSE_TOO_LARGE } from '../error_codes.js';
-
-// To avoid circular package dependency, copied to code here. If you update this please update same function in `json_rpc.ts`
-const isResponseWithError = <Error = unknown, Result = unknown>(
-	response: JsonRpcResponse<Result, Error>,
-): response is JsonRpcResponseWithError<Error> =>
-	typeof response === 'object' &&
-	// eslint-disable-next-line no-null/no-null
-	response !== null &&
-	!Array.isArray(response) &&
-	response.jsonrpc === '2.0' &&
-	// eslint-disable-next-line no-null/no-null
-	(response.result === undefined || response.result === null) &&
-	// JSON-RPC 2.0 defines `error` as an object; `"error": null` is a malformed reply.
-	typeof response.error === 'object' &&
-	// eslint-disable-next-line no-null/no-null
-	response.error !== null &&
-	!Array.isArray(response.error) &&
-	(typeof response.id === 'number' || typeof response.id === 'string');
 
 // A provider can hand back anything, `null` inside a batch array included; only an object can
 // carry an `error` member, so it is checked for before it is read.
@@ -55,10 +32,16 @@ const errorOf = (value: unknown): JsonRpcError | undefined =>
  * verbatim, so an HTTP 500 carrying a 2 MiB message produced a 2 MiB error message (P4-L-24).
  * The full text stays reachable through `innerError`.
  */
-const buildErrorMessage = (response: JsonRpcResponse<unknown, unknown>): string =>
-	isResponseWithError(response) && typeof response.error.message === 'string'
-		? truncateEchoedText(response.error.message)
+const buildErrorMessage = (response: JsonRpcResponse<unknown, unknown>): string => {
+	const error = errorOf(response);
+	// Diagnostic text is useful even when the envelope has no correlatable id.
+	return error &&
+		typeof error === 'object' &&
+		!Array.isArray(error) &&
+		typeof error.message === 'string'
+		? truncateEchoedText(error.message)
 		: '';
+};
 
 /**
  * A single (non-batch) reply whose `id` differs from the request's: the default

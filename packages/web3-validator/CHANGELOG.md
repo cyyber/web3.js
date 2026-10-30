@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Pass 13 audit corrections
+
+- Treat array-buffer views from every realm as atomic during budget checks and summarize large views before rendering validation errors (P13-QRL-3).
+
 ### Pass 10 audit corrections
 
 - Bound ABI tuple/array schema nesting to 64 levels and reject excessive dimensions with Web3ValidatorError (P10-ABI-1).

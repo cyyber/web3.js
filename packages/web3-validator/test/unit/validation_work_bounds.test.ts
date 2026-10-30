@@ -16,10 +16,27 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { Web3Validator } from '../../src/web3_validator';
+import { runInNewContext } from 'vm';
 import { Web3ValidatorError } from '../../src/errors';
 
 const validator = new Web3Validator();
 const schema = { type: 'array', items: { format: 'uint' } };
+
+test('rejects cross-realm views without enumerating or rendering their contents (P13-QRL-3)', () => {
+	const view = runInNewContext('new Uint8Array(4 * 1024 * 1024)') as Uint8Array;
+	const read = jest.fn(() => {
+		throw new Error('view was enumerated');
+	});
+	Object.defineProperty(view, 'sentinel', { enumerable: true, get: read });
+	const errors = validator.validate(['bytes'], [view], { silent: true, maxEntries: 3 });
+	expect(errors).toHaveLength(1);
+	expect(errors?.[0].params.value).toBe(view);
+	expect(errors?.[0].message).toContain('4194304 bytes');
+	expect(errors?.[0].message?.length).toBeLessThan(200);
+	expect(read).not.toHaveBeenCalled();
+	expect(() => validator.validate(['bytes'], [view])).toThrow(Web3ValidatorError);
+	expect(validator.validate(['bytes'], [new Uint8Array(4)])).toBeUndefined();
+});
 
 describe('validation work bounds (pass-5 audit)', () => {
 	it('accepts large caller arrays without an implicit value-count limit', () => {

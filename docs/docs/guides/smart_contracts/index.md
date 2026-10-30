@@ -38,15 +38,23 @@ cannot automatically select sibling layouts.
 
 `getPastEvents`, live subscriptions and their `fromBlock` replay compare active
 filter values locally using the selected fragment, including non-indexed values.
-`allEvents` scans all logs for the address before applying its local filter.
+`allEvents` scans all logs for the address before applying its local filter unless
+explicit topics restrict the query. With a non-wildcard first topic, validation
+only considers the non-anonymous event signatures that topic admits (including
+OR alternatives).
 Filter values and every OR alternative are validated before fetching or subscribing,
 including with explicit `topics`. Values must be encodable in every compatible
 layout containing all active keys, for both named events and `allEvents`. An empty
 OR list raises `AbiError`; an empty array for an array-typed input remains a value.
-Explicit `topics` override generated topics and disable the subscription's local
+An empty `topics: []` is treated as omitted on every path. Non-empty explicit
+`topics` override generated topics and disable the subscription's local
 filter for both live delivery and replay. `getPastEvents` still applies its filter
 when explicit topics are supplied. Live log fields are validated before decoding.
-The indistinguishable-layout limitation above still applies.
+Filters and topic alternatives are copied at call time for historical reads and
+subscriptions, including nested OR lists, tuple objects, arrays and byte buffers.
+Mutating the original options afterwards does not change validation, replay or
+live delivery. Copies use own enumerable properties and reject nesting beyond
+64 levels. The indistinguishable-layout limitation above still applies.
 
 `eventFilterNeedsBroadTopics(event, filter, jsonInterface)` reports whether a named,
 non-anonymous event needs this broad query. `matchesEventFilter(log, abi, filter)`

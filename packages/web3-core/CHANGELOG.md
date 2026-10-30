@@ -7,9 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Pass 13 audit corrections
+
+- Bound batch-failure, mismatched-id and non-JSON-RPC provider messages (P13-TR-2). Purge retired subscription notifications, including an active flush remainder, before a node can reuse an id.
+
 ### Pass 12 audit corrections
 
-- Stop early-notification flushes when a listener changes providers, clears or disposes the manager (P12-CORE-1).
+- Stop early-notification flushes when a listener changes providers or connections, clears or disposes the manager (P12-CORE-1).
 
 ### Pass 11 audit corrections
 

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Pass 13 audit corrections
+
+- Retain bounded node error messages when response ids or JSON-RPC metadata are missing or null (P13-TR-1).
+
 ### Pass 12 audit corrections
 
 - Bound the combined text of batch RPC errors while retaining full diagnostics in innerError/data (P12-TR-1).

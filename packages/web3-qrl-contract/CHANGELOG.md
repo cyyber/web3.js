@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Pass 13 audit corrections
+
+- Narrow allEvents filter validation by explicit signature topics, copy nested filters before reads or subscriptions, and treat empty topic lists as omitted consistently (P13-CT-1–3). Allow topic alternatives in ContractEventOptions.
+
 ### Pass 12 audit corrections
 
 - Use own enumerable filter keys consistently for historical reads, subscription replay and live delivery, ignoring inherited and non-enumerable properties (P12R-1).

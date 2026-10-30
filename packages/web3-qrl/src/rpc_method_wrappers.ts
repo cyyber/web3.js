@@ -1166,7 +1166,7 @@ export async function createAccessList<ReturnFormat extends DataFormat>(
 	)) as unknown as AccessListResult;
 
 	assertRpcResult('qrl_createAccessList', response, accessListResultSchema);
-	expectQuantityReply('qrl_createAccessList', response.gasUsed);
+	expectQuantityReply('qrl_createAccessList', response.gasUsed, 'result.gasUsed');
 	assertRpcResult(
 		'qrl_createAccessList',
 		response.accessList,

@@ -232,6 +232,31 @@ export const isOrList = (input: AbiParameter, value: unknown): value is unknown[
 const eventSignature = (event: AbiEventFragment & { signature?: HexString }): HexString =>
 	event.signature ?? encodeEventSignature(jsonInterfaceMethodToString(event));
 
+/** An empty topic list has the same contract-event semantics as omitted topics. */
+export const hasExplicitTopics = (topics: Filter['topics']): boolean =>
+	Array.isArray(topics) && topics.length > 0;
+
+// Preserve ABI field names, including constructor/__proto__, without invoking setters.
+// Copy bytes rather than calling slice(), which shares storage for Node Buffers.
+const copyFilterValue = (value: unknown, depth = 0): unknown => {
+	if (depth > 64) throw new AbiError('Event filter exceeds 64 nesting levels');
+	if (value instanceof Uint8Array) return new Uint8Array(value);
+	if (Array.isArray(value)) return value.map(item => copyFilterValue(item, depth + 1));
+	if (value && typeof value === 'object') {
+		return Object.fromEntries(
+			Object.entries(value).map(([key, item]) => [key, copyFilterValue(item, depth + 1)]),
+		);
+	}
+	return value;
+};
+
+/** Capture caller-owned filter values and topic alternatives before any async work. */
+export const snapshotEventOptions = (options: Filter): Filter => ({
+	...options,
+	filter: copyFilterValue(options.filter) as Filter['filter'],
+	topics: copyFilterValue(options.topics) as Filter['topics'],
+});
+
 /**
  * Whether compatible named, non-anonymous layouts require signature-only topics because
  * an active filter key has different indexed positions (including non-indexed) across them.
@@ -314,9 +339,15 @@ export const encodeEventABI = (
 	const keys = Object.keys(options?.filter ?? {}).filter(
 		key => !isNullish(options?.filter?.[key]),
 	);
+	const topics = hasExplicitTopics(options?.topics) ? options?.topics : undefined;
 	const broadTopics =
-		!options?.topics && eventFilterNeedsBroadTopics(event, options?.filter, jsonInterface);
-	const layouts = [event, ...jsonInterface.filter(isAbiEventFragment)].filter(
+		!topics && eventFilterNeedsBroadTopics(event, options?.filter, jsonInterface);
+	const firstTopic = topics?.[0];
+	const signatures = Array.isArray(firstTopic) ? firstTopic : [firstTopic];
+	const layouts = [
+		event,
+		...jsonInterface.filter(isAbiEventFragment).filter(candidate => candidate !== event),
+	].filter(
 		candidate =>
 			candidate.name !== ALL_EVENTS &&
 			(event.name === ALL_EVENTS ||
@@ -336,15 +367,28 @@ export const encodeEventABI = (
 		if (!layout) throw new AbiError('Event filter inputs do not belong to a single layout');
 		event = { ...layout, signature: eventSignature(layout) };
 	}
-	const topics = options?.topics;
 	const filter = options?.filter ?? {};
 	const opts: Writeable<Filter> = {};
 	// Local filters also compare non-indexed values. Validate every active alternative
 	// before requesting logs, for every compatible layout. Explicit topics still allow
 	// getPastEvents to post-filter, so they do not bypass validation.
 	if (keys.length > 0) {
-		const filterLayouts = layouts.filter(layout =>
-			keys.every(key => layout.inputs?.some(input => input.name === key)),
+		const filterLayouts = layouts.filter(
+			layout =>
+				keys.every(key => layout.inputs?.some(input => input.name === key)) &&
+				(event.name !== ALL_EVENTS ||
+					signatures.length === 0 ||
+					signatures.some(
+						topic =>
+							isNullish(topic) ||
+							(!layout.anonymous &&
+								typeof topic === 'string' &&
+								topic.toLowerCase() ===
+									rightPad(
+										eventSignature(layout),
+										TOPIC_HEX_LENGTH,
+									).toLowerCase()),
+					)),
 		);
 		for (const layout of filterLayouts) {
 			for (const input of layout.inputs ?? []) {
