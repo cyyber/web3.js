@@ -118,6 +118,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Synchronize the WebSocket subscription-budget regression tests with message delivery and registration, removing the timer race that intermittently failed CI.
 - Pass 5 audit: deployment transactions cannot inherit an existing contract address; event backfills and indexed tuple/array filters use the correct ABI; named tuple decoding visits aliases once.
 - Subscription reconnects are serialized, respect cancellation/provider changes/disposal, retain failed subscriptions for retry, and ignore stale unsubscribe acknowledgements. RPC envelopes, provider error codes, configuration batches and explicit timeouts are validated consistently.
 - Wallet signing uses the calling module configuration. Post-broadcast block-timeout setup failures are retried; fee caps and RPC result fields fail with typed errors. Reorg watchers tolerate transient missing receipts and report changed execution outcomes. Revert diagnostics use the preceding block as an approximation and preserve broadcast rejection data.

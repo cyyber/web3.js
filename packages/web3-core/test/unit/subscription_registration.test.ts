@@ -19,7 +19,8 @@ jest.unmock('isomorphic-ws');
 import { AddressInfo, Socket } from 'net';
 import { WebSocketServer, WebSocket } from 'ws';
 import { Web3RequestManager, Web3SubscriptionManager, Web3Subscription } from '../../src';
-import { JsonRpcRequest } from '@theqrl/web3-types';
+import { JsonRpcNotification, JsonRpcRequest } from '@theqrl/web3-types';
+import { Web3DeferredPromise } from '@theqrl/web3-utils';
 import WebSocketProvider from '@theqrl/web3-providers-ws';
 
 class Heads extends Web3Subscription<{ data: unknown }> {
@@ -29,10 +30,10 @@ class Heads extends Web3Subscription<{ data: unknown }> {
 	}
 }
 const tick = async () => new Promise<void>(resolve => setTimeout(resolve, 5));
-const until = async (check: () => boolean) => {
+const until = async (check: () => boolean, description = 'test connection') => {
 	const deadline = Date.now() + 2000;
 	while (!check()) {
-		if (Date.now() > deadline) throw new Error('Timed out waiting for test connection');
+		if (Date.now() > deadline) throw new Error(`Timed out waiting for ${description}`);
 		// eslint-disable-next-line no-await-in-loop
 		await tick();
 	}
@@ -42,8 +43,7 @@ const setup = async (
 	failHandshake = false,
 	coalesced: boolean | number = false,
 	dropUnsubscribe = false,
-	delayRequest: boolean | number = false,
-	tail = 0,
+	delayRequest = false,
 ) => {
 	const server = new WebSocketServer({ host: '127.0.0.1', port: 0 });
 	await new Promise<void>(resolve => server.once('listening', resolve));
@@ -104,17 +104,6 @@ const setup = async (
 							}),
 						);
 					wire.uncork();
-					if (tail > 0)
-						setTimeout(() => {
-							for (let i = 0; i < tail; i += 1)
-								socket.send(
-									JSON.stringify({
-										jsonrpc: '2.0',
-										method: 'qrl_subscription',
-										params: { subscription: id, result: `${id}:tail:${i}` },
-									}),
-								);
-						}, 8);
 				});
 			} else if (request.method === 'qrl_unsubscribe') {
 				if (dropUnsubscribe) socket.terminate();
@@ -132,9 +121,7 @@ const setup = async (
 		const request = provider.request.bind(provider);
 		jest.spyOn(provider, 'request').mockImplementation(async payload => {
 			const result = await request(payload);
-			await new Promise<void>(resolve =>
-				setTimeout(resolve, typeof delayRequest === 'number' ? delayRequest : 0),
-			);
+			await new Promise<void>(resolve => setTimeout(resolve, 0));
 			return result;
 		});
 	}
@@ -381,16 +368,63 @@ test.each([
 ])(
 	'keeps the unknown-id budget after an acknowledged burst of %s and tail of %s',
 	async (burst, tail) => {
-		const test = await setup(false, burst, false, 30, tail);
+		const test = await setup(false, burst);
 		const retained = Math.min(tail, 128);
+		const registrationGate = new Web3DeferredPromise<void>();
+		let subscription: Promise<Heads> | undefined;
 		try {
 			await new Promise<void>(resolve => test.provider.once('connect', () => resolve()));
 			const errors = jest.fn();
 			test.manager.on('error', errors);
-			const sub = await test.manager.subscribe('heads');
+			let replyReceived = false;
+			const request = test.provider.request.bind(test.provider);
+			jest.spyOn(test.provider, 'request').mockImplementation(async payload => {
+				const result = await request(payload);
+				if (payload.method === 'qrl_subscribe') {
+					replyReceived = true;
+					await registrationGate;
+				}
+				return result;
+			});
+			const received: JsonRpcNotification[] = [];
+			test.provider.on('message', message => {
+				const notification = message as unknown as JsonRpcNotification;
+				if (notification.params?.subscription === '0x1') received.push(notification);
+			});
+			subscription = test.manager.subscribe('heads');
+			// Keep registration pending until the provider has flushed the acknowledged
+			// burst and processed the entire unacknowledged tail. Timer gaps cannot
+			// establish this ordering when the CI runner or socket delivery is delayed.
+			await until(
+				() =>
+					replyReceived &&
+					received.length >= burst &&
+					!test.provider.isSubscriptionAcknowledged('0x1'),
+				'acknowledged burst to finish',
+			);
+			expect(received).toHaveLength(burst);
+			expect(test.server.clients.size).toBe(1);
+			for (const socket of test.server.clients) {
+				for (let i = 0; i < tail; i += 1)
+					socket.send(
+						JSON.stringify({
+							jsonrpc: '2.0',
+							method: 'qrl_subscription',
+							params: { subscription: '0x1', result: `0x1:tail:${i}` },
+						}),
+					);
+			}
+			await until(() => received.length >= burst + tail, 'tail to reach the provider');
+			expect(test.manager.subscriptions.size).toBe(0);
+			expect(errors).toHaveBeenCalledTimes(tail - retained);
+			registrationGate.resolve();
+			const sub = await subscription;
 			const data = jest.fn<void, [unknown]>();
 			sub.on('data', data);
-			await until(() => data.mock.calls.length === burst + retained);
+			await until(
+				() => data.mock.calls.length >= burst + retained,
+				'retained notifications to reach the subscription',
+			);
 			expect(data.mock.calls.map(([value]) => value)).toEqual([
 				...Array.from({ length: burst }, (_, i) => `0x1:${i}`),
 				...Array.from({ length: retained }, (_, i) => `0x1:tail:${i}`),
@@ -398,6 +432,8 @@ test.each([
 			expect(errors).toHaveBeenCalledTimes(tail - retained);
 			await sub.unsubscribe();
 		} finally {
+			registrationGate.resolve();
+			await subscription?.catch(() => undefined);
 			await test.close();
 		}
 	},
