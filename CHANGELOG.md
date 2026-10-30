@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Supply-chain correction
+
+- Remove the vulnerable `decode-uri-component` dependency (CVE-2026-118664) by moving the Cypress adapter's Jest 24 glob matcher to `micromatch` 4.0.8, preserving its matching and diagnostic behavior.
+
 ### Pass 13 audit corrections
 
 - Resolve all eight pass-13 findings: snapshot log filters, align empty-topic handling, narrow allEvents validation by explicit signatures, reject null subscription options before registration, bound cross-realm view diagnostics and remaining core error text, and retain error messages from incomplete RPC envelopes.

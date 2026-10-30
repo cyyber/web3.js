@@ -19,6 +19,10 @@ minimumReleaseAgeExclude:
 - 'body-parser@2.4.0'
 blockExoticSubdeps: true
 overrides:
+  # CVE-2026-118664 — remove decode-uri-component via micromatch 3's
+  # snapdragon/source-map-resolve chain in the Cypress adapter's Jest 24.
+  # jest-message-util only uses micromatch.some, which is retained in v4.
+  "jest-message-util@24.9.0>micromatch": "4.0.8"
   "braces@<3.0.3": "3.0.3"
   # CVE-2026-13697 / CVE-2026-19534 / CVE-2026-84961 — undici TLS validation
   # bypass (BalancedPool) and request handling (high); dev tooling via

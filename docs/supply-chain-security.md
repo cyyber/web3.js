@@ -244,6 +244,7 @@ they execute on developer and CI machines, so they are remediated the same way.
 
 | Override | Resolves to | Reason |
 | --- | --- | --- |
+| `jest-message-util@24.9.0>micromatch` | `4.0.8` | Removes the Cypress adapter's micromatch 3 → snapdragon → source-map-resolve → decode-uri-component chain affected by [CVE-2026-118664](https://github.com/SamVerschueren/decode-uri-component/security/advisories/GHSA-qr28-fpjm-wq7f). Jest 24 uses only the retained `micromatch.some` API. A direct decoder override would break the CommonJS caller because decoder 0.5.1 is ESM. Remove when the adapter no longer uses Jest 24. |
 | `http-proxy-middleware@<2.0.10` | `2.0.10` | Patch floor, 2.x line. |
 | `http-proxy-middleware@>=4.0.0 <4.1.1` | `4.2.0` | Patch floor, 4.x line. |
 | `linkify-it@<5.0.1` | `5.0.2` | Patch floor. |
