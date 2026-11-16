@@ -35,6 +35,10 @@ const DECIMAL_INTEGER = /^-?\d+$/;
 // long run of digits followed by a non-digit.
 const DECIMAL_NUMBER = /^-?(?:\d+(?:\.\d*)?|\.\d+)$/;
 
+// The width of a bare `uint` or `int`: the full QRVM word, as in Hyperion 0.3.1 and later.
+// Pass `bitSize` or a sized `abiType` to check a narrower quantity.
+const ABI_WORD_BITS = 512;
+
 /**
  * The integer a number-like input stands for, or `undefined` when the input is not an integer
  * written in a strict spelling. A JavaScript `number` must be a safe integer: above 2^53 it no
@@ -89,7 +93,7 @@ export const isUInt = (
 		size = options.bitSize;
 	}
 
-	const maxSize = BigInt(2) ** BigInt(size ?? 256) - BigInt(1);
+	const maxSize = BigInt(2) ** BigInt(size ?? ABI_WORD_BITS) - BigInt(1);
 	const valueToCheck = toIntegerBigInt(value);
 
 	return valueToCheck !== undefined && valueToCheck >= 0 && valueToCheck <= maxSize;
@@ -117,8 +121,8 @@ export const isInt = (
 		size = options.bitSize;
 	}
 
-	const maxSize = BigInt(2) ** BigInt((size ?? 256) - 1) - BigInt(1);
-	const minSize = BigInt(-1) * BigInt(2) ** BigInt((size ?? 256) - 1);
+	const maxSize = BigInt(2) ** BigInt((size ?? ABI_WORD_BITS) - 1) - BigInt(1);
+	const minSize = BigInt(-1) * BigInt(2) ** BigInt((size ?? ABI_WORD_BITS) - 1);
 	const valueToCheck = toIntegerBigInt(value);
 
 	return valueToCheck !== undefined && valueToCheck >= minSize && valueToCheck <= maxSize;

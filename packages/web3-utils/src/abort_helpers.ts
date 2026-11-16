@@ -70,7 +70,7 @@ export interface AbortComposition {
  * the deadline timer and detaches the listener from the caller's signal; it runs
  * automatically when the composed signal aborts, so no path leaks a timer or a listener.
  *
- * Uses only `AbortController` / `AbortSignal`, so it works on Node 20.19+ and modern
+ * Uses only `AbortController` / `AbortSignal`, so it works on Node 22.12+ and modern
  * browsers with no dependency on `AbortSignal.any` or `AbortSignal.timeout`.
  *
  * @param options - see {@link ComposeAbortSignalOptions}

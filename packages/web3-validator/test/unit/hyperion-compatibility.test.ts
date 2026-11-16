@@ -21,17 +21,27 @@ import { isInt, isUInt } from '../../src/validation/numbers';
 describe('Hyperion ABI compatibility', () => {
 	const validator = new Web3Validator();
 
-	it('validates integer aliases with 256-bit bounds', () => {
-		const maxUint = (BigInt(1) << BigInt(256)) - BigInt(1);
-		const minInt = -(BigInt(1) << BigInt(255));
+	it('validates bare ABI integers with 512-bit bounds', () => {
+		const maxUint = (BigInt(1) << BigInt(512)) - BigInt(1);
+		const minInt = -(BigInt(1) << BigInt(511));
 		expect(isUInt(maxUint)).toBe(true);
 		expect(isUInt(maxUint + BigInt(1))).toBe(false);
+		expect(isUInt(maxUint, { abiType: 'uint' })).toBe(true);
 		expect(isInt(minInt)).toBe(true);
 		expect(isInt(minInt - BigInt(1))).toBe(false);
 		expect(isInt(-minInt)).toBe(false);
 		expect(() => validator.validate(['uint', 'int'], [maxUint, minInt])).not.toThrow();
 		expect(() => validator.validate(['uint'], [maxUint + BigInt(1)])).toThrow();
 		expect(() => validator.validate(['int[]'], [[-minInt]])).toThrow();
+	});
+
+	it('keeps explicit 256-bit integers at 256 bits', () => {
+		const maxUint256 = (BigInt(1) << BigInt(256)) - BigInt(1);
+		expect(() => validator.validate(['uint256'], [maxUint256])).not.toThrow();
+		expect(() => validator.validate(['uint256'], [maxUint256 + BigInt(1)])).toThrow();
+		expect(isUInt(maxUint256 + BigInt(1), { abiType: 'uint256' })).toBe(false);
+		expect(isUInt(maxUint256 + BigInt(1), { bitSize: 256 })).toBe(false);
+		expect(isInt(BigInt(1) << BigInt(255), { abiType: 'int256' })).toBe(false);
 	});
 
 	it('still accepts explicit 512-bit integers', () => {

@@ -523,9 +523,9 @@ describe('AbiCoder', () => {
 			},
 		);
 
-		it('defaults a bare uint/int to 256 bits', () => {
-			expect(defaultAbiCoder._getCoder(ParamType.from('uint')).name).toBe('uint256');
-			expect(defaultAbiCoder._getCoder(ParamType.from('int')).name).toBe('int256');
+		it('defaults a bare uint/int to 512 bits', () => {
+			expect(defaultAbiCoder._getCoder(ParamType.from('uint')).name).toBe('uint512');
+			expect(defaultAbiCoder._getCoder(ParamType.from('int')).name).toBe('int512');
 		});
 
 		it.each(['bytes0', 'bytes65'])('rejects the invalid type %s', type => {

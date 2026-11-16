@@ -16,7 +16,7 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { Sha3Input } from '@theqrl/web3-types';
-import fixture from '../../../../fixtures/abi/hyperion-0.2.0.json';
+import fixture from '../../../../fixtures/abi/hyperion-0.3.1.json';
 import { encodePacked, hyperionSha3, keccak256 } from '../../src/hash';
 
 describe('Hyperion compiler packed ABI compatibility', () => {
@@ -32,15 +32,21 @@ describe('Hyperion compiler packed ABI compatibility', () => {
 		},
 	);
 
-	it('uses 256-bit aliases for inferred numbers and preserves explicit 512-bit types', () => {
-		const one = `0x${'00'.repeat(31)}01`;
+	it('uses 512-bit aliases for inferred numbers and preserves explicit widths', () => {
+		const one = `0x${'00'.repeat(63)}01`;
 		expect(encodePacked(1)).toBe(one);
 		expect(encodePacked(BigInt(1))).toBe(one);
 		expect(encodePacked({ type: 'bigint', value: BigInt(1) })).toBe(one);
 		expect(encodePacked({ type: 'uint', value: 1 })).toBe(one);
-		expect(encodePacked({ type: 'uint512', value: 1 })).toBe(`0x${'00'.repeat(63)}01`);
-		expect(() => encodePacked({ type: 'uint', value: BigInt(1) << BigInt(256) })).toThrow();
-		expect(() => encodePacked({ type: 'int', value: BigInt(1) << BigInt(255) })).toThrow();
+		expect(encodePacked({ type: 'int', value: -1 })).toBe(`0x${'ff'.repeat(64)}`);
+		expect(encodePacked({ type: 'uint512', value: 1 })).toBe(one);
+		expect(encodePacked({ type: 'uint256', value: 1 })).toBe(`0x${'00'.repeat(31)}01`);
+		expect(() =>
+			encodePacked({ type: 'uint', value: (BigInt(1) << BigInt(512)) - BigInt(1) }),
+		).not.toThrow();
+		expect(() => encodePacked({ type: 'uint', value: BigInt(1) << BigInt(512) })).toThrow();
+		expect(() => encodePacked({ type: 'int', value: BigInt(1) << BigInt(511) })).toThrow();
+		expect(() => encodePacked({ type: 'uint256', value: BigInt(1) << BigInt(256) })).toThrow();
 	});
 
 	it.each([24, 64, 67, 69, 128])('rejects a %i-byte packed function value', length => {

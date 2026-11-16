@@ -429,7 +429,11 @@ describe('pass-7 install policy sources', () => {
 
 describe('git dependency lockfile pin (doctor substring check)', () => {
 	const name = '@theqrl/qrl-contracts';
-	const expected = doctorChecks.expectedGitDependencies[name];
+	const expected = {
+		tarball: 'https://codeload.github.com/theQRL/qrl-contracts/tar.gz/abc',
+		integrity: 'sha512-reviewed',
+		treeDigest: 'unused',
+	};
 	const pinnedLockfile = (options: {
 		version?: string;
 		integrity?: string;
@@ -457,10 +461,7 @@ describe('git dependency lockfile pin (doctor substring check)', () => {
 			'',
 		].join('\n');
 
-	it('accepts the committed lockfile and a minimal pinned lockfile', () => {
-		expect(
-			doctorChecks.gitDependencyLockfileFailures(read('pnpm-lock.yaml'), name, expected),
-		).toEqual([]);
+	it('accepts a minimal pinned lockfile', () => {
 		expect(
 			doctorChecks.gitDependencyLockfileFailures(pinnedLockfile({}), name, expected),
 		).toEqual([]);

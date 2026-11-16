@@ -26,7 +26,7 @@ const root = path.resolve(__dirname, '..');
 const failures = [];
 const warnings = [];
 
-const expectedNodeFloor = '20.19.0';
+const expectedNodeFloor = '22.12.0';
 const expectedNodeRange = `>=${expectedNodeFloor}`;
 const expectedPackageManager = 'pnpm@10.27.0';
 const expectedPnpmMajor = '10.';

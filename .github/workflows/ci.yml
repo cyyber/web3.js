@@ -27,10 +27,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # The advertised floor (engines.node: >=20.19.0) is NOT exercised here: the dev
+        # The advertised floor (engines.node: >=22.12.0) is NOT exercised here: the dev
         # toolchain cannot install on it (.npmrc sets engine-strict=true and
         # semantic-release requires ^22.14.0 || >=24.10.0). The floor is proven instead
-        # where it actually matters — against published tarballs, on 20.19.0, in
+        # where it actually matters — against published tarballs, on 22.12.0, in
         # release.yml's smoke job — plus scripts/doctor.js and the package_engines test.
         node-version: [22.x, 24.x]
 
@@ -41,7 +41,7 @@ jobs:
           persist-credentials: false
 
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: ${{ matrix.node-version }}
 
@@ -120,7 +120,7 @@ jobs:
           persist-credentials: false
 
       - name: Use Node.js ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: ${{ env.NODE_VERSION }}
 
@@ -160,7 +160,7 @@ jobs:
           persist-credentials: false
 
       - name: Use Node.js ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: ${{ env.NODE_VERSION }}
 
@@ -209,7 +209,7 @@ jobs:
           persist-credentials: false
 
       - name: Use Node.js ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: ${{ env.NODE_VERSION }}
 

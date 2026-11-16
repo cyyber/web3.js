@@ -17,7 +17,7 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 
 import { expectTypeOf, typecheck } from '@humeris/espresso-shot';
 import { Bytes, MatchPrimitiveType } from '@theqrl/web3-types';
-import fixture from '../../../../fixtures/abi/hyperion-0.2.0.json';
+import fixture from '../../../../fixtures/abi/hyperion-0.3.1.json';
 import { Contract } from '../../src/contract';
 import { decodeMethodReturn } from '../../src/encoding';
 
@@ -54,7 +54,10 @@ describe('Hyperion external function contract methods', () => {
 		const call = contract.methods.echo(pointer, 7, 'hello').encodeABI();
 		expect(call.slice(10)).toBe(compilerCase.encoded.slice(2));
 		expect(() => contract.methods.echo(`0x${'00'.repeat(24)}`, 7, 'hello')).toThrow();
-		expect(() => contract.methods.echo(pointer, BigInt(1) << BigInt(256), 'hello')).toThrow();
+		expect(() =>
+			contract.methods.echo(pointer, (BigInt(1) << BigInt(512)) - BigInt(1), 'hello'),
+		).not.toThrow();
+		expect(() => contract.methods.echo(pointer, BigInt(1) << BigInt(512), 'hello')).toThrow();
 	});
 
 	it('decodes a function return value with subsequent static and dynamic outputs', () => {

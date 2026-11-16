@@ -206,7 +206,7 @@ export const formatParam = (type: string, _param: unknown): unknown => {
 	// Format correct width for u?int[0-9]*
 	let match = paramTypeNumber.exec(type);
 	if (match) {
-		const size = parseInt(match[2] ? match[2] : '256', 10);
+		const size = parseInt(match[2] ? match[2] : '512', 10);
 		// Only a hex string carries a width worth normalising. A decimal string is a plain
 		// number to the coder, and left-padding it with zeros turned '-57' into '00000-57',
 		// which no longer parsed as a number for any `intN` narrower than 256 bits.
@@ -290,20 +290,23 @@ export const flattenTypes = (
 				types.push(`(${result.join()})`);
 			}
 		} else {
-			types.push(param.type.replace(/^(u?int)(?=$|\[)/, '$1256'));
+			types.push(param.type.replace(/^(u?int)(?=$|\[)/, '$1512'));
 		}
 	});
 
 	return types;
 };
 
-/** Expand integer aliases in signature parameters, preserving the function/event/error name. */
+/**
+ * Expand integer aliases in signature parameters, preserving the function/event/error name.
+ * Bare `uint` and `int` are `uint512` and `int512`, as in Hyperion 0.3.1 and later.
+ */
 export const canonicalizeSignature = (signature: string): string => {
 	const paramsStart = signature.indexOf('(');
 	if (paramsStart < 0) return signature;
 	return (
 		signature.slice(0, paramsStart) +
-		signature.slice(paramsStart).replace(/\b(u?int)\b/g, '$1256')
+		signature.slice(paramsStart).replace(/\b(u?int)\b/g, '$1512')
 	);
 };
 

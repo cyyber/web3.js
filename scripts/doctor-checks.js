@@ -191,16 +191,10 @@ function overridePolicyFailures(workspaceYaml, lockfileYaml) {
 		: ['pnpm-lock.yaml overrides must match pnpm-workspace.yaml exactly'];
 }
 
-// The reviewed archives of git dependencies, checked by scripts/doctor.js.
-const expectedGitDependencies = {
-	'@theqrl/qrl-contracts': {
-		tarball:
-			'https://codeload.github.com/theQRL/qrl-contracts/tar.gz/d3c84eedac4e051f6e99892397c5e42f0f0a2266',
-		integrity:
-			'sha512-l7G9mP4DJR1cF+8Vht3hN9Rk9KjY+/jz2C5BMUq5OaQ0IPcL1exO6Jcb4HgwFuZ3TuecSCVvWnZW2OATzQITAA==',
-		treeDigest: 'ba165d2f1305116539092a351a2c476a0cd3425336183ef6fd5b35f996f2d5b7',
-	},
-};
+// The reviewed archives of git dependencies, checked by scripts/doctor.js:
+// package name -> { tarball, integrity, treeDigest }. There are none at present;
+// see docs/supply-chain-security.md before adding one.
+const expectedGitDependencies = {};
 
 // A git dependency must resolve to its reviewed archive: every importer that
 // depends on it names the tarball, and the lockfile's only `packages:` entry

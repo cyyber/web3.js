@@ -28,7 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **Breaking:** Renamed `getEncodedEip712Data` to `getEncodedQRLTypedData`. Typed data must define `QRLTypedDataDomain` instead of `EIP712Domain`, changing its hashes.
 - **Breaking:** ABI-decoded addresses are checksummed Q addresses. `decodeLog` returns the 32-byte keccak hash for hashed indexed parameters, extracted from the 64-byte QRVM topic.
-- **Breaking:** Bare `uint` and `int` now mean `uint256` and `int256`, matching Hyperion 0.2.0. They still occupy one 64-byte ABI word. Use explicit `uint512` or `int512` for wider values. Function, event, and error signatures also expand these aliases to 256 bits.
+- **Breaking:** Bare `uint` and `int` mean `uint512` and `int512`, the full QRVM word, matching Hyperion 0.3.1. Function, event, and error signatures expand these aliases to 512 bits, so `f(uint)` has the selector of `f(uint512)`. Hyperion 0.2.0 read the bare names as 256 bits: write `uint256` or `int256` explicitly for contracts compiled by it.
 
 ### Added
 
@@ -39,7 +39,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Memoize named tuple results, reserve positional event keys, and align typed-data field/schema validation with go-qrl, including rejection of fixed and multidimensional array declarations (P5-ABI-1/2/4).
 - Encode finite messages with self-referencing or mutually recursive typed-data schemas without overflowing the stack.
 - Accept `Uint8Array` and Node.js `Buffer` values for `bytes` and fixed-byte ABI arguments without losing their binary contents.
-- Decode compiler-generated `Error(string)` and `Panic(uint256)` even when absent from the supplied ABI. Explicit error definitions take precedence. Panic payloads use selector `0x4e487b71` followed by one 64-byte code word.
+- Decode compiler-generated `Error(string)` and panics even when absent from the supplied ABI. Explicit error definitions take precedence. Hyperion 0.3.1 raises `Panic(uint512)` (selector `0xdf75fb3b`) and contracts compiled by 0.2.0 raise `Panic(uint256)` (`0x4e487b71`); both are decoded, and both carry one 64-byte code word.
 
 <!-- EXAMPLE
 

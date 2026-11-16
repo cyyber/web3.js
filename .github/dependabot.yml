@@ -6,12 +6,26 @@ updates:
       interval: "weekly"
     cooldown:
       default-days: 7
+    # Minor and patch updates arrive as one grouped pull request. Major updates
+    # are left out of the group, so each gets its own pull request and a
+    # breaking one cannot hold up the rest.
     groups:
       workspace-dependencies:
         patterns:
           - "*"
         exclude-patterns:
           - "turbo"
+        update-types:
+          - "minor"
+          - "patch"
+    ignore:
+      # Lift when @typescript-eslint, ts-jest and typedoc accept TypeScript 7.
+      - dependency-name: "typescript"
+        update-types: ["version-update:semver-major"]
+      # Lift when @semantic-release/release-notes-generator ships
+      # conventional-changelog-writer 9 or later.
+      - dependency-name: "conventional-changelog-conventionalcommits"
+        update-types: ["version-update:semver-major"]
     commit-message:
       prefix: "deps"
 

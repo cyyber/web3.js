@@ -22,7 +22,7 @@
 	"author": "The QRL Contributors",
 	"license": "LGPL-3.0",
 	"engines": {
-		"node": ">=20.19.0"
+		"node": ">=22.12.0"
 	},
 	"files": [
 		"lib/**/*",
@@ -52,9 +52,9 @@
 		"@humeris/espresso-shot": "4.0.0",
 		"@theqrl/eslint-config-base-web3": "workspace:^",
 		"@types/jest": "30.0.0",
-		"@typescript-eslint/eslint-plugin": "8.72.0",
-		"@typescript-eslint/parser": "8.72.0",
-		"eslint": "10.13.0",
+		"@typescript-eslint/eslint-plugin": "8.72.1",
+		"@typescript-eslint/parser": "8.72.1",
+		"eslint": "10.14.0",
 		"eslint-config-prettier": "10.1.8",
 		"jest": "30.5.2",
 		"jest-extended": "7.0.0",

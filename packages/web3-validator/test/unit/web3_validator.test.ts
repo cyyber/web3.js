@@ -451,11 +451,11 @@ describe('array element types keep their declared size (pass-3 residual)', () =>
 		expect(validator.validate(['uint8[2][]'], [[[255, 0]]])).toBeUndefined();
 	});
 
-	it('still accepts unsized uint[] elements up to 256 bits', () => {
+	it('still accepts unsized uint[] elements up to 512 bits', () => {
 		expect(
-			validator.validate(['uint[]'], [[BigInt(2) ** BigInt(256) - BigInt(1)]]),
+			validator.validate(['uint[]'], [[BigInt(2) ** BigInt(512) - BigInt(1)]]),
 		).toBeUndefined();
-		expect(() => validator.validate(['uint[]'], [[BigInt(2) ** BigInt(256)]])).toThrow(
+		expect(() => validator.validate(['uint[]'], [[BigInt(2) ** BigInt(512)]])).toThrow(
 			Web3ValidatorError,
 		);
 	});
