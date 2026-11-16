@@ -71,6 +71,6 @@
 		"@theqrl/web3-utils": "workspace:^",
 		"@types/ws": "8.18.2",
 		"isomorphic-ws": "5.0.0",
-		"ws": "8.22.1"
+		"ws": "8.22.2"
 	}
 }
