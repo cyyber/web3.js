@@ -1,0 +1,804 @@
+{
+	"compiler": "0.3.1+commit.f8af5b22.Emscripten.clang",
+	"vm": "go-qrl f3864c46b3f94662c514105da1efaf3466394fae",
+	"compilerInput": {
+		"language": "Hyperion",
+		"settings": {
+			"optimizer": {
+				"enabled": true,
+				"runs": 200
+			},
+			"outputSelection": {
+				"*": {
+					"*": [
+						"abi",
+						"qrvm.deployedBytecode.object",
+						"qrvm.methodIdentifiers"
+					]
+				}
+			}
+		},
+		"sources": {
+			"AbiCompatibility.hyp": {
+				"content": "// SPDX-License-Identifier: LGPL-3.0\npragma hyperion 0.3.1;\n\ninterface CallbackTarget {\n    function ping() external;\n}\n\ncontract AbiCompatibility {\n    struct Bundle {\n        function() external callback;\n        bytes payload;\n    }\n\n    error Custom(uint code, address who, string note);\n\n    event Indexed(address indexed who, bytes64 indexed wide, uint indexed id, int value, string note);\n\n    uint256[] public narrowValues;\n    mapping(address => uint) public balances;\n    mapping(bytes64 => mapping(uint => bool)) public wideKeys;\n\n    function pointer() private pure returns (function() external) {\n        return CallbackTarget(account()).ping;\n    }\n\n    function account() private pure returns (address) {\n        return address(uint512(\n            0x0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef\n        ));\n    }\n\n    function wide() private pure returns (bytes64) {\n        return bytes64(uint512(\n            0xfedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210\n        ));\n    }\n\n    function aliases() external pure returns (bytes memory) {\n        return abi.encode(type(uint).max, type(int).min);\n    }\n\n    function narrowIntegers() external pure returns (bytes memory) {\n        return abi.encode(type(uint256).max, type(int256).min);\n    }\n\n    function wideIntegers() external pure returns (bytes memory) {\n        return abi.encode(uint512(1) << 400, -(int512(1) << 400));\n    }\n\n    function functionAndString() external pure returns (bytes memory) {\n        return abi.encode(pointer(), uint(7), \"hello\");\n    }\n\n    function fixedFunctions() external pure returns (bytes memory) {\n        function() external[2] memory callbacks = [pointer(), pointer()];\n        return abi.encode(callbacks, uint(9));\n    }\n\n    function dynamicFunctions() external pure returns (bytes memory) {\n        function() external[] memory callbacks = new function() external[](2);\n        callbacks[0] = pointer();\n        callbacks[1] = pointer();\n        return abi.encode(callbacks, uint(9));\n    }\n\n    function nestedFunction() external pure returns (bytes memory) {\n        return abi.encode(Bundle(pointer(), hex\"010203\"), uint(9));\n    }\n\n    function packed() external pure returns (bytes memory) {\n        return abi.encodePacked(uint(1), int(-2), pointer());\n    }\n\n    function packedNarrow() external pure returns (bytes memory) {\n        return abi.encodePacked(uint256(1), int256(-2), account(), wide());\n    }\n\n    function packedFunctions() external pure returns (bytes memory) {\n        function() external[2] memory callbacks = [pointer(), pointer()];\n        return abi.encodePacked(callbacks);\n    }\n\n    function packedIntegers() external pure returns (bytes memory) {\n        uint[2] memory unsigned = [uint(1), type(uint).max];\n        int[2] memory signed = [int(-2), type(int).min];\n        return abi.encodePacked(unsigned, signed);\n    }\n\n    // Echoes its arguments, so that an SDK's selector and argument encoding is\n    // checked against the compiler's decoder.\n    function echo(uint a, int b, uint256 c, address d, bytes64 e, string calldata f)\n        external\n        pure\n        returns (bytes memory)\n    {\n        return abi.encode(a, b, c, d, e, f);\n    }\n\n    function emitIndexed() external {\n        emit Indexed(account(), wide(), type(uint).max, -2, \"hello\");\n    }\n\n    function revertCustom() external pure {\n        revert Custom(type(uint).max, account(), \"hello\");\n    }\n\n    function revertString() external pure {\n        revert(\"hello\");\n    }\n\n    function panicAssert() external pure {\n        assert(false);\n    }\n\n    function panicDivision() external pure returns (uint) {\n        uint zero;\n        return 1 / zero;\n    }\n\n    function panicIndex() external view returns (uint256) {\n        return narrowValues[0];\n    }\n}\n"
+			}
+		}
+	},
+	"bytecode": "0x61010060805234a015610010575fa0fd5b5060043610610134575f356101e01ca06333af841a116100b657a0637eb385331161007b57a0637eb385331461025057a0638f23d5f61461026357a0639bd610371461026b57a063b33298981461027357a063b6bbe0611461027b57a063f387e0e414610283575fa0fd5ba06333af841a1461021d57a0633fc8a3051461022557a0634966cfae1461023857a063544286de1461024057a063743be58414610248575fa0fd5ba0631d71bbce116100fc57a0631d71bbce1461017657a0631d8e32d9146101bd57a0631ed106b8146101de57a0631f33f342146101e857a06327e235e3146101fe575fa0fd5ba06302a2dc451461013857a0630f3446a91461015657a063119e2ec71461015e57a063197eb3bc1461016657a0631998b4f41461016e575b5fa0fd5b61014061028b565b60805161014db1b06108ac565b608051a0b103b0f35b6101406102f3565b61014061032b565b610140610383565b6101406103d3565b6101ad6101843660046108c5565b60026040b0a1525fb2a3526080a0a420600160016101001b0316b0b152b0a252b0205460ff16a1565b608051b01515a15260400161014d565b6101c561043f565b608051600160016101001b03b0b116a15260400161014d565b6101e66104ad565b005b6101f06104dc565b608051b0a15260400161014d565b6101f061020c3660046108e5565b60016040525fb0a1526080b02054a1565b6101406104ef565b6101c56102333660046108e5565b6105a3565b61014061060b565b610140610629565b610140610651565b61014061025e3660046108fc565b61069b565b6101406106d6565b6101e661071a565b6101e6610733565b6101e6610784565b61014061078e565b60c05f608051a061010001608052a06102a26107ba565b63ffffffff16a260400152a1526080016102ba6107ba565b63ffffffff16a260400152a15250b050a060096080516040016102deb2b1b06109ae565b6080516040a1a30303a152b0608052b15050b0565b60c05f1960016101ff1b608051604001610317b2b1b0b1a2526040a20152608001b0565b6080516040a1a30303a152b0608052b050b0565b6080a051a0a201a2526001a1525f196040a0a301b1b0b152a251a0a401a452600119a15260016101ff1ba1a30152b25160c0b3b161036db1a4b1a4b1016109fa565b6080516040a1a30303a152b0608052b2505050b0565b60c05f608051a061010001608052a061039a6107ba565b63ffffffff16a260400152a1526080016103b26107ba565b63ffffffff16a260400152a15250b050a06080516040016102deb1b0610a58565b60c0608051a060c001608052a06103e86107ba565b63ffffffff16a260400152a152608001608051a0608001608052a06003600160016101001b0316a152604001620102036101e81ba15250600160016101001b0316a152506009608051604001610317b2b1b0610a9f565b5fa05fa154a11061045257610452610af3565ba06101001c1561046457610464610af3565bb0600160016101001b03165f5260405f20b06002b1a2a20401b1b006602002a16101001c1561049557610495610af3565bb054b06101000ab004600160016101001b0316b050b0565b5f196104b76107d0565b6080516339af05d56101e01ba1526004016104d3b2b1b0610b21565b608051a0b103b0fd5b5fa06104e9a16001610b46565bb15050b0565b6080a0516002a0a252610140a201b0b25260c0b15fb1b0a16040015b5f6040a201a1b052a1525f19b0b101b0608001a161050b57b05050b0506105306107ba565ba25fa151a11061054257610542610af3565b60800260400101a2a263ffffffff16a260400152a1525050506105636107ba565ba26001a151a11061057657610576610af3565b60800260400101a2a263ffffffff16a260400152a152505050a060096080516040016102deb2b1b0610b66565b5fa1a154a1106105b1575fa0fd5ba06101001c156105c3576105c3610af3565bb0600160016101001b03165f5260405f20b06002b1a2a20401b1b006602002a16101001c156105f4576105f4610af3565bb15054b06101000ab004600160016101001b0316a1565b60c06106156107ba565b6007608051604001610317b3b2b1b0610bc6565b60c060016101901b61063aa1610bfa565b6080a0516040a101b3b0b352a2015260c001610317565b60c060016001196106606107d0565b610668610814565b6080a051600160016101001b0319610100b6a71b166040a20152b3a51b6060a50152a301b1b0b15260c0a2015201610317565b60c0a7a7a7a7a7a7a76080516040016106bab7b6b5b4b3b2b1b0610c22565b6080516040a1a30303a152b0608052b050b7b650505050505050565b60c060016001196106e56107ba565b6080a0516040a101b5b0b552a401b2b0b25260c0a301526101e01b600160016101e01b031916610100a2015261010401610317565b60805162461bcd6101e51ba1526004016104d3b0610c86565b5f1961073d610814565b6107456107d0565b7f1d8b28489d1850d4ba05923c96c036dc3d06837b8fcbb349dfe7ac25684cfccd6101011b60011960805161077ab1b0610c9d565b608051a0b103b0c4565b61078c610cb4565b565b6080a051600160016101001b036040a201526001600160ff1b0319b1a101b1b0b15260c0b0a101610317565b5fa06107c46107d0565bb2635c36b186b250b050565b9f0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdefb0565b9ffedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210b0565b5fa151a0a4525f5ba1a1101561087c576040a1a501a10151a6a301a2015201610860565ba15ba1a11015610896575f6040a2a801015360010161087e565b5050603f01603f1916b2b0b201604001b2b15050565b6040a1525f6108be6040a301a4610858565bb3b2505050565b5fa06080a3a50312156108d6575fa0fd5b5050a035b26040b0b10135b150565b5f6040a2a40312156108f5575fa0fd5b5035b1b050565b5fa05fa05fa05f610180a8aa031215610913575fa0fd5ba735b6506040a80135b5506080a80135600160016101001b03a116a114610938575fa0fd5bb45060c0a80135b350610100a80135b250610140a8013567ffffffffffffffffa0a21115610964575fa0fd5ba1aa01b150aa603fa30112610977575fa0fd5ba135a1a11115610985575fa0fd5bab6040a2a501011115610996575fa0fd5b6040a301b450a0b350505050b2b5b8b1b4b750b2b550565b610140a101a1a45f5b6002a110156109e957a1516040a0a40151b1a55263ffffffffb0b116b0a401526080b2a301b2b0b101b06001016109b7565b505050a2610100a30152b3b2505050565b5fa1a4a25b6002a11015610a1e57a151a3526040b2a301b2b0b101b06001016109ff565b5050506080a201a35f5b6002a11015610a4757a151a3526040b2a301b2b0b101b0600101610a28565b505050610100a201b050b3b2505050565b5fa1a3a25b6002a11015610a8f57a1516040a0a40151b1a55263ffffffffb0b116b0a401526080b2a301b2b0b101b0600101610a5d565b505050610100a201b050b2b15050565b6080a152a2516040a401515fb1b063ffffffff166080a401a2b05263ffffffffa11660c0a5015250506080a4015160c0610100a40152610ae3610140a401a2610858565bb15050a26040a30152b3b2505050565b63df75fb3b6101e01b5f52603260045260445ffd5b6005a1526468656c6c6f6101d81b6040a20152608001b0565ba2a152a16040a2015260c06080a201525f610b3e60c0a301610b08565bb4b350505050565b5fa2610b615763df75fb3b6101e01b5f52601260045260445ffd5b5004b0565b6080a0a252a351a2a201a1b0525fb1b06040a601b060c0a501b0a45ba1a11015610bb157a3516040a0a60151b1a55263ffffffffb0b116b0a40152b2a401b2b1a401b1600101610b82565b5050a0b350505050a26040a30152b3b2505050565ba3a15263ffffffffa3166040a201525f610100a36080a40152a060c0a40152610bf0a1a401610b08565bb6b5505050505050565b5f60016101ff1ba201610c1c5763df75fb3b6101e01b5f52601160045260445ffd5b505f03b0565ba7a1526040a101a7b052600160016101001b03a6166080a2015260c0a101a5b052610100a101a4b052610180610140a201a1b052a101a2b0525f6101c0a3a5a2a501375fa3a501a20152603fb0b301603f1916b0b101b0b101b7b650505050505050565b6040a1525f610c976040a301610b08565bb2b15050565ba1a15260806040a201525f6108be6080a301610b08565b63df75fb3b6101e01b5f52600160045260445ffdfea264697066735822122059a2eef80023086fc5911e412f8a0d0c4d45fcb2334c712d889f8c0cef08edcb6468797063430003010033",
+	"abi": [
+		{
+			"inputs": [
+				{
+					"internalType": "uint512",
+					"name": "code",
+					"type": "uint512"
+				},
+				{
+					"internalType": "address",
+					"name": "who",
+					"type": "address"
+				},
+				{
+					"internalType": "string",
+					"name": "note",
+					"type": "string"
+				}
+			],
+			"name": "Custom",
+			"type": "error"
+		},
+		{
+			"anonymous": false,
+			"inputs": [
+				{
+					"indexed": true,
+					"internalType": "address",
+					"name": "who",
+					"type": "address"
+				},
+				{
+					"indexed": true,
+					"internalType": "bytes64",
+					"name": "wide",
+					"type": "bytes64"
+				},
+				{
+					"indexed": true,
+					"internalType": "uint512",
+					"name": "id",
+					"type": "uint512"
+				},
+				{
+					"indexed": false,
+					"internalType": "int512",
+					"name": "value",
+					"type": "int512"
+				},
+				{
+					"indexed": false,
+					"internalType": "string",
+					"name": "note",
+					"type": "string"
+				}
+			],
+			"name": "Indexed",
+			"type": "event"
+		},
+		{
+			"inputs": [],
+			"name": "aliases",
+			"outputs": [
+				{
+					"internalType": "bytes",
+					"name": "",
+					"type": "bytes"
+				}
+			],
+			"stateMutability": "pure",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "address",
+					"name": "",
+					"type": "address"
+				}
+			],
+			"name": "balances",
+			"outputs": [
+				{
+					"internalType": "uint512",
+					"name": "",
+					"type": "uint512"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [],
+			"name": "dynamicFunctions",
+			"outputs": [
+				{
+					"internalType": "bytes",
+					"name": "",
+					"type": "bytes"
+				}
+			],
+			"stateMutability": "pure",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "uint512",
+					"name": "a",
+					"type": "uint512"
+				},
+				{
+					"internalType": "int512",
+					"name": "b",
+					"type": "int512"
+				},
+				{
+					"internalType": "uint256",
+					"name": "c",
+					"type": "uint256"
+				},
+				{
+					"internalType": "address",
+					"name": "d",
+					"type": "address"
+				},
+				{
+					"internalType": "bytes64",
+					"name": "e",
+					"type": "bytes64"
+				},
+				{
+					"internalType": "string",
+					"name": "f",
+					"type": "string"
+				}
+			],
+			"name": "echo",
+			"outputs": [
+				{
+					"internalType": "bytes",
+					"name": "",
+					"type": "bytes"
+				}
+			],
+			"stateMutability": "pure",
+			"type": "function"
+		},
+		{
+			"inputs": [],
+			"name": "emitIndexed",
+			"outputs": [],
+			"stateMutability": "nonpayable",
+			"type": "function"
+		},
+		{
+			"inputs": [],
+			"name": "fixedFunctions",
+			"outputs": [
+				{
+					"internalType": "bytes",
+					"name": "",
+					"type": "bytes"
+				}
+			],
+			"stateMutability": "pure",
+			"type": "function"
+		},
+		{
+			"inputs": [],
+			"name": "functionAndString",
+			"outputs": [
+				{
+					"internalType": "bytes",
+					"name": "",
+					"type": "bytes"
+				}
+			],
+			"stateMutability": "pure",
+			"type": "function"
+		},
+		{
+			"inputs": [],
+			"name": "narrowIntegers",
+			"outputs": [
+				{
+					"internalType": "bytes",
+					"name": "",
+					"type": "bytes"
+				}
+			],
+			"stateMutability": "pure",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "uint512",
+					"name": "",
+					"type": "uint512"
+				}
+			],
+			"name": "narrowValues",
+			"outputs": [
+				{
+					"internalType": "uint256",
+					"name": "",
+					"type": "uint256"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [],
+			"name": "nestedFunction",
+			"outputs": [
+				{
+					"internalType": "bytes",
+					"name": "",
+					"type": "bytes"
+				}
+			],
+			"stateMutability": "pure",
+			"type": "function"
+		},
+		{
+			"inputs": [],
+			"name": "packed",
+			"outputs": [
+				{
+					"internalType": "bytes",
+					"name": "",
+					"type": "bytes"
+				}
+			],
+			"stateMutability": "pure",
+			"type": "function"
+		},
+		{
+			"inputs": [],
+			"name": "packedFunctions",
+			"outputs": [
+				{
+					"internalType": "bytes",
+					"name": "",
+					"type": "bytes"
+				}
+			],
+			"stateMutability": "pure",
+			"type": "function"
+		},
+		{
+			"inputs": [],
+			"name": "packedIntegers",
+			"outputs": [
+				{
+					"internalType": "bytes",
+					"name": "",
+					"type": "bytes"
+				}
+			],
+			"stateMutability": "pure",
+			"type": "function"
+		},
+		{
+			"inputs": [],
+			"name": "packedNarrow",
+			"outputs": [
+				{
+					"internalType": "bytes",
+					"name": "",
+					"type": "bytes"
+				}
+			],
+			"stateMutability": "pure",
+			"type": "function"
+		},
+		{
+			"inputs": [],
+			"name": "panicAssert",
+			"outputs": [],
+			"stateMutability": "pure",
+			"type": "function"
+		},
+		{
+			"inputs": [],
+			"name": "panicDivision",
+			"outputs": [
+				{
+					"internalType": "uint512",
+					"name": "",
+					"type": "uint512"
+				}
+			],
+			"stateMutability": "pure",
+			"type": "function"
+		},
+		{
+			"inputs": [],
+			"name": "panicIndex",
+			"outputs": [
+				{
+					"internalType": "uint256",
+					"name": "",
+					"type": "uint256"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [],
+			"name": "revertCustom",
+			"outputs": [],
+			"stateMutability": "pure",
+			"type": "function"
+		},
+		{
+			"inputs": [],
+			"name": "revertString",
+			"outputs": [],
+			"stateMutability": "pure",
+			"type": "function"
+		},
+		{
+			"inputs": [],
+			"name": "wideIntegers",
+			"outputs": [
+				{
+					"internalType": "bytes",
+					"name": "",
+					"type": "bytes"
+				}
+			],
+			"stateMutability": "pure",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "bytes64",
+					"name": "",
+					"type": "bytes64"
+				},
+				{
+					"internalType": "uint512",
+					"name": "",
+					"type": "uint512"
+				}
+			],
+			"name": "wideKeys",
+			"outputs": [
+				{
+					"internalType": "bool",
+					"name": "",
+					"type": "bool"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		}
+	],
+	"methodIdentifiers": {
+		"aliases()": "0f3446a9",
+		"balances(address)": "27e235e3",
+		"dynamicFunctions()": "33af841a",
+		"echo(uint512,int512,uint256,address,bytes64,string)": "7eb38533",
+		"emitIndexed()": "b3329898",
+		"fixedFunctions()": "02a2dc45",
+		"functionAndString()": "4966cfae",
+		"narrowIntegers()": "f387e0e4",
+		"narrowValues(uint512)": "3fc8a305",
+		"nestedFunction()": "1998b4f4",
+		"packed()": "8f23d5f6",
+		"packedFunctions()": "197eb3bc",
+		"packedIntegers()": "119e2ec7",
+		"packedNarrow()": "743be584",
+		"panicAssert()": "b6bbe061",
+		"panicDivision()": "1f33f342",
+		"panicIndex()": "1d8e32d9",
+		"revertCustom()": "1ed106b8",
+		"revertString()": "9bd61037",
+		"wideIntegers()": "544286de",
+		"wideKeys(bytes64,uint512)": "1d71bbce"
+	},
+	"cases": [
+		{
+			"name": "aliases",
+			"inputs": [
+				{
+					"type": "uint512"
+				},
+				{
+					"type": "int512"
+				}
+			],
+			"values": [
+				"13407807929942597099574024998205846127479365820592393377723561443721764030073546976801874298166903427690031858186486050853753882811946569946433649006084095",
+				"-6703903964971298549787012499102923063739682910296196688861780721860882015036773488400937149083451713845015929093243025426876941405973284973216824503042048"
+			],
+			"callData": "0x0f3446a9",
+			"encoded": "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff80000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+		},
+		{
+			"name": "narrowIntegers",
+			"inputs": [
+				{
+					"type": "uint256"
+				},
+				{
+					"type": "int256"
+				}
+			],
+			"values": [
+				"115792089237316195423570985008687907853269984665640564039457584007913129639935",
+				"-57896044618658097711785492504343953926634992332820282019728792003956564819968"
+			],
+			"callData": "0xf387e0e4",
+			"encoded": "0x0000000000000000000000000000000000000000000000000000000000000000ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff8000000000000000000000000000000000000000000000000000000000000000"
+		},
+		{
+			"name": "wideIntegers",
+			"inputs": [
+				{
+					"type": "uint512"
+				},
+				{
+					"type": "int512"
+				}
+			],
+			"values": [
+				"2582249878086908589655919172003011874329705792829223512830659356540647622016841194629645353280137831435903171972747493376",
+				"-2582249878086908589655919172003011874329705792829223512830659356540647622016841194629645353280137831435903171972747493376"
+			],
+			"callData": "0x544286de",
+			"encoded": "0x00000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000ffffffffffffffffffffffffffff0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+		},
+		{
+			"name": "functionAndString",
+			"inputs": [
+				{
+					"type": "function"
+				},
+				{
+					"type": "uint512"
+				},
+				{
+					"type": "string"
+				}
+			],
+			"values": [
+				"0x0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef5c36b186",
+				"7",
+				"hello"
+			],
+			"callData": "0x4966cfae",
+			"encoded": "0x0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000005c36b18600000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000007000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000568656c6c6f0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+		},
+		{
+			"name": "fixedFunctions",
+			"inputs": [
+				{
+					"type": "function[2]"
+				},
+				{
+					"type": "uint512"
+				}
+			],
+			"values": [
+				[
+					"0x0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef5c36b186",
+					"0x0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef5c36b186"
+				],
+				"9"
+			],
+			"callData": "0x02a2dc45",
+			"encoded": "0x0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000005c36b1860123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000005c36b18600000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000009"
+		},
+		{
+			"name": "dynamicFunctions",
+			"inputs": [
+				{
+					"type": "function[]"
+				},
+				{
+					"type": "uint512"
+				}
+			],
+			"values": [
+				[
+					"0x0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef5c36b186",
+					"0x0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef5c36b186"
+				],
+				"9"
+			],
+			"callData": "0x33af841a",
+			"encoded": "0x0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000008000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000009000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000020123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000005c36b1860123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000005c36b186"
+		},
+		{
+			"name": "nestedFunction",
+			"inputs": [
+				{
+					"components": [
+						{
+							"name": "callback",
+							"type": "function"
+						},
+						{
+							"name": "payload",
+							"type": "bytes"
+						}
+					],
+					"type": "tuple"
+				},
+				{
+					"type": "uint512"
+				}
+			],
+			"values": [
+				[
+					"0x0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef5c36b186",
+					"0x010203"
+				],
+				"9"
+			],
+			"callData": "0x1998b4f4",
+			"encoded": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000080000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000090123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000005c36b186000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000301020300000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+		},
+		{
+			"name": "packed",
+			"packed": true,
+			"inputs": [
+				{
+					"type": "uint"
+				},
+				{
+					"type": "int"
+				},
+				{
+					"type": "function"
+				}
+			],
+			"values": [
+				"1",
+				"-2",
+				"0x0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef5c36b186"
+			],
+			"callData": "0x8f23d5f6",
+			"encoded": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef5c36b186"
+		},
+		{
+			"name": "packedNarrow",
+			"packed": true,
+			"inputs": [
+				{
+					"type": "uint256"
+				},
+				{
+					"type": "int256"
+				},
+				{
+					"type": "address"
+				},
+				{
+					"type": "bytes64"
+				}
+			],
+			"values": [
+				"1",
+				"-2",
+				"Q0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+				"0xfedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210"
+			],
+			"callData": "0x743be584",
+			"encoded": "0x0000000000000000000000000000000000000000000000000000000000000001fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdeffedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210"
+		},
+		{
+			"name": "packedFunctions",
+			"packed": true,
+			"inputs": [
+				{
+					"type": "function[2]"
+				}
+			],
+			"values": [
+				[
+					"0x0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef5c36b186",
+					"0x0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef5c36b186"
+				]
+			],
+			"callData": "0x197eb3bc",
+			"encoded": "0x0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000005c36b1860123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000005c36b186"
+		},
+		{
+			"name": "packedIntegers",
+			"packed": true,
+			"inputs": [
+				{
+					"type": "uint[2]"
+				},
+				{
+					"type": "int[2]"
+				}
+			],
+			"values": [
+				[
+					"1",
+					"13407807929942597099574024998205846127479365820592393377723561443721764030073546976801874298166903427690031858186486050853753882811946569946433649006084095"
+				],
+				[
+					"-2",
+					"-6703903964971298549787012499102923063739682910296196688861780721860882015036773488400937149083451713845015929093243025426876941405973284973216824503042048"
+				]
+			],
+			"callData": "0x119e2ec7",
+			"encoded": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe80000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+		},
+		{
+			"name": "panicAssert",
+			"code": "1",
+			"reason": "assert(false)",
+			"panic": true,
+			"callData": "0xb6bbe061",
+			"encoded": "0xdf75fb3b00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001"
+		},
+		{
+			"name": "panicDivision",
+			"code": "18",
+			"reason": "division or modulo by zero",
+			"panic": true,
+			"callData": "0x1f33f342",
+			"encoded": "0xdf75fb3b00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000012"
+		},
+		{
+			"name": "panicIndex",
+			"code": "50",
+			"reason": "out-of-bounds access of an array or bytesN",
+			"panic": true,
+			"callData": "0x1d8e32d9",
+			"encoded": "0xdf75fb3b00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000032"
+		}
+	],
+	"calls": [
+		{
+			"name": "echo",
+			"signature": "echo(uint,int,uint256,address,bytes64,string)",
+			"canonical": "echo(uint512,int512,uint256,address,bytes64,string)",
+			"values": [
+				"13407807929942597099574024998205846127479365820592393377723561443721764030073546976801874298166903427690031858186486050853753882811946569946433649006084095",
+				"-6703903964971298549787012499102923063739682910296196688861780721860882015036773488400937149083451713845015929093243025426876941405973284973216824503042048",
+				"115792089237316195423570985008687907853269984665640564039457584007913129639935",
+				"Q0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+				"0xfedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210",
+				"hello"
+			],
+			"callData": "0x7eb38533ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdeffedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000568656c6c6f0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+			"reverted": false,
+			"returned": "0x0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000004000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000200ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdeffedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000568656c6c6f0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+		},
+		{
+			"name": "narrowValues",
+			"signature": "narrowValues(uint)",
+			"canonical": "narrowValues(uint512)",
+			"values": [
+				"0"
+			],
+			"callData": "0x3fc8a30500000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+			"reverted": true,
+			"returned": "0x"
+		},
+		{
+			"name": "balances",
+			"signature": "balances(address)",
+			"canonical": "balances(address)",
+			"values": [
+				"Q0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+			],
+			"callData": "0x27e235e30123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+			"reverted": false,
+			"returned": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+		},
+		{
+			"name": "wideKeys",
+			"signature": "wideKeys(bytes64,uint)",
+			"canonical": "wideKeys(bytes64,uint512)",
+			"values": [
+				"0xfedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210",
+				"13407807929942597099574024998205846127479365820592393377723561443721764030073546976801874298166903427690031858186486050853753882811946569946433649006084095"
+			],
+			"callData": "0x1d71bbcefedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+			"reverted": false,
+			"returned": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+		}
+	],
+	"errors": [
+		{
+			"name": "revertCustom",
+			"error": "Custom",
+			"values": [
+				"13407807929942597099574024998205846127479365820592393377723561443721764030073546976801874298166903427690031858186486050853753882811946569946433649006084095",
+				"Q0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+				"hello"
+			],
+			"callData": "0x1ed106b8",
+			"encoded": "0x39af05d5ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000568656c6c6f0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+		},
+		{
+			"name": "revertString",
+			"error": "Error",
+			"values": [
+				"hello"
+			],
+			"callData": "0x9bd61037",
+			"encoded": "0x08c379a0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000568656c6c6f0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+		}
+	],
+	"events": [
+		{
+			"name": "emitIndexed",
+			"event": "Indexed",
+			"signature": "Indexed(address,bytes64,uint,int,string)",
+			"values": {
+				"who": "Q0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+				"wide": "0xfedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210",
+				"id": "13407807929942597099574024998205846127479365820592393377723561443721764030073546976801874298166903427690031858186486050853753882811946569946433649006084095",
+				"value": "-2",
+				"note": "hello"
+			},
+			"abi": {
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "who",
+						"type": "address"
+					},
+					{
+						"indexed": true,
+						"internalType": "bytes64",
+						"name": "wide",
+						"type": "bytes64"
+					},
+					{
+						"indexed": true,
+						"internalType": "uint512",
+						"name": "id",
+						"type": "uint512"
+					},
+					{
+						"indexed": false,
+						"internalType": "int512",
+						"name": "value",
+						"type": "int512"
+					},
+					{
+						"indexed": false,
+						"internalType": "string",
+						"name": "note",
+						"type": "string"
+					}
+				],
+				"name": "Indexed",
+				"type": "event"
+			},
+			"callData": "0xb3329898",
+			"topics": [
+				"0x3b1650913a30a1a9740b24792d806db87a0d06f71f976693bfcf584ad099f99a0000000000000000000000000000000000000000000000000000000000000000",
+				"0x0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+				"0xfedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210",
+				"0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+			],
+			"data": "0xfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000568656c6c6f0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+		}
+	]
+}

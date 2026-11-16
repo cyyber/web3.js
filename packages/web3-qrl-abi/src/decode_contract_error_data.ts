@@ -22,9 +22,12 @@ import { encodeErrorSignature } from './api/errors_api.js';
 import { decodeParameters } from './api/parameters_api.js';
 import { jsonInterfaceMethodToString } from './utils.js';
 
-// These errors are emitted by the compiler and need not appear in a contract ABI.
+// These errors are emitted by the compiler and need not appear in a contract ABI. Hyperion
+// 0.3.1 and later raise `Panic(uint512)` (selector `0xdf75fb3b`); contracts compiled by 0.2.0
+// keep raising `Panic(uint256)` (`0x4e487b71`). Both carry one 64-byte code word.
 const builtinErrors: AbiErrorFragment[] = [
 	{ type: 'error', name: 'Error', inputs: [{ name: 'message', type: 'string' }] },
+	{ type: 'error', name: 'Panic', inputs: [{ name: 'code', type: 'uint512' }] },
 	{ type: 'error', name: 'Panic', inputs: [{ name: 'code', type: 'uint256' }] },
 ];
 
@@ -34,8 +37,9 @@ const REVERT_DATA_WITH_SELECTOR = /^0x[0-9a-f]{8}/i;
 
 /**
  * Decodes the EIP-838 revert data carried by `error.data` against the custom errors of a
- * contract ABI (plus the compiler's builtin `Error(string)` and `Panic(uint256)`), and sets
- * `errorName`, `errorSignature` and `errorArgs` on the error.
+ * contract ABI (plus the compiler's builtin `Error(string)`, `Panic(uint512)` and the
+ * `Panic(uint256)` of Hyperion 0.2.0), and sets `errorName`, `errorSignature` and `errorArgs`
+ * on the error.
  *
  * The data is node-supplied and is never trusted: it must be a hex string carrying a full
  * 4-byte selector, the selector is matched exactly (case-insensitively) and the properties are

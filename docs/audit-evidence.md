@@ -21,7 +21,8 @@ corepack enable
 
 Expected result:
 
-- Node is within the supported `>=20.19.0` range.
+- Node is within the range the workspace installs on, `^22.14.0` or `>=24.10.0`.
+  The published packages' `engines.node` floor is lower (`>=22.12.0`).
 - pnpm is the Corepack-managed pnpm 10 line used by the lockfile.
 - `corepack enable` exits `0`.
 
@@ -53,10 +54,10 @@ Required GitHub status checks should match the commands above:
 
 - `Verify (Node 22.x)` and `Verify (Node 24.x)` run frozen ignored-script
   install, doctor, hygiene, lint, build, browser build, and unit tests. The
-  advertised `engines.node` floor (`>=20.19.0`) is deliberately not exercised
+  advertised `engines.node` floor (`>=22.12.0`) is deliberately not exercised
   here — the dev toolchain cannot install on it (`.npmrc` sets
   `engine-strict=true`; `semantic-release` requires `^22.14.0 || >=24.10.0`).
-  The floor is proven against published tarballs on 20.19.0 by the release
+  The floor is proven against published tarballs on 22.12.0 by the release
   smoke job, plus `scripts/doctor.js` and the `package_engines` metadata test.
 - `Supply Chain Audit` runs the pinned Trivy 0.70.0 lockfile scan over
   production and development dependencies, failing on HIGH/CRITICAL. Reproduce

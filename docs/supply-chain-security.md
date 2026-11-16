@@ -64,54 +64,40 @@ It warns about a dependency that nothing imports and about a plain (non
 
 ## Git-hosted Dependency Integrity
 
-`@theqrl/qrl-contracts`, the Hyperion contract library the test fixtures are
-compiled against, is a GitHub-hosted dependency pinned to a commit and a SHA-512
-archive checksum in `pnpm-lock.yaml`. pnpm 10.27.0 does not generate this integrity
-field automatically, but enforces it when supplied: an incorrect archive checksum
-fails installation with `ERR_PNPM_TARBALL_INTEGRITY`.
-`pnpm run doctor` parses the lockfile and checks that every importer resolves the
-package to the reviewed archive and that its only package entry carries exactly the
-reviewed checksum and URL. It also hashes the installed package tree
-(`scripts/git-dependency-digest.js`) and compares it with the reviewed tree digest.
-The reviewed values are `expectedGitDependencies` in `scripts/doctor-checks.js`.
+The workspace has no Git-hosted dependencies: `@theqrl/qrl-contracts`, the
+Hyperion contract library the test fixtures are compiled against, is the npm
+release pinned in `package.json`, with the registry's integrity hash in
+`pnpm-lock.yaml`.
 
-When the pinned commit changes, download its codeload archive and review the
-source diff. Compute the archive's SHA-512 checksum, prefix the base64 output
-with `sha512-`, and record it as `resolution.integrity` alongside `tarball` in
-the lockfile and in `scripts/doctor-checks.js`:
+Prefer a published release. A Git-hosted dependency needs every install to reach
+`codeload.github.com`, Dependabot cannot track it, and pnpm 10.27.0 does not
+generate an integrity hash for the archive, although it enforces one that is
+supplied (`ERR_PNPM_TARBALL_INTEGRITY`). If one is unavoidable:
 
-```sh
-openssl dgst -sha512 -binary qrl-contracts.tar.gz | openssl base64 -A
-```
+1. Pin it to a commit (`github:<owner>/<repo>#<commit>`), never a branch or a
+   tag that can be re-pointed, and review the source.
+2. Download the commit's codeload archive, compute its SHA-512 checksum, prefix
+   the base64 output with `sha512-`, and record it as `resolution.integrity`
+   alongside `tarball` in the lockfile:
 
-Install with the updated lockfile, review the installed files, and record the
-new tree digest in `scripts/doctor-checks.js`:
+    ```sh
+    openssl dgst -sha512 -binary archive.tar.gz | openssl base64 -A
+    ```
 
-```sh
-pnpm install --frozen-lockfile
-node scripts/git-dependency-digest.js @theqrl/qrl-contracts
-```
+3. Install with the updated lockfile, review the installed files, and compute
+   the tree digest:
 
-Run `pnpm run doctor` after recording both digests. Do not remove the archive
-integrity field when refreshing the lockfile.
+    ```sh
+    pnpm install --frozen-lockfile
+    node scripts/git-dependency-digest.js <package-name>
+    ```
 
-### Why a Git-hosted dependency, and the exit plan
+4. Record the tarball URL, integrity and tree digest under the package name in
+   `expectedGitDependencies` in `scripts/doctor-checks.js`.
 
-The npm release `@theqrl/qrl-contracts@0.1.0` (2026-04-03) predates the VM64 /
-Hyperion 0.2.0 contract sources the fixtures are compiled from, so `package.json`
-points at the GitHub archive of commit `d3c84eedac4e051f6e99892397c5e42f0f0a2266`
-(`github:theQRL/qrl-contracts#<commit>`). The price of that pin is operational:
-every install must reach `codeload.github.com` (an offline or registry-only
-sandbox fails with `ERR_PNPM_FETCH_403` on exactly that URL), Dependabot cannot
-track or update a Git dependency, and the integrity hash has to be maintained by
-hand as described above.
-
-Exit plan: publish a tagged `@theqrl/qrl-contracts` release built from that
-commit or a later one, change `package.json` back to the npm version, refresh
-the lockfile (npm supplies the integrity hash itself), remove the archive pin and
-the tree digest from `scripts/doctor-checks.js`, and record the switch in
-`CHANGELOG.md`. Until then, bump the commit only through the review procedure
-above and never to a moving reference (a branch or a tag that can be re-pointed).
+`pnpm run doctor` then checks that every importer resolves the package to the
+reviewed archive, that its only lockfile entry carries exactly the reviewed
+checksum and URL, and that the installed tree matches the reviewed digest.
 
 ## Audit Gate
 

@@ -11,7 +11,7 @@
 ![Contributors](https://img.shields.io/github/contributors/theQRL/web3.js?label=contributors)
 
 ![ES Version](https://img.shields.io/badge/ES-2020-yellow)
-![Node Version](https://img.shields.io/badge/node-%3E%3D20-green)
+![Node Version](https://img.shields.io/badge/node-%3E%3D22.12-green)
 
 QRL Web3.js is a TypeScript implementation of QRL JSON-RPC client tooling maintained by [The QRL Contributors](https://theqrl.org/).
 
@@ -38,7 +38,7 @@ pnpm add @theqrl/web3
 
 ## Prerequisites
 
--   [NodeJS](https://nodejs.org/) (20 or newer)
+-   [NodeJS](https://nodejs.org/): the published packages run on 22.12 or newer; developing in this repository needs `^22.14.0` or `>=24.10.0`, the range the development toolchain installs on
 -   [pnpm](https://pnpm.io/) and [Turbo](https://turbo.build/)
 
 ## Useful links

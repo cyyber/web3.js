@@ -16,10 +16,16 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { Eip838ExecutionError } from '@theqrl/web3-errors';
-import { AbiErrorFragment, AbiParameter } from '@theqrl/web3-types';
-import fixture from '../../../../fixtures/abi/hyperion-0.2.0.json';
+import {
+	AbiErrorFragment,
+	AbiEventFragment,
+	AbiFunctionFragment,
+	AbiParameter,
+} from '@theqrl/web3-types';
+import fixture from '../../../../fixtures/abi/hyperion-0.3.1.json';
 import { decodeParameters, encodeParameters } from '../../src/api/parameters_api';
-import { encodeFunctionSignature } from '../../src/api/functions_api';
+import { encodeFunctionCall, encodeFunctionSignature } from '../../src/api/functions_api';
+import { decodeLog } from '../../src/api/logs_api';
 import { encodeEventSignature } from '../../src/api/events_api';
 import { encodeErrorSignature } from '../../src/api/errors_api';
 import { decodeContractErrorData } from '../../src/decode_contract_error_data';
@@ -51,8 +57,9 @@ describe('Hyperion compiler ABI compatibility', () => {
 		'canonicalizes integer aliases in string signatures',
 		encodeSignature => {
 			expect(encodeSignature('uint(uint,int[],(uint[2],int))')).toBe(
-				encodeSignature('uint(uint256,int256[],(uint256[2],int256))'),
+				encodeSignature('uint(uint512,int512[],(uint512[2],int512))'),
 			);
+			expect(encodeSignature('uint(uint)')).not.toBe(encodeSignature('uint(uint256)'));
 		},
 	);
 
@@ -69,23 +76,104 @@ describe('Hyperion compiler ABI compatibility', () => {
 			},
 		];
 		expect(jsonInterfaceMethodToString({ type: 'function', name: 'foo', inputs })).toBe(
-			'foo(uint256[],(int256,uint256[2]))',
+			'foo(uint512[],(int512,uint512[2]))',
 		);
 		expect(encodeFunctionSignature({ type: 'function', name: 'foo', inputs })).toBe(
-			encodeFunctionSignature('foo(uint256[],(int256,uint256[2]))'),
+			encodeFunctionSignature('foo(uint512[],(int512,uint512[2]))'),
 		);
 	});
 
 	it.each(fixture.cases.filter(test => test.panic))(
 		'decodes $name without a builtin error entry in the ABI',
 		({ encoded, code }) => {
-			expect(encoded.slice(0, 10)).toBe('0x4e487b71');
+			expect(encoded.slice(0, 10)).toBe('0xdf75fb3b');
 			expect(encoded).toHaveLength(2 + (4 + 64) * 2);
 			const error = new Eip838ExecutionError({ code: 3, message: 'reverted', data: encoded });
 			decodeContractErrorData([], error);
 			expect(error.errorName).toBe('Panic');
-			expect(error.errorSignature).toBe('Panic(uint256)');
+			expect(error.errorSignature).toBe('Panic(uint512)');
 			expect(error.errorArgs?.code).toBe(BigInt(code as string));
+		},
+	);
+
+	it('still decodes the Panic(uint256) of contracts compiled by Hyperion 0.2.0', () => {
+		// The revert payload of `assert(false)` in the Hyperion 0.2.0 fixture, executed in go-qrl.
+		const data = `0x4e487b71${'00'.repeat(63)}01`;
+		const error = new Eip838ExecutionError({ code: 3, message: 'reverted', data });
+		decodeContractErrorData([], error);
+		expect(error.errorName).toBe('Panic');
+		expect(error.errorSignature).toBe('Panic(uint256)');
+		expect(error.errorArgs?.code).toBe(BigInt(1));
+	});
+
+	it.each(Object.entries(fixture.methodIdentifiers))(
+		'derives the compiler selector of %s',
+		(signature, selector) => {
+			expect(encodeFunctionSignature(signature)).toBe(`0x${selector}`);
+			const name = signature.slice(0, signature.indexOf('('));
+			const entry = fixture.abi.find(item => item.type === 'function' && item.name === name);
+			expect(encodeFunctionSignature(entry as AbiFunctionFragment)).toBe(`0x${selector}`);
+		},
+	);
+
+	const functionEntry = (name: string) =>
+		fixture.abi.find(
+			item => item.type === 'function' && item.name === name,
+		) as AbiFunctionFragment;
+
+	it.each(fixture.calls)(
+		'$signature encodes the call data the compiler decodes',
+		({ name, signature, values, callData }) => {
+			expect(encodeFunctionSignature(signature)).toBe(callData.slice(0, 10));
+			expect(encodeFunctionCall(functionEntry(name), values)).toBe(callData);
+		},
+	);
+
+	it('echo returns the arguments the compiler decoded from the call data', () => {
+		const [{ callData, returned }] = fixture.calls.filter(call => call.name === 'echo');
+		expect(decodeParameters(['bytes'], returned)[0]).toBe(`0x${callData.slice(10)}`);
+	});
+
+	it.each(fixture.calls.filter(call => call.name !== 'echo' && !call.reverted))(
+		'decodes the value returned by the $canonical getter',
+		({ name, returned }) => {
+			const outputs = functionEntry(name).outputs as AbiParameter[];
+			expect(encodeParameters(outputs, [decodeParameters(outputs, returned)[0]])).toBe(
+				returned,
+			);
+		},
+	);
+
+	it.each(fixture.events)(
+		'decodes the log of $signature with 64-byte topics',
+		({ signature, abi, topics, data, values }) => {
+			const event = abi as AbiEventFragment;
+			// The 32-byte signature hash is left-aligned in the 64-byte topic.
+			expect(topics[0]).toBe(encodeEventSignature(signature));
+			expect(topics[0]).toHaveLength(2 + 128);
+			expect(encodeEventSignature(event)).toBe(encodeEventSignature(signature));
+			const decoded = decodeLog([...event.inputs], data, topics.slice(1));
+			expect(String(decoded.who).toLowerCase()).toBe(values.who.toLowerCase());
+			expect(decoded.wide).toBe(values.wide);
+			expect(decoded.id).toBe(BigInt(values.id));
+			expect(decoded.value).toBe(BigInt(values.value));
+			expect(decoded.note).toBe(values.note);
+		},
+	);
+
+	it.each(fixture.errors)(
+		'decodes the revert data of $name',
+		({ error: errorName, encoded, values }) => {
+			const errorsAbi = fixture.abi.filter(
+				item => item.type === 'error',
+			) as AbiErrorFragment[];
+			const error = new Eip838ExecutionError({ code: 3, message: 'reverted', data: encoded });
+			decodeContractErrorData(errorsAbi, error);
+			expect(error.errorName).toBe(errorName);
+			const args = error.errorArgs as Record<string, unknown>;
+			expect(values.map((_, index) => String(args[index]).toLowerCase())).toEqual(
+				values.map(value => value.toLowerCase()),
+			);
 		},
 	);
 
@@ -116,7 +204,7 @@ describe('Hyperion compiler ABI compatibility', () => {
 		expect(error.errorArgs?.code).toBeUndefined();
 	});
 
-	it('only decodes Panic(uint512) when supplied as a custom error', () => {
+	it('gives an explicit Panic(uint512) error ABI precedence over the builtin fallback', () => {
 		const abi: AbiErrorFragment = {
 			type: 'error',
 			name: 'Panic',
@@ -125,12 +213,11 @@ describe('Hyperion compiler ABI compatibility', () => {
 		const error = new Eip838ExecutionError({
 			code: 3,
 			message: 'reverted',
-			data: `${encodeErrorSignature(abi).slice(0, 10)}${encodeParameters(['uint512'], [1]).slice(2)}`,
+			data: `0xdf75fb3b${encodeParameters(['uint512'], [1]).slice(2)}`,
 		});
-		decodeContractErrorData([], error);
-		expect(error.errorName).toBeUndefined();
 		decodeContractErrorData([abi], error);
 		expect(error.errorSignature).toBe('Panic(uint512)');
 		expect(error.errorArgs?.wideCode).toBe(BigInt(1));
+		expect(error.errorArgs?.code).toBeUndefined();
 	});
 });

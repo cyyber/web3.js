@@ -222,22 +222,23 @@ const getType = (arg: Sha3Input): [string, EncodingTypes] => {
 };
 
 /**
- * returns the type with size if uint or int
+ * returns the type with size if uint or int. The bare names are the full 512-bit QRVM word, as
+ * in Hyperion 0.3.1 and later.
  * @param name - the input to return the type with size
  * @returns - the type with size of the input
  */
 const elementaryName = (name: string): string => {
 	if (name.startsWith('int[')) {
-		return `int256${name.slice(3)}`;
+		return `int512${name.slice(3)}`;
 	}
 	if (name === 'int') {
-		return 'int256';
+		return 'int512';
 	}
 	if (name.startsWith('uint[')) {
-		return `uint256${name.slice(4)}`;
+		return `uint512${name.slice(4)}`;
 	}
 	if (name === 'uint') {
-		return 'uint256';
+		return 'uint512';
 	}
 	return name;
 };

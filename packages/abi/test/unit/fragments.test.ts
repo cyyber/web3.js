@@ -78,11 +78,12 @@ describe('checkForbidden', () => {
 	it('rejects the builtin error signatures', () => {
 		expect(() => ErrorFragment.from('Error(string)')).toThrow(/user defined/);
 		expect(() => ErrorFragment.from('Panic(uint256)')).toThrow(/user defined/);
+		expect(() => ErrorFragment.from('Panic(uint512)')).toThrow(/user defined/);
 		expect(() => ErrorFragment.from('Panic(uint)')).toThrow(/user defined/);
 	});
 
-	it('accepts Panic(uint512) as a custom error', () => {
-		expect(ErrorFragment.from('Panic(uint512)').format()).toBe('Panic(uint512)');
+	it('accepts other Panic signatures as custom errors', () => {
+		expect(ErrorFragment.from('Panic(uint8)').format()).toBe('Panic(uint8)');
 	});
 });
 

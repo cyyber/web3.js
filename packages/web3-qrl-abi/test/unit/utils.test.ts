@@ -61,21 +61,22 @@ describe('utils', () => {
 		const digits = 'ab'.repeat(33);
 		const wideHex = `0x${digits}`;
 		const paddedTo256 = `0x${'0'.repeat(256 - 66)}${digits}`;
+		const paddedTo512 = `0x${'0'.repeat(512 - 66)}${digits}`;
 
-		it('pads a bare uint to 256 hex characters', () => {
-			expect(formatParam('uint', wideHex)).toBe(paddedTo256);
+		it('pads a bare uint to 512 hex characters', () => {
+			expect(formatParam('uint', wideHex)).toBe(paddedTo512);
 		});
 
-		it('pads a bare int to 256 hex characters', () => {
-			expect(formatParam('int', wideHex)).toBe(paddedTo256);
+		it('pads a bare int to 512 hex characters', () => {
+			expect(formatParam('int', wideHex)).toBe(paddedTo512);
 		});
 
-		it('pads bare uint array members to 256 hex characters', () => {
-			expect(formatParam('uint[]', [wideHex])).toEqual([paddedTo256]);
+		it('pads bare uint array members to 512 hex characters', () => {
+			expect(formatParam('uint[]', [wideHex])).toEqual([paddedTo512]);
 		});
 
 		it('uses an explicit width instead of the bare default', () => {
-			expect(formatParam('uint256', wideHex)).toBe(`0x${'0'.repeat(256 - 66)}${digits}`);
+			expect(formatParam('uint256', wideHex)).toBe(paddedTo256);
 			expect(formatParam('int128', wideHex)).toBe(`0x${'0'.repeat(128 - 66)}${digits}`);
 			// Decimal strings are numbers to the coder and are never padded: padding turned
 			// '-57' into '00000-57', which no longer parsed for any `intN` narrower than 256 bits.

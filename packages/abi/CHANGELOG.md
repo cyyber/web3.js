@@ -25,6 +25,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- **Breaking:** ABI values occupy 64-byte VM words. Explicit integer widths extend through `uint512` / `int512`; bare `uint` / `int` retain Hyperion 0.2.0's 256-bit bounds.
+- **Breaking:** ABI values occupy 64-byte VM words. Explicit integer widths extend through `uint512` / `int512`; bare `uint` / `int` are `uint512` / `int512`, as in Hyperion 0.3.1 (0.2.0 read them as 256 bits). `Panic(uint512)` is reserved for the compiler like `Panic(uint256)` and cannot be declared as a custom error.
 - **Breaking:** Decoding an ABI address returns a checksummed Q address.
 - **Breaking:** The ABI `function` type contains a 64-byte address and four-byte selector (68 bytes), encoded in two 64-byte words.

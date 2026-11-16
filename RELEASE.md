@@ -17,7 +17,7 @@ Release publishing is guarded by:
 - The protected GitHub environment `npm-publish` must approve the job.
 - The CI workflow must pass first.
 - Every release tag of a publishable package must already be on the registry (pre-flight, see "Recovering From A Failed Release Run").
-- Release tarballs must pass CommonJS and ESM smoke tests on Node 20.19.0 (the advertised `engines.node` floor) before publish, installed with `npm ci` from a lockfile the `prepare` job resolved.
+- Release tarballs must pass CommonJS and ESM smoke tests on Node 22.12.0 (the advertised `engines.node` floor) before publish, installed with `npm ci` from a lockfile the `prepare` job resolved.
 - Every job that consumes the release-candidate artifact first verifies it against the SHA-256 digests the `prepare` job recorded as job outputs (`scripts/release/verify-artifact-digests.sh`); the artifact store of a running workflow is not trusted.
 - npm publishing runs on Node 24.22.1 with its bundled npm (11.5.1 or newer) so npm trusted publishing can use OIDC, in a job that does nothing but verify and publish.
 - npm publishing must use provenance (`NPM_CONFIG_PROVENANCE=true`).
@@ -99,7 +99,7 @@ The release workflow (`.github/workflows/release.yml`), on a push to `main`:
 6. Rebuilds packages after version updates and inspects them again.
 7. Packs released packages, generates SHA-256 and SHA-512 checksums, and resolves the smoke-test dependency tree into a lockfile (`npm install --package-lock-only`, metadata only).
 8. Records the SHA-256 digest of every artifact file, and of the tarballs alone, as job outputs, then uploads the tarballs, metadata, checksums and smoke lockfile as the `release-candidate-tarballs` artifact (kept for 30 days, the maximum wait for an environment approval).
-9. `smoke-node-floor`: downloads the artifact, verifies it against the `prepare` digests, and on Node 20.19.0 (the advertised floor) installs the tarballs with `npm ci` from the shipped lockfile and smoke-tests CommonJS `require()` and ESM `import`.
+9. `smoke-node-floor`: downloads the artifact, verifies it against the `prepare` digests, and on Node 22.12.0 (the advertised floor) installs the tarballs with `npm ci` from the shipped lockfile and smoke-tests CommonJS `require()` and ESM `import`.
 10. `publish` (environment `npm-publish`, `id-token: write` only): downloads and verifies the artifact, then publishes with npm trusted publishing from Node 24 and its bundled npm 11 (`scripts/release/publish-tarballs.js`: a version already on the registry is skipped only when its `dist.integrity` matches this run's tarball, a failure does not stop the loop). No dependency installation or build runs in this job.
 11. `sbom` (no OIDC token, read-only): generates SPDX and CycloneDX SBOMs of the repository checkout — the whole locked dependency graph the tarballs were built from — records their digests as job outputs and uploads them.
 12. `attest` (`id-token`, `attestations: write`, `contents: write`, deliberately **outside** the `npm-publish` environment so its OIDC tokens cannot publish to npm): verifies the artifact and the SBOMs against the recorded digests, creates the build-provenance attestation for the tarballs and checksum files and the two SBOM attestations with the same tarballs and checksum files as subjects, uploads tarballs, checksums and SBOMs to each draft release and publishes the releases (`gh release edit --draft=false`).

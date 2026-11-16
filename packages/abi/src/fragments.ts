@@ -1118,7 +1118,8 @@ export class FunctionFragment extends ConstructorFragment {
 
 function checkForbidden(fragment: ErrorFragment): ErrorFragment {
 	const sig = fragment.format();
-	if (sig === 'Error(string)' || sig === 'Panic(uint256)') {
+	// `Panic(uint512)` is raised by Hyperion 0.3.1 and later, `Panic(uint256)` by 0.2.0.
+	if (sig === 'Error(string)' || sig === 'Panic(uint512)' || sig === 'Panic(uint256)') {
 		logger.throwArgumentError(`cannot specify user defined ${sig} error`, 'fragment', fragment);
 	}
 	return fragment;
@@ -1210,11 +1211,12 @@ function verifyType(type: string): string {
 		logger.throwArgumentError('invalid type', 'type', type);
 	}
 
-	// These need to be transformed to their full description
+	// These need to be transformed to their full description. Bare `uint` and `int` are the
+	// full 512-bit QRVM word, as in Hyperion 0.3.1 and later (0.2.0 read them as 256 bits).
 	if (type.match(/^uint($|[^1-9])/)) {
-		type = `uint256${type.substring(4)}`;
+		type = `uint512${type.substring(4)}`;
 	} else if (type.match(/^int($|[^1-9])/)) {
-		type = `int256${type.substring(3)}`;
+		type = `int512${type.substring(3)}`;
 	}
 
 	// @TODO: more verification

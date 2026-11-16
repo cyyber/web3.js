@@ -22,8 +22,8 @@ along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
 // file contents (nested node_modules excluded) for `scripts/doctor.js`, which compares it
 // with the reviewed digest in `scripts/doctor-checks.js`.
 //
-// Recompute a digest after changing the pinned commit:
-//   node scripts/git-dependency-digest.js @theqrl/qrl-contracts
+// Compute the digest of an installed package:
+//   node scripts/git-dependency-digest.js <package-name>
 
 const crypto = require('node:crypto');
 const fs = require('node:fs');

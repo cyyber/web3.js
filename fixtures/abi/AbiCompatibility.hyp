@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: LGPL-3.0
-pragma hyperion 0.2.0;
+pragma hyperion 0.3.1;
 
 interface CallbackTarget {
     function ping() external;
@@ -11,14 +11,36 @@ contract AbiCompatibility {
         bytes payload;
     }
 
+    error Custom(uint code, address who, string note);
+
+    event Indexed(address indexed who, bytes64 indexed wide, uint indexed id, int value, string note);
+
+    uint256[] public narrowValues;
+    mapping(address => uint) public balances;
+    mapping(bytes64 => mapping(uint => bool)) public wideKeys;
+
     function pointer() private pure returns (function() external) {
-        return CallbackTarget(address(uint512(
+        return CallbackTarget(account()).ping;
+    }
+
+    function account() private pure returns (address) {
+        return address(uint512(
             0x0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
-        ))).ping;
+        ));
+    }
+
+    function wide() private pure returns (bytes64) {
+        return bytes64(uint512(
+            0xfedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210
+        ));
     }
 
     function aliases() external pure returns (bytes memory) {
-        return abi.encode(type(uint).max, int(-1));
+        return abi.encode(type(uint).max, type(int).min);
+    }
+
+    function narrowIntegers() external pure returns (bytes memory) {
+        return abi.encode(type(uint256).max, type(int256).min);
     }
 
     function wideIntegers() external pure returns (bytes memory) {
@@ -49,6 +71,10 @@ contract AbiCompatibility {
         return abi.encodePacked(uint(1), int(-2), pointer());
     }
 
+    function packedNarrow() external pure returns (bytes memory) {
+        return abi.encodePacked(uint256(1), int256(-2), account(), wide());
+    }
+
     function packedFunctions() external pure returns (bytes memory) {
         function() external[2] memory callbacks = [pointer(), pointer()];
         return abi.encodePacked(callbacks);
@@ -60,6 +86,28 @@ contract AbiCompatibility {
         return abi.encodePacked(unsigned, signed);
     }
 
+    // Echoes its arguments, so that an SDK's selector and argument encoding is
+    // checked against the compiler's decoder.
+    function echo(uint a, int b, uint256 c, address d, bytes64 e, string calldata f)
+        external
+        pure
+        returns (bytes memory)
+    {
+        return abi.encode(a, b, c, d, e, f);
+    }
+
+    function emitIndexed() external {
+        emit Indexed(account(), wide(), type(uint).max, -2, "hello");
+    }
+
+    function revertCustom() external pure {
+        revert Custom(type(uint).max, account(), "hello");
+    }
+
+    function revertString() external pure {
+        revert("hello");
+    }
+
     function panicAssert() external pure {
         assert(false);
     }
@@ -67,5 +115,9 @@ contract AbiCompatibility {
     function panicDivision() external pure returns (uint) {
         uint zero;
         return 1 / zero;
+    }
+
+    function panicIndex() external view returns (uint256) {
+        return narrowValues[0];
     }
 }
