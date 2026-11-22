@@ -30,6 +30,22 @@ describe('[Common]: Parameter access for param(), paramByHardfork()', () => {
 		expect(c.paramByHardfork('gasPrices', 'notexistingvalue', 'zond')).toEqual(BigInt(0));
 	});
 
+	it('Follows the gas prices of go-qrl', () => {
+		const c = new Common({ chain: Chain.Mainnet, hardfork: Hardfork.Zond });
+
+		// The SHAKE256 (0x06) and XMSS verification (0x07) precompiles.
+		expect(c.param('gasPrices', 'shake256')).toEqual(BigInt(240));
+		expect(c.param('gasPrices', 'shake256Word')).toEqual(BigInt(48));
+		expect(c.param('gasPrices', 'xmssVerifyHash')).toEqual(BigInt(96));
+
+		// The transient storage opcodes of EIP-1153.
+		expect(c.param('gasPrices', 'tstore')).toEqual(BigInt(100));
+		expect(c.param('gasPrices', 'tload')).toEqual(BigInt(100));
+
+		// The modexp precompile is priced by EIP-7883, which does not divide by Gquaddivisor.
+		expect(c.param('gasPrices', 'modexpGquaddivisor')).toEqual(BigInt(1));
+	});
+
 	it('Error cases for param(), paramByHardfork()', () => {
 		const c = new Common({ chain: Chain.Mainnet });
 

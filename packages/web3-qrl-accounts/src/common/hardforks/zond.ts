@@ -158,6 +158,14 @@ export default {
 			v: 3,
 			d: '',
 		},
+		shake256: {
+			v: 240,
+			d: 'Base gas cost of the SHAKE256 precompile (address 0x06)',
+		},
+		shake256Word: {
+			v: 48,
+			d: "Once per 64-byte word of the SHAKE256 precompile's input",
+		},
 		stop: {
 			v: 0,
 			d: 'Base fee of the STOP opcode',
@@ -387,12 +395,16 @@ export default {
 			d: 'Base fee of the DELEGATECALL opcode',
 		},
 		modexpGquaddivisor: {
-			v: 3,
-			d: 'Gquaddivisor from modexp precompile for gas calculation',
+			v: 1,
+			d: 'Gquaddivisor from modexp precompile for gas calculation: 1 since the pricing of EIP-7883, which has no divisor',
 		},
 		mldsa87Verify: {
 			v: 125000,
 			d: 'Gas cost for one ML-DSA-87 verification precompile (address 0x03)',
+		},
+		xmssVerifyHash: {
+			v: 96,
+			d: 'Gas cost for one hash of the XMSS verification precompile (address 0x07)',
 		},
 		revert: {
 			v: 0,
@@ -501,6 +513,14 @@ export default {
 		initCodeWordCost: {
 			v: 2,
 			d: 'Gas to pay for each word (64 bytes) of initcode when creating a contract',
+		},
+		tstore: {
+			v: 100,
+			d: 'Base fee of the TSTORE opcode',
+		},
+		tload: {
+			v: 100,
+			d: 'Base fee of the TLOAD opcode',
 		},
 	},
 	vm: {

@@ -32,6 +32,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - **Breaking:** The `zond` hardfork gas table changes `depositroot` from 19,992 to 18,000 gas, adds `mldsa87Verify` at 125,000 gas, and raises `initialBaseFee` from 1 gwei to 100 gwei (`100000000000`).
+- **Breaking:** The `zond` hardfork gas table changes `modexpGquaddivisor` from 3 to 1: go-qrl prices the modexp precompile by EIP-7883, which has no divisor. The table adds `tstore` and `tload` at 100 gas (EIP-1153), `shake256` at 240 and `shake256Word` at 48 gas for the SHAKE256 precompile (`0x06`), and `xmssVerifyHash` at 96 gas for the XMSS verification precompile (`0x07`).
 
 ### Removed
 
